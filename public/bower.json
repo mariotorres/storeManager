@@ -1,0 +1,21 @@
+{
+  "name": "businessmanager",
+  "homepage": "https://github.com/mario291187/businessManager",
+  "authors": [
+    "Mario Torres <mario291187@gmail.com>"
+  ],
+  "description": "Business Manager",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "font-awesome": "fontawesome#^4.6.3",
+    "bootstrap": "^3.3.7"
+  }
+}
