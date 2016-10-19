@@ -111,8 +111,23 @@ create table ventas (
     notas text
 );
 
-/* Compras */
 
+/*
+tipo_transaccion
+retorno_mercancia
+compra
+*/
+
+/* transacciones */
+drop table if exists transacciones;
+ create table transacciones(
+    id serial primary key,
+    id_proveedor integer references proveedores(id)
+    id_tipo_transaccion integer,
+    notas text,
+    monto numeric
+    /* ... */
+);
 
 /* Operaciones nomina */
 drop table if exists operaciones_nomina cascade;
