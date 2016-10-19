@@ -115,7 +115,7 @@ create table ventas (
 /*
 tipo_transaccion
 retorno_mercancia
-compra
+pago_mercancia
 */
 
 /* transacciones */
@@ -148,6 +148,16 @@ create table nomina (
     monto numeric,
     fecha date,
     hora time
+);
+
+/* Asistencia */
+drop table if exists asistencia;
+create table asistencia(
+id serial primary key,
+id_usuario integer references usuarios(id),
+fecha date,
+hora_entrada time,
+hora_salida time
 );
 
 
