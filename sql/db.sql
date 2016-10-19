@@ -75,6 +75,7 @@ create table tiendas (
 drop table if exists articulos cascade;
 create table articulos (
     id serial primary key,
+    id_proveedor integer references proveedores(id),
     id_tienda integer references tiendas(id),
     articulo text,
     descripcion text,
