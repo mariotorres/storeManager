@@ -15,7 +15,8 @@ create table usuarios (
     direccion_localidad text,
     direccion_municipio text,
     direccion_ciudad text,
-    direccion_pais text
+    direccion_pais text,
+    salario numeric
 );
 
 /* Niveles de usuario */
@@ -55,16 +56,35 @@ create table proveedores (
     direccion_pais text
 );
 
+/* Tiendas */
+drop table if exists tiendas cascade;
+create table tiendas (
+    id serial primary key,
+    nombre text,
+    direccion_calle text,
+    direccion_numero_int text,
+    direccion_numero_ext text,
+    direccion_colonia text,
+    direccion_localidad text,
+    direccion_municipio text,
+    direccion_ciudad text,
+    direccion_pais text
+);
+
 /* Inventario */
 drop table if exists articulos cascade;
 create table articulos (
     id serial primary key,
+    id_tienda integer references tiendas(id),
     articulo text,
     descripcion text,
     talla text,
     notas text,
     precio numeric
 );
+
+
+/* Estatus ventas*/
 
 /* Ventas */
 drop table if exists ventas;
@@ -73,6 +93,36 @@ create table ventas (
     id_articulo integer references articulos(id),
     id_usuario integer references usuarios(id),
     precio_venta numeric,
+    monto_pagado numeric,
     fecha_venta date,
     hora_venta time
+    /* status */
 );
+
+/* Compras */
+
+
+/* Operaciones nomina */
+drop table if exists operaciones_nomina cascade;
+create table operaciones_nomina(
+    id serial primary key,
+    operacion text
+);
+
+insert into operaciones_nomina("operacion") values
+('Salario'),('Bono'),('Deducción');
+
+/* Nomina */
+drop table if exists nomina;
+create table nomina (
+    id serial primary key,
+    id_usuario integer references usuarios(id),
+    id_operacion integer references operaciones_nomina(id),
+    monto numeric,
+    fecha date,
+    hora time
+);
+
+
+
+
