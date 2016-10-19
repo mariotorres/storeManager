@@ -84,7 +84,17 @@ create table articulos (
 );
 
 
-/* Estatus ventas*/
+/* Estatus ventas */
+drop table if exists estatus_ventas cascade;
+create table estatus_ventas (
+    id serial primary key,
+    estatus text,
+    descripcion text
+);
+
+insert into estatus_ventas ("estatus","descripcion") values
+('Entregado','Se ha cubierto el importe y entregado el artículo'),
+('Ajuste','En artículo está en proceso de ajuste');
 
 /* Ventas */
 drop table if exists ventas;
@@ -95,8 +105,9 @@ create table ventas (
     precio_venta numeric,
     monto_pagado numeric,
     fecha_venta date,
-    hora_venta time
-    /* status */
+    hora_venta time,
+    id_estatus_venta integer references estatus_ventas(id),
+    notas text
 );
 
 /* Compras */
