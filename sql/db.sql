@@ -28,8 +28,10 @@ create table sesiones (
 );
 
 insert into sesiones ("tipo","descripcion") values
-('Administrador','Administrador del sistema'),
-('Vendedor(a)','Vendedor(a)');
+('Ventas','Realizar ventas'),
+('Tablero de control','Estadísticas de la organización'),
+('Administrador','Permite administrar el sistema');
+
 
 /* Permisos de acceso */
 drop table if exists sesiones_usuarios;
@@ -40,7 +42,7 @@ create table sesiones_usuarios (
 );
 
 /* Proveedores */
-drop table if exists proveedores;
+drop table if exists proveedores cascade;
 create table proveedores (
     id serial primary key,
     nombre text,
@@ -122,7 +124,7 @@ pago_mercancia
 drop table if exists transacciones;
  create table transacciones(
     id serial primary key,
-    id_proveedor integer references proveedores(id)
+    id_proveedor integer references proveedores(id),
     id_tipo_transaccion integer,
     notas text,
     monto numeric

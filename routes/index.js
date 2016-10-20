@@ -27,7 +27,7 @@ if ( typeof process.env.DB != "undefined" ){
 
 
 
-/* GET home page. */
+/* GET login page. */
 router.get('/', function(req, res, next) {
 
     db.manyOrNone("select * from sesiones").then(function (data) {
@@ -36,6 +36,19 @@ router.get('/', function(req, res, next) {
         console.log(error);
     });
 
+});
+
+
+router.get('/admin', function (req, res) {
+   res.render('admin', { title : "Panel de administración del sistema"});
+});
+
+router.get('/ventas', function (req, res) {
+    res.render('ventas',{title : "Ventas"});
+});
+
+router.get('/tablero', function (req, res) {
+    res.render('tablero',{title : "Tablero de control"});
 });
 
 module.exports = router;
