@@ -28,9 +28,9 @@ create table sesiones (
 );
 
 insert into sesiones ("tipo","descripcion") values
-('Ventas','Realizar ventas'),
-('Tablero de control','Estadísticas de la organización'),
-('Administrador','Permite administrar el sistema');
+('Ventas','Permite realizar ventas'),
+('Tablero de control','Administración del negocio'),
+('Administrador','Permite administrar funciones del sistema');
 
 
 /* Permisos de acceso */
