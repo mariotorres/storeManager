@@ -71,11 +71,12 @@ passport.use('login', new LocalStrategy({
             }
         );*/
 
-        db.one('select * from usuario where usuario = $1 and contrasena = $2', [ username , password ]).then(function (data) {
-            return done(null,data);
+        db.oneOrNone('select * from usuarios where usuario = $1', [ username ]).then(function (user) {
+            //password, session
+            return done(null,user);
         }).catch(function (error) {
             console.log(error);
-            return (error);
+            return done(error);
         });
     }
 ));
@@ -88,7 +89,7 @@ var isValidPassword = function(user, password){
 passport.serializeUser(function(user, done) {
     console.log('serializing user: ');
     console.log(user);
-    done(null, user._id);
+    done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
@@ -96,8 +97,8 @@ passport.deserializeUser(function(id, done) {
         //console.log('deserializing user:',user);
         done(err, user);
     });*/
-   db.one(' select * from usuario where id = $1',[ id ]).then(function (user) {
-       done (err, user);
+   db.oneOrNone(' select * from usuarios where id = $1',[ id ]).then(function (user) {
+       done (null, user);
    }).catch(function (error) {
        console.log(error);
    });
