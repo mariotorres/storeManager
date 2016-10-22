@@ -39,7 +39,103 @@ var flash = require('connect-flash');
 router.use(flash());
 
 var bCrypt = require('bcrypt-nodejs');
-var LocalStrategy = require('passport-local').strategy;
+var LocalStrategy = require('passport-local').Strategy;
+
+
+passport.use('login', new LocalStrategy({
+        passReqToCallback : true
+    },
+    function(req, username, password, done) {
+        // check in mongo if a user with username exists or not
+
+        /**
+        User.findOne({ 'username' :  username },
+            function(err, user) {
+
+                // In case of any error, return using the done method
+                if (err)
+                    return done(err);
+                // Username does not exist, log the error and redirect back
+                if (!user){
+                    console.log('User Not Found with username '+username);
+                    return done(null, false, req.flash('message', 'Usuario no registrado'));
+                }
+                // User exists but wrong password, log the error
+                if (!isValidPassword(user, password)){
+                    console.log('Contraseña no válida');
+                    return done(null, false, req.flash('message', 'Contraseña no válida')); // redirect back to login page
+                }
+                // User and password both match, return user from done method
+                // which will be treated like success
+                return done(null, user);
+            }
+        );*/
+
+        db.one('select * from usuario where usuario = $1 and contrasena = $2', [ username , password ]).then(function (data) {
+            return done(null,data);
+        }).catch(function (error) {
+            console.log(error);
+            return (error);
+        });
+    }
+));
+
+var isValidPassword = function(user, password){
+    return bCrypt.compareSync(password, user.password);
+};
+
+// Passport needs to be able to serialize and deserialize users to support persistent login sessions
+passport.serializeUser(function(user, done) {
+    console.log('serializing user: ');
+    console.log(user);
+    done(null, user._id);
+});
+
+passport.deserializeUser(function(id, done) {
+   /* User.findById(id, function(err, user) {
+        //console.log('deserializing user:',user);
+        done(err, user);
+    });*/
+   db.one(' select * from usuario where id = $1',[ id ]).then(function (user) {
+       done (err, user);
+   }).catch(function (error) {
+       console.log(error);
+   });
+});
+
+var isAuthenticated = function (req, res, next) {
+    // if user is authenticated in the session, call the next() to call the next request handler
+    // Passport adds this method to request object. A middleware is allowed to add properties to
+    // request and response objects
+    if (req.isAuthenticated())
+        return next();
+    // if the user is not authenticated then redirect him to the login page
+    res.redirect('/');
+};
+
+var isNotAuthenticated = function (req, res, next) {
+    if (req.isUnauthenticated())
+        return next();
+    // if the user is authenticated then redirect him to the main page
+    res.redirect('/main');
+};
+
+
+/* Handle Login POST */
+router.post('/login', passport.authenticate('login', {
+    successRedirect: '/ventas',
+    failureRedirect: '/',
+    failureFlash : true
+}));
+
+/* Handle Logout */
+router.get('/signout', function(req, res) {
+    req.logout();
+    res.redirect('/');
+});
+
+/**/
+
 
 /* GET login page. */
 router.get('/', function(req, res, next) {
