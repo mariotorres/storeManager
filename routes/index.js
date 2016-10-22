@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var pgp      = require("pg-promise")();
+var pgp = require("pg-promise")();
 var db;
 
 // Linked postgresql docker container
@@ -25,7 +25,21 @@ if ( typeof process.env.DB != "undefined" ){
     db = pgp("postgres://tester:test@localhost/business");
 }
 
+// Configuring Passport
+var passport = require('passport');
+var expressSession = require('express-session');
 
+router.use(expressSession({secret: 'mySecretKey', resave : false , saveUninitialized: false}));
+router.use(passport.initialize());
+router.use(passport.session());
+
+// Using the flash middleware provided by connect-flash to store messages in session
+// and displaying in templates
+var flash = require('connect-flash');
+router.use(flash());
+
+var bCrypt = require('bcrypt-nodejs');
+var LocalStrategy = require('passport-local').strategy;
 
 /* GET login page. */
 router.get('/', function(req, res, next) {
