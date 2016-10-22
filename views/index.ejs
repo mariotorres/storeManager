@@ -40,6 +40,13 @@
                 <button type="submit" class="btn btn-primary">Ingresar</button>
             </form>
             <!-- alerta -->
+            <% if ( message != '' ){%>
+            <p>
+            <div class="alert alert-danger alert-dismissible" align="left">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>Atención:</strong> <%= message %> </div>
+            </p>
+            <%}%>
         </div>
     </div>
 

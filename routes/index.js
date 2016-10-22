@@ -72,7 +72,19 @@ passport.use('login', new LocalStrategy({
         );*/
 
         db.oneOrNone('select * from usuarios where usuario = $1', [ username ]).then(function (user) {
-            //password, session
+            // session
+
+            if (!user){
+                console.log('User Not Found with username '+username);
+                return done(null, false, req.flash('message', 'Usuario no registrado'));
+            }
+
+            /*
+            if (!isValidPassword(user ,password)){
+                console.log('Contraseña no válida');
+                return done(null, false, req.flash('message', 'Contraseña no válida')); // redirect back to login page
+            }*/
+
             return done(null,user);
         }).catch(function (error) {
             console.log(error);
@@ -142,7 +154,7 @@ router.get('/signout', function(req, res) {
 router.get('/', function(req, res, next) {
 
     db.manyOrNone("select * from sesiones").then(function (data) {
-        res.render('index', { title: 'Business Manager', sesiones : data  });
+        res.render('index', { title: 'Business Manager', sesiones : data, message : req.flash('message') });
     }).catch(function (error) {
         console.log(error);
     });
