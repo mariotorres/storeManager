@@ -30,16 +30,8 @@
         <div class="panel-body">
             <form action="/login" method="POST">
                 <p><input class="form-control" type="text" placeholder="Usuario" name="username" required></p>
-                <p>
-                    <input class="form-control" type="password" placeholder="Contraseña" name="password" required></p>
-                <p>
-                    <label>Tipo de sesión</label>
-                    <select class="form-control" name="session">
-                        <% for (var i=0; i < sesiones.length; i++){ %>
-                        <option value="<%= sesiones[i].id%>"> <%=sesiones[i].tipo+ " - "+sesiones[i].descripcion %></option>
-                        <% } %>
-                    </select>
-                </p>
+                <p><input class="form-control" type="password" placeholder="Contraseña" name="password" required></p>
+
                 <button type="submit" class="btn btn-primary">Ingresar <i class="fa fa-sign-in"></i> </button>
             </form>
             <!-- alerta -->

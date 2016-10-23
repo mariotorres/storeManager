@@ -103,12 +103,12 @@ var isNotAuthenticated = function (req, res, next) {
     if (req.isUnauthenticated())
         return next();
     // if the user is authenticated then redirect him to the main page
-    res.redirect('/main');
+    res.redirect('/principal');
 };
 
 /* Handle Login POST */
 router.post('/login', passport.authenticate('login', {
-    successRedirect: '/ventas',
+    successRedirect: '/principal',
     failureRedirect: '/',
     failureFlash : true
 }));
@@ -121,7 +121,7 @@ router.get('/signout', function(req, res) {
 
 
 /* GET login page. */
-router.get('/', function(req, res, next) {
+router.get('/', isNotAuthenticated, function(req, res, next) {
 
     db.manyOrNone("select * from sesiones").then(function (data) {
         res.render('index', { title: 'Business Manager', sesiones : data, message : req.flash('message') });
@@ -129,6 +129,10 @@ router.get('/', function(req, res, next) {
         console.log(error);
     });
 
+});
+
+router.get('/principal',isAuthenticated, function (req, res) {
+    res.render('principal', { title: 'Tienda', user: req.user});
 });
 
 router.get('/admin',isAuthenticated, function (req, res) {
