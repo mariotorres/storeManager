@@ -79,11 +79,10 @@ passport.use('login', new LocalStrategy({
                 return done(null, false, req.flash('message', 'Usuario no registrado'));
             }
 
-            /*
             if (!isValidPassword(user ,password)){
                 console.log('Contraseña no válida');
                 return done(null, false, req.flash('message', 'Contraseña no válida')); // redirect back to login page
-            }*/
+            }
 
             return done(null,user);
         }).catch(function (error) {
@@ -94,7 +93,7 @@ passport.use('login', new LocalStrategy({
 ));
 
 var isValidPassword = function(user, password){
-    return bCrypt.compareSync(password, user.password);
+    return bCrypt.compareSync(password, user.contrasena);
 };
 
 // Passport needs to be able to serialize and deserialize users to support persistent login sessions
