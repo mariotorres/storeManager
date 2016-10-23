@@ -46,31 +46,7 @@ passport.use('login', new LocalStrategy({
         passReqToCallback : true
     },
     function(req, username, password, done) {
-        // check in mongo if a user with username exists or not
-
-        /**
-        User.findOne({ 'username' :  username },
-            function(err, user) {
-
-                // In case of any error, return using the done method
-                if (err)
-                    return done(err);
-                // Username does not exist, log the error and redirect back
-                if (!user){
-                    console.log('User Not Found with username '+username);
-                    return done(null, false, req.flash('message', 'Usuario no registrado'));
-                }
-                // User exists but wrong password, log the error
-                if (!isValidPassword(user, password)){
-                    console.log('Contraseña no válida');
-                    return done(null, false, req.flash('message', 'Contraseña no válida')); // redirect back to login page
-                }
-                // User and password both match, return user from done method
-                // which will be treated like success
-                return done(null, user);
-            }
-        );*/
-
+        // check in postgres if a user with username exists or not
         db.oneOrNone('select * from usuarios where usuario = $1', [ username ]).then(function (user) {
             // session
 
@@ -104,13 +80,11 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-   /* User.findById(id, function(err, user) {
-        //console.log('deserializing user:',user);
-        done(err, user);
-    });*/
-   db.oneOrNone(' select * from usuarios where id = $1',[ id ]).then(function (user) {
+   db.one(' select * from usuarios where id = $1',[ id ]).then(function (user) {
+       //console.log('deserializing user:',user);
        done (null, user);
    }).catch(function (error) {
+       done(err);
        console.log(error);
    });
 });
@@ -132,7 +106,6 @@ var isNotAuthenticated = function (req, res, next) {
     res.redirect('/main');
 };
 
-
 /* Handle Login POST */
 router.post('/login', passport.authenticate('login', {
     successRedirect: '/ventas',
@@ -146,8 +119,6 @@ router.get('/signout', function(req, res) {
     res.redirect('/');
 });
 
-/**/
-
 
 /* GET login page. */
 router.get('/', function(req, res, next) {
@@ -160,16 +131,15 @@ router.get('/', function(req, res, next) {
 
 });
 
-
-router.get('/admin', function (req, res) {
+router.get('/admin',isAuthenticated, function (req, res) {
    res.render('admin', { title : "Panel de administración del sistema"});
 });
 
-router.get('/ventas', function (req, res) {
+router.get('/ventas',isAuthenticated, function (req, res) {
     res.render('ventas',{title : "Ventas"});
 });
 
-router.get('/tablero', function (req, res) {
+router.get('/tablero', isAuthenticated, function (req, res) {
     res.render('tablero',{title : "Tablero de control"});
 });
 
