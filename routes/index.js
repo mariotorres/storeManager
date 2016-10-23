@@ -132,15 +132,15 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/admin',isAuthenticated, function (req, res) {
-   res.render('admin', { title : "Panel de administración del sistema"});
+   res.render('admin', { title : "Panel de administración del sistema", user : req.user });
 });
 
 router.get('/ventas',isAuthenticated, function (req, res) {
-    res.render('ventas',{title : "Ventas"});
+    res.render('ventas',{title : "Ventas", user: req.user });
 });
 
 router.get('/tablero', isAuthenticated, function (req, res) {
-    res.render('tablero',{title : "Tablero de control"});
+    res.render('tablero',{title : "Tablero de control", user: req.user});
 });
 
 module.exports = router;
