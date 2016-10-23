@@ -81,6 +81,15 @@
     </div>
     <div class="panel-body">
 
+        <div class="list-group">
+            <% for (var i =0; i< activities.length; i++){%>
+            <a href="<%= activities[i].url %>" class="list-group-item">
+                <h4 class="list-group-item-heading"><%= activities[i].nombre %></h4>
+                <p class="list-group-item-text"> <%= activities[i].descripcion %></p>
+            </a>
+            <%}%>
+        </div>
+
     </div>
 </div>
 

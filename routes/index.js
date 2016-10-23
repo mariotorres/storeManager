@@ -84,7 +84,7 @@ passport.deserializeUser(function(id, done) {
        //console.log('deserializing user:',user);
        done (null, user);
    }).catch(function (error) {
-       done(err);
+       done(error);
        console.log(error);
    });
 });
@@ -122,17 +122,15 @@ router.get('/signout', function(req, res) {
 
 /* GET login page. */
 router.get('/', isNotAuthenticated, function(req, res, next) {
-
-    db.manyOrNone("select * from sesiones").then(function (data) {
-        res.render('index', { title: 'Business Manager', sesiones : data, message : req.flash('message') });
-    }).catch(function (error) {
-        console.log(error);
-    });
-
+        res.render('index', { title: 'Business Manager', message : req.flash('message') });
 });
 
 router.get('/principal',isAuthenticated, function (req, res) {
-    res.render('principal', { title: 'Tienda', user: req.user});
+    db.manyOrNone(' select * from actividades').then(function (activities) {
+        res.render('principal', { title: 'Tienda', activities: activities, user: req.user});
+    }).catch(function (error) {
+        console.log(error);
+    });
 });
 
 router.get('/admin',isAuthenticated, function (req, res) {

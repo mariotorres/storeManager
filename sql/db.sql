@@ -19,18 +19,22 @@ create table usuarios (
     salario numeric
 );
 
+insert into usuarios ("usuario","contrasena","nombres") values
+('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador');
+
 /* Niveles de usuario */
-drop table if exists sesiones cascade;
-create table sesiones (
+drop table if exists actividades cascade;
+create table actividades (
     id serial primary key,
-    tipo text,
-    descripcion text
+    nombre text,
+    descripcion text,
+    url text
 );
 
-insert into sesiones ("tipo","descripcion") values
-('Ventas','Permite realizar ventas'),
-('Tablero de control','Administración del negocio'),
-('Administrador','Permite administrar funciones del sistema');
+insert into actividades ("nombre","descripcion", "url") values
+('Ventas','Permite realizar ventas', '/ventas'),
+('Tablero de control','Administración del negocio', '/tablero'),
+('Administrador','Permite administrar funciones del sistema','/admin');
 
 
 /* Permisos de acceso */
