@@ -68,3 +68,10 @@ h2{
     color: white;
     border: 2px solid #e91e63;
 }
+
+.btn-primary:active, btn-primary.active{
+        border-color: #9e9e9e !important;
+        background: #9e9e9e !important;
+        color: white;
+        box-shadow: none;
+}
