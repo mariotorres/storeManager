@@ -122,7 +122,7 @@ router.get('/signout', function(req, res) {
 
 /* GET login page. */
 router.get('/', isNotAuthenticated, function(req, res, next) {
-        res.render('index', { title: 'Business Manager', message : req.flash('message') });
+        res.render('index', { title: '', message : req.flash('message') });
 });
 
 router.get('/principal',isAuthenticated, function (req, res) {
