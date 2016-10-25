@@ -87,7 +87,8 @@ create table articulos (
     descripcion text,
     talla text,
     notas text,
-    precio numeric
+    precio numeric,
+    codigo_barras numeric
 );
 
 
@@ -104,17 +105,24 @@ insert into estatus_ventas ("estatus","descripcion") values
 ('Ajuste','En artículo está en proceso de ajuste');
 
 /* Ventas */
-drop table if exists ventas;
+drop table if exists ventas cascade;
 create table ventas (
     id serial primary key,
-    id_articulo integer references articulos(id),
     id_usuario integer references usuarios(id),
     precio_venta numeric,
     monto_pagado numeric,
+    forma_pago numeric,
     fecha_venta date,
     hora_venta time,
     id_estatus_venta integer references estatus_ventas(id),
     notas text
+);
+
+drop table if exists venta_articulos;
+create table venta_articulos(
+    id serial primary key,
+    id_articulo integer references articulos(id),
+    id_venta integer references ventas(id)
 );
 
 
