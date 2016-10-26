@@ -145,4 +145,16 @@ router.get('/tablero', isAuthenticated, function (req, res) {
     res.render('tablero',{title : "Tablero de control", user: req.user});
 });
 
+
+router.post('perfil-usuario', function(req,res){
+    var user_id = req.body.user_id;
+
+    db.one('select * from usuarios where id = $1', user_id).then(function (user) {
+        res.render('user-profile', { user: user });
+    }).catch(function () {
+       console.log(error);
+        res.send("Error");
+    });
+});
+
 module.exports = router;
