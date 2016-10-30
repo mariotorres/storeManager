@@ -1,10 +1,32 @@
 <form name="form_updateprofile">
     <input type="hidden" name="user_id">
-    <p><input class="form-control" name ="nombres" vale = "<%= user.nombres %>"></p>
-    <button class="btn btn-primary" type="submit">Guardar</button>
+    <p><input class="form-control" name ="nombres" value = "<%= user.usuario %>" disabled ></p>
+    <p><input class="form-control" name ="nombres" value = "<%= user.nombres %>" ></p>
+    <p><input class="form-control" name ="apellido_paterno" value = "<%= user.apellido_paterno %>" ></p>
+    <p><input class="form-control" name ="apellido_materno" value = "<%= user.apellido_materno %>" ></p>
+    <p><input type="text" class="form-control" name="rfc" value="<% user.rfc%>"></p>
+    <p><input type="text" class="form-control" name="direccion_calle" value="<% user.direccion_calle%>"></p>
+    <div class="row">
+        <div class="col-sm-6">
+            <p><input type="text" class="form-control" name="direccion_numero_int" value="<% user.direccion_numero_int%>"></p>
+        </div>
+        <div class="col-sm-6">
+            <p><input type="text" class="form-control" name="direccion_numero_ext" value="<% user.direccion_numero_ext%>"></p>
+        </div>
+    </div>
+
+    <p><input type="text" class="form-control" name="direccion_colonia" value="<% user.direccion_colonia %>"></p>
+    <p><input type="text" class="form-control" name="direccion_localidad" value="<% user.direccion_localidad %>"></p>
+    <p><input type="text" class="form-control" name="direccion_municipio" value="<% user.direccion_municipio %>"></p>
+    <p><input type="text" class="form-control" name="direccion_ciudad" value="<% user.direccion_ciudad%>"></p>
+    <p><input type="text" class="form-control" name="direccion_pais" value="<% user.direccion_pais %>"></p>
+    <button class="btn btn-primary" type="submit">Actualizar</button>
 </form>
 <hr>
 <form name="update_password">
     <input type="hidden" name="user_id">
-    <button class="btn btn-primary" type="submit">Guardar</button>
+    <p><input type="password" class="form-control" name="old_pass"></p>
+    <p><input type="password" class="form-control" name="new_pass"></p>
+    <p><input type="password" class="form-control" name="confirm_pass"></p>
+    <button class="btn btn-primary" type="submit">Actualizar</button>
 </form>
