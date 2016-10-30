@@ -20,7 +20,7 @@ if ( typeof process.env.DB != "undefined" ){
     console.log("DB: ", process.env.DB);
     db = pgp( process.env.DB );
 } else {
-    console.log("Warning: EDCA_DB env variable is not set\n " +
+    console.log("Warning: BM_DB env variable is not set\n " +
         " defaulting to -> postgres://tester:test@localhost/business");
     db = pgp("postgres://tester:test@localhost/business");
 }
@@ -146,12 +146,12 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 });
 
 
-router.post('perfil-usuario', function(req,res){
+router.post('/perfil-usuario', function(req,res){
     var user_id = req.body.user_id;
 
     db.one('select * from usuarios where id = $1', user_id).then(function (user) {
-        res.render('user-profile', { user: user });
-    }).catch(function () {
+        res.render('partials/user-profile', { user: user });
+    }).catch(function (error) {
        console.log(error);
         res.send("Error");
     });
