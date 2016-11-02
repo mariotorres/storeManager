@@ -1,9 +1,25 @@
-<form name="form_updateprofile">
-    <input type="hidden" name="user_id">
+<div class="alert alert-warning alert-dismissible" role="alert" hidden>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+<p></p>
+</div>
+
+<form id="form_updateprofile">
+    <input type="hidden" name="user_id" value="<%= user.id %>">
     <p><input class="form-control" name ="nombres" value = "<%= user.usuario %>" disabled ></p>
-    <p><input class="form-control" name ="nombres" value = "<%= user.nombres %>" ></p>
-    <p><input class="form-control" name ="apellido_paterno" value = "<%= user.apellido_paterno %>" ></p>
-    <p><input class="form-control" name ="apellido_materno" value = "<%= user.apellido_materno %>" ></p>
+    <label>Nombre(s)</label>
+    <p><input class="form-control" name ="nombres" value = "<%= user.nombres %>" required></p>
+    <div class="row">
+        <div class="col-sm-6">
+            <label>Apellido paterno</label>
+            <p><input class="form-control" name ="apellido_paterno" value = "<%= user.apellido_paterno %>" ></p>
+        </div>
+        <div class="col-sm-6">
+            <label>Apellido materno</label>
+            <p><input class="form-control" name ="apellido_materno" value = "<%= user.apellido_materno %>" ></p>
+        </div>
+    </div>
+
+
     <p><input type="text" class="form-control" name="rfc" value="<% user.rfc%>"></p>
     <p><input type="text" class="form-control" name="direccion_calle" value="<% user.direccion_calle%>"></p>
     <div class="row">
@@ -22,11 +38,16 @@
     <p><input type="text" class="form-control" name="direccion_pais" value="<% user.direccion_pais %>"></p>
     <button class="btn btn-primary" type="submit">Actualizar</button>
 </form>
+
+
 <hr>
-<form name="update_password">
+<form id="update_password">
     <input type="hidden" name="user_id">
+    <label>Contraseña actual</label>
     <p><input type="password" class="form-control" name="old_pass"></p>
+    <label>Nueva contraseña</label>
     <p><input type="password" class="form-control" name="new_pass"></p>
+    <label>Confirmación de contraseña</label>
     <p><input type="password" class="form-control" name="confirm_pass"></p>
     <button class="btn btn-primary" type="submit">Actualizar</button>
 </form>

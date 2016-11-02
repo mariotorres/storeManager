@@ -85,10 +85,13 @@ create table articulos (
     id_tienda integer references tiendas(id),
     articulo text,
     descripcion text,
+    marca text,
+    modelo text,
     talla text,
     notas text,
     precio numeric,
-    codigo_barras numeric
+    codigo_barras numeric,
+    url_imagen text;
 );
 
 

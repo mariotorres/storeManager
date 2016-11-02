@@ -146,9 +146,8 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 });
 
 
-router.post('/perfil-usuario', function(req,res){
+router.post('/users/profile', function(req,res){
     var user_id = req.body.user_id;
-
     db.one('select * from usuarios where id = $1', user_id).then(function (user) {
         res.render('partials/user-profile', { user: user });
     }).catch(function (error) {
@@ -156,5 +155,27 @@ router.post('/perfil-usuario', function(req,res){
         res.send("Error");
     });
 });
+
+
+router.post('/users/update', function(req, res){
+    db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4 where id = $1 returning id ',[
+        req.body.user_id,
+        req.body.nombres,
+        req.body.apellido_materno,
+        req.body.apellido_paterno
+    ]).then(function (data) {
+        res.json({
+            status :'Ok',
+            message : 'Los datos del usuario han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
+       res.json({
+           status : 'Error',
+           message: 'Ocurrió un error al actualizar los datos del usuario'
+       });
+    });
+});
+
 
 module.exports = router;
