@@ -16,11 +16,14 @@ create table usuarios (
     direccion_municipio text,
     direccion_ciudad text,
     direccion_pais text,
-    salario numeric
+    salario numeric,
+    permiso_tablero boolean,
+    permiso_administrador boolean,
+    permiso_empleados boolean
 );
 
-insert into usuarios ("usuario","contrasena","nombres") values
-('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador');
+insert into usuarios ("usuario","contrasena","nombres","permiso_tablero","permiso_administrador","permiso_empleados") values
+('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador', true, true, true);
 
 /* Niveles de usuario */
 drop table if exists actividades cascade;
@@ -36,14 +39,6 @@ insert into actividades ("nombre","descripcion", "url") values
 ('Tablero de control','Administración del negocio', '/tablero'),
 ('Administrador','Permite administrar funciones del sistema','/admin');
 
-
-/* Permisos de acceso */
-drop table if exists sesiones_usuarios;
-create table sesiones_usuarios (
-    id serial not null,
-    id_usuario integer not null references usuarios(id) on delete cascade,
-    id_sesion integer not null references sesiones(id) on delete cascade
-);
 
 /* Proveedores */
 drop table if exists proveedores cascade;
@@ -91,7 +86,7 @@ create table articulos (
     notas text,
     precio numeric,
     codigo_barras numeric,
-    url_imagen text;
+    url_imagen text
 );
 
 
