@@ -127,26 +127,26 @@ router.get('/', isNotAuthenticated, function(req, res, next) {
 
 router.get('/principal',isAuthenticated, function (req, res) {
     db.manyOrNone(' select * from actividades').then(function (activities) {
-        res.render('principal', { title: 'Tienda', activities: activities, user: req.user});
+        res.render('principal', { title: 'Tienda', activities: activities, user: req.user, section: 'principal'});
     }).catch(function (error) {
         console.log(error);
     });
 });
 
 router.get('/admin',isAuthenticated, function (req, res) {
-   res.render('admin', { title : "Panel de administración del sistema", user : req.user });
+   res.render('admin', { title : "Panel de administración del sistema", user : req.user, section: 'admin' });
 });
 
 router.get('/empleados',isAuthenticated, function (req, res) {
-    res.render('empleados',{title : "Panel de empleados", user: req.user });
+    res.render('empleados',{title : "Panel de empleados", user: req.user, section: 'empleados' });
 });
 
 router.get('/tablero', isAuthenticated, function (req, res) {
-    res.render('tablero',{title : "Tablero de control", user: req.user});
+    res.render('tablero',{title : "Tablero de control", user: req.user, section: 'tablero'});
 });
 
 router.get('/carrito', isAuthenticated, function (req, res) {
-    res.render('carrito',{title : "Venta en proceso", user: req.user});
+    res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito'});
 });
 
 
