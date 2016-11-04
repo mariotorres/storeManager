@@ -32,7 +32,7 @@ create table actividades (
 );
 
 insert into actividades ("nombre","descripcion", "url") values
-('Ventas','Permite realizar ventas', '/ventas'),
+('Empleados','Panel de empleados', '/empleados'),
 ('Tablero de control','Administración del negocio', '/tablero'),
 ('Administrador','Permite administrar funciones del sistema','/admin');
 

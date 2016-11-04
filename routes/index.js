@@ -137,12 +137,16 @@ router.get('/admin',isAuthenticated, function (req, res) {
    res.render('admin', { title : "Panel de administración del sistema", user : req.user });
 });
 
-router.get('/ventas',isAuthenticated, function (req, res) {
-    res.render('ventas',{title : "Ventas", user: req.user });
+router.get('/empleados',isAuthenticated, function (req, res) {
+    res.render('empleados',{title : "Panel de empleados", user: req.user });
 });
 
 router.get('/tablero', isAuthenticated, function (req, res) {
     res.render('tablero',{title : "Tablero de control", user: req.user});
+});
+
+router.get('/carrito', isAuthenticated, function (req, res) {
+    res.render('carrito',{title : "Venta en proceso", user: req.user});
 });
 
 
@@ -175,6 +179,10 @@ router.post('/users/update', function(req, res){
            message: 'Ocurrió un error al actualizar los datos del usuario'
        });
     });
+});
+
+router.post('/users/password',function(req, res){
+
 });
 
 

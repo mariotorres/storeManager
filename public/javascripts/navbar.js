@@ -17,10 +17,16 @@ $('#genericModal').on('show.bs.modal', function (event) {
                         }
                     });
                     event.preventDefault();
-                })
+                });
+                $('#form_updatepassword').submit(function (event) {
+                   $.post('/users/password', $(this).serialize()).done(function (data) {
+                        alert(data);
+                       if(data.status=='Ok'){
+                           modal.modal('hide');
+                       }
+                   });
+                });
             });
-            break;
-        case "update_password":
             break;
     }
 });
