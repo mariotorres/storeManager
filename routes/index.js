@@ -134,15 +134,29 @@ router.get('/principal',isAuthenticated, function (req, res) {
 });
 
 router.get('/admin',isAuthenticated, function (req, res) {
-   res.render('admin', { title : "Panel de administración del sistema", user : req.user, section: 'admin' });
+
+    if ( req.user.permiso_administrador ) {
+        res.render('admin', {title: "Panel de administración del sistema", user: req.user, section: 'admin'});
+    } else {
+        res.redirect('/principal');
+    }
 });
 
 router.get('/empleados',isAuthenticated, function (req, res) {
-    res.render('empleados',{title : "Panel de empleados", user: req.user, section: 'empleados' });
+    if ( req.user.permiso_empleados ) {
+        res.render('empleados', {title: "Panel de empleados", user: req.user, section: 'empleados'});
+    } else{
+        res.redirect('/principal')
+    }
+
 });
 
 router.get('/tablero', isAuthenticated, function (req, res) {
-    res.render('tablero',{title : "Tablero de control", user: req.user, section: 'tablero'});
+    if (req.user.permiso_tablero) {
+        res.render('tablero', {title: "Tablero de control", user: req.user, section: 'tablero'});
+    }else {
+        res.redirect('/principal');
+    }
 });
 
 router.get('/carrito', isAuthenticated, function (req, res) {
