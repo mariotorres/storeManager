@@ -9,7 +9,7 @@
 
     <!-- Bootstrap -->
     <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/stylesheets/principal.css" rel="stylesheet">
+    <link href="/stylesheets/style.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -35,12 +35,20 @@
     <div class="panel-body">
 
         <div class="list-group">
-            <% for (var i =0; i< activities.length; i++){%>
-            <a href="<%= activities[i].url %>" class="list-group-item">
-                <h4 class="list-group-item-heading"><%= activities[i].nombre %></h4>
-                <p class="list-group-item-text"> <%= activities[i].descripcion %></p>
+
+            <a href="/empleados" class="list-group-item">
+                <h4 class="list-group-item-heading">Empleados</h4>
+                <p class="list-group-item-text"> Panel de empleados</p>
             </a>
-            <%}%>
+            <a href="/tablero" class="list-group-item">
+                <h4 class="list-group-item-heading">Tablero de control</h4>
+                <p class="list-group-item-text"> Administración del negocio </p>
+            </a>
+            <a href="/admin" class="list-group-item">
+                <h4 class="list-group-item-heading">Administrador</h4>
+                <p class="list-group-item-text"> Permite administrar funciones del sistema </p>
+            </a>
+
         </div>
 
     </div>

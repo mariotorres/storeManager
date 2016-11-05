@@ -126,11 +126,7 @@ router.get('/', isNotAuthenticated, function(req, res, next) {
 });
 
 router.get('/principal',isAuthenticated, function (req, res) {
-    db.manyOrNone(' select * from actividades').then(function (activities) {
-        res.render('principal', { title: 'Tienda', activities: activities, user: req.user, section: 'principal'});
-    }).catch(function (error) {
-        console.log(error);
-    });
+    res.render('principal', { title: 'Tienda', user: req.user, section: 'principal'});
 });
 
 router.get('/admin',isAuthenticated, function (req, res) {

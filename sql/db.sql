@@ -25,21 +25,6 @@ create table usuarios (
 insert into usuarios ("usuario","contrasena","nombres","permiso_tablero","permiso_administrador","permiso_empleados") values
 ('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador', true, true, true);
 
-/* Niveles de usuario */
-drop table if exists actividades cascade;
-create table actividades (
-    id serial primary key,
-    nombre text,
-    descripcion text,
-    url text
-);
-
-insert into actividades ("nombre","descripcion", "url") values
-('Empleados','Panel de empleados', '/empleados'),
-('Tablero de control','Administración del negocio', '/tablero'),
-('Administrador','Permite administrar funciones del sistema','/admin');
-
-
 /* Proveedores */
 drop table if exists proveedores cascade;
 create table proveedores (
