@@ -28,34 +28,25 @@
 <% include partials/navbar.ejs%>
 
 <div class="container">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="panel-title"><%= title %></div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Ventas</strong></a></li>
+        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab"><strong>Devoluciones</strong></a></li>
+        <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab"><strong>Inventario</strong></a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade in active" id="home">
+            <h3>Buscar artículos</h3>
         </div>
-        <div class="panel-body">
-            <div class="list-group">
-                <a href="#" class="list-group-item">
-                    <h4 class="list-group-item-heading">Realizar venta</h4>
-                    <p class="list-group-item-text">Buscar artículos</p>
-                </a>
-                <a href="#" class="list-group-item">
-                    <h4 class="list-group-item-heading">Devoluciones</h4>
-                    <p class="list-group-item-text">Registrar devolución</p>
-                </a>
-                <a href="#" class="list-group-item">
-                    <h4 class="list-group-item-heading">Transferir mercancía</h4>
-                    <p class="list-group-item-text">Registrar devolución</p>
-                </a>
-
-                <a href="#" class="list-group-item">
-                    <h4 class="list-group-item-heading">Administrar inventario</h4>
-                    <p class="list-group-item-text">Permite añadir, actualizar y eliminar productos del inventario</p>
-                </a>
-
-            </div>
+        <div role="tabpanel" class="tab-pane fade" id="profile">
+            <h3>Registrar devolución</h3>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="messages">
+            <h3>transferir mercancía, Permite añadir, actualizar y eliminar productos del inventario</h3>
         </div>
     </div>
-</div>
 
 <% include partials/modal.ejs %>
 

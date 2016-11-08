@@ -27,6 +27,37 @@
 <% include partials/navbar.ejs%>
 
 <div class="container">
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Negocio</strong></a></li>
+       <!-- <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Historial</a></li>-->
+        <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab"><strong>Nómina</strong></a></li>
+        <li role="presentation"><a href="#inventario" aria-controls="inventario" role="tab" data-toggle="tab"><strong>Inventario</strong></a></li>
+        <li role="presentation"><a href="#usuarios" aria-controls="usuarios" role="tab" data-toggle="tab"><strong>Usuarios</strong></a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade in active" id="home">
+            <h3> Revisar operación global de la empresa </h3>
+            <h3>Historial de ventas devoluciones y transferencias de mercancía</h3>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="messages">
+            <h3>Administración de empleados</h3>
+        </div>
+
+        <div role="tabpanel" class="tab-pane fade" id="inventario">
+            <h3>Permite añadir, actualizar y eliminar productos del inventario</h3>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="usuarios">
+            <h3>Permite añadir, actualizar y eliminar usuarios</h3>
+        </div>
+    </div>
+
+
+    <!--
+
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title"><%= title %></div>
@@ -57,7 +88,7 @@
             </div>
 
         </div>
-    </div>
+    </div>-->
 
 </div>
 
