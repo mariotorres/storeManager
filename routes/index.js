@@ -106,6 +106,14 @@ var isNotAuthenticated = function (req, res, next) {
     res.redirect('/principal');
 };
 
+
+ // Generates hash using bCrypt
+ var createHash = function(password){
+ return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
+ };
+
+
+
 /* Handle Login POST */
 router.post('/login', passport.authenticate('login', {
     successRedirect: '/principal',
@@ -172,15 +180,26 @@ router.post('/users/profile', function(req,res){
 
 
 router.post('/users/update', function(req, res){
-    db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4 where id = $1 returning id ',[
+    db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
+        'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13 ' +
+        'where id = $1 returning id, usuario ',[
         req.body.user_id,
         req.body.nombres,
         req.body.apellido_materno,
-        req.body.apellido_paterno
+        req.body.apellido_paterno,
+        req.body.rfc,
+        req.body.direccion_calle,
+        req.body.direccion_numero_int,
+        req.body.direccion_numero_ext,
+        req.body.direccion_colonia,
+        req.body.direccion_localidad,
+        req.body.direccion_municipio,
+        req.body.direccion_ciudad,
+        req.body.direccion_pais
     ]).then(function (data) {
         res.json({
             status :'Ok',
-            message : 'Los datos del usuario han sido actualizados'
+            message : 'Los datos del usuario "'+data.usuario+'" han sido actualizados'
         });
     }).catch(function (error) {
         console.log(error);

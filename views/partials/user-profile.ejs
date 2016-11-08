@@ -19,23 +19,32 @@
         </div>
     </div>
 
-
-    <p><input type="text" class="form-control" name="rfc" value="<% user.rfc%>"></p>
-    <p><input type="text" class="form-control" name="direccion_calle" value="<% user.direccion_calle%>"></p>
+    <label>RFC</label>
+    <p><input type="text" class="form-control" name="rfc" value="<%= user.rfc%>"></p>
+    <h3>Dirección</h3>
+    <label>Calle</label>
+    <p><input type="text" class="form-control" name="direccion_calle" value="<%= user.direccion_calle%>"></p>
     <div class="row">
         <div class="col-sm-6">
-            <p><input type="text" class="form-control" name="direccion_numero_int" value="<% user.direccion_numero_int%>"></p>
+            <label>Número interior</label>
+            <p><input type="text" class="form-control" name="direccion_numero_int" value="<%= user.direccion_numero_int%>"></p>
         </div>
         <div class="col-sm-6">
-            <p><input type="text" class="form-control" name="direccion_numero_ext" value="<% user.direccion_numero_ext%>"></p>
+            <label>Número exterior</label>
+            <p><input type="text" class="form-control" name="direccion_numero_ext" value="<%= user.direccion_numero_ext%>"></p>
         </div>
     </div>
 
-    <p><input type="text" class="form-control" name="direccion_colonia" value="<% user.direccion_colonia %>"></p>
-    <p><input type="text" class="form-control" name="direccion_localidad" value="<% user.direccion_localidad %>"></p>
-    <p><input type="text" class="form-control" name="direccion_municipio" value="<% user.direccion_municipio %>"></p>
-    <p><input type="text" class="form-control" name="direccion_ciudad" value="<% user.direccion_ciudad%>"></p>
-    <p><input type="text" class="form-control" name="direccion_pais" value="<% user.direccion_pais %>"></p>
+    <label>Colonia</label>
+    <p><input type="text" class="form-control" name="direccion_colonia" value="<%= user.direccion_colonia %>"></p>
+    <label>Localidad</label>
+    <p><input type="text" class="form-control" name="direccion_localidad" value="<%= user.direccion_localidad %>"></p>
+    <label>Municipio</label>
+    <p><input type="text" class="form-control" name="direccion_municipio" value="<%= user.direccion_municipio %>"></p>
+    <label>Ciudad</label>
+    <p><input type="text" class="form-control" name="direccion_ciudad" value="<%= user.direccion_ciudad%>"></p>
+    <label>País</label>
+    <p><input type="text" class="form-control" name="direccion_pais" value="<%= user.direccion_pais %>"></p>
     <button class="btn btn-primary" type="submit">Actualizar</button>
 </form>
 
