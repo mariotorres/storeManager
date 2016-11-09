@@ -39,18 +39,22 @@
 
             <div class="list-group">
 
+                <% if (user.permiso_empleados){%>
                 <a href="/empleados" class="list-group-item">
                     <h4 class="list-group-item-heading">Empleados</h4>
                     <p class="list-group-item-text"> Panel de empleados</p>
                 </a>
+                <%} if(user.permiso_tablero){%>
                 <a href="/tablero" class="list-group-item">
                     <h4 class="list-group-item-heading">Tablero de control</h4>
                     <p class="list-group-item-text"> Administración del negocio </p>
                 </a>
+                <%} if (user.permiso_administrador){%>
                 <a href="/admin" class="list-group-item">
                     <h4 class="list-group-item-heading">Administrador</h4>
                     <p class="list-group-item-text"> Permite administrar funciones del sistema </p>
                 </a>
+                <%}%>
 
             </div>
 
