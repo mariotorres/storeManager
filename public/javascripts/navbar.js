@@ -8,9 +8,9 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "user_profile":
             modal.find('.modal-title').text('Editar información del usuario');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/users/profile', { user_id: button.data('user_id')  }, function(){
+            modal.find('#modal_content').load('/user/profile', { user_id: button.data('user_id')  }, function(){
                 $('#form_updateprofile').submit(function(event){
-                    $.post('/users/update', $(this).serialize()).done(function (data) {
+                    $.post('/user/update', $(this).serialize()).done(function (data) {
                         alert(data.message);
                         if (data.status=='Ok'){
                             modal.modal('hide');
@@ -18,13 +18,20 @@ $('#genericModal').on('show.bs.modal', function (event) {
                     });
                     event.preventDefault();
                 });
+            });
+            break;
+        case "change_password":
+            modal.find('.modal-title').text('Cambiar contraseña');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/user/change-password', { user_id: button.data('user_id')  }, function(){
                 $('#form_updatepassword').submit(function (event) {
-                   $.post('/users/password', $(this).serialize()).done(function (data) {
-                        alert(data);
-                       if(data.status=='Ok'){
-                           modal.modal('hide');
-                       }
-                   });
+                    $.post('/user/update-password', $(this).serialize()).done(function (data) {
+                        alert(data.message);
+                        if(data.status=='Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    event.preventDefault();
                 });
             });
             break;

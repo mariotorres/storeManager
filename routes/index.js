@@ -168,7 +168,7 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 });
 
 
-router.post('/users/profile', function(req,res){
+router.post('/user/profile', function(req,res){
     var user_id = req.body.user_id;
     db.one('select * from usuarios where id = $1', user_id).then(function (user) {
         res.render('partials/user-profile', { user: user });
@@ -179,14 +179,14 @@ router.post('/users/profile', function(req,res){
 });
 
 
-router.post('/users/update', function(req, res){
+router.post('/user/update', function(req, res){
     db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
         'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13 ' +
         'where id = $1 returning id, usuario ',[
         req.body.user_id,
         req.body.nombres,
-        req.body.apellido_materno,
         req.body.apellido_paterno,
+        req.body.apellido_materno,
         req.body.rfc,
         req.body.direccion_calle,
         req.body.direccion_numero_int,
@@ -210,7 +210,57 @@ router.post('/users/update', function(req, res){
     });
 });
 
-router.post('/users/password',function(req, res){
+router.post('/user/change-password',isAuthenticated,function(req, res){
+    res.render('partials/change-password', {user: { id : req.body.user_id } });
+});
+
+
+router.post('/user/update-password',isAuthenticated,function (req, res ) {
+
+    var user_id = req.body.user_id;
+    var old_pass = req.body.old_pass;
+    var new_pass = req.body.new_pass;
+    var confirm_pass = req.body.confirm_pass;
+
+    db.one('select id, contrasena from usuarios where id=$1 ',[user_id]).then(function (user) {
+
+        if ( !isValidPassword(user, old_pass)){
+            res.json({
+                status : "Error",
+                message: "Contraseña incorrecta"
+            })
+        } else if ( isValidPassword(user, old_pass) && new_pass == confirm_pass ){
+
+            db.one('update usuarios set contrasena = $1 where id =$2 returning id, usuario',[
+                bCrypt.hashSync( new_pass, bCrypt.genSaltSync(10), null),
+                user.id
+            ]).then(function (data) {
+                console.log("Usuario "+data.usuario+": Contraseña actualizada");
+                res.json({
+                    status: "Ok",
+                    message: "Contraseña actualizada"
+                });
+            }).catch(function (error) {
+               console.log(error);
+               res.json({
+                   status: "Error",
+                   message: "Ocurrió un error al actualizar la contraseña"
+               });
+            });
+        } else if ( isValidPassword(user, old_pass) && new_pass != confirm_pass ){
+            res.json({
+                status : "Error",
+                message: "La nueva contraseña no coincide"
+            })
+        }
+
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : "Error",
+            message: "Ha ocurrido un error al actualizar la contraseña"
+        })
+    })
 
 });
 
