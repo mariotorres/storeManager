@@ -4,6 +4,7 @@ create table usuarios (
     id serial primary key,
     usuario text,
     contrasena text,
+    email text,
     nombres text,
     apellido_paterno text,
     apellido_materno text,

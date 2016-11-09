@@ -181,7 +181,7 @@ router.post('/user/profile', function(req,res){
 
 router.post('/user/update', function(req, res){
     db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
-        'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13 ' +
+        'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13, email=$14 ' +
         'where id = $1 returning id, usuario ',[
         req.body.user_id,
         req.body.nombres,
@@ -195,7 +195,8 @@ router.post('/user/update', function(req, res){
         req.body.direccion_localidad,
         req.body.direccion_municipio,
         req.body.direccion_ciudad,
-        req.body.direccion_pais
+        req.body.direccion_pais,
+        req.body.email
     ]).then(function (data) {
         res.json({
             status :'Ok',

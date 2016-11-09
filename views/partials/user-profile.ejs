@@ -1,12 +1,16 @@
 <div class="alert alert-warning alert-dismissible" role="alert" hidden>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-<p></p>
+    <p></p>
 </div>
 
 <form id="form_updateprofile">
     <input type="hidden" name="user_id" value="<%= user.id %>">
     <label>Usuario</label>
     <p><input class="form-control" name ="nombres" value = "<%= user.usuario %>" disabled ></p>
+    <label>E-mail</label>
+    <p>
+        <input class="form-control" type="email" name="email" placeholder="Correo electrónico" value="<%= user.email %>">
+    </p>
     <div class="row">
         <div class="col-sm-6">
             <label>Nombre(s)</label>
