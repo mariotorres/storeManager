@@ -20,11 +20,12 @@ create table usuarios (
     salario numeric,
     permiso_tablero boolean,
     permiso_administrador boolean,
-    permiso_empleados boolean
+    permiso_empleados boolean,
+    permiso_inventario boolean
 );
 
-insert into usuarios ("usuario","contrasena","nombres","permiso_tablero","permiso_administrador","permiso_empleados") values
-('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador', true, true, true);
+insert into usuarios ("usuario","contrasena","nombres","permiso_tablero","permiso_administrador","permiso_empleados", "permiso_inventario") values
+('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador', true, true, true, true);
 
 /* Proveedores */
 drop table if exists proveedores cascade;

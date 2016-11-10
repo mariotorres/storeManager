@@ -155,6 +155,14 @@ router.get('/empleados',isAuthenticated, function (req, res) {
 
 });
 
+router.get('/inventario', isAuthenticated, function (req, res ) {
+    if ( req.user.permiso_inventario ){
+        res.render('inventario',{ title: "Inventario", user: req.user, section : 'inventario'});
+    }else {
+        res.redirect('/principal')
+    }
+});
+
 router.get('/tablero', isAuthenticated, function (req, res) {
     if (req.user.permiso_tablero) {
         res.render('tablero', {title: "Tablero de control", user: req.user, section: 'tablero'});
@@ -177,6 +185,7 @@ router.post('/user/profile', function(req,res){
         res.send("Error");
     });
 });
+
 
 
 router.post('/user/update', function(req, res){

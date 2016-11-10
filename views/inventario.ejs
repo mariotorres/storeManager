@@ -24,23 +24,23 @@
 </head>
 <body>
 
-
 <% include partials/navbar.ejs%>
 
 <div class="container">
+
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Ventas</strong></a></li>
-        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab"><strong>Devoluciones</strong></a></li>
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Inventario</strong> </a></li>
     </ul>
 
     <!-- Tab panes -->
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane fade in active" id="home">
-            <h3>Buscar artículos</h3>
-        </div>
-        <div role="tabpanel" class="tab-pane fade" id="profile">
-            <h3>Registrar devolución</h3>
+            <h3>Permite añadir, actualizar y eliminar productos del inventario</h3>
+            <div class="list-group">
+                <button type="button" class="list-group-item">Editar productos</button>
+                <button type="button" class="list-group-item">Nuevo producto</button>
+            </div>
         </div>
     </div>
 

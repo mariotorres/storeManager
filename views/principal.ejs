@@ -54,8 +54,12 @@
                     <h4 class="list-group-item-heading">Administrador</h4>
                     <p class="list-group-item-text"> Permite administrar funciones del sistema </p>
                 </a>
+                <%} if (user.permiso_inventario){%>
+                <a href="/inventario" class="list-group-item">
+                    <h4 class="list-group-item-heading">Inventario</h4>
+                    <p class="list-group-item-text"> Permite administrar el inventario </p>
+                </a>
                 <%}%>
-
             </div>
 
         </div>
