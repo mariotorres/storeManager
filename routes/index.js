@@ -172,7 +172,13 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 });
 
 router.get('/carrito', isAuthenticated, function (req, res) {
-    res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito'});
+    db.manyOrNone('select * from carrito where id_usuario = $1',[
+        req.user.id
+    ]).then(function (data) {
+        res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data });
+    }).catch(function (error) {
+
+    });
 });
 
 

@@ -80,7 +80,8 @@ create table articulos (
 drop table if exists carrito cascade;
 create table carrito (
 fecha date,
-id_articulo integer references articulo(id)
+id_articulo integer references articulos(id),
+id_usuario integer references usuarios(id)
 );
 
 /* Estatus ventas */
