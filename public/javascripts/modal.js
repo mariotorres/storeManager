@@ -35,8 +35,13 @@ $('#genericModal').on('show.bs.modal', function (event) {
                 });
             });
             break;
+        case "new_item":
+            modal.find('.modal-title').text('Registrar artículo');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/item/new', {   }, function(){
+                //
+            });
+            break;
     }
 });
 
-$(document).ready(function () {
-});

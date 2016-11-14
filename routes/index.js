@@ -177,7 +177,7 @@ router.get('/carrito', isAuthenticated, function (req, res) {
     ]).then(function (data) {
         res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data });
     }).catch(function (error) {
-
+        console.log(error);
     });
 });
 
@@ -192,6 +192,10 @@ router.post('/user/profile', function(req,res){
     });
 });
 
+
+router.post('/item/new', function(req,res ){
+    res.render ('partials/new-item');
+});
 
 
 router.post('/user/update', function(req, res){
