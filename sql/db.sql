@@ -76,6 +76,12 @@ create table articulos (
     url_imagen text
 );
 
+/* Carrito */
+drop table if exists carrito cascade;
+create table carrito (
+fecha date,
+id_articulo integer references articulo(id)
+);
 
 /* Estatus ventas */
 drop table if exists estatus_ventas cascade;
