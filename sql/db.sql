@@ -17,6 +17,7 @@ create table usuarios(
     direccion_municipio text,
     direccion_ciudad text,
     direccion_pais text,
+    empleado boolean,
     salario numeric,
     permiso_tablero boolean,
     permiso_administrador boolean,
