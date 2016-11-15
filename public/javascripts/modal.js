@@ -42,6 +42,10 @@ $('#genericModal').on('show.bs.modal', function (event) {
                 //
             });
             break;
+        case "edit_item":
+            modal.find('.modal-title').text('Editar artículos');
+            modal.find('#modal_content').html("");
+            break;
     }
 });
 
