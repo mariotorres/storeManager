@@ -1,6 +1,6 @@
 /* Usuarios */
 drop table if exists usuarios cascade;
-create table usuarios (
+create table usuarios(
     id serial primary key,
     usuario text,
     contrasena text,

@@ -35,7 +35,18 @@
             </p>
 
 
-
+            <% if (items.length > 0){%>
+            <div class="list-group">
+                <% for ( var i =0; i< items.length; i++){%>
+                <a href="#" class="list-group-item">
+                    <h4 class="list-group-item-heading">List group item heading</h4>
+                    <p class="list-group-item-text">...</p>
+                </a>
+                <%}%>
+            </div>
+            <%}else{%>
+            <div class="alert alert-info" role="alert">El carrito está vacio</div>
+            <%}%>
         </div>
     </div>
 
