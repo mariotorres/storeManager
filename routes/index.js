@@ -194,7 +194,15 @@ router.post('/user/profile', function(req,res){
 
 
 router.post('/item/new', function(req,res ){
-    res.render ('partials/new-item');
+    db.task(function (t) {
+        return this.batch([
+            this.manyOrNone('select * from tiendas'),
+            this.manyOrNone('select * from proveedores')
+        ]);
+
+    }).then(function (data) {
+        res.render('partials/new-item', {tiendas: data[0], proveedores: data[1]});
+    });
 });
 
 

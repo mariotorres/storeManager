@@ -46,6 +46,15 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('.modal-title').text('Editar artículos');
             modal.find('#modal_content').html("");
             break;
+            //stores
+        case "new_store":
+            modal.find('.modal-title').text('Registrar sucursal');
+            modal.find('#modal_content').html("");
+            break;
+        case "edit_store":
+            modal.find('.modal-title').text('Editar sucursal');
+            modal.find('#modal_content').html("");
+            break;
     }
 });
 
