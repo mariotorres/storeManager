@@ -182,17 +182,6 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 });
 
 
-router.post('/user/profile', function(req,res){
-    var user_id = req.body.user_id;
-    db.one('select * from usuarios where id = $1', user_id).then(function (user) {
-        res.render('partials/user-profile', { user: user });
-    }).catch(function (error) {
-       console.log(error);
-        res.send("Error");
-    });
-});
-
-
 router.post('/item/new', function(req,res ){
     db.task(function (t) {
         return this.batch([
@@ -202,6 +191,24 @@ router.post('/item/new', function(req,res ){
 
     }).then(function (data) {
         res.render('partials/new-item', {tiendas: data[0], proveedores: data[1]});
+    });
+});
+
+router.post('/supplier/new',function(req, res ){
+    res.render('partials/new-supplier');
+});
+
+router.post('store/new', function (req, res) {
+    res.render('partials/store');
+});
+
+router.post('/user/profile', function(req,res){
+    var user_id = req.body.user_id;
+    db.one('select * from usuarios where id = $1', user_id).then(function (user) {
+        res.render('partials/user-profile', { user: user });
+    }).catch(function (error) {
+        console.log(error);
+        res.send("Error");
     });
 });
 
