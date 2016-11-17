@@ -55,6 +55,14 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('.modal-title').text('Editar sucursal');
             modal.find('#modal_content').html("");
             break;
+        case "new_supplier":
+            modal.find('.modal-title').text('Registrar proveedor');
+            modal.find('#modal_content').html("");
+            break;
+        case "edit_supplier":
+            modal.find('.modal-title').text('Editar proveedor');
+            modal.find('#modal_content').html("");
+            break;
     }
 });
 
