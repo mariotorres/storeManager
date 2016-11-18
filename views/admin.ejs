@@ -50,7 +50,7 @@
 
         <div role="tabpanel" class="tab-pane fade" id="sucursales">
             <div class="list-group">
-                <button type="button" class="list-group-item">Nueva sucursal</button>
+                <button type="button" data-action="new_store" data-toggle="modal" data-target="#genericModal" class="list-group-item">Nueva sucursal</button>
                 <button type="button" class="list-group-item">Editar sucursales</button>
             </div>
         </div>
@@ -59,7 +59,7 @@
         <div role="tabpanel" class="tab-pane fade" id="usuarios">
             <h3>Permite añadir, actualizar y eliminar usuarios</h3>
             <div class="list-group">
-                <button type="button" class="list-group-item">Nuevo usuario </button>
+                <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_user" class="list-group-item">Nuevo usuario </button>
                 <button type="button" class="list-group-item">Editar usuarios</button>
             </div>
         </div>

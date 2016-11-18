@@ -198,8 +198,12 @@ router.post('/supplier/new',function(req, res ){
     res.render('partials/new-supplier');
 });
 
-router.post('store/new', function (req, res) {
+router.post('/store/new', function (req, res) {
     res.render('partials/store');
+});
+
+router.post('/user/new',function (req, res) {
+    res.render('partials/new-user');
 });
 
 router.post('/user/profile', function(req,res){

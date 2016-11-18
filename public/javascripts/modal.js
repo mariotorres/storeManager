@@ -4,7 +4,13 @@ $('#genericModal').on('show.bs.modal', function (event) {
     var modal = $(this);
 
     switch (button.data('action')) {
-        //import data from csv files
+        case "new_user":
+            modal.find('.modal-title').text('Registrar proveedor');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/user/new', { user_id: button.data('user_id')  }, function(){
+
+            });
+            break;
         case "user_profile":
             modal.find('.modal-title').text('Editar información del usuario');
             modal.find('#modal_content').html("");
@@ -50,6 +56,9 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "new_store":
             modal.find('.modal-title').text('Registrar sucursal');
             modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/store/new', { user_id: button.data('user_id')  }, function(){
+
+            });
             break;
         case "edit_store":
             modal.find('.modal-title').text('Editar sucursal');
@@ -58,6 +67,9 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/supplier/new', { user_id: button.data('user_id')  }, function(){
+
+            });
             break;
         case "edit_supplier":
             modal.find('.modal-title').text('Editar proveedor');
