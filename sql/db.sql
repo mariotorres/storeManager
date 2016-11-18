@@ -26,7 +26,8 @@ create table usuarios(
 );
 
 insert into usuarios ("usuario","contrasena","nombres","permiso_tablero","permiso_administrador","permiso_empleados", "permiso_inventario") values
-('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador', true, true, true, true);
+('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador', true, true, true, true),
+('empleado','$2a$10$3NNCPr4qaxS7JjwmTygBLuIXClsDaXVT2HoE40rh2WyEwqLFwLy6m','Empleado', false, false, true, true);
 
 /* Proveedores */
 drop table if exists proveedores cascade;
