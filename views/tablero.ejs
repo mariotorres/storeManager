@@ -21,6 +21,35 @@
 
     <!-- font awesome -->
     <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+
+    <style>
+
+        /* bar chart */
+        .bar {
+            fill: steelblue;
+        }
+
+        .bar:hover {
+            fill: brown;
+        }
+
+        .axis--x path {
+            display: none;
+        }
+
+        /* line chart */
+        .axis--x path {
+            display: none;
+        }
+
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+    </style>
+
 </head>
 <body>
 
@@ -32,25 +61,33 @@
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Visualización 1</strong> </a></li>
         <li role="presentation"><a href="#tablero2" aria-controls="tablero2" role="tab" data-toggle="tab"><strong>Visualización 2 </strong></a></li>
+        <li role="presentation"><a href="#tablero3" aria-controls="tablero3" role="tab" data-toggle="tab"><strong>Visualización 3 </strong></a></li>
     </ul>
 
     <!-- Tab panes -->
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane fade in active" id="home">
-            <h3>Presenta estádisticas y visualizaciones de la operación</h3>
+        <div role="tabpanel" class="tab-pane fade in active" id="home" style="overflow: auto">
+            <svg id="barchart" width="1024" height="500"></svg>
         </div>
-        <div role="tabpanel" class="tab-pane fade" id="tablero2">
-            <h3>Presenta estádisticas y visualizaciones de la operación</h3>
+        <div role="tabpanel" class="tab-pane fade" id="tablero2" style="overflow: auto">
+            <canvas id="piechart" width="1024" height="500"></canvas>
         </div>
+        <div role="tabpanel" class="tab-pane fade" id="tablero3" style="overflow: auto">
+            <svg id="linechart" width="1024" height="500"></svg>
+        </div>
+
     </div>
+</div>
 
-    <% include partials/modal.ejs %>
+<% include partials/modal.ejs %>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/bower_components/d3/d3.min.js"></script>
-    <script src="/javascripts/modal.js"></script>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/bower_components/d3/d3.min.js"></script>
+<script src="/javascripts/modal.js"></script>
+<script src="/javascripts/viz.js"></script>
+
 </body>
 </html>
