@@ -1,84 +1,84 @@
 <div class="alert alert-warning alert-dismissible" role="alert" hidden>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <p></p>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 </div>
+<p></p>
 
 <form id="form_updateprofile">
-    <input type="hidden" name="user_id" value="<%= user.id %>">
-    <label>Usuario</label>
-    <p><input class="form-control" name ="nombres" value = "<%= user.usuario %>" disabled ></p>
-    <label>E-mail</label>
-    <p>
-        <input class="form-control" type="email" name="email" placeholder="Correo electrónico" value="<%= user.email %>">
-    </p>
-    <div class="row">
-        <div class="col-sm-6">
-            <label>Nombre(s)</label>
-            <p><input class="form-control" name ="nombres" value = "<%= user.nombres %>" required></p>
-        </div>
-        <div class="col-sm-6">
-            <label>Apellido paterno</label>
-            <p><input class="form-control" name ="apellido_paterno" value = "<%= user.apellido_paterno %>" ></p>
-        </div>
-
+  <input type="hidden" name="user_id" value="<%= user.id %>">
+  <label>Usuario</label>
+  <p><input class="form-control" name ="nombres" value = "<%= user.usuario %>" disabled ></p>
+  <label>E-mail</label>
+  <p>
+    <input class="form-control" type="email" name="email" placeholder="Correo electrónico" value="<%= user.email %>">
+  </p>
+  <div class="row">
+    <div class="col-sm-6">
+      <label>Nombre(s)</label>
+      <p><input class="form-control" name ="nombres" value = "<%= user.nombres %>" required></p>
     </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <label>Apellido materno</label>
-            <p><input class="form-control" name ="apellido_materno" value = "<%= user.apellido_materno %>" ></p>
-        </div>
-        <div class="col-sm-6">
-            <label>RFC</label>
-            <p><input type="text" class="form-control" name="rfc" value="<%= user.rfc%>"></p>
-        </div>
+    <div class="col-sm-6">
+      <label>Apellido paterno</label>
+      <p><input class="form-control" name ="apellido_paterno" value = "<%= user.apellido_paterno %>" ></p>
     </div>
 
-    <h3>Dirección</h3>
-    <div class="row">
-        <div class="col-sm-6">
-            <label>Calle</label>
-            <p><input type="text" class="form-control" name="direccion_calle" value="<%= user.direccion_calle%>"></p>
-        </div>
-        <div class="col-sm-6">
-            <label>Número interior</label>
-            <p><input type="text" class="form-control" name="direccion_numero_int" value="<%= user.direccion_numero_int%>"></p>
-        </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <label>Apellido materno</label>
+      <p><input class="form-control" name ="apellido_materno" value = "<%= user.apellido_materno %>" ></p>
+    </div>
+    <div class="col-sm-6">
+      <label>RFC</label>
+      <p><input type="text" class="form-control" name="rfc" value="<%= user.rfc%>"></p>
+    </div>
+  </div>
+
+  <h3>Dirección</h3>
+  <div class="row">
+    <div class="col-sm-6">
+      <label>Calle</label>
+      <p><input type="text" class="form-control" name="direccion_calle" value="<%= user.direccion_calle%>"></p>
+    </div>
+    <div class="col-sm-6">
+      <label>Número interior</label>
+      <p><input type="text" class="form-control" name="direccion_numero_int" value="<%= user.direccion_numero_int%>"></p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <label>Número exterior</label>
+      <p><input type="text" class="form-control" name="direccion_numero_ext" value="<%= user.direccion_numero_ext%>"></p>
+    </div>
+    <div class="col-sm-6">
+      <label>Colonia</label>
+      <p><input type="text" class="form-control" name="direccion_colonia" value="<%= user.direccion_colonia %>"></p>
+    </div>
+  </div>
+  <div class="row">
+
+    <div class="col-sm-6">
+      <label>Localidad</label>
+      <p><input type="text" class="form-control" name="direccion_localidad" value="<%= user.direccion_localidad %>"></p>
+    </div>
+    <div class="col-sm-6">
+      <label>Municipio</label>
+      <p><input type="text" class="form-control" name="direccion_municipio" value="<%= user.direccion_municipio %>"></p>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col-sm-6">
+      <label>Ciudad</label>
+      <p><input type="text" class="form-control" name="direccion_ciudad" value="<%= user.direccion_ciudad%>"></p>
     </div>
 
-    <div class="row">
-        <div class="col-sm-6">
-            <label>Número exterior</label>
-            <p><input type="text" class="form-control" name="direccion_numero_ext" value="<%= user.direccion_numero_ext%>"></p>
-        </div>
-        <div class="col-sm-6">
-            <label>Colonia</label>
-            <p><input type="text" class="form-control" name="direccion_colonia" value="<%= user.direccion_colonia %>"></p>
-        </div>
+    <div class="col-sm-6">
+      <label>País</label>
+      <p><input type="text" class="form-control" name="direccion_pais" value="<%= user.direccion_pais %>"></p>
     </div>
-    <div class="row">
+  </div>
 
-        <div class="col-sm-6">
-            <label>Localidad</label>
-            <p><input type="text" class="form-control" name="direccion_localidad" value="<%= user.direccion_localidad %>"></p>
-        </div>
-        <div class="col-sm-6">
-            <label>Municipio</label>
-            <p><input type="text" class="form-control" name="direccion_municipio" value="<%= user.direccion_municipio %>"></p>
-        </div>
-    </div>
-
-    <div class="row">
-
-        <div class="col-sm-6">
-            <label>Ciudad</label>
-            <p><input type="text" class="form-control" name="direccion_ciudad" value="<%= user.direccion_ciudad%>"></p>
-        </div>
-
-        <div class="col-sm-6">
-            <label>País</label>
-            <p><input type="text" class="form-control" name="direccion_pais" value="<%= user.direccion_pais %>"></p>
-        </div>
-    </div>
-
-    <button class="btn btn-primary" type="submit">Actualizar</button>
+  <button class="btn btn-primary" type="submit">Actualizar</button>
 </form>

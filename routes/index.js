@@ -175,7 +175,7 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 });
 
 router.get('/carrito', isAuthenticated, function (req, res) {
-    db.manyOrNone('select carrito.id_articulo, carrito.id_usuario, articulos.descripcion from carrito, articulos where carrito.id_articulo = articulos.id and  carrito.id_usuario = $1',[
+    db.manyOrNone('select * from carrito, articulos where carrito.id_articulo = articulos.id and  carrito.id_usuario = $1',[
         req.user.id
     ]).then(function (data) {
         res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data });
@@ -221,7 +221,39 @@ router.post('/user/profile', function(req,res){
     });
 });
 
+/*
+ * Registro de proveedores
+ */
+router.post('/supplier/register', function(req, res){
+  db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id, nombre ', [
+    req.body.nombre,
+    req.body.razon_social,
+    req.body.rfc,
+    req.body.direccion_calle,
+    req.body.direccion_numero_int,
+    req.body.direccion_numero_ext,
+    req.body.direccion_colonia,
+    req.body.direccion_localidad,
+    req.body.direccion_municipio,
+    req.body.direccion_ciudad,
+    req.body.direccion_pais
+  ]).then(function(data){
+    res.json({
+      status: 'Ok',
+      message: 'Se ha registrado el usuario "' + data.nombre + '" ha sido registrado'
+    });
+  }).catch(function (error){
+    console.log(error);
+    res.json({
+      status: 'Error',
+      message: 'Ocurrió un error al registar el usuario'
+    });
+  });
+});
 
+/*
+ * Actualización de usuario
+ */
 router.post('/user/update', function(req, res){
     db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
         'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13, email=$14 ' +

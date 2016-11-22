@@ -68,7 +68,15 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/supplier/new', { user_id: button.data('user_id')  }, function(){
-
+              $('#luisForm').submit(function(event){
+                $.post('/supplier/register', $(this).serialize()).done(function (data){
+                  alert(data.message);
+                  if(data.status == 'Ok'){
+                    modal.modal('hide');
+                  }
+                });
+                event.preventDefault();
+              });
             });
             break;
         case "edit_supplier":
