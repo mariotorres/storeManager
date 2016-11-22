@@ -112,7 +112,11 @@ var isNotAuthenticated = function (req, res, next) {
  return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
  };
 
-
+/*
+ * ############################################
+ *  Exec
+ * ############################################
+ */
 
 /* Handle Login POST */
 router.post('/login', passport.authenticate('login', {
@@ -133,12 +137,11 @@ router.get('/', isNotAuthenticated, function(req, res, next) {
         res.render('index', { title: '', message : req.flash('message') });
 });
 
-router.get('/principal',isAuthenticated, function (req, res) {
+router.get('/principal', isAuthenticated, function (req, res) {
     res.render('principal', { title: 'Tienda', user: req.user, section: 'principal'});
 });
 
 router.get('/admin',isAuthenticated, function (req, res) {
-
     if ( req.user.permiso_administrador ) {
         res.render('admin', {title: "Panel de administración del sistema", user: req.user, section: 'admin'});
     } else {
@@ -150,7 +153,7 @@ router.get('/empleados',isAuthenticated, function (req, res) {
     if ( req.user.permiso_empleados ) {
         res.render('empleados', {title: "Panel de empleados", user: req.user, section: 'empleados'});
     } else{
-        res.redirect('/principal')
+      res.redirect('/principal');
     }
 
 });
@@ -159,7 +162,7 @@ router.get('/inventario', isAuthenticated, function (req, res ) {
     if ( req.user.permiso_inventario ){
         res.render('inventario',{ title: "Inventario", user: req.user, section : 'inventario'});
     }else {
-        res.redirect('/principal')
+      res.redirect('/principal');
     }
 });
 
@@ -172,7 +175,7 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 });
 
 router.get('/carrito', isAuthenticated, function (req, res) {
-    db.manyOrNone('select * from carrito where id_usuario = $1',[
+    db.manyOrNone('select carrito.id_articulo, carrito.id_usuario, articulos.descripcion from carrito, articulos where carrito.id_articulo = articulos.id and  carrito.id_usuario = $1',[
         req.user.id
     ]).then(function (data) {
         res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data });
@@ -191,6 +194,8 @@ router.post('/item/new', function(req,res ){
 
     }).then(function (data) {
         res.render('partials/new-item', {tiendas: data[0], proveedores: data[1]});
+    }).catch(function(error){
+      console.log(error);
     });
 });
 
