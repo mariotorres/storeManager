@@ -247,7 +247,7 @@ router.post('/item/register', function(req, res){
     ]).then(function(data){
         res.json({
             status:'Ok',
-            message: 'La prenda "' + data.articulo + '"ha sido registrada'
+            message: 'La prenda "' + data.articulo + '" ha sido registrada'
         });
     }).catch(function(error){
         console.log(error);
