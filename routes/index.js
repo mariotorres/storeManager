@@ -222,6 +222,36 @@ router.post('/user/profile', function(req,res){
 });
 
 /*
+ * Registro de artículos
+ */
+router.post('/item/register', function(req, res){
+    db.one('insert into articulos(id, id_proveedor, id_tienda, articulo, descripcion, marca, modelo, talla, notas, precio, codigo_barras, url_imagen) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning id, id',[
+        req.body.id,
+        req.body.id_proveedor,
+        req.body.id_tienda,
+        req.body.articulo,
+        req.body.descripcion,
+        req.body.marca,
+        req.body.modelo,
+        req.body.talla,
+        req.body.notas,
+        req.body.precio,
+        req.body.codigo_barras,
+        req.body.url_imagen
+    ]).then(function(data){
+        res.json({
+            status:'Ok',
+            message: 'La prenda "' + data.articulo + '"ha sido registrada'
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar el usuario'
+        });
+    });
+});
+/*
  * Registro de tiendas
  */
 router.post('/store/register', function(req, res){
@@ -239,9 +269,15 @@ router.post('/store/register', function(req, res){
         res.json({
             status:'Ok',
             message: '¡La tienda "' + data.nombre + '" ha sido registrada!'
-        })
-    })
-})
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar el usuario'
+        });
+    });
+});
 
 /*
  * Registro de proveedores
@@ -297,7 +333,7 @@ router.post('/user/update', function(req, res){
     ]).then(function (data) {
         res.json({
             status :'Ok',
-            message : 'Los datos del usuario "'+data.usuario+'" han sido actualizados'
+            message : 'Los datos del usuario "'+ data.usuario +'" han sido actualizados'
         });
     }).catch(function (error) {
         console.log(error);

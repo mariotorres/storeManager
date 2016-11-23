@@ -44,8 +44,16 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "new_item":
             modal.find('.modal-title').text('Registrar artículo');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/item/new', {   }, function(){
-                //
+            modal.find('#modal_content').load('/item/new', {}, function(){
+                $('#itemForm').submit(function(event){
+                    $.post('/item/register', $(this).serialize()).done(function (data){
+                        alert(data.message);
+                        if(data.status == 'Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    event.preventDefault();
+                })
             });
             break;
         case "edit_item":
@@ -62,7 +70,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
                         alert(data.message);
                         if(data.status == 'Ok'){
                             modal.modal('hide');
-                    }
+                        }
                     });
                     event.preventDefault();
                 });

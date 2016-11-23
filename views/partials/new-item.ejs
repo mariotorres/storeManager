@@ -1,4 +1,4 @@
-<form>
+<form id="itemForm">
     <!--id_proveedor
     id_tienda-->
     <p>
@@ -41,7 +41,7 @@
             if (proveedores.length > 0 ){
             for (var i =0; i < proveedores.length; i++){
             %>
-            <option value="<%= tiendas[i].id %>"> <%= tiendas[i].nombre %> </option>
+            <option value="<%= tiendas[i].id %>"> <%= proveedores[i].nombre %> </option>
             <%
             }
             }else {
