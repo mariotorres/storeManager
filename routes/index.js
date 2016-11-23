@@ -224,19 +224,25 @@ router.post('/user/profile', function(req,res){
 /*
  * Registro de artículos
  */
+
+ function numericCol ( x ){
+     return ( x == '' || isNaN(x))?null:x;
+ }
 router.post('/item/register', function(req, res){
-    db.one('insert into articulos(id, id_proveedor, id_tienda, articulo, descripcion, marca, modelo, talla, notas, precio, codigo_barras, url_imagen) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning id, id',[
-        req.body.id,
-        req.body.id_proveedor,
-        req.body.id_tienda,
+
+    console.log(req.body);
+    db.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, marca, modelo, talla, notas, precio, codigo_barras, url_imagen) ' +
+        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id, articulo',[
+        numericCol(req.body.id_proveedor),
+        numericCol(req.body.id_tienda),
         req.body.articulo,
         req.body.descripcion,
         req.body.marca,
         req.body.modelo,
         req.body.talla,
         req.body.notas,
-        req.body.precio,
-        req.body.codigo_barras,
+        numericCol(req.body.precio),
+        numericCol(req.body.codigo_barras),
         req.body.url_imagen
     ]).then(function(data){
         res.json({
@@ -247,7 +253,7 @@ router.post('/item/register', function(req, res){
         console.log(error);
         res.json({
             status: 'Error',
-            message: 'Ocurrió un error al registrar el usuario'
+            message: 'Ocurrió un error al registrar el artículo'
         });
     });
 });
