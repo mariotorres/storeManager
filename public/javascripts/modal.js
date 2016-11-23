@@ -56,8 +56,16 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "new_store":
             modal.find('.modal-title').text('Registrar sucursal');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/store/new', { user_id: button.data('user_id')  }, function(){
-
+            modal.find('#modal_content').load('/store/new', {}, function(){
+                $('#storeForm').submit(function(event){
+                    $.post('/store/register', $(this).serialize()).done(function (data){
+                        alert(data.message);
+                        if(data.status == 'Ok'){
+                            modal.modal('hide');
+                    }
+                    });
+                    event.preventDefault();
+                });
             });
             break;
         case "edit_store":
@@ -67,8 +75,8 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/supplier/new', { user_id: button.data('user_id')  }, function(){
-              $('#luisForm').submit(function(event){
+            modal.find('#modal_content').load('/supplier/new', {}, function(){
+              $('#supplierForm').submit(function(event){
                 $.post('/supplier/register', $(this).serialize()).done(function (data){
                   alert(data.message);
                   if(data.status == 'Ok'){
@@ -82,6 +90,9 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "edit_supplier":
             modal.find('.modal-title').text('Editar proveedor');
             modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/supplier/new', {}, function(){
+
+            });
             break;
     }
 });

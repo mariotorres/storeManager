@@ -222,6 +222,28 @@ router.post('/user/profile', function(req,res){
 });
 
 /*
+ * Registro de tiendas
+ */
+router.post('/store/register', function(req, res){
+    db.one('insert into tiendas(nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id, nombre ', [
+        req.body.nombre,
+        req.body.direccion_calle,
+        req.body.direccion_numero_int,
+        req.body.direccion_numero_ext,
+        req.body.direccion_colonia,
+        req.body.direccion_localidad,
+        req.body.direccion_municipio,
+        req.body.direccion_ciudad,
+        req.body.direccion_pais
+    ]).then(function(data){
+        res.json({
+            status:'Ok',
+            message: '¡La tienda "' + data.nombre + '" ha sido registrada!'
+        })
+    })
+})
+
+/*
  * Registro de proveedores
  */
 router.post('/supplier/register', function(req, res){
@@ -240,7 +262,7 @@ router.post('/supplier/register', function(req, res){
   ]).then(function(data){
     res.json({
       status: 'Ok',
-      message: 'Se ha registrado el usuario "' + data.nombre + '" ha sido registrado'
+      message: '¡El proveedor "' + data.nombre + '" ha sido registrado!'
     });
   }).catch(function (error){
     console.log(error);
