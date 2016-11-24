@@ -202,12 +202,13 @@ router.post('/item/new', function(req,res ){
 
 router.get('/item/list/:page', function (req, res) {
 
-    var offset = req.params.page * 10;
+    var pageSize = 10;
+    var offset = req.params.page * pageSize;
 
     db.task(function (t) {
         return this.batch([
             this.one('select count(*) from articulos as count'),
-            this.manyOrNone('select * from articulos order by articulo limit 10 offset $1',[ offset ])
+            this.manyOrNone('select * from articulos order by articulo limit $1 offset $2',[ pageSize, offset ])
         ]);
 
     }).then(function (data) {
@@ -215,10 +216,8 @@ router.get('/item/list/:page', function (req, res) {
             status : 'Ok',
             data: data[1],
             pageNumber : req.params.page,
-            numberOfPages: parseInt( (+data[0].count + 9 )/ 10)
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
-
-
     }).catch(function (error) {
         res.json({
             status: 'Error',
