@@ -199,6 +199,35 @@ router.post('/item/new', function(req,res ){
     });
 });
 
+
+router.get('/item/list/:page', function (req, res) {
+
+    var offset = req.params.page * 10;
+
+    db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from articulos as count'),
+            this.manyOrNone('select * from articulos order by articulo limit 10 offset $1',[ offset ])
+        ]);
+
+    }).then(function (data) {
+        res.json({
+            status : 'Ok',
+            data: data[1],
+            pageNumber : req.params.page,
+            numberOfPages: parseInt( (+data[0].count + 9 )/ 10)
+        });
+
+
+    }).catch(function (error) {
+        res.json({
+            status: 'Error',
+            data : error
+        });
+
+    });
+});
+
 router.post('/supplier/new',function(req, res ){
     res.render('partials/new-supplier');
 });
