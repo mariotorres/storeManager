@@ -225,6 +225,28 @@ router.get('/item/list/:page', function (req, res) {
     });
 });
 
+router.post('/item/edit-item/', function(req, res){
+   db.task(function (t){
+       return this.batch([
+           this.one('select * from articulos where articulos.id = $1', [req.body.id]),
+           this.manyOrNone('select * from tiendas'),
+           this.manyOrNone('select * from proveedores')
+       ]);
+   }).then(function(data){
+       res.render('partials/edit-item', {
+           status:'Ok',
+           item:data[1],
+           pageNumber: req.params.page,
+           numberOfPages:parseInt((+data[0].count + pageSize - 1)/pageSize)
+       });
+   }).catch(function(error){
+       res.json({
+           status:'Error',
+           data:error
+       });
+   });
+});
+
 router.post('/supplier/new',function(req, res ){
     res.render('partials/new-supplier');
 });
