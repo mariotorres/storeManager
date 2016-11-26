@@ -211,9 +211,9 @@ router.get('/item/list/:page', function (req, res) {
         ]);
 
     }).then(function (data) {
-        res.json({
+        res.render('partials/item-list',{
             status : 'Ok',
-            data: data[1],
+            items: data[1],
             pageNumber : req.params.page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
@@ -222,7 +222,6 @@ router.get('/item/list/:page', function (req, res) {
             status: 'Error',
             data : error
         });
-
     });
 });
 
