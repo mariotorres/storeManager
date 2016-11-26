@@ -199,9 +199,8 @@ router.post('/item/new', function(req,res ){
     });
 });
 
-
+// Display de objetos
 router.get('/item/list/:page', function (req, res) {
-
     var pageSize = 10;
     var offset = req.params.page * pageSize;
 
