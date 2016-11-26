@@ -62,7 +62,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('#modal_content').load('/item/list/0', function(){
                 $(this).find('.list-group-item').click(function(){
                    // alert("Funciona, item: "+ $(this).data('item_id'));
-                    modal.find('#modal_content').load('/item/edit-item/'+ $(this).data('item_id'))
+                    $(this).parent().load('/item/edit-item/',{ id: $(this).data('item_id') });
                 })
             });
             break;

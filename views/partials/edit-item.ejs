@@ -6,6 +6,8 @@
         <label>articulo</label>
         <input type="text" value="<%=item.articulo%>" class="form-control" name="articulo">
     </p>
+
+
     <p>
         <label>Descripcion</label>
         <input type="text" value="<%=item.descripcion%>" name="descripcion" class="form-control">
@@ -19,6 +21,7 @@
         <input name="modelo" value="<%=item.modelo%>" type="text" class="form-control">
     </p>
 
+
     <p>
         <label>Tienda</label>
         <select name = "id_tienda" class="form-control">
@@ -26,7 +29,7 @@
             if (tiendas.length > 0 ){
             for (var i =0; i < tiendas.length; i++){
             %>
-            <option value="<%= tiendas[i].id %>" <%= tiendas[i].id == item.id_tienda? "selected":null%> > <%= tiendas[i].nombre %> </option>
+            <option value="<%= tiendas[i].id %>"> <%= tiendas[i].nombre %> </option>
             <%
             }
             }else {
@@ -42,7 +45,7 @@
             if (proveedores.length > 0 ){
             for (var i =0; i < proveedores.length; i++){
             %>
-            <option value="<%= tiendas[i].id %>" <%=tiendas[i].id == item.id_tienda? "selected":null%>> <%= proveedores[i].nombre %> </option>
+            <option value="<%= tiendas[i].id %>"> <%= proveedores[i].nombre %> </option>
             <%
             }
             }else {
@@ -51,6 +54,12 @@
             <% }%>
         </select>
     </p>
+
+
+
+
+
+
     <p>
         <label>Talla</label>
         <input type="text" name="talla" class="form-control">
@@ -76,4 +85,8 @@
     <p>
         <button type="submit" class="btn btn-primary">Registrar</button>
     </p>
+
+
+
+
 </form>

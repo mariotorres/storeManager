@@ -226,20 +226,26 @@ router.get('/item/list/:page', function (req, res) {
 });
 
 router.post('/item/edit-item/', function(req, res){
+
+    var id = req.body.id;
+
+    console.log(id);
+
    db.task(function (t){
        return this.batch([
-           this.one('select * from articulos where articulos.id = $1', [req.body.id]),
+           this.one('select * from articulos where id = $1', [id]),
            this.manyOrNone('select * from tiendas'),
            this.manyOrNone('select * from proveedores')
        ]);
    }).then(function(data){
        res.render('partials/edit-item', {
            status:'Ok',
-           item:data[1],
-           pageNumber: req.params.page,
-           numberOfPages:parseInt((+data[0].count + pageSize - 1)/pageSize)
+           item: data[0],
+           tiendas: data[1],
+           proveedores: data[2]
        });
    }).catch(function(error){
+       console.log(error);
        res.json({
            status:'Error',
            data:error
