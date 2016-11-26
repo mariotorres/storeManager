@@ -29,7 +29,7 @@
             if (tiendas.length > 0 ){
             for (var i =0; i < tiendas.length; i++){
             %>
-            <option value="<%= tiendas[i].id %>"> <%= tiendas[i].nombre %> </option>
+            <option value="<%= tiendas[i].id %>" <%= tiendas[i].id == item.id_tienda ? 'selected': null %> > <%= tiendas[i].nombre %> </option>
             <%
             }
             }else {
@@ -45,7 +45,7 @@
             if (proveedores.length > 0 ){
             for (var i =0; i < proveedores.length; i++){
             %>
-            <option value="<%= tiendas[i].id %>"> <%= proveedores[i].nombre %> </option>
+            <option value="<%= proveedores[i].id %>" <%= item.id_proveedor == proveedores[i].id?'selected' : null %> > <%= proveedores[i].nombre %> </option>
             <%
             }
             }else {
@@ -55,22 +55,17 @@
         </select>
     </p>
 
-
-
-
-
-
     <p>
         <label>Talla</label>
-        <input type="text" name="talla" class="form-control">
+        <input type="text" name="talla" value="<%= item.talla %>" class="form-control">
     </p>
     <p>
         <label>Notas</label>
-        <input type="text" name="notas" class="form-control">
+        <input type="text" name="notas" value="<%= item.notas %>" class="form-control">
     </p>
     <p>
         <label>Precio unitario</label>
-        <input type="text" name="precio" class="form-control">
+        <input type="text" name="precio" value="<%= item.precio %>" class="form-control">
     </p>
     <!--codigo_barras-->
     <!--url_imagen-->
@@ -85,8 +80,5 @@
     <p>
         <button type="submit" class="btn btn-primary">Registrar</button>
     </p>
-
-
-
 
 </form>
