@@ -4,21 +4,21 @@
     <input type="text" value="<%=item.id%>" name="id" hidden>
     <p>
         <label>articulo</label>
-        <input type="text" value="<%=item.articulo%>" class="form-control" name="articulo">
+        <input type="text" value="<%=item.articulo%>" class="form-control" name="articulo" required>
     </p>
 
 
     <p>
         <label>Descripcion</label>
-        <input type="text" value="<%=item.descripcion%>" name="descripcion" class="form-control">
+        <input type="text" value="<%=item.descripcion%>" name="descripcion" class="form-control" required>
     </p>
     <p>
         <label>Marca</label>
-        <input type="text" value="<%=item.marca%>" class="form-control" name="marca">
+        <input type="text" value="<%=item.marca%>" class="form-control" name="marca" required>
     </p>
     <p>
         <label>Modelo</label>
-        <input name="modelo" value="<%=item.modelo%>" type="text" class="form-control">
+        <input name="modelo" value="<%=item.modelo%>" type="text" class="form-control" required>
     </p>
 
 
@@ -71,14 +71,14 @@
     <!--url_imagen-->
     <p>
         <label>Fotografía</label>
-        <input class="form-control" type="text" name="url_imagen">
+        <input class="form-control" type="file" name="url_imagen">
     </p>
     <p>
         <label>Código de barras</label>
         <input type="number" class="form-control" name="codigo_barras">
     </p>
     <p>
-        <button type="submit" class="btn btn-primary">Registrar</button>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
     </p>
 
 </form>
