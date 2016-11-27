@@ -4,9 +4,8 @@
 if ( suppliers.length > 0){%>
 <div class="list-group">
     <%
-    for (var i=0; i< suppliers.length; i++){
-    %>
-    <a href="#" class="list-group-item">
+    for ( var i =0; i < suppliers.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-supplier_id="<%= suppliers[i].id %>">
         <h4 class="list-group-item-heading"> <%= suppliers[i].nombre %></h4>
         <p class="list-group-item-text"><%= suppliers[i].razon_social %></p>
     </a>

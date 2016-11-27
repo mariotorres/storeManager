@@ -270,6 +270,23 @@ router.post('/store/edit-store/', isAuthenticated, function(req, res){
     });
 });
 
+// Load supplier data into modal
+router.post('/supplier/edit-supplier/', isAuthenticated, function(req, res){
+    var id = req.body.id;
+    db.one('select * from proveedores where id = $1', [id]).then(function(data){
+        res.render('partials/edit-supplier', {
+            status: 'Ok',
+            supplier:data
+        });
+    }).catch(function(error){
+        conslole.log(error);
+        res.json({
+            status:'Error',
+            data:error
+        });
+    });
+});
+
 // Load item data into modal
 router.post('/item/edit-item/', isAuthenticated, function(req, res){
     var id = req.body.id;

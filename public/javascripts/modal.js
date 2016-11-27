@@ -114,7 +114,11 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('.modal-title').text('Editar proveedor');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/supplier/list/', { page : 0 } , function(){
-                // list events
+                $(this).find('.list-group-item').click(function(){
+                    $("#modal_content").load("/supplier/edit-supplier/", {id: $(this).data('supplier_id')}, function(){
+
+                    })
+                });
             });
             break;
     }
