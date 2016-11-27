@@ -62,7 +62,9 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('#modal_content').load('/item/list/',{ page: 0 }, function(){
                 $(this).find('.list-group-item').click(function(){
                    // alert("Funciona, item: "+ $(this).data('item_id'));
-                    $(this).parent().load('/item/edit-item/',{ id: $(this).data('item_id') });
+                    $(this).parent().load('/item/edit-item/',{ id: $(this).data('item_id') }, function () {
+                        //update item submit event
+                    });
                 })
             });
             break;
@@ -88,7 +90,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('#modal_content').load('/store/list/',{ page: 0 }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $(this).parent().load('/store/edit-store/', {id: $(this).data('store_id')}, function () {
-
+                        //update item submit event
                     })
                 });
         });
@@ -111,8 +113,8 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "edit_supplier":
             modal.find('.modal-title').text('Editar proveedor');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/supplier/new', {}, function(){
-
+            modal.find('#modal_content').load('/supplier/list', { page : 0 } , function(){
+                // list events
             });
             break;
     }

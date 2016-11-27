@@ -301,6 +301,21 @@ router.post('/supplier/new',function(req, res ){
     res.render('partials/new-supplier');
 });
 
+
+router.post('/supplier/list',function(req, res ){
+    db.manyOrNone('select * from proveedores').then(function( suppliers ){
+        res.render('partials/supplier-list', {
+            status : "Ok",
+            suppliers: suppliers
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.render('partials/supplier-list', {
+            status: "Error"
+        });
+    });
+});
+
 router.post('/store/new', function (req, res) {
     res.render('partials/store');
 });
