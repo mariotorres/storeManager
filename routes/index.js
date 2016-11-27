@@ -253,6 +253,27 @@ router.get('/store/list/:page', function (req, res) {
 });
 
 // Load store data into  modal.
+router.post('/store/edit-store/', function(req, res){
+    var id = req.body.id;
+    console.log(id);
+
+    db.task(function (t){
+        return this.batch([
+            this.one('select * from tiendas where id = $1', [id]),
+        ]);
+    }).then(function(data){
+        res.render('partials/edit-store', {
+            status:'Ok',
+            tiendas: data[0]
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status:'Error',
+            data:error
+        });
+    });
+});
 
 // Load item data into modal
 router.post('/item/edit-item/', function(req, res){
