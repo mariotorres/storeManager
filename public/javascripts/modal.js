@@ -62,7 +62,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('#modal_content').load('/item/list/',{ page: 0 }, function(){
                 $(this).find('.list-group-item').click(function(){
                    // alert("Funciona, item: "+ $(this).data('item_id'));
-                    $(this).parent().load('/item/edit-item/',{ id: $(this).data('item_id') }, function () {
+                    $("#modal_content").load('/item/edit-item/',{ id: $(this).data('item_id') }, function () {
                         //update item submit event
                     });
                 })
@@ -89,7 +89,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/store/list/',{ page: 0 }, function(){
                 $(this).find('.list-group-item').click(function(){
-                    $(this).parent().load('/store/edit-store/', {id: $(this).data('store_id')}, function () {
+                    $("#modal_content").load('/store/edit-store/', {id: $(this).data('store_id')}, function () {
                         //update item submit event
                     })
                 });
