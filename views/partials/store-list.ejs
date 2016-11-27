@@ -11,31 +11,7 @@ if (stores.length > 0){%>
     <%}%>
 </div>
 
-
-<nav aria-label="Page navigation">
-    <ul class="pagination">
-
-        <li class="<%= pageNumber > 0 ? null : 'disabled'%>">
-            <a href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-
-
-        <%for (var i=0; i< numberOfPages; i ++){%>
-        <li class="<%= i==pageNumber?'active': null%>">
-            <a href="#"><%= i + 1%></a>
-        </li>
-        <%}%>
-
-        <li class="<%= pageNumber < (numberOfPages - 1) ? null : 'disabled'%>">
-            <a href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-
-    </ul>
-</nav>
+<% include pagination.ejs %>
 
 <%}else {%>
 <div class="alert alert-info" role="alert">No hay tiendas registradas</div>
