@@ -225,10 +225,38 @@ router.get('/item/list/:page', function (req, res) {
     });
 });
 
+
+// Display de sucursales
+router.get('/store/list/:page', function (req, res) {
+    var pageSize = 10;
+    var offset = req.params.page * pageSize;
+
+    db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from tiendas as count'),
+            this.manyOrNone('select * from tiendas order by nombre limit $1 offset $2',[ pageSize, offset ])
+        ]);
+
+    }).then(function (data) {
+        res.render('partials/store-list',{
+            status : 'Ok',
+            items: data[1],
+            pageNumber : req.params.page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
+        });
+    }).catch(function (error) {
+        res.json({
+            status: 'Error',
+            data : error
+        });
+    });
+});
+
+// Load store data into  modal.
+
+// Load item data into modal
 router.post('/item/edit-item/', function(req, res){
-
     var id = req.body.id;
-
     console.log(id);
 
    db.task(function (t){

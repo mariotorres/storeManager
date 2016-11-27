@@ -85,6 +85,11 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "edit_store":
             modal.find('.modal-title').text('Editar sucursal');
             modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/store/list/0', function(){
+                $(this).find('.list-group-item').click(function(){
+                    $(this).parent().load('/store/edit-store/', {id: $(this).data('store_id')})
+                });
+        });
             break;
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');

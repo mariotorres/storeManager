@@ -1,0 +1,43 @@
+<form id="storeForm">
+
+    <input type="text" value="<%=store.id%>" name="id" hidden>
+    <p>
+        <label>Nombre de la tienda</label>
+        <input name="nombre" value="<%=store.nombre%>" class="form-control">
+    </p>
+    <p>
+        <label>Calle</label>
+        <input type="text" value="<%=store.direccion_calle%>"  class="form-control" name="direccion_calle">
+    </p>
+    <p>
+        <label>Número interior</label>
+        <input type="text" value="<%=store.direccion_numero_int%>"  class="form-control" name="direccion_numero_int">
+    </p>
+    <p>
+        <label>Número exterior</label>
+        <input type="text" value="<%=store.direccion_numero_ext%>"  class="form-control" name="direccion_numero_ext">
+    </p>
+    <p>
+        <label>Colonia</label>
+        <input type="text" value="<%=store.direccion_colonia%>"  class="form-control" name="direccion_colonia">
+    </p>
+    <p>
+        <label>Localidad</label>
+        <input class="form-control" value="<%=store.localidad%>" type="text" name="direccion_localidad">
+    </p>
+    <p>
+        <label>Municipio</label>
+        <input type="text" value="<%=store.direccion_municipio%>" class="form-control" name="direccion_municipio">
+    </p>
+    <p>
+        <label>Ciudad</label>
+        <input type="text" value="<%=store.direccion_ciudad%>"  class="form-control" name="direccion_ciudad">
+    </p>
+    <p>
+        <label>Pais</label>
+        <input type="text" value="<%=store.direccion_pais%>" class="form-control" name = "direccion_pais">
+    </p>
+    <p>
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </p>
+</form>
