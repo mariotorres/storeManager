@@ -200,9 +200,9 @@ router.post('/item/new', function(req,res ){
 });
 
 // Display de objetos
-router.get('/item/list/:page', function (req, res) {
+router.post('/item/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
-    var offset = req.params.page * pageSize;
+    var offset = req.body.page * pageSize;
 
     db.task(function (t) {
         return this.batch([
@@ -227,9 +227,9 @@ router.get('/item/list/:page', function (req, res) {
 
 
 // Display de sucursales
-router.get('/store/list/:page', function (req, res) {
+router.post('/store/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
-    var offset = req.params.page * pageSize;
+    var offset = req.body.page * pageSize;
 
     db.task(function (t) {
         return this.batch([
@@ -253,18 +253,13 @@ router.get('/store/list/:page', function (req, res) {
 });
 
 // Load store data into  modal.
-router.post('/store/edit-store/', function(req, res){
+router.post('/store/edit-store/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    console.log(id);
-
-    db.task(function (t){
-        return this.batch([
-            this.one('select * from tiendas where id = $1', [id]),
-        ]);
-    }).then(function(data){
+    //console.log(id);
+    db.one('select * from tiendas where id = $1', [id]).then(function(data){
         res.render('partials/edit-store', {
             status:'Ok',
-            store: data[0]
+            store: data
         });
     }).catch(function(error){
         console.log(error);
@@ -276,7 +271,7 @@ router.post('/store/edit-store/', function(req, res){
 });
 
 // Load item data into modal
-router.post('/item/edit-item/', function(req, res){
+router.post('/item/edit-item/', isAuthenticated, function(req, res){
     var id = req.body.id;
     console.log(id);
 

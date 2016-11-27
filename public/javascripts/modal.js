@@ -59,7 +59,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "edit_item":
             modal.find('.modal-title').text('Editar artículos');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/item/list/0', function(){
+            modal.find('#modal_content').load('/item/list/',{ page: 0 }, function(){
                 $(this).find('.list-group-item').click(function(){
                    // alert("Funciona, item: "+ $(this).data('item_id'));
                     $(this).parent().load('/item/edit-item/',{ id: $(this).data('item_id') });
@@ -70,7 +70,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "new_store":
             modal.find('.modal-title').text('Registrar sucursal');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/store/new', {}, function(){
+            modal.find('#modal_content').load('/store/new', { /* post body data */ }, function(){
                 $('#storeForm').submit(function(event){
                     $.post('/store/register', $(this).serialize()).done(function (data){
                         alert(data.message);
@@ -85,16 +85,18 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "edit_store":
             modal.find('.modal-title').text('Editar sucursal');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/store/list/0', function(){
+            modal.find('#modal_content').load('/store/list/',{ page: 0 }, function(){
                 $(this).find('.list-group-item').click(function(){
-                    $(this).parent().load('/store/edit-store/', {id: $(this).data('store_id')})
+                    $(this).parent().load('/store/edit-store/', {id: $(this).data('store_id')}, function () {
+
+                    })
                 });
         });
             break;
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/supplier/new', {}, function(){
+            modal.find('#modal_content').load('/supplier/new', { /* post body data */ }, function(){
               $('#supplierForm').submit(function(event){
                 $.post('/supplier/register', $(this).serialize()).done(function (data){
                   alert(data.message);
