@@ -287,11 +287,27 @@ router.post('/supplier/edit-supplier/', isAuthenticated, function(req, res){
     });
 });
 
+// Load user data into modal
+router.post('/user/edit-user/', isAuthenticated, function(req, res){
+    var id = req.body.id;
+    db.one('select * from usuarios where id = $1', [id]).then(function(data){
+        res.render('partials/edit-user', {
+            status: 'Ok',
+            user:data
+        });
+    }).catch(function(error){
+        conslole.log(error);
+        res.json({
+            status:'Error',
+            data:error
+        });
+    });
+});
+
 // Load item data into modal
 router.post('/item/edit-item/', isAuthenticated, function(req, res){
     var id = req.body.id;
     console.log(id);
-
    db.task(function (t){
        return this.batch([
            this.one('select * from articulos where id = $1', [id]),
@@ -318,19 +334,16 @@ router.post('/supplier/new',function(req, res ){
     res.render('partials/new-supplier');
 });
 
-
+// Listar proveedores
 router.post('/supplier/list/',function(req, res ){
-
     var page = req.body.page;
     var pageSize = 10;
     var offset = page * pageSize;
-
     db.task(function (t) {
         return this.batch([
             this.one('select count(*) from proveedores as count'),
             this.manyOrNone('select * from proveedores order by nombre limit $1 offset $2',[ pageSize, offset ])
         ]);
-
     }).then(function( data ){
         res.render('partials/supplier-list', {
             status : "Ok",
@@ -341,6 +354,31 @@ router.post('/supplier/list/',function(req, res ){
     }).catch(function (error) {
         console.log(error);
         res.render('partials/supplier-list', {
+            status: "Error"
+        });
+    });
+});
+
+// Listar usuarios
+router.post('/user/list/', function(req, res){
+    var page = req.body.page;
+    var pageSize = 10;
+    var offset = page * pageSize;
+    db.task(function(t){
+        return this.batch([
+            this.one('select count(*) from usuarios as count'),
+            this.manyOrNone('select * from usuarios order by usuario limit $1 offset $2', [pageSize, offset])
+        ]);
+    }).then(function( data ){
+        res.render('partials/user-list', {
+            status: "Ok",
+            users: data[1],
+            pageNumber: page,
+            numberOfPages: parseInt((+data[0].count + pageSize -1) / pageSize )
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.render('partials/user-list', {
             status: "Error"
         });
     });

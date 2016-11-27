@@ -68,6 +68,19 @@ $('#genericModal').on('show.bs.modal', function (event) {
                 })
             });
             break;
+            // Editar articulos
+        case "edit_user":
+            modal.find('.modal-title').text('Editar usuario');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/user/list/',{ page: 0 }, function(){
+                $(this).find('.list-group-item').click(function(){
+                    // alert("Funciona, item: "+ $(this).data('item_id'));
+                    $("#modal_content").load('/user/edit-user/',{ id: $(this).data('user_id') }, function () {
+                        //update item submit event
+                    });
+                })
+            });
+            break;
             //stores
         case "new_store":
             modal.find('.modal-title').text('Registrar sucursal');
