@@ -63,7 +63,15 @@ $('#genericModal').on('show.bs.modal', function (event) {
                 $(this).find('.list-group-item').click(function(){
                    // alert("Funciona, item: "+ $(this).data('item_id'));
                     $("#modal_content").load('/item/edit-item/',{ id: $(this).data('item_id') }, function () {
-                        //update item submit event
+                        $('#itemForm').submit(function (event) {
+                            $.post('/item/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
                     });
                 })
             });

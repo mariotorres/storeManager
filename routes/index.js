@@ -497,6 +497,37 @@ router.post('/supplier/register', function(req, res){
 });
 
 /*
+ * Actualización de items
+ */
+router.post('/item/update', function(req, res){
+    db.one('update articulos set articulo=$2, descripcion=$3, marca=$4, modelo=$5, talla=$6, notas=$7, ' +
+        'precio=$8, codigo_barras=$9, url_imagen=$10' +
+        'where id = $1 returning id, articulo ',[
+        req.body.id,
+        req.body.articulo,
+        req.body.descripcion,
+        req.body.marca,
+        req.body.modelo,
+        req.body.talla,
+        req.body.notas,
+        req.body.precio,
+        req.body.codigo_barras,
+        req.body.url_imagen
+    ]).then(function (data) {
+        res.json({
+            status :'Ok',
+            message : 'Los datos del articulo "'+ data.articulo +'" han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al actualizar los datos del usuario'
+        });
+    });
+});
+
+/*
  * Actualización de usuario
  */
 router.post('/user/update', function(req, res){
