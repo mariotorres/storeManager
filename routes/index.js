@@ -501,7 +501,7 @@ router.post('/supplier/register', function(req, res){
  */
 router.post('/item/update', function(req, res){
     db.one('update articulos set articulo=$2, descripcion=$3, marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-        'precio=$8, codigo_barras=$9, url_imagen=$10' +
+        'precio=$8, codigo_barras=$9, url_imagen=$10 ' +
         'where id=$1 returning id, articulo ',[
         req.body.id,
         req.body.articulo,
@@ -510,8 +510,8 @@ router.post('/item/update', function(req, res){
         req.body.modelo,
         req.body.talla,
         req.body.notas,
-        req.body.precio,
-        req.body.codigo_barras,
+        numericCol(req.body.precio),
+        numericCol(req.body.codigo_barras),
         req.body.url_imagen
     ]).then(function (data) {
         res.json({
@@ -522,7 +522,7 @@ router.post('/item/update', function(req, res){
         console.log(error);
         res.json({
             status : 'Error',
-            message: 'Ocurrió un error al actualizar los datos del usuario'
+            message: 'Ocurrió un error al actualizar los datos del artículo'
         });
     });
 });
