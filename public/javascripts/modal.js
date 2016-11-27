@@ -5,7 +5,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
 
     switch (button.data('action')) {
         case "new_user":
-            modal.find('.modal-title').text('Registrar proveedor');
+            modal.find('.modal-title').text('Registrar usuario');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/user/new', { user_id: button.data('user_id')  }, function(){
 
