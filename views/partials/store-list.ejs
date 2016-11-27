@@ -1,8 +1,8 @@
 <div class="list-group">
-    <% for ( var i =0; i < items.length ; i ++ ){ %>
-    <a href="#" class="list-group-item" data-item_id="<%= items[i].id %>">
-        <h4 class="list-group-item-heading"> <%= items[i].articulo %></h4>
-        <p class="list-group-item-text"><%= items[i].descripcion %></p>
+    <% for ( var i =0; i < stores.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-item_id="<%= stores[i].id %>">
+        <h4 class="list-group-item-heading"> <%= stores[i].nombre %></h4>
+        <p class="list-group-item-text"><%= stores[i].descripcion %></p>
     </a>
     <%}%>
 </div>

@@ -240,7 +240,7 @@ router.get('/store/list/:page', function (req, res) {
     }).then(function (data) {
         res.render('partials/store-list',{
             status : 'Ok',
-            items: data[1],
+            stores: data[1],
             pageNumber : req.params.page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
