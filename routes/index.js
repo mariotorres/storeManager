@@ -502,7 +502,7 @@ router.post('/supplier/register', function(req, res){
 router.post('/item/update', function(req, res){
     db.one('update articulos set articulo=$2, descripcion=$3, marca=$4, modelo=$5, talla=$6, notas=$7, ' +
         'precio=$8, codigo_barras=$9, url_imagen=$10' +
-        'where id = $1 returning id, articulo ',[
+        'where id=$1 returning id, articulo ',[
         req.body.id,
         req.body.articulo,
         req.body.descripcion,
