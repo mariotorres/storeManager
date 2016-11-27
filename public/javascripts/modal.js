@@ -113,7 +113,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "edit_supplier":
             modal.find('.modal-title').text('Editar proveedor');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/supplier/list', { page : 0 } , function(){
+            modal.find('#modal_content').load('/supplier/list/', { page : 0 } , function(){
                 // list events
             });
             break;

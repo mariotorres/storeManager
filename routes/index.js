@@ -214,7 +214,7 @@ router.post('/item/list/', isAuthenticated, function (req, res) {
         res.render('partials/item-list',{
             status : 'Ok',
             items: data[1],
-            pageNumber : req.params.page,
+            pageNumber : req.body.page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
@@ -241,7 +241,7 @@ router.post('/store/list/', isAuthenticated, function (req, res) {
         res.render('partials/store-list',{
             status : 'Ok',
             stores: data[1],
-            pageNumber : req.params.page,
+            pageNumber : req.body.page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
@@ -302,11 +302,24 @@ router.post('/supplier/new',function(req, res ){
 });
 
 
-router.post('/supplier/list',function(req, res ){
-    db.manyOrNone('select * from proveedores').then(function( suppliers ){
+router.post('/supplier/list/',function(req, res ){
+
+    var page = req.body.page;
+    var pageSize = 10;
+    var offset = page * pageSize;
+
+    db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from proveedores as count'),
+            this.manyOrNone('select * from proveedores order by nombre limit $1 offset $2',[ pageSize, offset ])
+        ]);
+
+    }).then(function( data ){
         res.render('partials/supplier-list', {
             status : "Ok",
-            suppliers: suppliers
+            suppliers: data[1],
+            pageNumber : page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 ) / pageSize )
         });
     }).catch(function (error) {
         console.log(error);
