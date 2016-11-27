@@ -264,7 +264,7 @@ router.post('/store/edit-store/', function(req, res){
     }).then(function(data){
         res.render('partials/edit-store', {
             status:'Ok',
-            tiendas: data[0]
+            store: data[0]
         });
     }).catch(function(error){
         console.log(error);
