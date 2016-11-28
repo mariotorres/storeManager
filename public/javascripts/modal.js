@@ -149,7 +149,7 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/item/list',{ page: page},function(){
                 $(this).find('.list-group-item').click(function(){
                     if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).data('item_id'))){
-                        $.post('/carrito/new', $(this).data('item_id')).done(function (data) {
+                        $.post('/carrito/new', {item_id:$(this).data('item_id')}).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');

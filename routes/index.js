@@ -188,6 +188,7 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 // Agregar id de proveedor
 router.post('/carrito/new', isAuthenticated, function(req, res){
     var today = new Date();
+    // Agregar a carrito
     db.one('insert into carrito(fecha, id_articulo, id_usuario) ' +
         'values($1, $2, $3) returning id_articulo',[
         today,
@@ -205,6 +206,15 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             message: 'Ocurrió un error al registrar el artículo'
         });
     });
+    // Eliminar de inventario
+    /*db.result('delete from articulos where id=$1',
+        req.body.item_id
+    ).then(function(result){
+        console.log(result.rowCount);
+    }).catch(function(error){
+        console.log(error);
+    })*/
+    // Agregar a saldo deudor de proveedor.
 })
 
 router.post('/item/new', function(req,res ){

@@ -40,10 +40,11 @@
             <div class="list-group">
                 <% for ( var i =0; i< items.length; i++){%>
                 <a href="#" class="list-group-item">
-                  <h4 class="list-group-item-heading"><%=items[i].articulo%></h4>
-                  <p class="list-group-item-text"><strong>Descripción: </strong><%=items[i].descripcion%></p>
-                  <p class="list-group-item-text"><strong>Modelo: </strong><%=items[i].modelo%> | <strong>Marca: </strong><%=items[i].marca%> | <strong>Talla</strong><%=items[i].talla%></p>
-                  <p class="list-group-item-text"><strong>Precio</strong><%=items[i].precio%></p>
+                  <h4 class="list-group-item-heading"><strong>ID:</strong><%=items[i].id%></h4>
+                    <p class="list-group-item-text"><strong>Articulo: </strong><%=items[i].articulo%></p>
+                    <p class="list-group-item-text"><strong>Descripción: </strong><%=items[i].descripcion%></p>
+                    <p class="list-group-item-text"><strong>Modelo: </strong><%=items[i].modelo%> | <strong>Marca: </strong><%=items[i].marca%> | <strong>Talla</strong><%=items[i].talla%></p>
+                    <p class="list-group-item-text"><strong>Precio</strong><%=items[i].precio%></p>
                 </a>
                 <%}%>
             </div>
