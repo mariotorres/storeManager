@@ -1,8 +1,4 @@
-
-$('#genericModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var modal = $(this);
-
+function modalEvents(button, modal, page ) {
     switch (button.data('action')) {
         case "new_user":
             modal.find('.modal-title').text('Registrar usuario');
@@ -59,9 +55,9 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "edit_item":
             modal.find('.modal-title').text('Editar artículos');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/item/list/',{ page: 0 }, function(){
+            modal.find('#modal_content').load('/item/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
-                   // alert("Funciona, item: "+ $(this).data('item_id'));
+                    // alert("Funciona, item: "+ $(this).data('item_id'));
                     $("#modal_content").load('/item/edit-item/',{ id: $(this).data('item_id') }, function () {
                         $('#itemForm').submit(function (event) {
                             $.post('/item/update', $(this).serialize()).done(function (data) {
@@ -73,14 +69,17 @@ $('#genericModal').on('show.bs.modal', function (event) {
                             event.preventDefault();
                         });
                     });
-                })
+                });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
+                });
             });
             break;
-            // Editar articulos
+        // Editar articulos
         case "edit_user":
             modal.find('.modal-title').text('Editar usuario');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/user/list/',{ page: 0 }, function(){
+            modal.find('#modal_content').load('/user/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
                     // alert("Funciona, item: "+ $(this).data('item_id'));
                     $("#modal_content").load('/user/edit-user/',{ id: $(this).data('user_id') }, function () {
@@ -94,10 +93,13 @@ $('#genericModal').on('show.bs.modal', function (event) {
                             event.preventDefault();
                         });
                     });
-                })
+                });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
+                });
             });
             break;
-            //stores
+        //stores
         case "new_store":
             modal.find('.modal-title').text('Registrar sucursal');
             modal.find('#modal_content').html("");
@@ -116,7 +118,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
         case "edit_store":
             modal.find('.modal-title').text('Editar sucursal');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/store/list/',{ page: 0 }, function(){
+            modal.find('#modal_content').load('/store/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/store/edit-store/', {id: $(this).data('store_id')}, function () {
                         $('#storeForm').submit(function (event) {
@@ -130,27 +132,30 @@ $('#genericModal').on('show.bs.modal', function (event) {
                         });
                     });
                 });
-        });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
+                });
+            });
             break;
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/supplier/new', { /* post body data */ }, function(){
-              $('#supplierForm').submit(function(event){
-                $.post('/supplier/register', $(this).serialize()).done(function (data){
-                  alert(data.message);
-                  if(data.status == 'Ok'){
-                    modal.modal('hide');
-                  }
+                $('#supplierForm').submit(function(event){
+                    $.post('/supplier/register', $(this).serialize()).done(function (data){
+                        alert(data.message);
+                        if(data.status == 'Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    event.preventDefault();
                 });
-                event.preventDefault();
-              });
             });
             break;
         case "edit_supplier":
             modal.find('.modal-title').text('Editar proveedor');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/supplier/list/', { page : 0 } , function(){
+            modal.find('#modal_content').load('/supplier/list/', { page : page } , function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load("/supplier/edit-supplier/", {id: $(this).data('supplier_id')}, function(){
                         $('#supplierForm').submit(function (event) {
@@ -162,10 +167,21 @@ $('#genericModal').on('show.bs.modal', function (event) {
                             });
                             event.preventDefault();
                         });
-                    })
+                    });
+                });
+
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
                 });
             });
             break;
     }
+}
+
+$('#genericModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var modal = $(this);
+    var page = 0;
+    modalEvents(button, modal, page);
 });
 
