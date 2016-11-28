@@ -143,6 +143,23 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "new_sale":
+            modal.find('.modal-title').text('Registrar venta');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/item/list',{ page: page},function(){
+                $(this).find('.list-group-item').click(function(){
+                    if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).data('item_id'))){
+                        $.post('/carrito/new', $(this).data('item_id')).done(function (data) {
+                            alert(data.message);
+                            if(data.status=='Ok'){
+                                modal.modal('hide');
+                            }
+                        });
+                        event.preventDefault();
+                    }
+                });
+            });
+            break;
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");

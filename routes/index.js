@@ -184,6 +184,28 @@ router.get('/carrito', isAuthenticated, function (req, res) {
     });
 });
 
+// Insertar prenda en carrito
+// Agregar id de proveedor
+router.post('/carrito/new', isAuthenticated, function(req, res){
+    var today = new Date();
+    db.one('insert into carrito(fecha, id_articulo, id_usuario) ' +
+        'values($1, $2, $3) returning id_articulo',[
+        today,
+        numericCol(req.body.item_id),
+        numericCol(1) // ARREGLAR ESTO:::: ID DEL USUARIO
+    ]).then(function(data){
+        res.json({
+            status:'Ok',
+            message: 'La prenda "' + data.id_articulo + '" ha sido registrada en el carrito'
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar el artículo'
+        });
+    });
+})
 
 router.post('/item/new', function(req,res ){
     db.task(function (t) {
