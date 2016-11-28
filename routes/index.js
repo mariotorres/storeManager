@@ -495,6 +495,38 @@ router.post('/supplier/register', function(req, res){
     });
   });
 });
+/*
+ * Actualizacion de proveedores
+ */
+router.post('/supplier/update', function(req, res){
+    db.one('update proveedores set nombre=$2, razon_social=$3, rfc=$4, direccion_calle=$5,'+
+        'direccion_numero_int=$6, direccion_numero_ext=$7, direccion_colonia=$8, direccion_localidad=$9,' +
+        'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12 where id=$1 returning id, nombre ', [
+        req.body.id,
+        req.body.nombre,
+        req.body.razon_social,
+        req.body.rfc,
+        req.body.direccion_calle,
+        req.body.direccion_numero_int,
+        req.body.direccion_numero_ext,
+        req.body.direccion_colonia,
+        req.body.direccion_localidad,
+        req.body.direccion_municipio,
+        req.body.direccion_ciudad,
+        req.body.direccion_pais
+    ]).then(function(data){
+        res.json({
+            status: 'Ok',
+            message: '¡El proveedor "' + data.nombre + '" ha sido actualizado!'
+        });
+    }).catch(function (error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registar el usuario'
+        });
+    });
+});
 
 /*
  * Actualización de tiendas

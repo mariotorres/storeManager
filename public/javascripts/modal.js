@@ -128,7 +128,7 @@ $('#genericModal').on('show.bs.modal', function (event) {
                             });
                             event.preventDefault();
                         });
-                    })
+                    });
                 });
         });
             break;
@@ -153,7 +153,15 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('#modal_content').load('/supplier/list/', { page : 0 } , function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load("/supplier/edit-supplier/", {id: $(this).data('supplier_id')}, function(){
-
+                        $('#supplierForm').submit(function (event) {
+                            $.post('/supplier/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
                     })
                 });
             });
