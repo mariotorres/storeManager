@@ -43,7 +43,8 @@ create table proveedores (
     direccion_localidad text,
     direccion_municipio text,
     direccion_ciudad text,
-    direccion_pais text
+    direccion_pais text,
+    saldo_deudor money
 );
 
 /* Tiendas */
@@ -74,6 +75,7 @@ create table articulos (
     talla text,
     notas text,
     precio numeric,
+    costo numeric,
     codigo_barras numeric,
     url_imagen text
 );
