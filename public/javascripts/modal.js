@@ -47,7 +47,7 @@ function modalEvents(button, modal, page ) {
                         for(var i = 0; i < n_articles; i++)
                         {
                             $.post('/item/register', $(this).serialize()).done(function (data) {
-                                if(i == 0)alert(data.message);
+                                if(i == 0) alert(data.message);
                                 if (data.status == 'Ok') {
                                     modal.modal('hide');
                                 }
