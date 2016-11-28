@@ -497,6 +497,36 @@ router.post('/supplier/register', function(req, res){
 });
 
 /*
+ * Actualización de tiendas
+ */
+router.post('/store/update', function(req, res){
+    db.one('update tiendas set nombre=$2, direccion_calle=$3, direccion_numero_int=$4, direccion_numero_ext=$5, direccion_colonia=$6, direccion_localidad=$7, ' +
+        'direccion_municipio=$8, direccion_ciudad=$9, direccion_pais=$10 ' +
+        'where id=$1 returning id, nombre ',[
+        req.body.id,
+        req.body.nombre,
+        req.body.direccion_calle,
+        req.body.direccion_numero_int,
+        req.body.direccion_numero_ext,
+        req.body.direccion_colonia,
+        req.body.direccion_localidad,
+        req.body.direccion_municipio,
+        req.body.direccion_ciudad,
+        req.body.direccion_pais
+    ]).then(function (data) {
+        res.json({
+            status :'Ok',
+            message : 'Los datos de la tienda "'+ data.nombre +'" han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al actualizar los datos del artículo'
+        });
+    });
+});
+/*
  * Actualización de items
  */
 router.post('/item/update', function(req, res){

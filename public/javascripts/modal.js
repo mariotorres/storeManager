@@ -119,7 +119,15 @@ $('#genericModal').on('show.bs.modal', function (event) {
             modal.find('#modal_content').load('/store/list/',{ page: 0 }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/store/edit-store/', {id: $(this).data('store_id')}, function () {
-                        //update item submit event
+                        $('#storeForm').submit(function (event) {
+                            $.post('/store/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
                     })
                 });
         });
