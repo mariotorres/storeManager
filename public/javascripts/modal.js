@@ -41,14 +41,20 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar artículo');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/new', {}, function(){
-                $('#itemForm').submit(function(event){
-                    $.post('/item/register', $(this).serialize()).done(function (data){
-                        alert(data.message);
-                        if(data.status == 'Ok'){
-                            modal.modal('hide');
+                $('#itemForm').submit(function(event) {
+                    var n_articles = $('input[id=nArts]').val();
+                    if (confirm("¿Está seguro que quiere registrar " + n_articles + " artículos?")){
+                        for(var i = 0; i < n_articles; i++)
+                        {
+                            $.post('/item/register', $(this).serialize()).done(function (data) {
+                                if(i == 0)alert(data.message);
+                                if (data.status == 'Ok') {
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
                         }
-                    });
-                    event.preventDefault();
+                }
                 })
             });
             break;
