@@ -77,7 +77,8 @@ create table articulos (
     precio numeric,
     costo numeric,
     codigo_barras numeric,
-    url_imagen text
+    url_imagen text,
+    n_existencias numeric
 );
 
 /* Carrito */
