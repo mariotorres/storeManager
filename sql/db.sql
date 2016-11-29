@@ -44,7 +44,7 @@ create table proveedores (
     direccion_municipio text,
     direccion_ciudad text,
     direccion_pais text,
-    saldo_deudor money
+    saldo money
 );
 
 /* Tiendas */

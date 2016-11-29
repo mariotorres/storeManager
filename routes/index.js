@@ -238,8 +238,8 @@ router.post('/item/list/', isAuthenticated, function (req, res) {
 
     db.task(function (t) {
         return this.batch([
-            this.one('select count(*) from articulos as count'),
-            this.manyOrNone('select * from articulos order by articulo limit $1 offset $2',[ pageSize, offset ])
+            this.one('select count(*) from articulos as count where n_existencias > 0'),
+            this.manyOrNone('select * from articulos where n_existencias > 0 order by articulo limit $1 offset $2',[ pageSize, offset ])
         ]);
 
     }).then(function (data) {
@@ -444,8 +444,8 @@ router.post('/user/profile', function(req,res){
 router.post('/item/register', function(req, res){
 
     console.log(req.body);
-    db.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, marca, modelo, talla, notas, precio, codigo_barras, url_imagen) ' +
-        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id, articulo',[
+    db.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias) ' +
+        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, articulo, n_existencias',[
         numericCol(req.body.id_proveedor),
         numericCol(req.body.id_tienda),
         req.body.articulo,
@@ -455,13 +455,22 @@ router.post('/item/register', function(req, res){
         req.body.talla,
         req.body.notas,
         numericCol(req.body.precio),
+        numericCol(req.body.costo),
         numericCol(req.body.codigo_barras),
-        req.body.url_imagen
-    ]).then(function(data){
-        res.json({
-            status:'Ok',
-            message: 'La prenda "' + data.articulo + '" ha sido registrada'
-        });
+        req.body.url_imagen,
+        numericCol(req.body.n_arts)
+    ]).then(function(data) {
+        if (data.n_existencias == 1) {
+            res.json({
+                status: 'Ok',
+                message: 'Se ha registrado ' + data.n_existencias + ' existencia  de la prenda ' + data.articulo
+            });
+        }else{
+            res.json({
+                status: 'Ok',
+                message: 'Se han registrado ' + data.n_existencias + ' existencias  de la prenda ' + data.articulo
+            });
+        }
     }).catch(function(error){
         console.log(error);
         res.json({
@@ -502,7 +511,7 @@ router.post('/store/register', function(req, res){
  * Registro de proveedores
  */
 router.post('/supplier/register', function(req, res){
-  db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id, nombre ', [
+  db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, saldo) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning id, nombre ', [
     req.body.nombre,
     req.body.razon_social,
     req.body.rfc,
@@ -513,7 +522,8 @@ router.post('/supplier/register', function(req, res){
     req.body.direccion_localidad,
     req.body.direccion_municipio,
     req.body.direccion_ciudad,
-    req.body.direccion_pais
+    req.body.direccion_pais,
+    req.body.saldo
   ]).then(function(data){
     res.json({
       status: 'Ok',
@@ -533,7 +543,7 @@ router.post('/supplier/register', function(req, res){
 router.post('/supplier/update', function(req, res){
     db.one('update proveedores set nombre=$2, razon_social=$3, rfc=$4, direccion_calle=$5,'+
         'direccion_numero_int=$6, direccion_numero_ext=$7, direccion_colonia=$8, direccion_localidad=$9,' +
-        'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12 where id=$1 returning id, nombre ', [
+        'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12, saldo=$13 where id=$1 returning id, nombre ', [
         req.body.id,
         req.body.nombre,
         req.body.razon_social,
@@ -545,7 +555,8 @@ router.post('/supplier/update', function(req, res){
         req.body.direccion_localidad,
         req.body.direccion_municipio,
         req.body.direccion_ciudad,
-        req.body.direccion_pais
+        req.body.direccion_pais,
+        req.body.saldo
     ]).then(function(data){
         res.json({
             status: 'Ok',
@@ -595,7 +606,7 @@ router.post('/store/update', function(req, res){
  */
 router.post('/item/update', function(req, res){
     db.one('update articulos set articulo=$2, descripcion=$3, marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-        'precio=$8, codigo_barras=$9, url_imagen=$10 ' +
+        'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11 ' +
         'where id=$1 returning id, articulo ',[
         req.body.id,
         req.body.articulo,
@@ -605,6 +616,7 @@ router.post('/item/update', function(req, res){
         req.body.talla,
         req.body.notas,
         numericCol(req.body.precio),
+        numericCol(req.body.costo),
         numericCol(req.body.codigo_barras),
         req.body.url_imagen
     ]).then(function (data) {

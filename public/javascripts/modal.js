@@ -44,16 +44,13 @@ function modalEvents(button, modal, page ) {
                 $('#itemForm').submit(function(event) {
                     var n_articles = $('input[id=nArts]').val();
                     if (confirm("¿Está seguro que quiere registrar " + n_articles + " artículos?")){
-                        for(var i = 0; i < n_articles; i++)
-                        {
                             $.post('/item/register', $(this).serialize()).done(function (data) {
-                                if(i == 0) alert(data.message);
+                                alert(data.message);
                                 if (data.status == 'Ok') {
                                     modal.modal('hide');
                                 }
                             });
                             event.preventDefault();
-                        }
                 }
                 })
             });

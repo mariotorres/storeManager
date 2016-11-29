@@ -67,6 +67,10 @@
         <label>Precio unitario</label>
         <input type="text" name="precio" value="<%= item.precio %>" class="form-control">
     </p>
+    <p>
+        <label>Costo unitario</label>
+        <input type="text" name="precio" value="<%= item.costo %>" class="form-control">
+    </p>
     <!--codigo_barras-->
     <!--url_imagen-->
     <p>
@@ -76,6 +80,10 @@
     <p>
         <label>Código de barras</label>
         <input type="number" class="form-control" name="codigo_barras">
+    </p>
+    <p>
+        <label>Número de existencias</label>
+        <input type="number" class="form-control" value="<%= item.n_existencias%>" name="n_existencias" readonly>
     </p>
     <p>
         <button type="submit" class="btn btn-primary">Actualizar</button>
