@@ -1,0 +1,33 @@
+
+<p>
+    <label>Vendedor</label>
+    <select id="vselect" name = "id_vendedor" class="form-control">
+        <%
+        if (users.length > 0 ){
+        for (var i =0; i < users.length; i++){
+        %>
+        <option id="user" value="<%= users[i].id %>"> <%= users[i].usuario %> </option>
+        <%
+        }
+        }else {
+        %>
+        <option value="">Ninguna</option>
+        <% }%>
+    </select>
+</p>
+<%
+if (items.length > 0){%>
+<div class="list-group">
+    <% for ( var i =0; i < items.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-item_id="<%= items[i].id %>">
+        <h4 class="list-group-item-heading"> <%= items[i].articulo %></h4>
+        <p class="list-group-item-text"><%= items[i].descripcion %></p>
+    </a>
+    <%}%>
+</div>
+
+<% include pagination.ejs %>
+
+<%}else {%>
+<div class="alert alert-info" role="alert">No hay articulos registrados</div>
+<%}%>

@@ -175,10 +175,13 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 });
 
 router.get('/carrito', isAuthenticated, function (req, res) {
-    db.manyOrNone('select * from carrito, articulos where carrito.id_articulo = articulos.id and  carrito.id_usuario = $1',[
-        req.user.id
-    ]).then(function (data) {
-        res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data });
+    db.task(function (t) {
+        return this.batch([
+        this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and  carrito.id_usuario = usuarios.id'),
+        this.one('select * from usuarios where id = $1', req.user.id)
+    ])
+    }).then(function (data) {
+        res.render('carrito',{title : "Venta en proceso", user:req.user.id, section: 'carrito', items: data[0], users:data[1]});
     }).catch(function (error) {
         console.log(error);
     });
@@ -193,7 +196,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
         'values($1, $2, $3) returning id_articulo',[
         today,
         numericCol(req.body.item_id),
-        numericCol(1) // ARREGLAR ESTO:::: ID DEL USUARIO
+        numericCol(req.body.user_id)
     ]).then(function(data){
         res.json({
             status:'Ok',
@@ -228,6 +231,34 @@ router.post('/item/new', function(req,res ){
         res.render('partials/new-item', {tiendas: data[0], proveedores: data[1]});
     }).catch(function(error){
       console.log(error);
+    });
+});
+
+// Display de objetos para venta
+router.post('/item/list/sale', isAuthenticated, function (req, res) {
+    var pageSize = 10;
+    var offset = req.body.page * pageSize;
+
+    db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from articulos as count where n_existencias > 0'),
+            this.manyOrNone('select * from articulos where n_existencias > 0 order by articulo limit $1 offset $2',[ pageSize, offset ]),
+            this.manyOrNone('select * from usuarios where permiso_empleados = true')
+        ]);
+
+    }).then(function (data) {
+        res.render('partials/sale-item-list',{
+            status : 'Ok',
+            items: data[1],
+            users: data[2],
+            pageNumber : req.body.page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
+        });
+    }).catch(function (error) {
+        res.json({
+            status: 'Error',
+            data : error
+        });
     });
 });
 
