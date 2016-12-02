@@ -181,7 +181,7 @@ router.get('/carrito', isAuthenticated, function (req, res) {
         this.one('select * from usuarios where id = $1', req.user.id)
     ])
     }).then(function (data) {
-        res.render('carrito',{title : "Venta en proceso", user:req.user.id, section: 'carrito', items: data[0], users:data[1]});
+        res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1]});
     }).catch(function (error) {
         console.log(error);
     });
