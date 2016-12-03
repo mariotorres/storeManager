@@ -145,7 +145,6 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/list/sale',{ page: page},function(){
                 var select = $('select[id=vselect]').val();
-                alert(select);
                 //alert("Usuario: "+ select.options[select.selectedIndex].value);
                 $(this).find('.list-group-item').click(function(){
                     if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).data('item_id'))){
