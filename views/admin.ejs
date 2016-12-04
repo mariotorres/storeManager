@@ -32,8 +32,8 @@
     <ul class="nav nav-pills" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Reportes</strong></a></li>
         <li role="presentation"><a href="#sucursales" aria-controls="sucursales" role="tab" data-toggle="tab"><strong>Sucursales</strong></a></li>
-        <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab"><strong>Nómina</strong></a></li>
         <li role="presentation"><a href="#usuarios" aria-controls="usuarios" role="tab" data-toggle="tab"><strong>Usuarios</strong></a></li>
+        <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab"><strong>Nómina</strong></a></li>
     </ul>
 
     <div class="panel panel-default">
@@ -42,12 +42,11 @@
             <!-- Tab panes -->
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="home">
-                    <h3> Revisar operación global de la empresa </h3>
+                    <!--<h3> Revisar operación global de la empresa </h3>-->
                     <!--<h3>Historial de ventas devoluciones y transferencias de mercancía</h3>-->
 
                     <div class="list-group">
-                        <button type="button" class="list-group-item">Ventas</button>
-                        <button type="button" class="list-group-item">Devoluciones</button>
+                        <button type="button" class="list-group-item"><i class="fa fa-file-text"></i> <strong>Generar reportes</strong></button>
                     </div>
                 </div>
 
@@ -55,17 +54,17 @@
 
                 <div role="tabpanel" class="tab-pane fade" id="sucursales">
                     <div class="list-group">
-                        <button type="button" data-action="new_store" data-toggle="modal" data-target="#genericModal" class="list-group-item">Nueva sucursal</button>
-                        <button type="button" data-action="edit_store" data-toggle="modal" data-target="#genericModal"  class="list-group-item">Editar sucursales</button>
+                        <button type="button" data-action="new_store" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-plus-square"></i> <strong>Añadir sucursal<strong></strong></strong></button>
+                        <button type="button" data-action="edit_store" data-toggle="modal" data-target="#genericModal"  class="list-group-item"><i class="fa fa-edit"></i> <strong>Editar sucursales</strong></button>
                     </div>
                 </div>
 
 
                 <div role="tabpanel" class="tab-pane fade" id="usuarios">
-                    <h3>Permite añadir, actualizar y eliminar usuarios</h3>
+                    <!--<h3>Permite añadir, actualizar y eliminar usuarios</h3>-->
                     <div class="list-group">
-                        <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_user" class="list-group-item">Nuevo usuario </button>
-                        <button type="button" data-action="edit_user" data-toggle="modal" data-target="#genericModal"  class="list-group-item">Editar usuarios</button>
+                        <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_user" class="list-group-item"><i class="fa fa-user-plus"></i> <strong>Crear usuario </strong></button>
+                        <button type="button" data-action="edit_user" data-toggle="modal" data-target="#genericModal"  class="list-group-item"><i class="fa fa-users"></i> <strong>Editar usuarios</strong></button>
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="messages">
