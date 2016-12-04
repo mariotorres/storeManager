@@ -16,3 +16,8 @@ body{
     border-radius: 0px 0px 5px 5px;
     padding: 10px;
 }*/
+
+ body .panel-body {
+
+    min-height: 150px;
+}
