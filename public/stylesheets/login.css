@@ -3,7 +3,7 @@ body {
     /*-webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
     background-color: black;
     opacity: 1;
-    background-blend-mode: luminosity;
+    /*background-blend-mode: luminosity;*/
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
