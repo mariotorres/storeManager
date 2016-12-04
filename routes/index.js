@@ -218,7 +218,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
         console.log(error);
     })*/
     // Agregar a saldo deudor de proveedor.
-})
+});
 
 router.post('/item/new', function(req,res ){
     db.task(function (t) {
@@ -753,5 +753,8 @@ router.post('/user/update-password',isAuthenticated,function (req, res ) {
 
 });
 
+router.post('/reports/', function (req, res) {
+   res.render('partials/reports');
+});
 
 module.exports = router;

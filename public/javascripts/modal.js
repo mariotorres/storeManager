@@ -197,6 +197,14 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+
+        case "reports":
+            modal.find('.modal-title').text('Editar proveedor');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/reports',{},function(){
+
+            });
+            break;
     }
 }
 
