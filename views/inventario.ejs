@@ -29,25 +29,30 @@
 <div class="container">
 
     <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
+    <ul class="nav nav-pills" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Artículos</strong> </a></li>
         <li role="presentation"><a href="#articulos" aria-controls="articulos" role="tab" data-toggle="tab"><strong>Proveedores</strong> </a></li>
     </ul>
 
-    <!-- Tab panes -->
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane fade in active" id="home">
-            <h3>Permite añadir, actualizar y eliminar productos del inventario</h3>
-            <div class="list-group">
-                <button type="button" data-action="new_item" data-toggle="modal" data-target="#genericModal" class="list-group-item">Nuevo producto</button>
-                <button type="button" data-action="edit_item" data-toggle="modal" data-target="#genericModal" class="list-group-item">Editar productos</button>
-            </div>
-        </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
 
-        <div role="tabpanel" class="tab-pane fade" id="articulos">
-          <div class="list-group">
-                <button type="button" data-action="new_supplier" data-toggle="modal" data-target="#genericModal" class="list-group-item">Nuevo proveedor</button>
-                <button type="button" data-action="edit_supplier" data-toggle="modal" data-target="#genericModal" class="list-group-item">Editar proveedor</button>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="home">
+                    <h3>Permite añadir, actualizar y eliminar productos del inventario</h3>
+                    <div class="list-group">
+                        <button type="button" data-action="new_item" data-toggle="modal" data-target="#genericModal" class="list-group-item">Nuevo producto</button>
+                        <button type="button" data-action="edit_item" data-toggle="modal" data-target="#genericModal" class="list-group-item">Editar productos</button>
+                    </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="articulos">
+                    <div class="list-group">
+                        <button type="button" data-action="new_supplier" data-toggle="modal" data-target="#genericModal" class="list-group-item">Nuevo proveedor</button>
+                        <button type="button" data-action="edit_supplier" data-toggle="modal" data-target="#genericModal" class="list-group-item">Editar proveedor</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

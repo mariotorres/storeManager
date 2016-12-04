@@ -58,24 +58,28 @@
 <div class="container">
 
     <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
+    <ul class="nav nav-pills" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Visualización 1</strong> </a></li>
         <li role="presentation"><a href="#tablero2" aria-controls="tablero2" role="tab" data-toggle="tab"><strong>Visualización 2 </strong></a></li>
         <li role="presentation"><a href="#tablero3" aria-controls="tablero3" role="tab" data-toggle="tab"><strong>Visualización 3 </strong></a></li>
     </ul>
 
-    <!-- Tab panes -->
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane fade in active" id="home" style="overflow: auto">
-            <svg id="barchart" width="1024" height="500"></svg>
-        </div>
-        <div role="tabpanel" class="tab-pane fade" id="tablero2" style="overflow: auto">
-            <canvas id="piechart" width="1024" height="500"></canvas>
-        </div>
-        <div role="tabpanel" class="tab-pane fade" id="tablero3" style="overflow: auto">
-            <svg id="linechart" width="1024" height="500"></svg>
-        </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
 
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="home" style="overflow: auto">
+                    <svg id="barchart" width="1024" height="500"></svg>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="tablero2" style="overflow: auto">
+                    <canvas id="piechart" width="1024" height="500"></canvas>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="tablero3" style="overflow: auto">
+                    <svg id="linechart" width="1024" height="500"></svg>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

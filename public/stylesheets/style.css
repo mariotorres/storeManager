@@ -1,8 +1,13 @@
 body{
     background-color: #f6f6f6;
-    padding-top: 80px;
+    padding-top: 70px;
 }
 
+.nav-pills{
+    padding-bottom: 10px;
+}
+
+/*
 .tab-pane{
     background-color: white;
     border-left: 1px solid #ddd;
@@ -10,4 +15,4 @@ body{
     border-bottom: 1px solid #ddd;
     border-radius: 0px 0px 5px 5px;
     padding: 10px;
-}
+}*/
