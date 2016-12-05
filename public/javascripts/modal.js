@@ -247,6 +247,14 @@ function modalEvents(button, modal, page ) {
 
             });
             break;
+        case "new_brand":
+            modal.find('.modal-title').text('Registrar marca');
+            modal.find('#modal_content').html("");
+            break;
+        case "edit_brand":
+            modal.find('.modal-title').text('Editar marcas');
+            modal.find('#modal_content').html("");
+            break;
     }
 }
 

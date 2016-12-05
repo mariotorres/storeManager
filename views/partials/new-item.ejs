@@ -11,7 +11,12 @@
     </p>
     <p>
         <label>Marca</label>
-        <input type="text" class="form-control" name="marca" required>
+        <select class="form-control" name="id_marca">
+            <option value="">Ninguna</option>
+            <% for ( var i =0; i < marcas ; i++ ){%>
+            <option value="<%= marcas[i].id %>"> <%= marcas[i].nombre %></option>
+            <%}%>
+        </select>
     </p>
     <p>
         <label>Modelo</label>

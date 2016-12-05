@@ -224,11 +224,12 @@ router.post('/item/new', function(req,res ){
     db.task(function (t) {
         return this.batch([
             this.manyOrNone('select * from tiendas'),
+            this.manyOrNone('select * from marcas'),
             this.manyOrNone('select * from proveedores')
         ]);
 
     }).then(function (data) {
-        res.render('partials/new-item', {tiendas: data[0], proveedores: data[1]});
+        res.render('partials/new-item', {tiendas: data[0], marcas: data[1],proveedores: data[2]});
     }).catch(function(error){
       console.log(error);
     });
@@ -421,14 +422,16 @@ router.post('/item/edit-item/', isAuthenticated, function(req, res){
        return this.batch([
            this.one('select * from articulos where id = $1', [id]),
            this.manyOrNone('select * from tiendas'),
-           this.manyOrNone('select * from proveedores')
+           this.manyOrNone('select * from proveedores'),
+           this.manyOrNone('select * from marcas')
        ]);
    }).then(function(data){
        res.render('partials/edit-item', {
            status:'Ok',
            item: data[0],
            tiendas: data[1],
-           proveedores: data[2]
+           proveedores: data[2],
+           marcas: data[3]
        });
    }).catch(function(error){
        console.log(error);
@@ -526,13 +529,13 @@ router.post('/user/profile', function(req,res){
 router.post('/item/register', function(req, res){
 
     console.log(req.body);
-    db.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias) ' +
+    db.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias) ' +
         'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, articulo, n_existencias',[
         numericCol(req.body.id_proveedor),
         numericCol(req.body.id_tienda),
         req.body.articulo,
         req.body.descripcion,
-        req.body.marca,
+        req.body.id_marca,
         req.body.modelo,
         req.body.talla,
         req.body.notas,
@@ -729,13 +732,13 @@ router.post('/terminal/update', function(req, res){
  * Actualización de items
  */
 router.post('/item/update', function(req, res){
-    db.one('update articulos set articulo=$2, descripcion=$3, marca=$4, modelo=$5, talla=$6, notas=$7, ' +
+    db.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
         'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11 ' +
         'where id=$1 returning id, articulo ',[
         req.body.id,
         req.body.articulo,
         req.body.descripcion,
-        req.body.marca,
+        req.body.id_marca,
         req.body.modelo,
         req.body.talla,
         req.body.notas,
@@ -848,6 +851,10 @@ router.post('/user/update-password',isAuthenticated,function (req, res ) {
 
 router.post('/reports/', function (req, res) {
    res.render('partials/reports');
+});
+
+router.post('/item/find', function () {
+   //
 });
 
 module.exports = router;

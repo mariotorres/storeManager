@@ -62,6 +62,13 @@ create table tiendas (
     direccion_pais text
 );
 
+
+drop table if exists marcas cascade;
+create table marcas (
+id serial primary key,
+nombre text
+);
+
 /* Inventario */
 drop table if exists articulos cascade;
 create table articulos (
@@ -70,7 +77,7 @@ create table articulos (
     id_tienda integer references tiendas(id),
     articulo text,
     descripcion text,
-    marca text,
+    id_marca integer references marcas(id),
     modelo text,
     talla text,
     notas text,
@@ -80,6 +87,19 @@ create table articulos (
     url_imagen text,
     n_existencias numeric
 );
+
+
+/* terminales */
+/*
+*  Agregar campos terminales
+*/
+drop table if exists terminales cascade;
+create table terminales(
+    id serial primary key,
+nombre_facturador varchar(30)
+);
+
+
 
 /* Carrito */
 drop table if exists carrito cascade;
@@ -128,16 +148,6 @@ create table venta_articulos(
     id_venta integer references ventas(id)
 );
 
-
-/* terminales */
-/*
-*  Agregar campos terminales
-*/
-drop table if exists terminales cascade;
-create table terminales(
-    id serial primary key,
-nombre_facturador varchar(30)
-);
 
 
 /*

@@ -31,6 +31,7 @@
     <!-- Nav tabs -->
     <ul class="nav nav-pills" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Artículos</strong> </a></li>
+        <li role="presentation"><a href="#marcas" aria-controls="marcas" role="tab" data-toggle="tab"><strong>Marcas</strong> </a></li>
         <li role="presentation"><a href="#articulos" aria-controls="articulos" role="tab" data-toggle="tab"><strong>Proveedores</strong> </a></li>
     </ul>
 
@@ -53,6 +54,15 @@
                         <button type="button" data-action="edit_supplier" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-users"></i> <strong>Editar proveedor</strong></button>
                     </div>
                 </div>
+
+
+                <div role="tabpanel" class="tab-pane fade" id="marcas">
+                    <div class="list-group">
+                        <button type="button" data-action="new_brand" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-plus-square"></i> <strong>Registrar marca</strong></button>
+                        <button type="button" data-action="edit_brand" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-edit"></i> <strong>Editar marcas</strong></button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
