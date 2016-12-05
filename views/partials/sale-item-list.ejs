@@ -42,7 +42,7 @@ if (items.length > 0){%>
     <div class="form-inline">
         <div class="form-group ">
             <div class="col-lg-12">
-                <label class="radio-inline"><input type="radio" name="optradioPago">Efectivo</label>
+                <label class="radio-inline"><input type="radio" name="optradioPago" checked="">Efectivo</label>
                 <label class="radio-inline"><input type="radio" name="optradioPago">Tarjeta</label>
             </div>
         </div>
@@ -54,15 +54,22 @@ if (items.length > 0){%>
 <div class="col-lg-12">
     <div class="form-inline">
         <div class="form-group">
-            <select class="form-control" id="sel1">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
+            <select name="id_terminales" class="form-control">
+                <%
+                if (terminales.length > 0 ){
+                for (var i =0; i < terminales.length; i++){
+                %>
+                <option value="<%= terminales[i].id %>"> <%= terminales[i].nombre_facturador %> </option>
+                <%
+                }
+                }else {
+                %>
+                <option value="">Ninguno</option>
+                <% }%>
             </select>
         </div>
     </div>
 </div>
 
 
-<br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br>
