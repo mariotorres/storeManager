@@ -182,12 +182,15 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar venta');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/list/sale',{ page: page},function(){
-                var select = $('input[name=id]').data('user_id')
+                var select = $('input[name=id]').data('user_id');
                 //alert("Usuario: "+ select.options[select.selectedIndex].value);
+                var desc = $('input[name=optradioDesc]:checked').val();
+                alert(desc);
                 $(this).find('.list-group-item').click(function(){
                     if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).data('item_id'))){
                         // Selected discount
-                        $.post('/carrito/new', {item_id:$(this).data('item_id'), user_id:select}).done(function (data) {
+                        $.post('/carrito/new', {item_id:$(this).data('item_id'), user_id:select, desc:$('input[name=optradioDesc]:checked').val(),
+                            terminal_id:$(this).data('terminal_id')}).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');

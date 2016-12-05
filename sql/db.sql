@@ -86,7 +86,10 @@ drop table if exists carrito cascade;
 create table carrito (
 fecha date,
 id_articulo integer references articulos(id),
-id_usuario integer references usuarios(id)
+id_usuario integer references usuarios(id),
+id_terminal integer references terminales(id),
+descount    numeric,
+pago_efectivo boolean
 );
 
 /* Estatus ventas */
@@ -114,6 +117,7 @@ create table ventas (
     id_estatus_venta integer references estatus_ventas(id),
     notas text,
     id_terminal integer references terminales(id),
+    descount    numeric,
     pago_efectivo boolean
 );
 
