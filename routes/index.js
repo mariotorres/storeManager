@@ -220,6 +220,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
     // Agregar a saldo deudor de proveedor.
 });
 
+// New item
 router.post('/item/new', function(req,res ){
     db.task(function (t) {
         return this.batch([
@@ -343,6 +344,31 @@ router.post('/terminal/list/', isAuthenticated, function (req, res) {
     });
 });
 
+// Display de marcas
+router.post('/marca/list/', isAuthenticated, function (req, res) {
+    var pageSize = 10;
+    var offset = req.body.page * pageSize;
+
+    db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from marcas as count'),
+            this.manyOrNone('select * from marcas order by nombre limit $1 offset $2',[ pageSize, offset ])
+        ]);
+    }).then(function (data) {
+        res.render('partials/marcas-list',{
+            status : 'Ok',
+            marcas: data[1],
+            pageNumber : req.body.page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
+        });
+    }).catch(function (error) {
+        res.json({
+            status: 'Error',
+            data : error
+        });
+    });
+});
+
 // Load store data into  modal.
 router.post('/store/edit-store/', isAuthenticated, function(req, res){
     var id = req.body.id;
@@ -369,6 +395,30 @@ router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
         res.render('partials/edit-terminal', {
             status:'Ok',
             terminal: data
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status:'Error',
+            data:error
+        });
+    });
+});
+
+// Load brand data into  modal.
+router.post('/brand/edit-brand/', isAuthenticated, function(req, res){
+    var id = req.body.id;
+    //console.log(id);
+    db.task(function (t) {
+        return this.batch([
+            this.one('select * from marcas where id = $1', [id]),
+            this.manyOrNone('select * from proveedores')
+        ]);
+    }).then(function(data){
+        res.render('partials/edit-brand', {
+            status:'Ok',
+            marca: data[0],
+            proveedores: data[1]
         });
     }).catch(function(error){
         console.log(error);
@@ -759,6 +809,29 @@ router.post('/terminal/update', function(req, res){
         });
     });
 });
+
+/*
+ * Actualización de marcas
+ */
+router.post('/brand/update', function(req, res){
+    db.one('update marcas set nombre=$2, id_proveedor=$3 where id=$1 returning id, nombre ',[
+        req.body.id,
+        req.body.marca,
+        numericCol(req.body.id_proveedor)
+    ]).then(function (data) {
+        res.json({
+            status :'Ok',
+            message : 'Los datos de la marca "'+ data.nombre +'" han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al actualizar los datos de la marca'
+        });
+    });
+});
+
 
 /*
  * Actualización de items

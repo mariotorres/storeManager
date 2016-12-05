@@ -264,8 +264,26 @@ function modalEvents(button, modal, page ) {
             });
             break;
         case "edit_brand":
-            modal.find('.modal-title').text('Editar marcas');
+            modal.find('.modal-title').text('Editar marca');
             modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/marca/list/',{ page: page }, function(){
+                $(this).find('.list-group-item').click(function(){
+                    $("#modal_content").load('/brand/edit-brand/', {id: $(this).data('marca_id')}, function () {
+                        $('#brandForm').submit(function (event) {
+                            $.post('/brand/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
+                    });
+                });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
+                });
+            });
             break;
     }
 }

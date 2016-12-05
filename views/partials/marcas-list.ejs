@@ -1,0 +1,16 @@
+<%
+if (marcas.length > 0){%>
+<div class="list-group">
+    <%
+    for ( var i =0; i < marcas.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-marca_id="<%= marcas[i].id %>">
+        <h4 class="list-group-item-heading"><%= marcas[i].nombre %></h4>
+    </a>
+    <%}%>
+</div>
+
+<% include pagination.ejs %>
+
+<%}else {%>
+<div class="alert alert-info" role="alert">No hay marcas registradas</div>
+<%}%>
