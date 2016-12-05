@@ -1,0 +1,16 @@
+<%
+if (terminals.length > 0){%>
+<div class="list-group">
+    <%
+    for ( var i =0; i < terminals.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-terminal_id="<%= terminals[i].id %>">
+        <h4 class="list-group-item-heading"> <%= terminals[i].nombre_facturador %></h4>
+    </a>
+    <%}%>
+</div>
+
+<% include pagination.ejs %>
+
+<%}else {%>
+<div class="alert alert-info" role="alert">No hay terminales registradas</div>
+<%}%>

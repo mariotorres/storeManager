@@ -315,6 +315,32 @@ router.post('/store/list/', isAuthenticated, function (req, res) {
     });
 });
 
+// Display de terminales
+router.post('/terminal/list/', isAuthenticated, function (req, res) {
+    var pageSize = 10;
+    var offset = req.body.page * pageSize;
+
+    db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from terminales as count'),
+            this.manyOrNone('select * from terminales order by nombre_facturador limit $1 offset $2',[ pageSize, offset ])
+        ]);
+
+    }).then(function (data) {
+        res.render('partials/terminals-list',{
+            status : 'Ok',
+            terminals: data[1],
+            pageNumber : req.body.page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
+        });
+    }).catch(function (error) {
+        res.json({
+            status: 'Error',
+            data : error
+        });
+    });
+});
+
 // Load store data into  modal.
 router.post('/store/edit-store/', isAuthenticated, function(req, res){
     var id = req.body.id;
@@ -323,6 +349,24 @@ router.post('/store/edit-store/', isAuthenticated, function(req, res){
         res.render('partials/edit-store', {
             status:'Ok',
             store: data
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status:'Error',
+            data:error
+        });
+    });
+});
+
+// Load terminal data into  modal.
+router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
+    var id = req.body.id;
+    //console.log(id);
+    db.one('select * from terminales where id = $1', [id]).then(function(data){
+        res.render('partials/edit-terminal', {
+            status:'Ok',
+            terminal: data
         });
     }).catch(function(error){
         console.log(error);
@@ -451,6 +495,11 @@ router.post('/store/new', function (req, res) {
     res.render('partials/store');
 });
 
+
+router.post('/terminal/new', function (req, res) {
+    res.render('partials/new-terminal');
+});
+
 router.post('/user/new',function (req, res) {
     res.render('partials/new-user');
 });
@@ -533,7 +582,27 @@ router.post('/store/register', function(req, res){
         console.log(error);
         res.json({
             status: 'Error',
-            message: 'Ocurrió un error al registrar el usuario'
+            message: 'Ocurrió un error al registrar la tienda'
+        });
+    });
+});
+
+/*
+ * Registro de terminal
+ */
+router.post('/terminal/register', function(req, res){
+    db.one('insert into terminales(nombre_facturador) values($1) returning id, nombre_facturador ', [
+        req.body.nombre
+    ]).then(function(data){
+        res.json({
+            status:'Ok',
+            message: '¡La terminal "' + data.id + '" ha sido registrada ' + 'para el facturador "' + data.nombre_facturador + '"!'
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar la terminal'
         });
     });
 });
@@ -632,6 +701,28 @@ router.post('/store/update', function(req, res){
         });
     });
 });
+
+/*
+ * Actualización de terminales
+ */
+router.post('/terminal/update', function(req, res){
+    db.one('update terminales set nombre_facturador=$2 where id=$1 returning id, nombre_facturador ',[
+        req.body.id,
+        req.body.nombre
+    ]).then(function (data) {
+        res.json({
+            status :'Ok',
+            message : 'Los datos de la terminal "'+ data.id +'" han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al actualizar los datos de la terminal'
+        });
+    });
+});
+
 /*
  * Actualización de items
  */

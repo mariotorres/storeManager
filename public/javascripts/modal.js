@@ -118,6 +118,44 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        //terminals
+        case "new_terminal":
+            modal.find('.modal-title').text('Registrar terminal');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/terminal/new', { /* post body data */ }, function(){
+                $('#terminalForm').submit(function(event){
+                    $.post('/terminal/register', $(this).serialize()).done(function (data){
+                        alert(data.message);
+                        if(data.status == 'Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    event.preventDefault();
+                });
+            });
+            break;
+        case "edit_terminal":
+            modal.find('.modal-title').text('Editar terminal');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/terminal/list/',{ page: page }, function(){
+                $(this).find('.list-group-item').click(function(){
+                    $("#modal_content").load('/terminal/edit-terminal/', {id: $(this).data('terminal_id')}, function () {
+                        $('#terminalForm').submit(function (event) {
+                            $.post('/terminal/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
+                    });
+                });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
+                });
+            });
+            break;
         case "edit_store":
             modal.find('.modal-title').text('Editar sucursal');
             modal.find('#modal_content').html("");

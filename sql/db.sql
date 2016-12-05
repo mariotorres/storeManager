@@ -112,7 +112,9 @@ create table ventas (
     fecha_venta date,
     hora_venta time,
     id_estatus_venta integer references estatus_ventas(id),
-    notas text
+    notas text,
+    id_terminal integer references terminales(id),
+    pago_efectivo boolean
 );
 
 drop table if exists venta_articulos;
@@ -120,6 +122,17 @@ create table venta_articulos(
     id serial primary key,
     id_articulo integer references articulos(id),
     id_venta integer references ventas(id)
+);
+
+
+/* terminales */
+/*
+*  Agregar campos terminales
+*/
+drop table if exists terminales cascade;
+create table terminales(
+    id serial primary key,
+nombre_facturador varchar(30)
 );
 
 
