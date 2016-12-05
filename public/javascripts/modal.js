@@ -185,7 +185,7 @@ function modalEvents(button, modal, page ) {
                 var select = $('input[name=id]').data('user_id');
                 //alert("Usuario: "+ select.options[select.selectedIndex].value);
                 var desc = $('input[name=optradioDesc]:checked').val();
-                alert(desc);
+                // alert(desc);
                 $(this).find('.list-group-item').click(function(){
                     if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).data('item_id'))){
                         // Selected discount
