@@ -7,6 +7,68 @@ body{
     padding-bottom: 10px;
 }
 
+
+body.modal-open .supreme-container{
+    -webkit-filter: blur(1px);
+    -moz-filter: blur(1px);
+    -o-filter: blur(1px);
+    -ms-filter: blur(1px);
+    filter: blur(1px);
+}
+
+.btn {
+    padding: 14px 24px;
+    border: 0 none;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.btn:focus, .btn:active:focus, .btn.active:focus {
+    outline: 0 none;
+}
+
+.btn-primary {
+    background: #e91e63;
+    /*border: 2px solid #e91e63;*/
+    color: #ffffff;
+}
+
+.btn-primary:hover, .btn-primary:focus, .open > .dropdown-toggle.btn-primary {
+    background: #ad1457;
+    color: white;
+/*border: 2px solid #bdbdbd;*/
+}
+
+.btn-primary:active, .btn-primary.active {
+    background: white !important;
+    border: 2px solid #e91e63;
+    border-color: #e91e63 !important;
+    color: #e91e63 !important;
+    box-shadow: none;
+}
+
+.nav-pills> li > a  {
+    color: white;
+    background: #e91e63;
+    border: 2px solid #e91e63;
+}
+
+.nav-pills> li > a:hover  {
+    color: white;
+    background: #ad1457;
+    border: 2px solid #ad1457;
+}
+
+.nav-pills> li > a:active, .nav-pills> li > a.active, .nav-pills> li > a:focus, .nav-pills> li > a.focus, .nav-pills > li.active > a:focus, .nav-pills > li.active > a{
+    background: white !important;
+    border: 2px solid #e91e63;
+    border-color: #e91e63 !important;
+    color: #e91e63 !important;
+    box-shadow: none;
+}
+
+
 /*
 .tab-pane{
     background-color: white;
