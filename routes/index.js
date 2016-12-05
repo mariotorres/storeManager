@@ -134,7 +134,7 @@ router.get('/signout', function(req, res) {
 
 /* GET login page. */
 router.get('/', isNotAuthenticated, function(req, res, next) {
-        res.render('index', { title: '', message : req.flash('message') });
+        res.render('loginTest/index', { title: '', message : req.flash('message') });
 });
 
 router.get('/principal', isAuthenticated, function (req, res) {
