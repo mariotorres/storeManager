@@ -11,11 +11,18 @@
     </p>
     <p>
         <label>Marca</label>
-        <select class="form-control" name="id_marca">
+        <select name = "id_marca" class="form-control">
+            <%
+            if (marcas.length > 0 ){
+            for (var i =0; i < marcas.length; i++){
+            %>
+            <option value="<%= marcas[i].id %>"> <%= marcas[i].nombre %> </option>
+            <%
+            }
+            }else {
+            %>
             <option value="">Ninguna</option>
-            <% for ( var i =0; i < marcas ; i++ ){%>
-            <option value="<%= marcas[i].id %>"> <%= marcas[i].nombre %></option>
-            <%}%>
+            <% }%>
         </select>
     </p>
     <p>

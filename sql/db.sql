@@ -66,7 +66,8 @@ create table tiendas (
 drop table if exists marcas cascade;
 create table marcas (
 id serial primary key,
-nombre text
+nombre text,
+id_proveedor integer references proveedores(id)
 );
 
 /* Inventario */

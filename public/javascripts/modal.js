@@ -247,9 +247,21 @@ function modalEvents(button, modal, page ) {
 
             });
             break;
+        // brands
         case "new_brand":
             modal.find('.modal-title').text('Registrar marca');
             modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/brand/new', { /* post body data */ }, function(){
+                $('#brandForm').submit(function(event){
+                    $.post('/brand/register', $(this).serialize()).done(function (data){
+                        alert(data.message);
+                        if(data.status == 'Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    event.preventDefault();
+                });
+            });
             break;
         case "edit_brand":
             modal.find('.modal-title').text('Editar marcas');

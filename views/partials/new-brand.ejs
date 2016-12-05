@@ -1,0 +1,25 @@
+<form id="brandForm">
+    <p>
+        <label>Nombre de la marca</label>
+        <input name="nombre" class="form-control" required>
+    </p>
+    <p>
+        <label>Proveedor</label>
+        <select name="id_proveedor" class="form-control">
+            <%
+            if (proveedores.length > 0 ){
+            for (var i =0; i < proveedores.length; i++){
+            %>
+            <option value="<%= proveedores[i].id %>"> <%= proveedores[i].nombre %> </option>
+            <%
+            }
+            }else {
+            %>
+            <option value="">Ninguno</option>
+            <% }%>
+        </select>
+    </p>
+    <p>
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </p>
+</form>

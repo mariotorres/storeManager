@@ -227,9 +227,8 @@ router.post('/item/new', function(req,res ){
             this.manyOrNone('select * from marcas'),
             this.manyOrNone('select * from proveedores')
         ]);
-
     }).then(function (data) {
-        res.render('partials/new-item', {tiendas: data[0], marcas: data[1],proveedores: data[2]});
+        res.render('partials/new-item', {tiendas: data[0], marcas: data[1], proveedores: data[2]});
     }).catch(function(error){
       console.log(error);
     });
@@ -505,6 +504,18 @@ router.post('/terminal/new', function (req, res) {
     res.render('partials/new-terminal');
 });
 
+router.post('/brand/new', function (req, res) {
+    db.task(function (t) {
+        return this.batch([
+            this.manyOrNone('select * from proveedores')
+        ]);
+    }).then(function (data) {
+        res.render('partials/new-brand', {proveedores: data[0]});
+    }).catch(function(error){
+        console.log(error);
+    });
+});
+
 router.post('/user/new',function (req, res) {
     res.render('partials/new-user');
 });
@@ -602,6 +613,27 @@ router.post('/terminal/register', function(req, res){
         res.json({
             status:'Ok',
             message: '¡La terminal "' + data.id + '" ha sido registrada ' + 'para el facturador "' + data.nombre_facturador + '"!'
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar la terminal'
+        });
+    });
+});
+
+/*
+ * Registro de marca
+ */
+router.post('/brand/register', function(req, res){
+    db.one('insert into marcas(nombre, id_proveedor) values($1, $2) returning id, nombre', [
+        req.body.nombre,
+        numericCol(req.body.id_proveedor)
+    ]).then(function(data){
+        res.json({
+            status:'Ok',
+            message: '¡La marca "' + data.nombre + '" ha sido registrada!'
         });
     }).catch(function(error){
         console.log(error);
