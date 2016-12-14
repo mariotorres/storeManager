@@ -1,3 +1,5 @@
+$.fn.modal.prototype.constructor.Constructor.DEFAULTS.backdrop = 'static';
+$.fn.modal.prototype.constructor.Constructor.DEFAULTS.keyboard = false;
 function modalEvents(button, modal, page ) {
     switch (button.data('action')) {
         case "new_user":
@@ -291,7 +293,13 @@ function modalEvents(button, modal, page ) {
 $('#genericModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     var modal = $(this);
+
     var page = 0;
     modalEvents(button, modal, page);
 });
-
+/*
+$('#genericModal').modal({
+    backdrop: 'static',
+    keyboard: false
+});
+*/
