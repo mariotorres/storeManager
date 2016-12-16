@@ -192,11 +192,13 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 router.post('/carrito/new', isAuthenticated, function(req, res){
     var today = new Date();
     // Agregar a carrito
-    db.one('insert into carrito(fecha, id_articulo, id_usuario) ' +
-        'values($1, $2, $3) returning id_articulo',[
+    db.one('insert into carrito(fecha, id_articulo, id_usuario, descount, id_terminal) ' +
+        'values($1, $2, $3, $4, $5) returning id_articulo',[
         today,
         numericCol(req.body.item_id),
-        numericCol(req.body.user_id)
+        numericCol(req.body.user_id),
+        numericCol(req.body.desc),
+        numericCol(req.body.terminal_id)
     ]).then(function(data){
         res.json({
             status:'Ok',
