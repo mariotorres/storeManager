@@ -185,13 +185,12 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/list/sale',{ page: page},function(){
                 var select = $('input[name=id]').data('user_id');
-                var desc = $('input[name=optradioDesc]:checked').val();
-                var terminal = document.getElementById("terminales").options[document.getElementById("terminales").selectedIndex].value;
                 $(this).find('.list-group-item').click(function(){
                     if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).data('item_id'))){
                         // Selected discount
                         $.post('/carrito/new', {item_id:$(this).data('item_id'), user_id:select, desc:$('input[name=optradioDesc]:checked').val(),
-                            terminal_id:terminal}).done(function (data) {
+                            terminal_id:document.getElementById("terminales").options[document.getElementById("terminales").selectedIndex].value,
+                            pago_efectivo: $('input[name=optradioPago]:checked').val() == 1}).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');
