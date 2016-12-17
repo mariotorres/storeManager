@@ -192,18 +192,20 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 router.post('/carrito/new', isAuthenticated, function(req, res){
     var today = new Date();
     // Agregar a carrito
-    db.one('insert into carrito(fecha, id_articulo, id_usuario, descount, id_terminal, pago_efectivo) ' +
-        'values($1, $2, $3, $4, $5, $6) returning id_articulo',[
-        today,
-        numericCol(req.body.item_id),
-        numericCol(req.body.user_id),
-        numericCol(req.body.desc),
-        numericCol(req.body.terminal_id),
-        req.body.pago_efectivo
-    ]).then(function(data){
+    db.task(function(t){
+        return this.batch([
+        this.one('insert into carrito(fecha, id_articulo, id_usuario, descount, id_terminal, pago_efectivo) ' +
+            'values($1, $2, $3, $4, $5, $6) returning id_articulo',[
+            today,
+            numericCol(req.body.item_id),
+            numericCol(req.body.user_id),
+            numericCol(req.body.desc),
+            numericCol(req.body.terminal_id),
+            req.body.pago_efectivo])
+        ])}).then(function(data){
         res.json({
             status:'Ok',
-            message: 'La prenda "' + data.id_articulo + '" ha sido registrada en el carrito'
+            message: 'La prenda "' + data[0].id_articulo + '" ha sido registrada en el carrito'
         });
     }).catch(function(error){
         console.log(error);
@@ -214,12 +216,12 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
     });
     // Eliminar de inventario
     /*db.result('delete from articulos where id=$1',
-        req.body.item_id
-    ).then(function(result){
-        console.log(result.rowCount);
-    }).catch(function(error){
-        console.log(error);
-    })*/
+     req.body.item_id
+     ).then(function(result){
+     console.log(result.rowCount);
+     }).catch(function(error){
+     console.log(error);
+     })*/
     // Agregar a saldo deudor de proveedor.
 });
 
