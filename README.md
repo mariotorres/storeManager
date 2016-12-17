@@ -5,6 +5,8 @@
 2. NodeJS v6 or later 
 
 ## Setup instructions
+Instructions for installing Store Manager
+
 ### Database configuration
 1. `cd storeManager`
 2. `psql -U postgres < sql/db.sql`
