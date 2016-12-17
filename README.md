@@ -1,11 +1,12 @@
 # Store Manager
-
-## Dependencies 
-1. Postgre SQL database >= 9.4 
-2. NodeJS v6 or later 
+Sales management software
 
 ## Setup instructions
 Instructions for installing Store Manager
+
+### Dependencies 
+1. Postgre SQL database >= 9.4 
+2. NodeJS v6 or later 
 
 ### Database configuration
 1. `cd storeManager`
