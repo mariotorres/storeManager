@@ -22,7 +22,7 @@ if ( typeof process.env.DB != "undefined" ){
 } else {
     console.log("Warning: BM_DB env variable is not set\n " +
         " defaulting to -> postgres://tester:test@localhost/business");
-    db = pgp("postgres://tester:test@localhost/business");
+    db = pgp("postgres://smuser:test@localhost/business");
 }
 
 // Configuring Passport

@@ -1,3 +1,12 @@
+drop user if exists smuser;
+create user smuser with password 'test';
+
+drop database if exists business;
+create database business owner smuser;
+
+\c business;
+set role smuser;
+
 /* Usuarios */
 drop table if exists usuarios cascade;
 create table usuarios(
