@@ -58,15 +58,10 @@ if (items.length > 0){%>
                 <label id="pagoTarjeta" class="radio-inline"><input type="radio" name="optradioPago" value="0">Tarjeta</label>
             </div>
         </div>
-    </div>
-    <br>
-</div>
-
-<label id="titTerminal" class="col-lg-12" style="visibility: hidden">Nombre terminal:</label>
-<div id="listTerminal" class="col-lg-12" style="visibility: hidden">
-    <div class="form-inline">
         <div class="form-group">
-            <select id="terminales" name="id_terminales" class="form-control">
+            <div id="listTerminal" class="col-lg-12" style="visibility: hidden">
+                <label style="color: #e91e63;">Terminal:  </label>
+                <select id="terminales" name="id_terminales" class="form-control">
                 <%
                 if (terminales.length > 0 ){
                 for (var i =0; i < terminales.length; i++){
@@ -79,17 +74,19 @@ if (items.length > 0){%>
                 <option value="">Ninguno</option>
                 <% }%>
             </select>
+            </div>
         </div>
     </div>
+    <br>
 </div>
+
 
 <script>
     $(document).ready(function() {
         $("#pagoTarjeta").click(function() {
-            $("#titTerminal").css('visibility', 'visible');
             $("#listTerminal").css('visibility', 'visible');
         });
     });
 </script>
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br>

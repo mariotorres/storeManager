@@ -191,7 +191,7 @@ function modalEvents(button, modal, page ) {
                         // Selected discount
                         $.post('/carrito/new', {item_id:$(this).data('item_id'), user_id:select, desc:$('input[name=optradioDesc]:checked').val(),
                             terminal_id:document.getElementById("terminales").options[document.getElementById("terminales").selectedIndex].value,
-                            pago_efectivo: $('input[name=optradioPago]:checked').val() == 1}).done(function (data) {
+                            pago_efectivo: $('input[name=optradioPago]:checked').val() == 1, }).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');
