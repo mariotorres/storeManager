@@ -1,5 +1,6 @@
 $.fn.modal.prototype.constructor.Constructor.DEFAULTS.backdrop = 'static';
 $.fn.modal.prototype.constructor.Constructor.DEFAULTS.keyboard = false;
+
 function modalEvents(button, modal, page ) {
     switch (button.data('action')) {
         case "new_user":

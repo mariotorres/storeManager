@@ -146,7 +146,9 @@ drop table if exists venta_articulos;
 create table venta_articulos(
     id serial primary key,
     id_articulo integer references articulos(id),
-    id_venta integer references ventas(id)
+    id_venta integer references ventas(id),
+    monto_pagado numeric,
+    estatus  text
 );
 
 
