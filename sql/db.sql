@@ -1,8 +1,10 @@
+drop database if exists business;
+create database business;
+
 drop user if exists smuser;
 create user smuser with password 'test';
 
-drop database if exists business;
-create database business owner smuser;
+grant all privileges on database business to smuser;
 
 \c business;
 set role smuser;
