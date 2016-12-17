@@ -194,7 +194,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
     // Agregar a carrito
     db.task(function(t){
         return this.batch([
-        this.one('insert into carrito(fecha, id_articulo, id_usuario, descount, id_terminal, pago_efectivo) ' +
+        this.one('insert into carrito(fecha, id_articulo, id_usuario, discount, id_terminal, pago_efectivo) ' +
             'values($1, $2, $3, $4, $5, $6) returning id_articulo',[
             today,
             numericCol(req.body.item_id),
@@ -231,11 +231,11 @@ router.post('/item/new', function(req,res ){
     db.task(function (t) {
         return this.batch([
             this.manyOrNone('select * from tiendas'),
-            this.manyOrNone('select * from marcas'),
-            this.manyOrNone('select * from proveedores')
+            this.manyOrNone('select * from proveedores'),
+            this.manyOrNone('select * from marcas')
         ]);
     }).then(function (data) {
-        res.render('partials/new-item', {tiendas: data[0], marcas: data[1], proveedores: data[2]});
+        res.render('partials/new-item', {tiendas: data[0], marcas: data[2], proveedores: data[1]});
     }).catch(function(error){
       console.log(error);
     });

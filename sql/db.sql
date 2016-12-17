@@ -118,7 +118,7 @@ fecha date,
 id_articulo integer references articulos(id),
 id_usuario integer references usuarios(id),
 id_terminal integer references terminales(id),
-descount    numeric,
+discount    numeric,
 pago_efectivo boolean,
 monto_pagado numeric,
 estatus  text
