@@ -30,11 +30,20 @@ if (items.length > 0){%>
                 <label class="radio-inline"><input type="radio" name="optradioDesc" value="15">15%</label>
             </div>
         </div>
+    </div>
+    <br>
+</div>
+
+
+<label class="col-lg-12">Estatus transacción:</label>
+<div class="col-lg-12">
+    <div class="form-inline">
         <div class="form-group ">
-            <div class="col-lg-12">
-                <label for="otroDesc">Otro:</label>
-                <input type="text" id="otroDesc" name="otroDesc" class="form-control " placeholder="E.j. 20%" >
-            </div>
+            <select id="estatus" name="id_estatus" class="form-control">
+                <option value="venta">Venta directa</option>
+                <option value="modificacion">Modificación</option>
+                <option value="devolucion">Devolución a proveedores</option>
+            </select>
         </div>
     </div>
     <br>
@@ -46,18 +55,13 @@ if (items.length > 0){%>
         <div class="form-group ">
             <div class="col-lg-12">
                 <label class="radio-inline"><input type="radio" name="optradioPago" checked="" value="1">Efectivo</label>
-                <label class="radio-inline"><input type="radio" name="optradioPago" value="0">Tarjeta</label>
+                <label id="pagoTarjeta" class="radio-inline"><input type="radio" name="optradioPago" value="0">Tarjeta</label>
             </div>
         </div>
-    </div>
-    <br>
-</div>
-
-<label class="col-lg-12">Nombre terminal:</label>
-<div class="col-lg-12">
-    <div class="form-inline">
         <div class="form-group">
-            <select id="terminales" name="id_terminales" class="form-control">
+            <div id="listTerminal" class="col-lg-12" style="visibility: hidden">
+                <label style="color: #e91e63;">Terminal:  </label>
+                <select id="terminales" name="id_terminales" class="form-control">
                 <%
                 if (terminales.length > 0 ){
                 for (var i =0; i < terminales.length; i++){
@@ -70,9 +74,19 @@ if (items.length > 0){%>
                 <option value="">Ninguno</option>
                 <% }%>
             </select>
+            </div>
         </div>
     </div>
+    <br>
 </div>
 
 
-<br><br><br><br><br><br><br><br><br><br><br><br>
+<script>
+    $(document).ready(function() {
+        $("#pagoTarjeta").click(function() {
+            $("#listTerminal").css('visibility', 'visible');
+        });
+    });
+</script>
+
+<br><br><br><br><br><br><br><br><br><br><br>

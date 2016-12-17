@@ -110,7 +110,9 @@ id_articulo integer references articulos(id),
 id_usuario integer references usuarios(id),
 id_terminal integer references terminales(id),
 descount    numeric,
-pago_efectivo boolean
+pago_efectivo boolean,
+monto_pagado numeric,
+estatus  text
 );
 
 /* Estatus ventas */
@@ -146,7 +148,9 @@ drop table if exists venta_articulos;
 create table venta_articulos(
     id serial primary key,
     id_articulo integer references articulos(id),
-    id_venta integer references ventas(id)
+    id_venta integer references ventas(id),
+    monto_pagado numeric,
+    estatus  text
 );
 
 
