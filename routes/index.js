@@ -201,7 +201,8 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             numericCol(req.body.user_id),
             numericCol(req.body.desc),
             numericCol(req.body.terminal_id),
-            req.body.pago_efectivo])
+            req.body.pago_efectivo]),
+        this.one('update articulos set n_existencias = n_existencias - 1 where id=$1 returning id, articulo ', [numericCol(req.body.item_id)])
         ])}).then(function(data){
         res.json({
             status:'Ok',

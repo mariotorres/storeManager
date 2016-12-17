@@ -9,7 +9,7 @@ if (items.length > 0){%>
     <% for ( var i =0; i < items.length ; i ++ ){ %>
     <a href="#" class="list-group-item" data-item_id="<%= items[i].id %>">
         <h4 class="list-group-item-heading"> <%= items[i].articulo %></h4>
-        <p class="list-group-item-text"><%= items[i].descripcion %></p>
+        <p class="list-group-item-text"><strong>Descripción: </strong><%= items[i].descripcion %> | <strong>Existencias: </strong><%= items[i].n_existencias %></p>
     </a>
     <%}%>
 </div>
