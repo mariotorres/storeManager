@@ -1,12 +1,13 @@
 # Store Manager
 
-
 ## Dependencies 
 1. Postgre SQL database >= 9.4 
 2. NodeJS v6 or later 
 
 ## Setup instructions
 ### Database configuration
+1. `cd storeManager`
+2. `psql -U postgres < sql/db.sql`
 
 ### Web app
 1. `cd storeManager/`
