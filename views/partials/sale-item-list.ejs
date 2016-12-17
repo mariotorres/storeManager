@@ -38,12 +38,20 @@ if (items.length > 0){%>
 <label class="col-lg-12">Estatus transacción:</label>
 <div class="col-lg-12">
     <div class="form-inline">
-        <div class="form-group ">
+        <div class="form-group">
+            <div class="col-lg-12">
             <select id="estatus" name="id_estatus" class="form-control">
                 <option value="venta">Venta directa</option>
                 <option value="modificacion">Modificación</option>
                 <option value="devolucion">Devolución a proveedores</option>
             </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div id="montoPagado" class="col-lg-12" style="visibility: hidden">
+                <label>Monto:  </label>
+                <input type="text" class="form-control" id="monto" value="000.00">
+            </div>
         </div>
     </div>
     <br>
@@ -52,7 +60,7 @@ if (items.length > 0){%>
 <label class="col-lg-12">Forma de pago:</label>
 <div class="col-lg-12">
     <div class="form-inline">
-        <div class="form-group ">
+        <div class="form-group">
             <div class="col-lg-12">
                 <label class="radio-inline"><input type="radio" name="optradioPago" checked="" value="1">Efectivo</label>
                 <label id="pagoTarjeta" class="radio-inline"><input type="radio" name="optradioPago" value="0">Tarjeta</label>
@@ -60,7 +68,7 @@ if (items.length > 0){%>
         </div>
         <div class="form-group">
             <div id="listTerminal" class="col-lg-12" style="visibility: hidden">
-                <label style="color: #e91e63;">Terminal:  </label>
+                <label>Terminal:  </label>
                 <select id="terminales" name="id_terminales" class="form-control">
                 <%
                 if (terminales.length > 0 ){
@@ -85,6 +93,14 @@ if (items.length > 0){%>
     $(document).ready(function() {
         $("#pagoTarjeta").click(function() {
             $("#listTerminal").css('visibility', 'visible');
+        });
+        $("#estatus").change(function() {
+            if (document.getElementById('estatus').options[document.getElementById("estatus").selectedIndex].value == "modificacion") {
+                alert("Favor de ingresar el monto que se dejará a cuenta para la modificación de la prenda.");
+                $("#montoPagado").css('visibility', 'visible');
+            }else{
+
+            }
         });
     });
 </script>
