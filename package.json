@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "build": "babel ./src/main.js --presets react --out-dir=./public/build"
   },
   "dependencies": {
+    "babel-preset-react": "^6.16.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "~1.15.1",
     "connect-flash": "^0.1.1",
@@ -19,5 +21,8 @@
     "passport-local": "^1.0.0",
     "pg-promise": "^5.3.4",
     "serve-favicon": "~2.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0"
   }
 }
