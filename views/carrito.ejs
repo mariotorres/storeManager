@@ -47,11 +47,12 @@
                             <p class="list-group-item-text"><strong>Articulo: </strong><%=items[i].articulo%></p>
                             <p class="list-group-item-text"><strong>Descripción: </strong><%=items[i].descripcion%></p>
                             <p class="list-group-item-text"><strong>Modelo: </strong><%=items[i].modelo%> | <strong>Marca: </strong><%=items[i].id_marca%> | <strong>Talla: </strong><%=items[i].talla%></p>
-                            <h2 class="list-group-item-text"><strong>Precio: </strong><%=items[i].precio%></h2>
+                            <h2 class="list-group-item-text"><strong>Precio: </strong><span style="color: #e91e63;"><%=items[i].precio%></span></h2>
                         </a>
                         <%}%>
+                        <h1 style="float: right;"><strong>Total: </strong> <%= total[0].sum%></h1>
                     </div>
-                    <p><button data-toggle="modal" data-target="#genericModal" data-action="make_sale" class="btn btn-primary">Realizar venta </button> </p>
+                    <button data-toggle="modal" data-target="#genericModal" data-action="make_sale" class="btn btn-primary">Realizar venta </button>
                     <%}else{%>
                     <div class="alert alert-info" role="alert">El carrito está vacio</div>
                     <%}%>

@@ -177,11 +177,12 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 router.get('/carrito', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
-        this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and  carrito.id_usuario = usuarios.id'),
-        this.one('select * from usuarios where id = $1', req.user.id)
+            this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and  carrito.id_usuario = usuarios.id'),
+            this.one('select * from usuarios where id = $1', req.user.id),
+            this.manyOrNone('select sum(precio) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and  carrito.id_usuario = usuarios.id')
     ])
     }).then(function (data) {
-        res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1]});
+        res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2]});
     }).catch(function (error) {
         console.log(error);
     });
@@ -601,7 +602,7 @@ router.post('/item/register', function(req, res){
     console.log(req.body);
     db.task(function(t) {
         return this.batch([
-            db.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias) ' +
+            this.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias) ' +
                 'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, articulo, n_existencias', [
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.id_tienda),
@@ -617,7 +618,7 @@ router.post('/item/register', function(req, res){
                 req.body.url_imagen,
                 numericCol(req.body.n_arts)
             ]),
-            db.one('update proveedores set a_cuenta=a_cuenta - cast($2 as money) where id=$1 returning id, nombre',[
+            this.one('update proveedores set a_cuenta=a_cuenta - cast($2 as money) where id=$1 returning id, nombre',[
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.costo)*numericCol(req.body.n_arts)
             ])
