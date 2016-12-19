@@ -1,22 +1,32 @@
 <form>
-    <label>Seleccione el tipo de reporte</label>
 
-    <select class="form-control">
+
+    <p>
+        <label>Seleccione el tipo de reporte</label>
+        <select class="form-control">
         <option>Ventas</option>
         <option>Asistencia de personal</option>
         <option>Devoluciones</option>
         <option>Saldos con proveedores</option>
     </select>
+    </p>
 
-    <label>Periodo de tiempo</label>
+    <label>Seleccione el periodo del reporte</label>
     <div class="row">
 
         <div class="col-sm-6">
-            <input type="date" class="form-control">
+            <p>
+            <input type="text" id="reports_datepicker1" class="form-control">
+            </p>
         </div>
         <div class="col-sm-6">
-            <input type="date" class="form-control">
+            <p>
+            <input type="text" id="reports_datepicker2" class="form-control">
+            </p>
         </div>
     </div>
 
+    <p>
+    <button type="submit" class="btn btn-default"> Generar</button>
+    </p>
 </form>
