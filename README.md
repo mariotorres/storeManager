@@ -18,5 +18,5 @@ Instructions for installing Store Manager
 3. `cd public/ && bower install`
 
 ## Running the app
-1. `cd storeManager/ && ./bin/www`
-2. Open `http://127.0.0.1:3333/` in your web browser
+1. `cd storeManager/ && npm start`
+2. Open `http://localhost:3333/` in your web browser
