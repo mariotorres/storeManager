@@ -182,7 +182,7 @@ function modalEvents(button, modal, page ) {
             });
             break;
         case "new_sale":
-            modal.find('.modal-title').text('Registrar venta');
+            modal.find('.modal-title').text('Agregar productos a carrito');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/list/sale',{ page: page},function(){
                 var select = $('input[name=id]').data('user_id');
