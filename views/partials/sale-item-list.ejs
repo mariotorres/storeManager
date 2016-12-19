@@ -62,8 +62,8 @@ if (items.length > 0){%>
     <div class="form-inline">
         <div class="form-group">
             <div class="col-lg-12">
-                <label class="radio-inline"><input type="radio" name="optradioPago" checked="" value="1">Efectivo</label>
-                <label id="pagoTarjeta" class="radio-inline"><input type="radio" name="optradioPago" value="0">Tarjeta</label>
+                <label id="pagoEfectivo" class="radio-inline"><input type="radio" name="optradioPago" checked="" value="1">Efectivo</label>
+                <label id="pagoTarjeta"  class="radio-inline"><input type="radio" name="optradioPago" value="0">Tarjeta</label>
             </div>
         </div>
         <div class="form-group">
@@ -94,12 +94,15 @@ if (items.length > 0){%>
         $("#pagoTarjeta").click(function() {
             $("#listTerminal").css('visibility', 'visible');
         });
+        $("#pagoEfectivo").click(function() {
+            $("#listTerminal").css('visibility', 'hidden');
+        });
         $("#estatus").change(function() {
             if (document.getElementById('estatus').options[document.getElementById("estatus").selectedIndex].value == "modificacion") {
                 alert("Favor de ingresar el monto que se dejará a cuenta para la modificación de la prenda.");
                 $("#montoPagado").css('visibility', 'visible');
             }else{
-
+                $("#montoPagado").css('visibility', 'hidden');
             }
         });
     });
