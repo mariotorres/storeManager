@@ -614,7 +614,7 @@ router.post('/item/register', function(req, res){
                 req.body.url_imagen,
                 numericCol(req.body.n_arts)
             ]),
-            db.one('update proveedores set saldo=saldo - $2 where id=$1 returning id, nombre',[
+            db.one('update proveedores set a_cuenta=a_cuenta - $2 where id=$1 returning id, nombre',[
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.costo)*numericCol(req.body.n_arts)
             ])
@@ -712,7 +712,7 @@ router.post('/brand/register', function(req, res){
  * Registro de proveedores
  */
 router.post('/supplier/register', function(req, res){
-  db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, saldo) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning id, nombre ', [
+  db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, a_cuenta, por_pagar) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, nombre ', [
     req.body.nombre,
     req.body.razon_social,
     req.body.rfc,
@@ -724,6 +724,7 @@ router.post('/supplier/register', function(req, res){
     req.body.direccion_municipio,
     req.body.direccion_ciudad,
     req.body.direccion_pais,
+    0,
     0
   ]).then(function(data){
     res.json({
@@ -744,7 +745,7 @@ router.post('/supplier/register', function(req, res){
 router.post('/supplier/update', function(req, res){
     db.one('update proveedores set nombre=$2, razon_social=$3, rfc=$4, direccion_calle=$5,'+
         'direccion_numero_int=$6, direccion_numero_ext=$7, direccion_colonia=$8, direccion_localidad=$9,' +
-        'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12, saldo=$13 where id=$1 returning id, nombre ', [
+        'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12, a_cuenta=$13, por_pagar=$14 where id=$1 returning id, nombre ', [
         req.body.id,
         req.body.nombre,
         req.body.razon_social,
@@ -757,7 +758,8 @@ router.post('/supplier/update', function(req, res){
         req.body.direccion_municipio,
         req.body.direccion_ciudad,
         req.body.direccion_pais,
-        req.body.saldo
+        req.body.a_cuenta,
+        req.body.por_pagar
     ]).then(function(data){
         res.json({
             status: 'Ok',

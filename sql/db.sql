@@ -55,7 +55,8 @@ create table proveedores (
     direccion_municipio text,
     direccion_ciudad text,
     direccion_pais text,
-    saldo numeric
+    a_cuenta  numeric, /* Esta cantidad se registra en el momento en el que se registra una prenda del proveedor*/
+    por_pagar numeric  /* Esta cantidad se registra en el momento en el que se vende una prenda del proveedor */
 );
 
 /* Tiendas */
