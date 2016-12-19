@@ -596,31 +596,39 @@ router.post('/user/profile', function(req,res){
 router.post('/item/register', function(req, res){
 
     console.log(req.body);
-    db.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias) ' +
-        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, articulo, n_existencias',[
-        numericCol(req.body.id_proveedor),
-        numericCol(req.body.id_tienda),
-        req.body.articulo,
-        req.body.descripcion,
-        numericCol(req.body.id_marca),
-        req.body.modelo,
-        req.body.talla,
-        req.body.notas,
-        numericCol(req.body.precio),
-        numericCol(req.body.costo),
-        numericCol(req.body.codigo_barras),
-        req.body.url_imagen,
-        numericCol(req.body.n_arts)
-    ]).then(function(data) {
-        if (data.n_existencias == 1) {
+    db.task(function(t) {
+        return this.batch([
+            db.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias) ' +
+                'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, articulo, n_existencias', [
+                numericCol(req.body.id_proveedor),
+                numericCol(req.body.id_tienda),
+                req.body.articulo,
+                req.body.descripcion,
+                numericCol(req.body.id_marca),
+                req.body.modelo,
+                req.body.talla,
+                req.body.notas,
+                numericCol(req.body.precio),
+                numericCol(req.body.costo),
+                numericCol(req.body.codigo_barras),
+                req.body.url_imagen,
+                numericCol(req.body.n_arts)
+            ]),
+            db.one('update proveedores set saldo=saldo - $2 where id=$1 returning id, nombre',[
+                numericCol(req.body.id_proveedor),
+                numericCol(req.body.costo)*numericCol(req.body.n_arts)
+            ])
+        ])
+    }).then(function(data) {
+        if (data[0].n_existencias == 1) {
             res.json({
                 status: 'Ok',
-                message: 'Se ha registrado ' + data.n_existencias + ' existencia  de la prenda ' + data.articulo
+                message: 'Se ha registrado ' + data[0].n_existencias + ' existencia  de la prenda ' + data[0].articulo + ' del proveedor ' + data[1].nombre
             });
         }else{
             res.json({
                 status: 'Ok',
-                message: 'Se han registrado ' + data.n_existencias + ' existencias  de la prenda ' + data.articulo
+                message: 'Se han registrado ' + data[0].n_existencias + ' existencias  de la prenda ' + data[0].articulo + ' del proveedor ' + data[1].nombre
             });
         }
     }).catch(function(error){
@@ -716,7 +724,7 @@ router.post('/supplier/register', function(req, res){
     req.body.direccion_municipio,
     req.body.direccion_ciudad,
     req.body.direccion_pais,
-    req.body.saldo
+    0
   ]).then(function(data){
     res.json({
       status: 'Ok',
