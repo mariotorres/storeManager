@@ -29,7 +29,7 @@ create table usuarios(
     direccion_ciudad text,
     direccion_pais text,
     empleado boolean,
-    salario numeric,
+    salario money,
     permiso_tablero boolean,
     permiso_administrador boolean,
     permiso_empleados boolean,
@@ -55,8 +55,8 @@ create table proveedores (
     direccion_municipio text,
     direccion_ciudad text,
     direccion_pais text,
-    a_cuenta  numeric, /* Esta cantidad se registra en el momento en el que se registra una prenda del proveedor*/
-    por_pagar numeric  /* Esta cantidad se registra en el momento en el que se vende una prenda del proveedor */
+    a_cuenta  money, /* Esta cantidad se registra en el momento en el que se registra una prenda del proveedor*/
+    por_pagar money  /* Esta cantidad se registra en el momento en el que se vende una prenda del proveedor */
 );
 
 /* Tiendas */
@@ -94,8 +94,8 @@ create table articulos (
     modelo text,
     talla text,
     notas text,
-    precio numeric,
-    costo numeric,
+    precio money,
+    costo money,
     codigo_barras numeric,
     url_imagen text,
     n_existencias numeric
@@ -123,7 +123,7 @@ id_usuario integer references usuarios(id),
 id_terminal integer references terminales(id),
 discount    numeric,
 pago_efectivo boolean,
-monto_pagado numeric,
+monto_pagado money,
 estatus  text
 );
 
@@ -144,8 +144,8 @@ drop table if exists ventas cascade;
 create table ventas (
     id serial primary key,
     id_usuario integer references usuarios(id),
-    precio_venta numeric,
-    monto_pagado numeric,
+    precio_venta money,
+    monto_pagado money,
     forma_pago numeric,
     fecha_venta date,
     hora_venta time,

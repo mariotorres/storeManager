@@ -617,7 +617,7 @@ router.post('/item/register', function(req, res){
                 req.body.url_imagen,
                 numericCol(req.body.n_arts)
             ]),
-            db.one('update proveedores set a_cuenta=a_cuenta - $2 where id=$1 returning id, nombre',[
+            db.one('update proveedores set a_cuenta=a_cuenta - cast($2 as money) where id=$1 returning id, nombre',[
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.costo)*numericCol(req.body.n_arts)
             ])
