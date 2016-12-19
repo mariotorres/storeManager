@@ -242,9 +242,12 @@ function modalEvents(button, modal, page ) {
             break;
 
         case "reports":
-            modal.find('.modal-title').text('Editar proveedor');
+            modal.find('.modal-title').text('Reportes');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/reports',{},function(){
+
+                $('#reports_datepicker1').datetimepicker();
+                $('#reports_datepicker2').datetimepicker();
 
             });
             break;
