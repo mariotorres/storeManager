@@ -186,8 +186,8 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/list/sale',{ page: page},function(){
                 var select = $('input[name=id]').data('user_id');
-                $(this).find('.btn').click(function(){
-                    if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).data('item_id'))){
+                $(this).find('form').submit(function(){
+                    if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).find('input[name=item_id]').val())){
                         // Selected discount
                         // alert("ID" + $(this.serialize().item_id));
                         $.post('/carrito/new', $(this).serialize()).done(function (data) {
@@ -196,8 +196,8 @@ function modalEvents(button, modal, page ) {
                                 modal.modal('hide');
                             }
                         });
-                        event.preventDefault();
                     }
+                    event.preventDefault();
                 });
             });
             break;
