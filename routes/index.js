@@ -213,7 +213,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             today,
             numericCol(req.body.item_id),
             numericCol(req.body.user_id),
-            0,//numericCol(req.body.desc),
+            numericCol(req.body.optradioDesc),
             numericCol(req.body.monto),
             req.body.estatus
         ]),
