@@ -207,16 +207,14 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
     // Agregar a carrito
     db.task(function(t){
         return this.batch([
-        this.one('insert into carrito(fecha, id_articulo, id_usuario, discount, id_terminal, pago_efectivo, estatus, monto_pagado) ' +
-            'values($1, $2, $3, $4, $5, $6, $7, $8) returning id_articulo',[
+        this.one('insert into carrito(fecha, id_articulo, id_usuario, discount, monto_pagado, estatus) ' +
+            'values($1, $2, $3, $4, $5, $6) returning id_articulo',[
             today,
             numericCol(req.body.item_id),
             numericCol(req.body.user_id),
-            numericCol(req.body.desc),
-            numericCol(req.body.terminal_id),
-            req.body.pago_efectivo,
-            req.body.estatus,
-            numericCol(req.body.monto)
+            0,//numericCol(req.body.desc),
+            numericCol(req.body.monto),
+            req.body.estatus
         ])//,
         //this.one('update articulos set n_existencias = n_existencias - 1 where id=$1 returning id, articulo ', [numericCol(req.body.item_id)])
         ])}).then(function(data){

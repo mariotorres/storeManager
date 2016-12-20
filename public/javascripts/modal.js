@@ -189,11 +189,8 @@ function modalEvents(button, modal, page ) {
                 $(this).find('.btn').click(function(){
                     if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).data('item_id'))){
                         // Selected discount
-                        $.post('/carrito/new', {item_id:$(this).data('item_id'), user_id:select, desc:$('input[name=optradioDesc]:checked').val(),
-                            terminal_id:document.getElementById("terminales").options[document.getElementById("terminales").selectedIndex].value,
-                            estatus:document.getElementById("estatus").options[document.getElementById("estatus").selectedIndex].value,
-                            monto:document.getElementById("monto").value,
-                            pago_efectivo: $('input[name=optradioPago]:checked').val() == 1}).done(function (data) {
+                        // alert("ID" + $(this.serialize().item_id));
+                        $.post('/carrito/new', $(this).serialize()).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');
