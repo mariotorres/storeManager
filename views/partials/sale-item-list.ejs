@@ -9,7 +9,7 @@ if (items.length > 0){%>
     <div class="panel-body">
 
         <form>
-            <input type="text" value="<%=user.id%>" name="user_id" hidden>
+            <input type="text" name="user_id" value="<%=user.id%>"  hidden>
             <input type="text" name="item_id" value="<%= items[i].id %>" hidden>
             <div class="row">
                 <div class="col-sm-8">

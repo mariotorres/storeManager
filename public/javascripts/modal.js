@@ -53,9 +53,9 @@ function modalEvents(button, modal, page ) {
                                     modal.modal('hide');
                                 }
                             });
-                            event.preventDefault();
                 }
-                })
+                    event.preventDefault();
+                });
             });
             break;
         case "edit_item":

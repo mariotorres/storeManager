@@ -204,13 +204,14 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
 // Agregar id de proveedor
 router.post('/carrito/new', isAuthenticated, function(req, res){
     console.log(req.body);
-    var today = new Date();
+
+
     // Agregar a carrito
     db.task(function(t){
         return this.batch([
-        this.one('insert into carrito(fecha, id_articulo, id_usuario, discount, monto_pagado, unidades_carrito, estatus) ' +
-            'values($1, $2, $3, $4, $5, $6 $7) returning id_articulo',[
-            today,
+        this.one('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
+            'values($1, $2, $3, $4, $5, $6, $7) returning id_articulo',[
+            new Date(),
             numericCol(req.body.item_id),
             numericCol(req.body.user_id),
             numericCol(req.body.optradioDesc),
@@ -219,7 +220,8 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             req.body.estatus
         ]),
         this.one('update articulos set n_existencias = n_existencias - 1 where id=$1 returning id, articulo ', [numericCol(req.body.item_id)])
-        ])}).then(function(data){
+        ])
+    }).then(function(data){
         res.json({
             status:'Ok',
             message: 'La prenda "' + data[0].id_articulo + '" ha sido registrada en el carrito'
