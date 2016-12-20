@@ -188,6 +188,18 @@ router.get('/carrito', isAuthenticated, function (req, res) {
     });
 });
 
+router.post('/carrito/sell', isAuthenticated, function (req, res) {
+    db.task(function (t) {
+        return this.batch([
+            this.manyOrNone(' update articulos set n_existencias = n_existencias - 1 from usuarios, carrito where carrito.id_articulo = articulos.id and carrito.id_usuario = usuarios.id')
+        ])
+    }).then(function (data) {
+        //res.render('carrito', {title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2]});
+    }).catch(function (error) {
+        console.log(error);
+    });
+});
+
 // Insertar prenda en carrito
 // Agregar id de proveedor
 router.post('/carrito/new', isAuthenticated, function(req, res){
@@ -205,8 +217,8 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             req.body.pago_efectivo,
             req.body.estatus,
             numericCol(req.body.monto)
-        ]),
-        this.one('update articulos set n_existencias = n_existencias - 1 where id=$1 returning id, articulo ', [numericCol(req.body.item_id)])
+        ])//,
+        //this.one('update articulos set n_existencias = n_existencias - 1 where id=$1 returning id, articulo ', [numericCol(req.body.item_id)])
         ])}).then(function(data){
         res.json({
             status:'Ok',

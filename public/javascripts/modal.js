@@ -193,7 +193,7 @@ function modalEvents(button, modal, page ) {
                             terminal_id:document.getElementById("terminales").options[document.getElementById("terminales").selectedIndex].value,
                             estatus:document.getElementById("estatus").options[document.getElementById("estatus").selectedIndex].value,
                             monto:document.getElementById("monto").value,
-                            pago_efectivo: $('input[name=optradioPago]:checked').val() == 1, }).done(function (data) {
+                            pago_efectivo: $('input[name=optradioPago]:checked').val() == 1}).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');
@@ -218,6 +218,17 @@ function modalEvents(button, modal, page ) {
                     event.preventDefault();
                 });
             });
+            break;
+        case "make_sale":
+            if (confirm("¿Está seguro que quiere realizar la venta?")){
+                // Selected discount
+                $.post('/carrito/sell', {}).done(function (data) {
+                    alert(data.message);
+                    if(data.status=='Ok'){
+                    }
+                });
+                event.preventDefault();
+            }
             break;
         case "edit_supplier":
             modal.find('.modal-title').text('Editar proveedor');
