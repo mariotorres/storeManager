@@ -266,7 +266,7 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
         return this.batch([
             this.one('select count(*) from articulos as count where n_existencias > 0'),
             this.manyOrNone('select * from articulos where n_existencias > 0 order by articulo limit $1 offset $2',[ pageSize, offset ]),
-            this.manyOrNone('select * from usuarios where permiso_empleados = true'),
+            this.oneOrNone('select * from usuarios where id = $1',[ req.user.id ]),
             this.manyOrNone('select * from terminales')
         ]);
 
@@ -274,7 +274,7 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
         res.render('partials/sale-item-list',{
             status : 'Ok',
             items: data[1],
-            users: data[2],
+            user: data[2],
             terminales:data[3],
             pageNumber : req.body.page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
