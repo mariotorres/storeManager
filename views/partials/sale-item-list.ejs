@@ -79,42 +79,38 @@ if (items.length > 0){%>
 <%}%>
 
 
-
-<label class="col-lg-12">Estatus transacción:</label>
-<div class="col-lg-12">
-    <div class="form-inline">
-        <div class="form-group">
-            <div class="col-lg-12">
-            <select id="estatus" name="id_estatus" class="form-control">
-                <option value="venta">Venta directa</option>
-                <option value="modificacion">Modificación</option>
-                <option value="devolucion">Devolución a proveedores</option>
-            </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <div id="montoPagado" class="col-lg-12" style="visibility: hidden">
-                <label>Monto:  </label>
-                <input type="text" class="form-control" id="monto" value="000.00">
-            </div>
+<div class="row">
+    <div class="col-sm-6">
+        <label>Estatus transacción:</label>
+        <select id="estatus" name="id_estatus" class="form-control">
+            <option value="venta">Venta directa</option>
+            <option value="modificacion">Modificación</option>
+            <option value="devolucion">Devolución a proveedores</option>
+        </select>
+    </div>
+    <div class="col-sm-6">
+        <div id="montoPagado" style="visibility: hidden">
+            <label>Monto:  </label>
+            <input type="text" class="form-control" id="monto" value="000.00">
         </div>
     </div>
-    <br>
 </div>
 
-<label class="col-lg-12">Forma de pago:</label>
-<div class="col-lg-12">
-    <div class="form-inline">
-        <div class="form-group">
-            <div class="col-lg-12">
-                <label id="pagoEfectivo" class="radio-inline"><input type="radio" name="optradioPago" checked="" value="1">Efectivo</label>
-                <label id="pagoTarjeta"  class="radio-inline"><input type="radio" name="optradioPago" value="0">Tarjeta</label>
-            </div>
-        </div>
-        <div class="form-group">
-            <div id="listTerminal" class="col-lg-12" style="visibility: hidden">
-                <label>Terminal:  </label>
-                <select id="terminales" name="id_terminales" class="form-control">
+<br>
+
+<div class="row">
+    <div class="col-sm-6">
+        <label>Forma de pago:</label>
+        <p>
+        <label id="pagoEfectivo" class="radio-inline"><input type="radio" name="optradioPago" checked="" value="1">Efectivo</label>
+        <label id="pagoTarjeta"  class="radio-inline"><input type="radio" name="optradioPago" value="0">Tarjeta</label>
+        </p>
+    </div>
+    <div class="col-sm-6">
+        <div id="listTerminal" style="visibility: hidden">
+            <label>Terminal:  </label>
+            <p>
+            <select id="terminales" name="id_terminales" class="form-control">
                 <%
                 if (terminales.length > 0 ){
                 for (var i =0; i < terminales.length; i++){
@@ -127,10 +123,9 @@ if (items.length > 0){%>
                 <option value="">Ninguno</option>
                 <% }%>
             </select>
-            </div>
+            </p>
         </div>
     </div>
-    <br>
 </div>
 
 
@@ -152,5 +147,3 @@ if (items.length > 0){%>
         });
     });
 </script>
-
-<br><br><br><br><br><br><br><br><br><br><br>
