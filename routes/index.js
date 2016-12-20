@@ -634,17 +634,11 @@ router.post('/item/register', function(req, res){
             ])
         ])
     }).then(function(data) {
-        if (data[0].n_existencias == 1) {
             res.json({
                 status: 'Ok',
-                message: 'Se ha registrado ' + data[0].n_existencias + ' existencia  de la prenda ' + data[0].articulo + ' del proveedor ' + data[1].nombre
+                message: 'Se '+(data[0].n_existencias == 1?'ha':'han')+' registrado ' + data[0].n_existencias + ' existencia  de la prenda ' + data[0].articulo + ' del proveedor ' + data[1].nombre
             });
-        }else{
-            res.json({
-                status: 'Ok',
-                message: 'Se han registrado ' + data[0].n_existencias + ' existencias  de la prenda ' + data[0].articulo + ' del proveedor ' + data[1].nombre
-            });
-        }
+
     }).catch(function(error){
         console.log(error);
         res.json({
