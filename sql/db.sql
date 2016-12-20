@@ -124,7 +124,8 @@ id_terminal integer references terminales(id),
 discount    numeric,
 pago_efectivo boolean,
 monto_pagado money,
-estatus  text
+unidades_carrito numeric,
+estatus text
 );
 
 /* Estatus ventas */
