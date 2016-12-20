@@ -46,8 +46,8 @@
                             <h4 class="list-group-item-text"><strong>ID:</strong><%=items[i].id_articulo%></h4>
                             <p class="list-group-item-text"><strong>Articulo: </strong><%=items[i].articulo%></p>
                             <p class="list-group-item-text"><strong>Descripción: </strong><%=items[i].descripcion%></p>
-                            <p class="list-group-item-text"><strong>Modelo: </strong><%=items[i].modelo%> | <strong>Marca: </strong><%=items[i].id_marca%> | <strong>Talla: </strong><%=items[i].talla%></p>
-                            <h2 class="list-group-item-text"><strong>Precio: </strong><span style="color: #e91e63;"><%=items[i].precio%></span></h2>
+                            <p class="list-group-item-text"><strong>Modelo: </strong><%=items[i].modelo%> | <strong>Marca: </strong><%=items[i].id_marca%> | <strong>Talla: </strong><%=items[i].talla%> | <strong>Precio unitario: </strong><%=items[i].precio%> | <strong>Unidades seleccionadas: </strong><%=items[i].unidades_carrito%></p>
+                            <h2 class="list-group-item-text"><strong>Precio: </strong><span style="color: #e91e63;"><%=totales[i].totales%></span></h2>
                         </a>
                         <%}%>
                         <h1 style="float: right;"><strong>Total: </strong> <%= total[0].sum%></h1>

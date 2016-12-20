@@ -179,10 +179,11 @@ router.get('/carrito', isAuthenticated, function (req, res) {
         return this.batch([
             this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and  carrito.id_usuario = usuarios.id'),
             this.one('select * from usuarios where id = $1', req.user.id),
-            this.manyOrNone('select sum(precio) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and  carrito.id_usuario = usuarios.id')
+            this.manyOrNone('select sum(precio * unidades_carrito) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and  carrito.id_usuario = usuarios.id'),
+            this.manyOrNone('select precio*unidades_carrito as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and carrito.id_usuario = usuarios.id')
     ])
     }).then(function (data) {
-        res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2]});
+        res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2], totales:data[3]});
     }).catch(function (error) {
         console.log(error);
     });
@@ -204,8 +205,6 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
 // Agregar id de proveedor
 router.post('/carrito/new', isAuthenticated, function(req, res){
     console.log(req.body);
-
-
     // Agregar a carrito
     db.task(function(t){
         return this.batch([
