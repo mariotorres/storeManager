@@ -611,6 +611,16 @@ router.post('/item/register', function(req, res){
 
     console.log(req.body);
     db.task(function(t) {
+
+        var proveedor = null;
+
+        if (req.body.id_proveedor != null && req.body.id_proveedor != ''){
+            proveedor = this.one('update proveedores set a_cuenta=a_cuenta - cast($2 as money) where id=$1 returning id, nombre',[
+                numericCol(req.body.id_proveedor),
+                numericCol(req.body.costo)*numericCol(req.body.n_arts)
+            ]);
+        }
+
         return this.batch([
             this.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias) ' +
                 'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, articulo, n_existencias', [
@@ -628,15 +638,13 @@ router.post('/item/register', function(req, res){
                 req.body.url_imagen,
                 numericCol(req.body.n_arts)
             ]),
-            this.one('update proveedores set a_cuenta=a_cuenta - cast($2 as money) where id=$1 returning id, nombre',[
-                numericCol(req.body.id_proveedor),
-                numericCol(req.body.costo)*numericCol(req.body.n_arts)
-            ])
+            proveedor
         ])
     }).then(function(data) {
             res.json({
                 status: 'Ok',
-                message: 'Se '+(data[0].n_existencias == 1?'ha':'han')+' registrado ' + data[0].n_existencias + ' existencia'+(data[0].n_existencias == 1?'':'s')+'  de la prenda ' + data[0].articulo + ' del proveedor ' + data[1].nombre
+                message: 'Se '+(data[0].n_existencias == 1?'ha':'han')+' registrado ' + data[0].n_existencias + ' existencia'+(data[0].n_existencias == 1?'':'s')+'  de la prenda ' + data[0].articulo +
+                (data[1]?' del proveedor ' + data[1].nombre:'')
             });
 
     }).catch(function(error){
