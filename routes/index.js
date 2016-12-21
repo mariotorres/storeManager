@@ -217,6 +217,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
+    console.log("id ITEM: " + req.body.item_id);
     db.task(function (t) {
         return this.batch([
             this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito + 1 from usuarios, articulos ' +
@@ -229,7 +230,7 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
     }).then(function (data) {
         res.json({
             status : 'Ok',
-            message: 'Algo aquí'
+            message: 'Se ha agregado una unidad del artículo: ' + req.body.item_id
         })
     }).catch(function (error) {
         console.log(error);
@@ -241,6 +242,7 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/dec', isAuthenticated, function (req, res) {
+    console.log("id ITEM: " + req.body.item_id);
     db.task(function (t) {
         return this.batch([
             this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 from usuarios, articulos ' +
@@ -252,12 +254,14 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
         ])
     }).then(function (data) {
         res.json({
-            //algo va aquí
+            status : 'Ok',
+            message: 'Se ha eliminado una unidad del artículo: ' + req.body.item_id
         });
     }).catch(function (error) {
         console.log(error);
         res.json({
-            //algo va aquí
+            status: 'Error',
+            message: 'Ha ocurrido un error'
         })
     });
 });

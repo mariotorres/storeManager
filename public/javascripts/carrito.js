@@ -12,6 +12,37 @@ $('.btn').click(function () {
     }
 });
 
+
+$('#inc').click(function(){
+    var button = $(this);
+    //Código para quitar un artículo del carrito
+    $.post('/carrito/inc', {
+        user_id: button.data('user_id'),
+        item_id: button.data('item_id')
+    }).done(function (data) {
+        alert(data.message);
+        if (data.status == 'Ok') {
+            // Obtener HTML del carrito
+            location.reload();
+        }
+    });
+});
+
+$('#dec').click(function(){
+    var button = $(this);
+    //Código para quitar un artículo del carrito
+    $.post('/carrito/dec', {
+        user_id: button.data('user_id'),
+        item_id: button.data('item_id')
+    }).done(function (data) {
+        alert(data.message);
+        if (data.status == 'Ok') {
+            // Obtener HTML del carrito
+            location.reload();
+        }
+    });
+});
+
 $('#rem').click(function(){
     var button = $(this);
     //Código para quitar un artículo del carrito
@@ -28,3 +59,4 @@ $('#rem').click(function(){
         });
     }
 });
+
