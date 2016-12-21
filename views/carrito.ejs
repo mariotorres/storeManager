@@ -41,7 +41,7 @@
                     <% if (items.length > 0){%>
                     <div class="list-group">
                         <% for ( var i =0; i< items.length; i++){%>
-                        <a href="#" class="list-group-item" data-item_id="<%= items[i].id %>" data-user_id="<%= items[i].usuario_id %>">
+                        <a href="#" class="list-group-item">
                         <div class="row" style="display: flex;align-items: center;">
                             <div class="col-sm-9">
                             <h3 class="list-group-item-heading"><strong>Vendedor: </strong><%=items[i].usuario%></h3>
@@ -52,7 +52,7 @@
                             <h2 class="list-group-item-text"><strong>Precio: </strong><span style="color: #e91e63;"><%=totales[i].totales%></span></h2>
                             </div>
                             <div class="col-sm-1" >
-                                <i data-toggle="modal" data-target="#genericModal" data-action="inc_existence" class="fa fa-chevron-circle-up fa-3x" style="color:#e0e0e0"></i>
+                                <i data-toggle="modal" data-user_id="<%=items[i].usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="inc_existence" class="fa fa-chevron-circle-up fa-3x" style="color:#e0e0e0"></i>
                             </div>
                             <div class="col-sm-1" >
                                 <i class="fa fa-chevron-circle-down fa-3x" style="color:#e0e0e0"></i>
