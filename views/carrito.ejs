@@ -44,16 +44,45 @@
                     <div class="list-group">
 
                         <% for ( var i =0; i< items.length; i++){%>
+<!--
 
-
-                        <!--
                         <div class="panel panel-default">
                             <div class="panel-body">
 
                                 <div class="row">
                                     <div class="col-sm-9">
-                                        <label>Vendedor</label>
-                                        <p><%= user.nombres %></p>
+                                        <p>
+                                        <label>Vendedor:</label>
+                                        <%= user.nombres %>
+                                        </p>
+                                        <p>
+                                        <label>Artículo:</label>
+                                            <%= items[i].articulo %>
+                                        </p>
+                                        <p>
+                                        <label>Descripción:</label>
+                                            <%= items[i].descripcion %>
+                                        </p>
+                                        <p>
+                                        <label>Marca:</label>
+                                        </p>
+                                        <p>
+                                        <label>Modelo:</label>
+                                            <%= items[i].modelo %>
+                                        </p>
+                                        <p>
+                                        <label>Talla:</label>
+                                            <%= items[i].talla %>
+                                        </p>
+                                        <p>
+                                            <label>Precio unitario:</label>
+                                            <%= items[i].precio %>
+                                        </p>
+
+                                        <p>
+                                        <label>Precio:</label>
+                                            <%= totales[i].totales %>
+                                        </p>
                                     </div>
 
                                     <div class="col-sm-1" >
