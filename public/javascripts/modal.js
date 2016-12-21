@@ -225,6 +225,7 @@ function modalEvents(button, modal, page ) {
                 event.preventDefault();
             }
             break;
+            /*
         case "inc_existence":
                 // Selected discount
                 $.post('/carrito/inc', {user_id:$("#inc").data('user_id'), item_id:$("#inc").data('item_id')}).done(function (data) {
@@ -251,7 +252,7 @@ function modalEvents(button, modal, page ) {
                 }
             });
             event.preventDefault();
-            break;
+            break;*/
         case "edit_supplier":
             modal.find('.modal-title').text('Editar proveedor');
             modal.find('#modal_content').html("");

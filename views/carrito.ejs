@@ -41,16 +41,15 @@
 
 
                     <% if (items.length > 0){%>
-                    <div class="list-group">
+                   <!-- <div class="list-group">-->
 
                         <% for ( var i =0; i< items.length; i++){%>
-<!--
 
                         <div class="panel panel-default">
                             <div class="panel-body">
 
                                 <div class="row">
-                                    <div class="col-sm-9">
+                                    <div class="col-sm-10">
                                         <p>
                                         <label>Vendedor:</label>
                                         <%= user.nombres %>
@@ -85,21 +84,18 @@
                                         </p>
                                     </div>
 
-                                    <div class="col-sm-1" >
-                                        <i id="inc" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="inc_existence" class="fa fa-chevron-circle-up fa-3x" style="color:#e0e0e0"></i>
-                                    </div>
-                                    <div class="col-sm-1" >
-                                        <i id="dec" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="dec_existence" class="fa fa-chevron-circle-down fa-3x" style="color:#e0e0e0"></i>
-                                    </div>
-                                    <div class="col-sm-1" >
-                                        <i id="rem" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="rem_existence" class="fa fa-times-circle-o fa-3x" style="color:#e0e0e0"></i>
+                                    <div class="col-sm-2" >
+                                        <button class="btn btn-default" data-action="rm_item" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>">
+                                            <i class="fa fa-times-circle-o fa-2x"></i>
+                                        </button>
                                     </div>
 
                                 </div>
 
                             </div>
-                        </div>-->
+                        </div>
 
+                    <!--
                         <a href="/carrito" class="list-group-item">
                         <div class="row" style="display: flex;align-items: center;">
                             <div class="col-sm-9">
@@ -111,23 +107,26 @@
                             <h2 class="list-group-item-text"><strong>Precio: </strong><span style="color: #e91e63;"><%=totales[i].totales%></span></h2>
                             </div>
                             <div class="col-sm-1" >
-                              <!--  <i id="inc" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="inc_existence" class="fa fa-chevron-circle-up fa-3x" style="color:#e0e0e0"></i>-->
+                                <i id="inc" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="inc_existence" class="fa fa-chevron-circle-up fa-3x" style="color:#e0e0e0"></i>
                             </div>
                             <div class="col-sm-1" >
-                            <!--    <i id="dec" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="dec_existence" class="fa fa-chevron-circle-down fa-3x" style="color:#e0e0e0"></i>-->
+                            <i id="dec" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="dec_existence" class="fa fa-chevron-circle-down fa-3x" style="color:#e0e0e0"></i>
                             </div>
                             <div class="col-sm-1" >
                                 <i id="rem" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="rem_existence" class="fa fa-times-circle-o fa-3x" style="color:#e0e0e0"></i>
                             </div>
                         </div>
                         </a>
+                    -->
 
 
                         <%}%>
 
 
+
+                <!--</div>-->
+
                         <h1 style="float: right;"><strong>Total: </strong> <%= total[0].sum%></h1>
-                    </div>
                     <button data-toggle="modal" data-target="#genericModal" data-action="make_sale" class="btn btn-primary">Realizar venta </button>
 
                     <%}else{%>
@@ -147,5 +146,6 @@
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="/javascripts/modal.js"></script>
+<script src="/javascripts/carrito.js"></script>
 </body>
 </html>
