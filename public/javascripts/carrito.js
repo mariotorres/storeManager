@@ -12,6 +12,7 @@ $('.btn').click(function () {
                 alert(data.message);
                 if (data.status == 'Ok') {
                     // Obtener HTML del carrito
+                    location.reload();
                 }
             });
         }
