@@ -225,6 +225,15 @@ function modalEvents(button, modal, page ) {
                 event.preventDefault();
             }
             break;
+        case "inc_existence":
+                // Selected discount
+                $.post('/carrito/inc', {user_id: $(this).data('usuario_id'), item_id:$(this).data("item_id")}).done(function (data) {
+                    alert(data.message);
+                    if(data.status=='Ok'){
+                    }
+                });
+                event.preventDefault();
+            break;
         case "edit_supplier":
             modal.find('.modal-title').text('Editar proveedor');
             modal.find('#modal_content').html("");

@@ -201,6 +201,26 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
     });
 });
 
+router.post('/carrito/inc', isAuthenticated, function (req, res) {
+    console.log(req.body.item_id);
+    console.log(req.body.user_id);
+    db.task(function (t) {
+        return this.batch([
+            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito + 1 from usuarios, articulos ' +
+                'where carrito.id_articulo=$1 and carrito.id_usuario=$2' +
+                'and carrito.unidades_carrito < articulos.n_existencias', [
+                numericCol(req.body.item_id),
+                numericCol(req.body.user_id)
+            ])
+        ])
+    }).then(function (data) {
+        //res.render('carrito', {title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2]});
+    }).catch(function (error) {
+        console.log(error);
+    });
+});
+
+
 // Insertar prenda en carrito
 // Agregar id de proveedor
 router.post('/carrito/new', isAuthenticated, function(req, res){
