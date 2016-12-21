@@ -178,15 +178,22 @@ router.get('/carrito', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
-                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0'),
-            this.one('select * from usuarios where id = $1', req.user.id),
+                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
             this.manyOrNone('select sum(precio * unidades_carrito) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
-                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0'),
+                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
             this.manyOrNone('select precio*unidades_carrito as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
-                'carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0')
-    ])
+                'carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ])
+        ]);
+
     }).then(function (data) {
-        res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2], totales:data[3]});
+        res.render('carrito',{
+            title : "Venta en proceso",
+            user: req.user,
+            section: 'carrito',
+            items: data[0],
+            total: data[1],
+            totales: data[2]
+        });
     }).catch(function (error) {
         console.log(error);
     });

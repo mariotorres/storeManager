@@ -38,9 +38,39 @@
             <!-- Tab panes -->
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="home">
+
+
                     <% if (items.length > 0){%>
                     <div class="list-group">
+
                         <% for ( var i =0; i< items.length; i++){%>
+
+
+                        <!--
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <label>Vendedor</label>
+                                        <p><%= user.nombres %></p>
+                                    </div>
+
+                                    <div class="col-sm-1" >
+                                        <i id="inc" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="inc_existence" class="fa fa-chevron-circle-up fa-3x" style="color:#e0e0e0"></i>
+                                    </div>
+                                    <div class="col-sm-1" >
+                                        <i id="dec" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="dec_existence" class="fa fa-chevron-circle-down fa-3x" style="color:#e0e0e0"></i>
+                                    </div>
+                                    <div class="col-sm-1" >
+                                        <i id="rem" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="rem_existence" class="fa fa-times-circle-o fa-3x" style="color:#e0e0e0"></i>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>-->
+
                         <a href="/carrito" class="list-group-item">
                         <div class="row" style="display: flex;align-items: center;">
                             <div class="col-sm-9">
@@ -62,10 +92,15 @@
                             </div>
                         </div>
                         </a>
+
+
                         <%}%>
+
+
                         <h1 style="float: right;"><strong>Total: </strong> <%= total[0].sum%></h1>
                     </div>
                     <button data-toggle="modal" data-target="#genericModal" data-action="make_sale" class="btn btn-primary">Realizar venta </button>
+
                     <%}else{%>
                     <div class="alert alert-info" role="alert">El carrito está vacio</div>
                     <%}%>
