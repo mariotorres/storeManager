@@ -208,7 +208,9 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             ])
         ])
     }).then(function (data) {
-        //res.render('carrito', {title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2]});
+        res.json({
+            message : 'Venta en proceso'
+        });
     }).catch(function (error) {
         console.log(error);
     });
@@ -225,9 +227,16 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
             ])
         ])
     }).then(function (data) {
-        //res.render('carrito', {title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2]});
+        res.json({
+            status : 'Ok',
+            message: 'Algo aquí'
+        })
     }).catch(function (error) {
         console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ha ocurrido un error'
+        })
     });
 });
 
@@ -242,9 +251,14 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
             ])
         ])
     }).then(function (data) {
-        //res.render('carrito', {title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2]});
+        res.json({
+            //algo va aquí
+        });
     }).catch(function (error) {
         console.log(error);
+        res.json({
+            //algo va aquí
+        })
     });
 });
 
@@ -259,9 +273,16 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
             ])
         ])
     }).then(function (data) {
-        //res.render('carrito', {title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2]});
+        res.json({
+            status: 'Ok',
+            message : 'El producto se ha removido del carrito'
+        })
     }).catch(function (error) {
         console.log(error);
+        res.json({
+           status : 'Error',
+            message : 'Ocurrió un error al remover el producto del carrito'
+        });
     });
 });
 
