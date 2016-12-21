@@ -177,10 +177,13 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 router.get('/carrito', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
-            this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and  carrito.id_usuario = usuarios.id'),
+            this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0'),
             this.one('select * from usuarios where id = $1', req.user.id),
-            this.manyOrNone('select sum(precio * unidades_carrito) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and  carrito.id_usuario = usuarios.id'),
-            this.manyOrNone('select precio*unidades_carrito as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and carrito.id_usuario = usuarios.id')
+            this.manyOrNone('select sum(precio * unidades_carrito) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0'),
+            this.manyOrNone('select precio*unidades_carrito as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+                'carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0')
     ])
     }).then(function (data) {
         res.render('carrito',{title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2], totales:data[3]});
@@ -202,8 +205,6 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
-    console.log(req.body.item_id);
-    console.log(req.body.user_id);
     db.task(function (t) {
         return this.batch([
             this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito + 1 from usuarios, articulos ' +
@@ -220,6 +221,22 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
     });
 });
 
+router.post('/carrito/dec', isAuthenticated, function (req, res) {
+    db.task(function (t) {
+        return this.batch([
+            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 from usuarios, articulos ' +
+                'where carrito.id_articulo=$1 and carrito.id_usuario=$2' +
+                'and carrito.unidades_carrito > 0', [
+                numericCol(req.body.item_id),
+                numericCol(req.body.user_id)
+            ])
+        ])
+    }).then(function (data) {
+        //res.render('carrito', {title : "Venta en proceso", user: req.user, section: 'carrito', items: data[0], users:data[1], total:data[2]});
+    }).catch(function (error) {
+        console.log(error);
+    });
+});
 
 // Insertar prenda en carrito
 // Agregar id de proveedor

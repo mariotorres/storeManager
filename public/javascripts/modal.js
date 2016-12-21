@@ -227,14 +227,23 @@ function modalEvents(button, modal, page ) {
             break;
         case "inc_existence":
                 // Selected discount
-            alert($(this).data('user_id'));
-            alert($(this).data('item_id'));
-                $.post('/carrito/inc', {user_id:$(this).data('user_id'), item_id:$(this).data('item_id')}).done(function (data) {
+                $.post('/carrito/inc', {user_id:$("#inc").data('user_id'), item_id:$("#inc").data('item_id')}).done(function (data) {
                     alert(data.message);
                     if(data.status=='Ok'){
                     }
                 });
                 event.preventDefault();
+            break;
+        case "dec_existence":
+            // Selected discount
+            //alert($("#dec").data('user_id'));
+            //alert($("#dec").data('item_id'));
+            $.post('/carrito/dec', {user_id:$("#dec").data('user_id'), item_id:$("#dec").data('item_id')}).done(function (data) {
+                alert(data.message);
+                if(data.status=='Ok'){
+                }
+            });
+            event.preventDefault();
             break;
         case "edit_supplier":
             modal.find('.modal-title').text('Editar proveedor');
