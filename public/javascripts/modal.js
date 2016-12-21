@@ -214,6 +214,7 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+            /*
         case "make_sale":
             if (confirm("¿Está seguro que quiere realizar la venta?")){
                 // Selected discount
@@ -225,7 +226,6 @@ function modalEvents(button, modal, page ) {
                 event.preventDefault();
             }
             break;
-            /*
         case "inc_existence":
                 // Selected discount
                 $.post('/carrito/inc', {user_id:$("#inc").data('user_id'), item_id:$("#inc").data('item_id')}).done(function (data) {
