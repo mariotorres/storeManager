@@ -1,4 +1,4 @@
-
+//Código de los botones del carrito
 $('.btn').click(function () {
     var button = $(this);
 
