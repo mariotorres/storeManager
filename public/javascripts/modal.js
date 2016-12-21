@@ -236,9 +236,16 @@ function modalEvents(button, modal, page ) {
             break;
         case "dec_existence":
             // Selected discount
-            //alert($("#dec").data('user_id'));
-            //alert($("#dec").data('item_id'));
             $.post('/carrito/dec', {user_id:$("#dec").data('user_id'), item_id:$("#dec").data('item_id')}).done(function (data) {
+                alert(data.message);
+                if(data.status=='Ok'){
+                }
+            });
+            event.preventDefault();
+            break;
+        case "rem_existence":
+            // Selected discount
+            $.post('/carrito/rem', {user_id:$("#rem").data('user_id'), item_id:$("#rem").data('item_id')}).done(function (data) {
                 alert(data.message);
                 if(data.status=='Ok'){
                 }
