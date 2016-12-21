@@ -47,47 +47,49 @@
 
                         <div class="panel panel-default">
                             <div class="panel-body">
-
                                 <div class="row">
-                                    <div class="col-sm-10">
-                                        <p>
+                                    <div class="col-sm-12">
+                                        <h4>
                                         <label>Vendedor:</label>
                                         <%= user.nombres %>
-                                        </p>
+                                        </h4>
+                                    </div>
+                                    <div class="col-sm-5">
+                                    <div class="col-sm-6">
                                         <p>
                                         <label>Artículo:</label>
                                             <%= items[i].articulo %>
                                         </p>
-                                        <p>
-                                        <label>Descripción:</label>
-                                            <%= items[i].descripcion %>
-                                        </p>
-                                        <p>
-                                        <label>Marca:</label>
-                                        </p>
+                                    </div>
+                                    <div class="col-sm-6">
                                         <p>
                                         <label>Modelo:</label>
                                             <%= items[i].modelo %>
                                         </p>
+                                    </div>
+                                    <div class="col-sm-6">
                                         <p>
-                                        <label>Talla:</label>
-                                            <%= items[i].talla %>
+                                            <label>Unidades seleccionadas:</label>
+                                            <%= items[i].unidades_carrito %>
                                         </p>
+                                    </div>
+                                    <div class="col-sm-6">
                                         <p>
                                             <label>Precio unitario:</label>
                                             <%= items[i].precio %>
                                         </p>
-
-                                        <p>
-                                        <label>Precio:</label>
-                                            <%= totales[i].totales %>
-                                        </p>
                                     </div>
+                                    </div>
+                                    <div class="col-sm-5" style="vertical-align: middle;">
+                                        <h2>
+                                            <label style="color:#bdbdbd">Precio:</label>
+                                            <span style="color: #e91e63"><%= totales[i].totales %></span>
+                                        </h2>
+                                    </div>
+                                    <div class="col-sm-1" >
+                                        <!--<button class="btn btn-default" ></button>-->
+                                            <i id="rem" data-action="rm_item" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-times-circle-o fa-2x" style="cursor: pointer;color:#e0e0e0"></i>
 
-                                    <div class="col-sm-2" >
-                                        <button class="btn btn-default" data-action="rm_item" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>">
-                                            <i class="fa fa-times-circle-o fa-2x"></i>
-                                        </button>
                                     </div>
 
                                 </div>
