@@ -69,6 +69,16 @@ body.modal-open .supreme-container{
 }
 
 
+.fa-chevron-circle-up:hover, .fa-chevron-circle-down:hover, .fa-times-circle-o:hover{
+    color: #616161 !important;
+    box-shadow: none;
+}
+
+.fa-chevron-circle-up:active, .fa-chevron-circle-down:active, .fa-times-circle-o:active{
+    color: #e91e63 !important;
+    box-shadow: none;
+}
+
 /*
 .tab-pane{
     background-color: white;
