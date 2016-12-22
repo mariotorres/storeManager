@@ -220,7 +220,7 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
     console.log("id ITEM: " + req.body.item_id);
     db.task(function (t) {
         return this.batch([
-            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito + 1 from usuarios, articulos ' +
+            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito + 1 ' +
                 'where carrito.id_articulo = $1 and carrito.id_usuario = $2 ', [
                 numericCol(req.body.item_id),
                 numericCol(req.body.user_id)
@@ -244,9 +244,9 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
     console.log("id ITEM: " + req.body.item_id);
     db.task(function (t) {
         return this.batch([
-            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 from usuarios, articulos ' +
+            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 ' +
                 'where carrito.id_articulo = $1 and carrito.id_usuario = $2 ' +
-                ' and carrito.unidades_carrito > 0', [
+                ' and carrito.unidades_carrito > 1 returning id_articulo', [
                 numericCol(req.body.item_id),
                 numericCol(req.body.user_id)
             ])
@@ -254,7 +254,7 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
     }).then(function (data) {
         res.json({
             status : 'Ok',
-            message: 'Se ha eliminado una unidad del artículo: ' + req.body.item_id
+            message: (data?'Se ha eliminado una unidad del artículo: ' + req.body.item_id : 'Solo queda una unidad del artículo: '+ req.body.item_id)
         });
     }).catch(function (error) {
         console.log(error);
@@ -965,7 +965,7 @@ router.post('/brand/update', function(req, res){
  */
 router.post('/item/update', function(req, res){
     db.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-        'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11 ' +
+        'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11, n_existencias= $12 ' +
         'where id=$1 returning id, articulo ',[
         req.body.id,
         req.body.articulo,
@@ -977,7 +977,8 @@ router.post('/item/update', function(req, res){
         numericCol(req.body.precio),
         numericCol(req.body.costo),
         numericCol(req.body.codigo_barras),
-        req.body.url_imagen
+        req.body.url_imagen,
+        numericCol(req.body.n_existencias)
     ]).then(function (data) {
         res.json({
             status :'Ok',
