@@ -304,31 +304,32 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
         ])
     })*/
     db.tx(function(t){
-    return this.one('select count(*) as unidades_carrito from carrito where id_articulo = $2 and id_usuario = $3', [
-        numericCol(req.body.item_id),
-        numericCol(req.body.user_id)
-    ]).then(function(data){
-        if(data.unidades_carrito > 0){
-            return t.batch([{count: data.unidades_carrito}]);
-        }else{
-        return t.batch([{count: data.unidades_carrito}, t.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
-            ' values($1, $2, $3, $4, $5, $6, $7) ' +
-            ' returning id_articulo',[
-            new Date(),
+        return this.one('select count(*) as unidades_carrito from carrito where id_articulo = $1 and id_usuario = $2', [
             numericCol(req.body.item_id),
-            numericCol(req.body.user_id),
-            numericCol(req.body.optradioDesc),
-            numericCol(req.body.monto),
-            req.body.existencias,
-            req.body.estatus
-        ])]);
-        }
-    })
+            numericCol(req.body.user_id)
+        ]).then(function(data){
+            if(data.unidades_carrito > 0){
+                return t.batch([{count: data.unidades_carrito}]);
+            }else{
+                return t.batch([{count: data.unidades_carrito},
+                    t.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
+                        ' values($1, $2, $3, $4, $5, $6, $7) ' +
+                        ' returning id_articulo',[
+                        new Date(),
+                        numericCol(req.body.item_id),
+                        numericCol(req.body.user_id),
+                        numericCol(req.body.optradioDesc),
+                        numericCol(req.body.monto),
+                        req.body.existencias,
+                        req.body.estatus
+                    ])]);
+            }
+        })
     }).then(function(data){
         if(data[0].count > 0){
-            var msg = 'La prenda "' + data[0].id_articulo + '" ya está en el carrito';
+            var msg = 'La prenda ya está en el carrito';
         }else{
-            var msg = 'La prenda "' + data[0].id_articulo + '" ha sido registrada en el carrito';
+            var msg = 'La prenda "' + data[1].id_articulo + '" ha sido registrada en el carrito';
         }
         res.json({
             status:'Ok',
@@ -354,7 +355,7 @@ router.post('/item/new', function(req,res ){
     }).then(function (data) {
         res.render('partials/new-item', {tiendas: data[0], marcas: data[2], proveedores: data[1]});
     }).catch(function(error){
-      console.log(error);
+        console.log(error);
     });
 });
 
