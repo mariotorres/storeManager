@@ -287,8 +287,8 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
     // Agregar a carrito
 
     /*
-    db.task(function(t){
-        return this.batch([
+     db.task(function(t){
+     return this.batch([
         this.one('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
             'values($1, $2, $3, $4, $5, $6, $7) returning id_articulo',[
             new Date(),
@@ -303,21 +303,33 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
         this.one('update articulos set n_existencias = n_existencias - 1 where id=$1 returning id, articulo ', [numericCol(req.body.item_id)])
         ])
     })*/
-
-    //where (select count(*) from carrito where id_articulo = $2 and id_usuario = $3) = 0
-    db.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
-        ' values($1, $2, $3, $4, $5, $6, $7) ' +
-        ' returning id_articulo',[
-        new Date(),
+    db.tx(function(t){
+    return this.one('select count(*) as unidades_carrito from carrito where id_articulo = $2 and id_usuario = $3', [
         numericCol(req.body.item_id),
-        numericCol(req.body.user_id),
-        numericCol(req.body.optradioDesc),
-        numericCol(req.body.monto),
-        req.body.existencias,
-        req.body.estatus
+        numericCol(req.body.user_id)
     ]).then(function(data){
-
-        var msg = (data?  'La prenda "' + data.id_articulo + '" ha sido registrada en el carrito':'El artículo ya fue agregado al carrito previamente');
+        if(data.unidades_carrito > 0){
+            return t.batch([{count: data.unidades_carrito}]);
+        }else{
+        return t.batch([{count: data.unidades_carrito}, t.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
+            ' values($1, $2, $3, $4, $5, $6, $7) ' +
+            ' returning id_articulo',[
+            new Date(),
+            numericCol(req.body.item_id),
+            numericCol(req.body.user_id),
+            numericCol(req.body.optradioDesc),
+            numericCol(req.body.monto),
+            req.body.existencias,
+            req.body.estatus
+        ])]);
+        }
+    })
+    }).then(function(data){
+        if(data[0].count > 0){
+            var msg = 'La prenda "' + data[0].id_articulo + '" ya está en el carrito';
+        }else{
+            var msg = 'La prenda "' + data[0].id_articulo + '" ha sido registrada en el carrito';
+        }
         res.json({
             status:'Ok',
             message: msg
@@ -329,15 +341,6 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             message: 'Ocurrió un error al registrar el artículo'
         });
     });
-    // Eliminar de inventario
-    /*db.result('delete from articulos where id=$1',
-     req.body.item_id
-     ).then(function(result){
-     console.log(result.rowCount);
-     }).catch(function(error){
-     console.log(error);
-     })*/
-    // Agregar a saldo deudor de proveedor.
 });
 
 // New item
@@ -363,10 +366,12 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.one('select count(*) from articulos as count where n_existencias > 0'),
-            this.manyOrNone('select * from articulos where n_existencias > 0 and not exists ' +
-                '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ]),
+            this.manyOrNone('select * from articulos where n_existencias > 0 ' +
+                ' order by articulo limit $1 offset $2',[ pageSize, offset ]),
             this.oneOrNone('select * from usuarios where id = $1',[ req.user.id ]),
-            this.manyOrNone('select * from terminales')
+            this.manyOrNone('select * from terminales'),
+            this.manyOrNone('select id from articulos where n_existencias > 0 and not exists ' +
+                '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ])
         ]);
 
     }).then(function (data) {
@@ -375,6 +380,7 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
             items: data[1],
             user: data[2],
             terminales:data[3],
+            not_in_carrito: data[4],
             pageNumber : req.body.page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
