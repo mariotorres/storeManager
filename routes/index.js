@@ -244,9 +244,9 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
     console.log("id ITEM: " + req.body.item_id);
     db.task(function (t) {
         return this.batch([
-            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 ' +
-                'where carrito.id_articulo = $1 and carrito.id_usuario = $2 ' +
-                ' and carrito.unidades_carrito > 1 returning id_articulo', [
+            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 from usuarios, articulos ' +
+                'where carrito.id_articulo=$1 and carrito.id_usuario=$2 ' +
+                ' and carrito.unidades_carrito > 0', [
                 numericCol(req.body.item_id),
                 numericCol(req.body.user_id)
             ])
