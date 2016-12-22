@@ -182,7 +182,7 @@ router.get('/carrito', isAuthenticated, function (req, res) {
             this.manyOrNone('select sum(precio * unidades_carrito) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
             this.manyOrNone('select precio*unidades_carrito as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
-                'carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ])
+                'carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo',[ req.user.id ])
         ]);
 
     }).then(function (data) {
@@ -285,24 +285,6 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 router.post('/carrito/new', isAuthenticated, function(req, res){
     console.log(req.body);
     // Agregar a carrito
-
-    /*
-     db.task(function(t){
-     return this.batch([
-        this.one('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
-            'values($1, $2, $3, $4, $5, $6, $7) returning id_articulo',[
-            new Date(),
-            numericCol(req.body.item_id),
-            numericCol(req.body.user_id),
-            numericCol(req.body.optradioDesc),
-            numericCol(req.body.monto),
-            req.body.existencias,
-            req.body.estatus
-        ]),
-            //Me parece que debemos actualizar las existencias hasta procesar la venta
-        this.one('update articulos set n_existencias = n_existencias - 1 where id=$1 returning id, articulo ', [numericCol(req.body.item_id)])
-        ])
-    })*/
     db.tx(function(t){
         return this.one('select count(*) as unidades_carrito from carrito where id_articulo = $1 and id_usuario = $2', [
             numericCol(req.body.item_id),
