@@ -86,10 +86,12 @@
                                             <span style="color: #e91e63"><%= totales[i].totales %></span>
                                         </h2>
                                     </div>
+                                    <% if (items[i].n_existencias > items[i].unidades_carrito){%>
                                     <div class="col-sm-1" >
                                         <!--<button class="btn btn-default" ></button>-->
                                         <i id="inc" data-action="rm_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-up fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
                                     </div>
+                                    <%}%>
                                     <div class="col-sm-1" >
                                         <!--<button class="btn btn-default" ></button>-->
                                         <i id="dec" data-action="rm_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-down fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
