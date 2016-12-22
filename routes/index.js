@@ -303,8 +303,11 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
         this.one('update articulos set n_existencias = n_existencias - 1 where id=$1 returning id, articulo ', [numericCol(req.body.item_id)])
         ])
     })*/
-    db.one('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
-        'values($1, $2, $3, $4, $5, $6, $7) returning id_articulo',[
+
+    //where (select count(*) from carrito where id_articulo = $2 and id_usuario = $3) = 0
+    db.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
+        ' values($1, $2, $3, $4, $5, $6, $7) ' +
+        ' returning id_articulo',[
         new Date(),
         numericCol(req.body.item_id),
         numericCol(req.body.user_id),
@@ -313,9 +316,11 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
         req.body.existencias,
         req.body.estatus
     ]).then(function(data){
+
+        var msg = (data?  'La prenda "' + data.id_articulo + '" ha sido registrada en el carrito':'El artículo ya fue agregado al carrito previamente');
         res.json({
             status:'Ok',
-            message: 'La prenda "' + data.id_articulo + '" ha sido registrada en el carrito'
+            message: msg
         });
     }).catch(function(error){
         console.log(error);
@@ -711,7 +716,7 @@ router.post('/item/register', function(req, res){
         var proveedor = null;
 
         if (req.body.id_proveedor != null && req.body.id_proveedor != ''){
-            proveedor = this.one('update proveedores set a_cuenta=a_cuenta - cast($2 as money) where id=$1 returning id, nombre',[
+            proveedor = this.one('update proveedores set a_cuenta=a_cuenta - $2 where id=$1 returning id, nombre',[
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.costo)*numericCol(req.body.n_arts)
             ]);
