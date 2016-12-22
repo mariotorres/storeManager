@@ -214,45 +214,6 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
-            /*
-        case "make_sale":
-            if (confirm("¿Está seguro que quiere realizar la venta?")){
-                // Selected discount
-                $.post('/carrito/sell', {}).done(function (data) {
-                    alert(data.message);
-                    if(data.status=='Ok'){
-                    }
-                });
-                event.preventDefault();
-            }
-            break;
-        case "inc_existence":
-                // Selected discount
-                $.post('/carrito/inc', {user_id:$("#inc").data('user_id'), item_id:$("#inc").data('item_id')}).done(function (data) {
-                    alert(data.message);
-                    if(data.status=='Ok'){
-                    }
-                });
-                event.preventDefault();
-            break;
-        case "dec_existence":
-            // Selected discount
-            $.post('/carrito/dec', {user_id:$("#dec").data('user_id'), item_id:$("#dec").data('item_id')}).done(function (data) {
-                alert(data.message);
-                if(data.status=='Ok'){
-                }
-            });
-            event.preventDefault();
-            break;
-        case "rem_existence":
-            // Selected discount
-            $.post('/carrito/rem', {user_id:$("#rem").data('user_id'), item_id:$("#rem").data('item_id')}).done(function (data) {
-                alert(data.message);
-                if(data.status=='Ok'){
-                }
-            });
-            event.preventDefault();
-            break;*/
         case "edit_supplier":
             modal.find('.modal-title').text('Editar proveedor');
             modal.find('#modal_content').html("");

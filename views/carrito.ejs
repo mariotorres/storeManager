@@ -39,9 +39,7 @@
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="home">
 
-
                     <% if (items.length > 0){%>
-                   <!-- <div class="list-group">-->
 
                         <% for ( var i =0; i< items.length; i++){%>
 
@@ -86,17 +84,21 @@
                                             <span style="color: #e91e63"><%= totales[i].totales %></span>
                                         </h2>
                                     </div>
+                                    <% if (items[i].n_existencias > items[i].unidades_carrito){%>
                                     <div class="col-sm-1" >
                                         <!--<button class="btn btn-default" ></button>-->
-                                        <i id="inc" data-action="rm_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-up fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                                        <i id="inc" data-action="inc_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-up fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
                                     </div>
+                                    <%}%>
+                                    <% if (items[i].unidades_carrito > 1){%>
                                     <div class="col-sm-1" >
                                         <!--<button class="btn btn-default" ></button>-->
-                                        <i id="dec" data-action="rm_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-down fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                                        <i id="dec" data-action="dec_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-down fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
                                     </div>
+                                    <%}%>
                                     <div class="col-sm-1" >
                                         <!--<button class="btn btn-default" ></button>-->
-                                            <i id="rem" data-action="rm_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-times-circle-o fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                                            <i id="rem" data-action="rem_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-times-circle-o fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
                                     </div>
 
                                 </div>
@@ -104,36 +106,7 @@
                             </div>
                         </div>
 
-                    <!--
-                        <a href="/carrito" class="list-group-item">
-                        <div class="row" style="display: flex;align-items: center;">
-                            <div class="col-sm-9">
-                            <h3 class="list-group-item-heading"><strong>Vendedor: </strong><%=items[i].usuario%></h3>
-                            <h4 class="list-group-item-text"><strong>ID:</strong><%=items[i].id_articulo%></h4>
-                            <p class="list-group-item-text"><strong>Articulo: </strong><%=items[i].articulo%></p>
-                            <p class="list-group-item-text"><strong>Descripción: </strong><%=items[i].descripcion%></p>
-                            <p class="list-group-item-text"><strong>Modelo: </strong><%=items[i].modelo%> | <strong>Marca: </strong><%=items[i].id_marca%> | <strong>Talla: </strong><%=items[i].talla%> | <strong>Precio unitario: </strong><%=items[i].precio%> | <strong>Unidades seleccionadas: </strong><%=items[i].unidades_carrito%></p>
-                            <h2 class="list-group-item-text"><strong>Precio: </strong><span style="color: #e91e63;"><%=totales[i].totales%></span></h2>
-                            </div>
-                            <div class="col-sm-1" >
-                                <i id="inc" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="inc_existence" class="fa fa-chevron-circle-up fa-3x" style="color:#e0e0e0"></i>
-                            </div>
-                            <div class="col-sm-1" >
-                            <i id="dec" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="dec_existence" class="fa fa-chevron-circle-down fa-3x" style="color:#e0e0e0"></i>
-                            </div>
-                            <div class="col-sm-1" >
-                                <i id="rem" data-toggle="modal" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" data-target="#genericModal" data-action="rem_existence" class="fa fa-times-circle-o fa-3x" style="color:#e0e0e0"></i>
-                            </div>
-                        </div>
-                        </a>
-                    -->
-
-
                         <%}%>
-
-
-
-                <!--</div>-->
 
                         <h1 style="float: right;"><strong>Total: </strong> <%= total[0].sum%></h1>
                     <button data-action="make_sale" class="btn btn-primary">Realizar venta </button>

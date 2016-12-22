@@ -178,7 +178,7 @@ router.get('/carrito', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
-                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
+                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo',[ req.user.id ]),
             this.manyOrNone('select sum(precio * unidades_carrito) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
             this.manyOrNone('select precio*unidades_carrito as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
@@ -220,9 +220,8 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
     console.log("id ITEM: " + req.body.item_id);
     db.task(function (t) {
         return this.batch([
-            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito + 1 from usuarios, articulos ' +
-                'where carrito.id_articulo=$1 and carrito.id_usuario=$2 ' +
-                'and carrito.unidades_carrito < articulos.n_existencias', [
+            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito + 1 ' +
+                'where carrito.id_articulo = $1 and carrito.id_usuario = $2 ', [
                 numericCol(req.body.item_id),
                 numericCol(req.body.user_id)
             ])
@@ -255,7 +254,7 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
     }).then(function (data) {
         res.json({
             status : 'Ok',
-            message: 'Se ha eliminado una unidad del artículo: ' + req.body.item_id
+            message: (data?'Se ha eliminado una unidad del artículo: ' + req.body.item_id : 'Solo queda una unidad del artículo: '+ req.body.item_id)
         });
     }).catch(function (error) {
         console.log(error);
@@ -304,8 +303,11 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
         this.one('update articulos set n_existencias = n_existencias - 1 where id=$1 returning id, articulo ', [numericCol(req.body.item_id)])
         ])
     })*/
-    db.one('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
-        'values($1, $2, $3, $4, $5, $6, $7) returning id_articulo',[
+
+    //where (select count(*) from carrito where id_articulo = $2 and id_usuario = $3) = 0
+    db.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
+        ' values($1, $2, $3, $4, $5, $6, $7) ' +
+        ' returning id_articulo',[
         new Date(),
         numericCol(req.body.item_id),
         numericCol(req.body.user_id),
@@ -314,9 +316,11 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
         req.body.existencias,
         req.body.estatus
     ]).then(function(data){
+
+        var msg = (data?  'La prenda "' + data.id_articulo + '" ha sido registrada en el carrito':'El artículo ya fue agregado al carrito previamente');
         res.json({
             status:'Ok',
-            message: 'La prenda "' + data.id_articulo + '" ha sido registrada en el carrito'
+            message: msg
         });
     }).catch(function(error){
         console.log(error);
@@ -359,7 +363,8 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.one('select count(*) from articulos as count where n_existencias > 0'),
-            this.manyOrNone('select * from articulos where n_existencias > 0 order by articulo limit $1 offset $2',[ pageSize, offset ]),
+            this.manyOrNone('select * from articulos where n_existencias > 0 and not exists ' +
+                '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ]),
             this.oneOrNone('select * from usuarios where id = $1',[ req.user.id ]),
             this.manyOrNone('select * from terminales')
         ]);
@@ -711,7 +716,7 @@ router.post('/item/register', function(req, res){
         var proveedor = null;
 
         if (req.body.id_proveedor != null && req.body.id_proveedor != ''){
-            proveedor = this.one('update proveedores set a_cuenta=a_cuenta - cast($2 as money) where id=$1 returning id, nombre',[
+            proveedor = this.one('update proveedores set a_cuenta=a_cuenta - $2 where id=$1 returning id, nombre',[
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.costo)*numericCol(req.body.n_arts)
             ]);
@@ -966,7 +971,7 @@ router.post('/brand/update', function(req, res){
  */
 router.post('/item/update', function(req, res){
     db.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-        'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11 ' +
+        'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11, n_existencias= $12 ' +
         'where id=$1 returning id, articulo ',[
         req.body.id,
         req.body.articulo,
@@ -978,7 +983,8 @@ router.post('/item/update', function(req, res){
         numericCol(req.body.precio),
         numericCol(req.body.costo),
         numericCol(req.body.codigo_barras),
-        req.body.url_imagen
+        req.body.url_imagen,
+        numericCol(req.body.n_existencias)
     ]).then(function (data) {
         res.json({
             status :'Ok',
