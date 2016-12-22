@@ -358,7 +358,8 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.one('select count(*) from articulos as count where n_existencias > 0'),
-            this.manyOrNone('select * from articulos where n_existencias > 0 order by articulo limit $1 offset $2',[ pageSize, offset ]),
+            this.manyOrNone('select * from articulos where n_existencias > 0 and not exists ' +
+                '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ]),
             this.oneOrNone('select * from usuarios where id = $1',[ req.user.id ]),
             this.manyOrNone('select * from terminales')
         ]);
