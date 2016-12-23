@@ -146,15 +146,10 @@ create table ventas (
     id serial primary key,
     id_usuario integer references usuarios(id),
     precio_venta numeric,
-    monto_pagado numeric,
-    forma_pago numeric,
     fecha_venta date,
     hora_venta time,
-    id_estatus_venta integer references estatus_ventas(id),
     notas text,
-    id_terminal integer references terminales(id),
-    descount    numeric,
-    pago_efectivo boolean
+    id_terminal integer references terminales(id)
 );
 
 drop table if exists venta_articulos;
@@ -162,7 +157,11 @@ create table venta_articulos(
     id serial primary key,
     id_articulo integer references articulos(id),
     id_venta integer references ventas(id),
+    id_estatus_venta integer references estatus_ventas(id),
+    unidades_vendidas numeric,
+    descount    numeric,
     monto_pagado numeric,
+    forma_pago numeric,
     estatus  text
 );
 

@@ -3,7 +3,7 @@ $('.btn').click(function () {
     var button = $(this);
     if (confirm("¿Está seguro que quiere realizar la venta?")){
         // Selected discount
-        $.post('/carrito/sell', {}).done(function (data) {
+        $.post('/carrito/sell', {user_id: button.data('user_id')}).done(function (data) {
             alert(data.message);
             if(data.status=='Ok'){
                 //¿?

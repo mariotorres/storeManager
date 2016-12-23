@@ -199,25 +199,8 @@ router.get('/carrito', isAuthenticated, function (req, res) {
     });
 });
 
-router.post('/carrito/sell', isAuthenticated, function (req, res) {
-    db.task(function (t) {
-        return this.batch([
-            this.manyOrNone('update articulos set n_existencias = n_existencias - carrito.unidades_carrito from usuarios, carrito ' +
-                'where carrito.id_articulo = articulos.id and carrito.id_usuario = usuarios.id and usuarios.id = $1',[
-                req.user.id
-            ])
-        ])
-    }).then(function (data) {
-        res.json({
-            message : 'Venta en proceso'
-        });
-    }).catch(function (error) {
-        console.log(error);
-    });
-});
-
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
-    console.log("id ITEM: " + req.body.item_id);
+    //console.log("id ITEM: " + req.body.item_id);
     db.task(function (t) {
         return this.batch([
             this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito + 1 ' +
@@ -280,8 +263,33 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
     });
 });
 
+// Carrito Sell
+/*return this.batch([
+    this.manyOrNone('update articulos set n_existencias = n_existencias - carrito.unidades_carrito from usuarios, carrito ' +
+        'where carrito.id_articulo = articulos.id and carrito.id_usuario = usuarios.id and usuarios.id = $1',[
+        req.user.id
+    ])
+])*/
+router.post('/carrito/sell', isAuthenticated, function (req, res) {
+    db.tx(function (t) {
+        return this.manyOrNone(
+            'select * from carrito where id_usuario = $1', numericCol(req.body.user_id)
+        ).then(function(data){
+            var precio_venta, monto_pagado;
+            for(var i = 0; i < data.length; i++){
+                console.log("ID ART :" + data[i].id_articulo);
+            }
+        })
+    }).then(function (data) {
+        res.json({
+            message : 'Venta en proceso'
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
+});
+
 // Insertar prenda en carrito
-// Agregar id de proveedor
 router.post('/carrito/new', isAuthenticated, function(req, res){
     console.log(req.body);
     // Agregar a carrito
@@ -294,7 +302,8 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
                 return t.batch([{count: data.unidades_carrito}]);
             }else{
                 return t.batch([{count: data.unidades_carrito},
-                    t.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount", "monto_pagado", "unidades_carrito", "estatus") ' +
+                    t.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount",  ' +
+                        '"monto_pagado", "unidades_carrito", "estatus") ' +
                         ' values($1, $2, $3, $4, $5, $6, $7) ' +
                         ' returning id_articulo',[
                         new Date(),
