@@ -306,12 +306,22 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                 t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [
                     numericCol(data[0][i].id_proveedor),
                     numericCol(data[0][i].costo * data[0][i].unidades_carrito)
-                ])
+                ]),
+                t.oneOrNone('delete from carrito where id_usuario=$1 and id_articulo=$2',[
+                        numericCol(data[0][i].id_usuario),
+                        numericCol(data[0][i].id_articulo)
+                        ]
+                    ),
+                t.manyOrNone('update articulos set n_existencias = n_existencias - $2 where id =$1',[
+                          numericCol(data[0][i].id_articulo),
+                          numericCol(data[0][i].unidades_carrito)
+                       ]
+                  )
             }
         })
     }).then(function (data) {
         res.json({
-            message : 'Venta en proceso'
+            message : 'Venta realizada'
         });
     }).catch(function (error) {
         console.log(error);
