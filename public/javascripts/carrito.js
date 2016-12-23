@@ -6,7 +6,9 @@ $('.btn').click(function () {
         $.post('/carrito/sell', {user_id: button.data('user_id')}).done(function (data) {
             alert(data.message);
             if(data.status=='Ok'){
-                //¿?
+                // Obtener HTML del carrito
+                alert("Venta exitosa");
+                location.reload();
             }
         });
     }

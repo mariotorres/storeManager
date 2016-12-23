@@ -321,7 +321,8 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
         })
     }).then(function (data) {
         res.json({
-            message : 'Venta realizada'
+            status : 'Ok',
+            message : 'Venta en proceso'
         });
     }).catch(function (error) {
         console.log(error);
