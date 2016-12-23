@@ -298,10 +298,14 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     ' values($1, $2, $3, $4, $5, $6)', [
                         numericCol(data[0][i].id_articulo),
                         numericCol(data[1].id),
-                        1,
+                        numericCol(data[0][i].estatus),
                         numericCol(data[0][i].unidades_carrito),
                         numericCol(data[0][i].discount),
                         numericCol(data[0][i].monto_pagado)
+                ]),
+                t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [
+                    numericCol(data[0][i].id_proveedor),
+                    numericCol(data[0][i].costo * data[0][i].unidades_carrito)
                 ])
             }
         })
