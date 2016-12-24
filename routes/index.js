@@ -274,51 +274,61 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
     db.tx(function (t) {
         return this.manyOrNone(
             'select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
-            ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo',
-            [numericCol(req.body.user_id)]
-        ).then(function(data){
+            ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo', [
+                numericCol(req.body.user_id)
+            ]).then(function(data){
             var precio_venta;
             for(var i = 0; i < data.length; i++){
-                precio_venta =+ data[i].precio;
+                //precio_venta =+ data[i].precio;
+                precio_venta += data[i].precio;
             }
-            return t.batch([data,
+
+            return t.batch([
+                data,
                 t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta") ' +
-                'values($1, $2, $3, $4) returning id',
-                [
+                'values($1, $2, $3, $4) returning id', [
                     numericCol(req.body.user_id),
                     precio_venta,
                     new Date(),
                     new Date().toLocaleTimeString()
                 ])
-            ])
+            ]);
         }).then(function(data){
+
+            var queries= [];
             for(var i = 0; i < data[0].length; i++){
+
                 console.log("INSERT ART: " + data[0][i].id_articulo + "ID VENTA: " + data[1].id);
-                t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "id_estatus_venta", "unidades_vendidas", "descount", "monto_pagado") ' +
+
+                queries.push(t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "id_estatus_venta", "unidades_vendidas", "descount", "monto_pagado") ' +
                     ' values($1, $2, $3, $4, $5, $6)', [
-                        numericCol(data[0][i].id_articulo),
-                        numericCol(data[1].id),
-                        numericCol(data[0][i].estatus),
-                        numericCol(data[0][i].unidades_carrito),
-                        numericCol(data[0][i].discount),
-                        numericCol(data[0][i].monto_pagado)
-                ]),
-                t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [
+                    numericCol(data[0][i].id_articulo),
+                    numericCol(data[1].id),
+                    numericCol(data[0][i].estatus),
+                    numericCol(data[0][i].unidades_carrito),
+                    numericCol(data[0][i].discount),
+                    numericCol(data[0][i].monto_pagado)
+                ]));
+
+                queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [
                     numericCol(data[0][i].id_proveedor),
                     numericCol(data[0][i].costo * data[0][i].unidades_carrito)
-                ]),
-                t.oneOrNone('delete from carrito where id_usuario=$1 and id_articulo=$2',[
-                        numericCol(data[0][i].id_usuario),
-                        numericCol(data[0][i].id_articulo)
-                        ]
-                    ),
-                t.manyOrNone('update articulos set n_existencias = n_existencias - $2 where id =$1',[
-                          numericCol(data[0][i].id_articulo),
-                          numericCol(data[0][i].unidades_carrito)
-                       ]
-                  )
+                ]));
+
+                queries.push(t.oneOrNone('delete from carrito where id_usuario=$1 and id_articulo=$2',[
+                    numericCol(data[0][i].id_usuario),
+                    numericCol(data[0][i].id_articulo)
+                ]));
+
+                queries.push(t.manyOrNone('update articulos set n_existencias = n_existencias - $2 where id =$1',[
+                    numericCol(data[0][i].id_articulo),
+                    numericCol(data[0][i].unidades_carrito)
+                ]));
             }
-        })
+
+            return t.batch(queries);
+
+        });
     }).then(function (data) {
         res.json({
             status : 'Ok',
@@ -326,6 +336,10 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrio un error'
+        })
     });
 });
 
@@ -357,10 +371,11 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             }
         })
     }).then(function(data){
+        var msg = '';
         if(data[0].count > 0){
-            var msg = 'La prenda ya está en el carrito';
+            msg = 'La prenda ya está en el carrito';
         }else{
-            var msg = 'La prenda "' + data[1].id_articulo + '" ha sido registrada en el carrito';
+            msg = 'La prenda "' + data[1].id_articulo + '" ha sido registrada en el carrito';
         }
         res.json({
             status:'Ok',
