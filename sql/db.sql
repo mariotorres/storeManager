@@ -108,8 +108,9 @@ create table articulos (
 */
 drop table if exists terminales cascade;
 create table terminales(
-    id serial primary key,
-nombre_facturador varchar(30)
+        id serial primary key,
+        id_tienda integer references tiendas(id),
+        nombre_facturador varchar(30)
 );
 
 
