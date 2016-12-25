@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+var path = require('path');
 var pgp = require("pg-promise")();
 var db;
 
@@ -1147,6 +1148,10 @@ router.post('/reports/', function (req, res) {
 
 router.post('/item/find', function () {
    //
+});
+
+router.get('/item/:id/image.jpg', isAuthenticated, function (req, res) {
+   res.sendfile( path.resolve('../images/dress.jpg'));
 });
 
 module.exports = router;
