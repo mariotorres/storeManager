@@ -147,7 +147,6 @@ create table ventas (
     precio_venta numeric,
     fecha_venta date,
     hora_venta time,
-    notas text,
     monto_pagado_efectivo numeric,
     id_terminal integer references terminales(id)
 );
@@ -159,7 +158,7 @@ create table venta_articulos(
     id_venta integer references ventas(id),
     /*id_estatus_venta integer references estatus_ventas(id),*/
     unidades_vendidas numeric,
-    descount    numeric,
+    discount    numeric,
     monto_pagado numeric,
     monto_por_pagar numeric,
     estatus  text

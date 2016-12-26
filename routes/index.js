@@ -281,7 +281,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             var precio_venta = 0;
             for(var i = 0; i < data.length; i++){
                 //precio_venta =+ data[i].precio;
-                precio_venta += data[i].precio;
+                precio_venta += data[i].precio*data[i].discount;
             }
             console.log("PRECIO VENTA: " + precio_venta);
             return t.batch([ // INCLUIR EN ESTA SECCIÓN PAGOS CON TARJETA.
@@ -297,17 +297,17 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
         }).then(function(data){
             var queries= [];
             for(var i = 0; i < data[0].length; i++){
-
-                console.log("INSERT ART: " + data[0][i].id_articulo + "ID VENTA: " + data[1].id);
-
-                queries.push(t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", "descount", "monto_pagado", "estatus") ' +
-                    ' values($1, $2, $3, $4, $5, $6)', [
+                queries.push(t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", "discount", ' +
+                    '"monto_pagado", "monto_por_pagar", "estatus") ' +
+                    ' values($1, $2, $3, $4, $5, $6, $7)', [
                     numericCol(data[0][i].id_articulo),
                     numericCol(data[1].id),
                     numericCol(data[0][i].unidades_carrito),
                     numericCol(data[0][i].discount),
                     numericCol(data[0][i].monto_pagado),
-                    numericCol(data[0][i].estatus)
+                    numericCol(( numericCol(data[0][i].unidades_carrito)* numericCol(data[0][i].precio)*
+                        (1- numericCol(data[0][i].discount)/100)) -  numericCol(data[0][i].monto_pagado)),
+                    data[0][i].estatus
                 ]));
 
                 queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [
