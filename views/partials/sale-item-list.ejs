@@ -78,6 +78,10 @@ if (items.length > 0){%>
                         <option value="devolucion">Devolución a proveedores</option>
                     </select>
                 </div>
+                <div class="col-sm-6">
+                    <label>Monto que se deja a cuenta:</label>
+                    <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="1" value="<%= items[i].precio%>">
+                </div>
             </div>
 
             <br>

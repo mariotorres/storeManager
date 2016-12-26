@@ -357,15 +357,16 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             }else{
                 return t.batch([{count: data.unidades_carrito},
                     t.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount",  ' +
-                        '"unidades_carrito", "estatus") ' +
-                        ' values($1, $2, $3, $4, $5, $6) ' +
+                        '"unidades_carrito", "estatus", "monto_pagado") ' +
+                        ' values($1, $2, $3, $4, $5, $6, $7) ' +
                         ' returning id_articulo',[
                         new Date(),
                         numericCol(req.body.item_id),
                         numericCol(req.body.user_id),
                         numericCol(req.body.optradioDesc),
                         req.body.existencias,
-                        req.body.id_estatus
+                        req.body.id_estatus,
+                        numericCol(req.body.monto_pagado)
                     ])]);
             }
         })
