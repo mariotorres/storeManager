@@ -121,9 +121,7 @@ create table carrito (
 fecha date,
 id_articulo integer references articulos(id),
 id_usuario integer references usuarios(id),
-id_terminal integer references terminales(id),
 discount    numeric,
-pago_efectivo boolean,
 monto_pagado numeric,
 unidades_carrito numeric,
 estatus text
@@ -150,6 +148,7 @@ create table ventas (
     fecha_venta date,
     hora_venta time,
     notas text,
+    monto_pagado_efectivo numeric,
     id_terminal integer references terminales(id)
 );
 
@@ -162,10 +161,9 @@ create table venta_articulos(
     unidades_vendidas numeric,
     descount    numeric,
     monto_pagado numeric,
-    forma_pago numeric,
+    /*forma_pago numeric,*/
     estatus  text
 );
-
 
 
 /*

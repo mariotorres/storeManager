@@ -284,7 +284,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                 precio_venta += data[i].precio;
             }
             console.log("PRECIO VENTA: " + precio_venta);
-            return t.batch([
+            return t.batch([ // INCLUIR EN ESTA SECCIÓN PAGOS CON TARJETA.
                 data,
                 t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta") ' +
                 'values($1, $2, $3, $4) returning id', [
