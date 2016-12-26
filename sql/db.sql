@@ -161,7 +161,7 @@ create table venta_articulos(
     unidades_vendidas numeric,
     descount    numeric,
     monto_pagado numeric,
-    /*forma_pago numeric,*/
+    monto_por_pagar numeric,
     estatus  text
 );
 

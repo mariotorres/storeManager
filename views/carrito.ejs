@@ -51,6 +51,7 @@
                                         <label>Vendedor:</label>
                                         <%= user.nombres %>
                                         </h4>
+                                        <hr>
                                     </div>
                                     <div class="col-sm-5">
                                     <div class="col-sm-6">
@@ -61,8 +62,12 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <p>
-                                        <label>Modelo:</label>
-                                            <%= items[i].modelo %>
+                                        <label>Descuento:</label>
+                                            <% if (items[i].discount){%>
+                                            <%= items[i].discount %>%
+                                            <%}else{%>
+                                            0%
+                                            <%}%>
                                         </p>
                                     </div>
                                     <div class="col-sm-6">
@@ -77,10 +82,14 @@
                                             <%= items[i].precio %>
                                         </p>
                                     </div>
+                                        <div class="col-sm-12">
+                                            <label>Monto pagado:</label>
+                                            <input type="number" name="monto_pagado" class="form-control" max="<%= totales[i].totales%>" min="1" value="<%= totales[i].totales%>">
+                                        </div>
                                     </div>
                                     <div class="col-sm-4" style="vertical-align: middle;">
                                         <h2>
-                                            <label style="color:#bdbdbd">Precio:</label>
+                                            <label style="color:#bdbdbd">Por pagar:</label>
                                             <span style="color: #e91e63"><%= totales[i].totales %></span>
                                         </h2>
                                     </div>
