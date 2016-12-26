@@ -300,14 +300,14 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
 
                 console.log("INSERT ART: " + data[0][i].id_articulo + "ID VENTA: " + data[1].id);
 
-                queries.push(t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "id_estatus_venta", "unidades_vendidas", "descount", "monto_pagado") ' +
+                queries.push(t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", "descount", "monto_pagado", "estatus") ' +
                     ' values($1, $2, $3, $4, $5, $6)', [
                     numericCol(data[0][i].id_articulo),
                     numericCol(data[1].id),
-                    numericCol(data[0][i].estatus),
                     numericCol(data[0][i].unidades_carrito),
                     numericCol(data[0][i].discount),
-                    numericCol(data[0][i].monto_pagado)
+                    numericCol(data[0][i].monto_pagado),
+                    numericCol(data[0][i].estatus)
                 ]));
 
                 queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [

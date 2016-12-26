@@ -95,26 +95,3 @@ if (items.length > 0){%>
 <div class="alert alert-info" role="alert">No hay articulos registrados</div>
 <%}%>
 
-
-<br>
-
-
-<script>
-    $(document).ready(function() {
-        $("#pagoTarjeta").click(function() {
-            $("#listTerminal").css('visibility', 'visible');
-        });
-        $("#pagoEfectivo").click(function() {
-            $("#listTerminal").css('visibility', 'hidden');
-        });
-        $(".form-control").change(function() {
-            //alert($(this).find("option:selected").text());
-            if ($(this).find("option:selected").text() == "Modificación") {
-                alert("Favor de ingresar el monto que se dejará a cuenta para la modificación de la prenda.");
-                $(".monto_class").css('visibility', 'visible');
-            }else{
-                $(".monto_class").css('visibility', 'hidden');
-            }
-        });
-    });
-</script>
