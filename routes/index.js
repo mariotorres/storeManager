@@ -669,6 +669,10 @@ router.post('/supplier/new',function(req, res ){
     res.render('partials/new-supplier');
 });
 
+router.post('/type/payment',function(req, res ){
+    res.render('partials/type-payment');
+});
+
 // Listar proveedores
 router.post('/supplier/list/',function(req, res ){
     var page = req.body.page;

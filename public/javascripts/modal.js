@@ -199,6 +199,21 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "make_sale":
+            modal.find('.modal-title').text('Seleccionar tipo de pago');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/type/payment', { /* post body data */ }, function(){
+                $('#typeForm').submit(function(event){
+                    /*$.post('/carrito/sell', $(this).serialize()).done(function (data){
+                        alert(data.message);
+                        if(data.status == 'Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    event.preventDefault();*/
+                });
+            });
+            break;
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");
@@ -249,6 +264,7 @@ function modalEvents(button, modal, page ) {
             });
             break;
         // brands
+
         case "new_brand":
             modal.find('.modal-title').text('Registrar marca');
             modal.find('#modal_content').html("");
