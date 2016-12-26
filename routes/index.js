@@ -278,12 +278,12 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo', [
                 numericCol(req.body.user_id)
             ]).then(function(data){
-            var precio_venta;
+            var precio_venta = 0;
             for(var i = 0; i < data.length; i++){
                 //precio_venta =+ data[i].precio;
                 precio_venta += data[i].precio;
             }
-
+            console.log("PRECIO VENTA: " + precio_venta);
             return t.batch([
                 data,
                 t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta") ' +
@@ -295,7 +295,6 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                 ])
             ]);
         }).then(function(data){
-
             var queries= [];
             for(var i = 0; i < data[0].length; i++){
 
@@ -367,7 +366,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
                         numericCol(req.body.optradioDesc),
                         numericCol(req.body.monto),
                         req.body.existencias,
-                        req.body.estatus
+                        req.body.id_estatus
                     ])]);
             }
         })

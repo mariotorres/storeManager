@@ -74,9 +74,9 @@ if (items.length > 0){%>
                     </select>
                 </div>
                 <div class="col-sm-6">
-                    <div id="montoPagado" style="visibility: hidden">
+                    <div id="montoPagado"  name="div_monto">
                         <label>Monto:  </label>
-                        <input type="text" class="form-control" id="monto" name="monto" value="000.00">
+                        <input type="text" class="form-control" id="monto" name="monto" value=<%= items[i].precio %>>
                     </div>
                 </div>
             </div>
@@ -107,12 +107,13 @@ if (items.length > 0){%>
         $("#pagoEfectivo").click(function() {
             $("#listTerminal").css('visibility', 'hidden');
         });
-        $("#estatus").change(function() {
-            if (document.getElementById('estatus').options[document.getElementById("estatus").selectedIndex].value == "modificacion") {
+        $(".form-control").change(function() {
+            //alert($(this).find("option:selected").text());
+            if ($(this).find("option:selected").text() == "Modificación") {
                 alert("Favor de ingresar el monto que se dejará a cuenta para la modificación de la prenda.");
-                $("#montoPagado").css('visibility', 'visible');
+                $(".monto_class").css('visibility', 'visible');
             }else{
-                $("#montoPagado").css('visibility', 'hidden');
+                $(".monto_class").css('visibility', 'hidden');
             }
         });
     });
