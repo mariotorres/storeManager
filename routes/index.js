@@ -180,9 +180,9 @@ router.get('/carrito', isAuthenticated, function (req, res) {
         return this.batch([
             this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo',[ req.user.id ]),
-            this.manyOrNone('select sum(precio * unidades_carrito) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+            this.manyOrNone('select round(sum(precio * unidades_carrito * (1 - discount/100)), 2) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
-            this.manyOrNone('select precio*unidades_carrito as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+            this.manyOrNone('select round(precio*unidades_carrito*(1 - discount/100), 2) as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 'carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo',[ req.user.id ])
         ]);
 
