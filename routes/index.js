@@ -1178,7 +1178,11 @@ router.post('/item/find', function () {
 });
 
 router.get('/item/:id/image.jpg', isAuthenticated, function (req, res) {
-   res.sendfile( path.resolve('../images/dress.jpg'));
+   res.sendFile( path.resolve('../images/items/item_1.jpg'));
+});
+
+router.get('/user/:id/image.jpg', function (req, res) {
+    res.sendFile( path.resolve('../images/users/user_1.png'));
 });
 
 module.exports = router;
