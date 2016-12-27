@@ -1023,9 +1023,10 @@ router.post('/store/update', function(req, res){
  * Actualización de terminales
  */
 router.post('/terminal/update', function(req, res){
-    db.one('update terminales set nombre_facturador=$2 where id=$1 returning id, nombre_facturador ',[
+    db.one('update terminales set nombre_facturador=$2, id_tienda=$3 where id=$1 returning id, nombre_facturador ',[
         req.body.id,
-        req.body.nombre
+        req.body.nombre,
+        req.body.id_tienda
     ]).then(function (data) {
         res.json({
             status :'Ok',
