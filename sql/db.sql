@@ -148,6 +148,7 @@ create table ventas (
     fecha_venta date,
     hora_venta time,
     monto_pagado_efectivo numeric,
+    monto_pagado_tarjeta  numeric,
     id_terminal integer references terminales(id)
 );
 

@@ -284,15 +284,18 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                 //precio_venta =+ data[i].precio;
                 precio_venta += data[i].precio*data[i].discount;
             }
-            console.log("PRECIO VENTA: " + precio_venta);
             return t.batch([ // INCLUIR EN ESTA SECCIÓN PAGOS CON TARJETA.
                 data,
-                t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta") ' +
-                'values($1, $2, $3, $4) returning id', [
+                t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
+                    '"monto_pagado_efectivo", "monto_pagado_tarjeta", "id_terminal") ' +
+                'values($1, $2, $3, $4, $5, $6, $7) returning id', [
                     numericCol(req.body.user_id),
                     precio_venta,
                     new Date(),
-                    new Date().toLocaleTimeString()
+                    new Date().toLocaleTimeString(),
+                    numericCol(req.body.monto_efec),
+                    (numericCol(req.body.efec_tot) - numericCol(req.body.monto_efec)),
+                    req.body.terminal
                 ])
             ]);
         }).then(function(data){
@@ -566,10 +569,16 @@ router.post('/store/edit-store/', isAuthenticated, function(req, res){
 router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
     var id = req.body.id;
     //console.log(id);
-    db.one('select * from terminales where id = $1', [id]).then(function(data){
+    db.task(function(t){
+        return this.batch([
+            db.one('select * from terminales where id = $1', [id]),
+            db.manyOrNone('select * from tiendas')
+        ])
+    }).then(function(data){
         res.render('partials/edit-terminal', {
             status:'Ok',
-            terminal: data
+            terminal: data[0],
+            tiendas:data[1]
         });
     }).catch(function(error){
         console.log(error);
@@ -677,13 +686,16 @@ router.post('/type/payment',function(req, res ){
     db.task(function(t){
         return this.batch([
             this.manyOrNone('select * from terminales order by nombre_facturador limit $1 offset $2',
-            [pageSize, offset])
+            [pageSize, offset]),
+            this.manyOrNone('select sum(monto_pagado) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ])
         ]);
     }).then(function(data){
         res.render('partials/type-payment', {
             status: "Ok",
             user:req.user,
             terminales : data[0],
+            total: data[1],
             pageNumber : page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 ) / pageSize )
             });
@@ -751,7 +763,13 @@ router.post('/store/new', function (req, res) {
 
 
 router.post('/terminal/new', function (req, res) {
-    res.render('partials/new-terminal');
+    db.task(function(t){
+        return this.manyOrNone('select * from tiendas')
+    }).then(function(data){
+        res.render('partials/new-terminal', {tiendas: data});
+    }).catch(function(error){
+        console.log(error);
+    });
 });
 
 router.post('/brand/new', function (req, res) {
@@ -867,8 +885,9 @@ router.post('/store/register', function(req, res){
  * Registro de terminal
  */
 router.post('/terminal/register', function(req, res){
-    db.one('insert into terminales(nombre_facturador) values($1) returning id, nombre_facturador ', [
-        req.body.nombre
+    db.one('insert into terminales(nombre_facturador, id_tienda) values($1, $2) returning id, nombre_facturador ', [
+        req.body.nombre,
+        req.body.id_tienda
     ]).then(function(data){
         res.json({
             status:'Ok',
@@ -1005,9 +1024,10 @@ router.post('/store/update', function(req, res){
  * Actualización de terminales
  */
 router.post('/terminal/update', function(req, res){
-    db.one('update terminales set nombre_facturador=$2 where id=$1 returning id, nombre_facturador ',[
+    db.one('update terminales set nombre_facturador=$2, id_tienda=$3 where id=$1 returning id, nombre_facturador ',[
         req.body.id,
-        req.body.nombre
+        req.body.nombre,
+        req.body.id_tienda
     ]).then(function (data) {
         res.json({
             status :'Ok',
