@@ -6,6 +6,22 @@
         <input name="nombre" value="<%=terminal.nombre_facturador%>" class="form-control" required>
     </p>
     <p>
+        <label>Tienda</label>
+        <select name = "id_tienda" class="form-control">
+            <%
+            if (tiendas.length > 0 ){
+            for (var i =0; i < tiendas.length; i++){
+            %>
+            <option value="<%= tiendas[i].id %>" <%= tiendas[i].id == terminal.id_tienda ? 'selected': null %> > <%= tiendas[i].nombre %> </option>
+            <%
+            }
+            }else {
+            %>
+            <option value="">Ninguna</option>
+            <% }%>
+        </select>
+    </p>
+    <p>
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </p>
 </form>

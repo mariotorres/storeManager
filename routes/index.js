@@ -568,10 +568,16 @@ router.post('/store/edit-store/', isAuthenticated, function(req, res){
 router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
     var id = req.body.id;
     //console.log(id);
-    db.one('select * from terminales where id = $1', [id]).then(function(data){
+    db.task(function(t){
+        return this.batch([
+            db.one('select * from terminales where id = $1', [id]),
+            db.manyOrNone('select * from tiendas')
+        ])
+    }).then(function(data){
         res.render('partials/edit-terminal', {
             status:'Ok',
-            terminal: data
+            terminal: data[0],
+            tiendas:data[1]
         });
     }).catch(function(error){
         console.log(error);
@@ -756,7 +762,13 @@ router.post('/store/new', function (req, res) {
 
 
 router.post('/terminal/new', function (req, res) {
-    res.render('partials/new-terminal');
+    db.task(function(t){
+        return this.manyOrNone('select * from tiendas')
+    }).then(function(data){
+        res.render('partials/new-terminal', {tiendas: data});
+    }).catch(function(error){
+        console.log(error);
+    });
 });
 
 router.post('/brand/new', function (req, res) {
@@ -872,8 +884,9 @@ router.post('/store/register', function(req, res){
  * Registro de terminal
  */
 router.post('/terminal/register', function(req, res){
-    db.one('insert into terminales(nombre_facturador) values($1) returning id, nombre_facturador ', [
-        req.body.nombre
+    db.one('insert into terminales(nombre_facturador, id_tienda) values($1, $2) returning id, nombre_facturador ', [
+        req.body.nombre,
+        req.body.id_tienda
     ]).then(function(data){
         res.json({
             status:'Ok',
