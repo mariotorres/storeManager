@@ -3,14 +3,20 @@ if (items.length > 0){%>
 <% for ( var i =0; i < items.length ; i ++ ){ %>
 <div class="panel panel-default">
     <div class="panel-heading" name="item_name">
-        <%= items[i].articulo %>
+       <strong><%= items[i].articulo %></strong>
     </div>
 
     <div class="panel-body">
 
         <form>
-            <input type="text" name="user_id" value="<%=user.id%>"  hidden>
+            <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
             <input type="text" name="item_id" value="<%= items[i].id %>" hidden>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio %></strong></span></h3>
+                </div>
+            </div>
+            <hr>
             <div class="row">
                 <div class="col-sm-8">
                     <label>Descripción:</label><p>
@@ -24,22 +30,24 @@ if (items.length > 0){%>
                     </a>
                 </div>
             </div>
-
-
             <label>Descuento aplicable:</label>
-
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <p>
-                        <label class="radio-inline"><input type="radio" name="optradioDesc" checked="" value="5">5%</label>
+                        <label class="radio-inline"><input type="radio" name="optradioDesc" checked value="0">0%</label>
                     </p>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
+                    <p>
+                        <label class="radio-inline"><input type="radio" name="optradioDesc" value="5">5%</label>
+                    </p>
+                </div>
+                <div class="col-sm-3">
                     <p>
                         <label class="radio-inline"><input type="radio" name="optradioDesc" value="10">10%</label>
                     </p>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <p>
                         <label class="radio-inline"><input type="radio" name="optradioDesc" value="15">15%</label>
                     </p>
@@ -67,14 +75,12 @@ if (items.length > 0){%>
                     <select id="estatus" name="id_estatus" class="form-control">
                         <option value="venta">Venta directa</option>
                         <option value="modificacion">Modificación</option>
-                        <option value="devolucion">Devolución a proveedores</option>
+                        <option value="devolucion_proveedores">Devolución a proveedores</option>
                     </select>
                 </div>
                 <div class="col-sm-6">
-                    <div id="montoPagado" style="visibility: hidden">
-                        <label>Monto:  </label>
-                        <input type="text" class="form-control" id="monto" name="monto" value="000.00">
-                    </div>
+                    <label>Monto que se deja a cuenta:</label>
+                    <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="1" value="<%= items[i].precio%>">
                 </div>
             </div>
 
@@ -92,25 +98,3 @@ if (items.length > 0){%>
 <div class="alert alert-info" role="alert">No hay articulos registrados</div>
 <%}%>
 
-
-<br>
-
-
-<script>
-    $(document).ready(function() {
-        $("#pagoTarjeta").click(function() {
-            $("#listTerminal").css('visibility', 'visible');
-        });
-        $("#pagoEfectivo").click(function() {
-            $("#listTerminal").css('visibility', 'hidden');
-        });
-        $("#estatus").change(function() {
-            if (document.getElementById('estatus').options[document.getElementById("estatus").selectedIndex].value == "modificacion") {
-                alert("Favor de ingresar el monto que se dejará a cuenta para la modificación de la prenda.");
-                $("#montoPagado").css('visibility', 'visible');
-            }else{
-                $("#montoPagado").css('visibility', 'hidden');
-            }
-        });
-    });
-</script>

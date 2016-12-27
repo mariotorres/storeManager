@@ -176,13 +176,13 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 });
 
 router.get('/carrito', isAuthenticated, function (req, res) {
-    db.task(function (t) {
+    db.task(function (t) { // El descuento se aplica al total de la venta, no a cada artículo!!!!
         return this.batch([
             this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo',[ req.user.id ]),
-            this.manyOrNone('select sum(precio * unidades_carrito) from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+            this.manyOrNone('select round(sum(precio * unidades_carrito * (1 - discount/(100))), 2) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
-            this.manyOrNone('select precio*unidades_carrito as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+            this.manyOrNone('select round(precio*unidades_carrito*(1 - discount/(100)), 2) as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 'carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo',[ req.user.id ])
         ]);
 
@@ -278,13 +278,13 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo', [
                 numericCol(req.body.user_id)
             ]).then(function(data){
-            var precio_venta;
+            var precio_venta = 0;
             for(var i = 0; i < data.length; i++){
                 //precio_venta =+ data[i].precio;
-                precio_venta += data[i].precio;
+                precio_venta += data[i].precio*data[i].discount;
             }
-
-            return t.batch([
+            console.log("PRECIO VENTA: " + precio_venta);
+            return t.batch([ // INCLUIR EN ESTA SECCIÓN PAGOS CON TARJETA.
                 data,
                 t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta") ' +
                 'values($1, $2, $3, $4) returning id', [
@@ -295,20 +295,19 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                 ])
             ]);
         }).then(function(data){
-
             var queries= [];
             for(var i = 0; i < data[0].length; i++){
-
-                console.log("INSERT ART: " + data[0][i].id_articulo + "ID VENTA: " + data[1].id);
-
-                queries.push(t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "id_estatus_venta", "unidades_vendidas", "descount", "monto_pagado") ' +
-                    ' values($1, $2, $3, $4, $5, $6)', [
+                queries.push(t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", "discount", ' +
+                    '"monto_pagado", "monto_por_pagar", "estatus") ' +
+                    ' values($1, $2, $3, $4, $5, $6, $7)', [
                     numericCol(data[0][i].id_articulo),
                     numericCol(data[1].id),
-                    numericCol(data[0][i].estatus),
                     numericCol(data[0][i].unidades_carrito),
                     numericCol(data[0][i].discount),
-                    numericCol(data[0][i].monto_pagado)
+                    numericCol(data[0][i].monto_pagado),
+                    numericCol(( numericCol(data[0][i].unidades_carrito)* numericCol(data[0][i].precio)*
+                        (1- numericCol(data[0][i].discount)/100)) -  numericCol(data[0][i].monto_pagado)),
+                    data[0][i].estatus
                 ]));
 
                 queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [
@@ -358,16 +357,16 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             }else{
                 return t.batch([{count: data.unidades_carrito},
                     t.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount",  ' +
-                        '"monto_pagado", "unidades_carrito", "estatus") ' +
+                        '"unidades_carrito", "estatus", "monto_pagado") ' +
                         ' values($1, $2, $3, $4, $5, $6, $7) ' +
                         ' returning id_articulo',[
                         new Date(),
                         numericCol(req.body.item_id),
                         numericCol(req.body.user_id),
                         numericCol(req.body.optradioDesc),
-                        numericCol(req.body.monto),
                         req.body.existencias,
-                        req.body.estatus
+                        req.body.id_estatus,
+                        numericCol(req.body.monto_pagado)
                     ])]);
             }
         })
@@ -668,6 +667,31 @@ router.post('/item/edit-item/', isAuthenticated, function(req, res){
 
 router.post('/supplier/new',function(req, res ){
     res.render('partials/new-supplier');
+});
+
+router.post('/type/payment',function(req, res ){
+    var page = req.body.page;
+    var pageSize = 10;
+    var offset = page * pageSize;
+    db.task(function(t){
+        return this.batch([
+            this.manyOrNone('select * from terminales order by nombre_facturador limit $1 offset $2',
+            [pageSize, offset])
+        ]);
+    }).then(function(data){
+        res.render('partials/type-payment', {
+            status: "Ok",
+            user:req.user,
+            terminales : data[0],
+            pageNumber : page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 ) / pageSize )
+            });
+    }).catch(function (error) {
+        console.log(error);
+        res.render('partials/type-payment', {
+            status: "Error"
+        });
+    });
 });
 
 // Listar proveedores

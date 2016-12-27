@@ -121,16 +121,14 @@ create table carrito (
 fecha date,
 id_articulo integer references articulos(id),
 id_usuario integer references usuarios(id),
-id_terminal integer references terminales(id),
 discount    numeric,
-pago_efectivo boolean,
 monto_pagado numeric,
 unidades_carrito numeric,
 estatus text
 );
 
 /* Estatus ventas */
-drop table if exists estatus_ventas cascade;
+/*drop table if exists estatus_ventas cascade;
 create table estatus_ventas (
     id serial primary key,
     estatus text,
@@ -140,7 +138,7 @@ create table estatus_ventas (
 insert into estatus_ventas ("estatus","descripcion") values
 ('Entregado','Se ha cubierto el importe y entregado el artículo'),
 ('Ajuste','En artículo está en proceso de ajuste');
-
+*/
 /* Ventas */
 drop table if exists ventas cascade;
 create table ventas (
@@ -149,7 +147,7 @@ create table ventas (
     precio_venta numeric,
     fecha_venta date,
     hora_venta time,
-    notas text,
+    monto_pagado_efectivo numeric,
     id_terminal integer references terminales(id)
 );
 
@@ -158,14 +156,13 @@ create table venta_articulos(
     id serial primary key,
     id_articulo integer references articulos(id),
     id_venta integer references ventas(id),
-    id_estatus_venta integer references estatus_ventas(id),
+    /*id_estatus_venta integer references estatus_ventas(id),*/
     unidades_vendidas numeric,
-    descount    numeric,
+    discount    numeric,
     monto_pagado numeric,
-    forma_pago numeric,
+    monto_por_pagar numeric,
     estatus  text
 );
-
 
 
 /*

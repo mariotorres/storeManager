@@ -51,6 +51,7 @@
                                         <label>Vendedor:</label>
                                         <%= user.nombres %>
                                         </h4>
+                                        <hr>
                                     </div>
                                     <div class="col-sm-5">
                                     <div class="col-sm-6">
@@ -61,13 +62,17 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <p>
-                                        <label>Modelo:</label>
-                                            <%= items[i].modelo %>
+                                        <label>Descuento:</label>
+                                            <% if (items[i].discount){%>
+                                            <%= items[i].discount %>%
+                                            <%}else{%>
+                                            0%
+                                            <%}%>
                                         </p>
                                     </div>
                                     <div class="col-sm-6">
                                         <p>
-                                            <label>Unidades seleccionadas:</label>
+                                            <label>Unidades:</label>
                                             <%= items[i].unidades_carrito %>
                                         </p>
                                     </div>
@@ -77,6 +82,10 @@
                                             <%= items[i].precio %>
                                         </p>
                                     </div>
+                                        <div class="col-sm-12">
+                                            <label>Monto que se deja a cuenta:</label>
+                                            <input type="number" name="monto_pagado" class="form-control" value="<%= items[i].monto_pagado%>" disabled>
+                                        </div>
                                     </div>
                                     <div class="col-sm-4" style="vertical-align: middle;">
                                         <h2>
@@ -108,8 +117,7 @@
                         <%}%>
 
                         <h1 style="float: right;"><strong>Total: </strong> <%= total[0].sum%></h1>
-                    <button data-action="make_sale" data-user_id="<%=user.id%>" class="btn btn-primary">Realizar venta </button>
-
+                    <button data-toggle="modal" data-target="#genericModal" data-action="make_sale" data-user_id="<%=user.id%>" class="btn btn-primary">Realizar venta </button>
                     <%}else{%>
                     <div class="alert alert-info" role="alert">El carrito está vacio</div>
                     <%}%>

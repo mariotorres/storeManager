@@ -1,0 +1,33 @@
+<form id="typeForm">
+    <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
+    <p>
+        <label>Monto Pagado en efectivo: </label>
+        <input name="monto_efec" class="form-control" required>
+    </p>
+
+    <p>
+        <label>Monto Pagado con tarjeta: </label>
+        <input name="monto_tarj" class="form-control" required>
+    </p>
+
+    <p>
+        <label>Terminal: </label>
+        <select name="terminal" class="form-control" required>
+            <%
+            if (terminales.length > 0 ){
+            for (var i =0; i < terminales.length; i++){
+            %>
+            <option value="<%= terminales[i].id %>"> <%= terminales[i].nombre_facturador %> </option>
+            <%
+            }
+            }else {
+            %>
+            <option value="">Ninguno</option>
+            <% }%>
+        </select>
+    </p>
+
+    <p>
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </p>
+</form>

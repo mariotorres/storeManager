@@ -199,6 +199,23 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "make_sale":
+            modal.find('.modal-title').text('Seleccionar tipo de pago');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/type/payment', { page:page }, function(){
+                $('#typeForm').submit(function(event){
+                    $.post('/carrito/sell', {user_id: "1"}).done(function (data) {
+                        alert(data.message);
+                        if(data.status=='Ok'){
+                            // Obtener HTML del carrito
+                            alert("Venta exitosa");
+                            location.reload();
+                        }
+                    });
+                    event.preventDefault();
+                });
+            });
+            break;
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");
@@ -249,6 +266,7 @@ function modalEvents(button, modal, page ) {
             });
             break;
         // brands
+
         case "new_brand":
             modal.find('.modal-title').text('Registrar marca');
             modal.find('#modal_content').html("");
