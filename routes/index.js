@@ -286,14 +286,14 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             return t.batch([ // INCLUIR EN ESTA SECCIÓN PAGOS CON TARJETA.
                 data,
                 t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
-                    '"monto_pagado_efectivo", "monto_pagado_tarjeta", "terminal") ' +
+                    '"monto_pagado_efectivo", "monto_pagado_tarjeta", "id_terminal") ' +
                 'values($1, $2, $3, $4, $5, $6, $7) returning id', [
                     numericCol(req.body.user_id),
                     precio_venta,
                     new Date(),
                     new Date().toLocaleTimeString(),
-                    req.body.monto_efec,
-                    req.body.monto_tarj,
+                    numericCol(req.body.monto_efec),
+                    (numericCol(req.body.efec_tot) - numericCol(req.body.monto_efec)),
                     req.body.terminal
                 ])
             ]);

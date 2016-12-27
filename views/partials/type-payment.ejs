@@ -35,7 +35,7 @@
 
 <script>
     $("#monto_efec").on('keyup', function(){
-        document.getElementById("monto_tarj").value = document.getElementById("efec_tot").value -
-            document.getElementById("monto_efec").value;
+        document.getElementById("monto_tarj").value = Number(document.getElementById("efec_tot").value) -
+           Number(document.getElementById("monto_efec").value);
     })
 </script>
