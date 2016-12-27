@@ -676,13 +676,16 @@ router.post('/type/payment',function(req, res ){
     db.task(function(t){
         return this.batch([
             this.manyOrNone('select * from terminales order by nombre_facturador limit $1 offset $2',
-            [pageSize, offset])
+            [pageSize, offset]),
+            this.manyOrNone('select round(sum(precio * unidades_carrito * (1 - discount/(100))), 2) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ])
         ]);
     }).then(function(data){
         res.render('partials/type-payment', {
             status: "Ok",
             user:req.user,
             terminales : data[0],
+            total: data[1],
             pageNumber : page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 ) / pageSize )
             });
