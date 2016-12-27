@@ -202,15 +202,17 @@ function modalEvents(button, modal, page ) {
         case "make_sale":
             modal.find('.modal-title').text('Seleccionar tipo de pago');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/type/payment', { /* post body data */ }, function(){
+            modal.find('#modal_content').load('/type/payment', { page:page }, function(){
                 $('#typeForm').submit(function(event){
-                    /*$.post('/carrito/sell', $(this).serialize()).done(function (data){
+                    $.post('/carrito/sell', {user_id: "1"}).done(function (data) {
                         alert(data.message);
-                        if(data.status == 'Ok'){
-                            modal.modal('hide');
+                        if(data.status=='Ok'){
+                            // Obtener HTML del carrito
+                            alert("Venta exitosa");
+                            location.reload();
                         }
                     });
-                    event.preventDefault();*/
+                    event.preventDefault();
                 });
             });
             break;

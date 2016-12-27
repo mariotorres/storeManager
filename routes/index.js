@@ -670,7 +670,28 @@ router.post('/supplier/new',function(req, res ){
 });
 
 router.post('/type/payment',function(req, res ){
-    res.render('partials/type-payment');
+    var page = req.body.page;
+    var pageSize = 10;
+    var offset = page * pageSize;
+    db.task(function(t){
+        return this.batch([
+            this.manyOrNone('select * from terminales order by nombre_facturador limit $1 offset $2',
+            [pageSize, offset])
+        ]);
+    }).then(function(data){
+        res.render('partials/type-payment', {
+            status: "Ok",
+            user:req.user,
+            terminales : data[0],
+            pageNumber : page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 ) / pageSize )
+            });
+    }).catch(function (error) {
+        console.log(error);
+        res.render('partials/type-payment', {
+            status: "Error"
+        });
+    });
 });
 
 // Listar proveedores

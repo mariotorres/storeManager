@@ -1,5 +1,5 @@
 //Código de los botones del carrito
-$('.btn').click(function () {
+/*$('.btn').click(function () {
     var button = $(this);
     if (confirm("¿Está seguro que quiere realizar la venta?")){
         // Selected discount
@@ -13,6 +13,7 @@ $('.btn').click(function () {
         });
     }
 });
+*/
 
 $('.fa').click(function(){
     var button = $(this);
