@@ -204,7 +204,7 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/type/payment', { page:page }, function(){
                 $('#typeForm').submit(function(event){
-                    $.post('/carrito/sell', {user_id: "1"}).done(function (data) {
+                    $.post('/carrito/sell', $(this).serialize()).done(function (data) {
                         alert(data.message);
                         if(data.status=='Ok'){
                             // Obtener HTML del carrito

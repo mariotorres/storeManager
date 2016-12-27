@@ -283,15 +283,18 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                 //precio_venta =+ data[i].precio;
                 precio_venta += data[i].precio*data[i].discount;
             }
-            console.log("PRECIO VENTA: " + precio_venta);
             return t.batch([ // INCLUIR EN ESTA SECCIÓN PAGOS CON TARJETA.
                 data,
-                t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta") ' +
-                'values($1, $2, $3, $4) returning id', [
+                t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
+                    '"monto_pagado_efectivo", "monto_pagado_tarjeta", "terminal") ' +
+                'values($1, $2, $3, $4, $5, $6, $7) returning id', [
                     numericCol(req.body.user_id),
                     precio_venta,
                     new Date(),
-                    new Date().toLocaleTimeString()
+                    new Date().toLocaleTimeString(),
+                    req.body.monto_efec,
+                    req.body.monto_tarj,
+                    req.body.terminal
                 ])
             ]);
         }).then(function(data){
@@ -677,7 +680,7 @@ router.post('/type/payment',function(req, res ){
         return this.batch([
             this.manyOrNone('select * from terminales order by nombre_facturador limit $1 offset $2',
             [pageSize, offset]),
-            this.manyOrNone('select round(sum(precio * unidades_carrito * (1 - discount/(100))), 2) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+            this.manyOrNone('select sum(monto_pagado) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ])
         ]);
     }).then(function(data){
