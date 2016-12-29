@@ -208,7 +208,7 @@ function modalEvents(button, modal, page ) {
             });
             break;
         case "list_notes":
-            modal.find('.modal-title').text('Seleccionar notas para imprimir');
+            modal.find('.modal-title').text('Seleccionar notas');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/notes/list/',{ page: page},function(){
                 $(this).find('form').submit(function(){

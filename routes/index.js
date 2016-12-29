@@ -450,25 +450,13 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
             this.manyOrNone('select * from ventas where saldo_pendiente = 0 or monto_pagado_tarjeta > 0 and id_usuario = $1' +
                 ' order by id limit $2 offset $3',[ req.user.id, pageSize, offset ])
         ]);
-    }).then(function (data) {
-        for(var i = 0; i < data[0].count; i++) {
-            console.log("N Sales = " + data[0].count);
-            console.log("PRECIO VENTA = " + data[1][i].precio_venta);
-        }
-        return t.batch([data,
-            t.manyOrNone('select * from venta_articuos where id_venta = $1 order by id_venta limit $2 offset $3', [
-                data[1].id,
-                pageSize,
-                offset
-            ])
-        ])
     }).then(function(data){
-        res.render('partials/sale-item-list',{
+        res.render('partials/notes-list',{
             status : 'Ok',
-            sales: data[0],
-            items_sale: data[1],
+            count: data[0],
+            sales: data[1],
             pageNumber : req.body.page,
-            numberOfPages: parseInt( (+data[0][0].count + pageSize - 1 )/ pageSize )
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
         res.json({
