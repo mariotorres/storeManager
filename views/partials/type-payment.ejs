@@ -1,6 +1,8 @@
 <form id="typeForm">
     <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
     <input type="text" name="efec_tot" id="efec_tot" value="<%=total[0].sum%>" hidden>
+    <input type="text" name="precio_tot" id="precio_tot" value="<%=precio[0].sum%>" hidden>
+
     <p>
         <label>Monto que se deja a cuenta en efectivo: </label>
         <input id="monto_efec" name="monto_efec" class="form-control" required value="<%=total[0].sum%>">
