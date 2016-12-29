@@ -279,13 +279,11 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo', [
                 numericCol(req.body.user_id)
             ]).then(function(data){
-            console.log("PRECIO DE VENTA: " + req.body.precio_tot);
-            console.log("MONTO PAGADO: " + req.body.efec_tot);
-            return t.batch([ // INCLUIR EN ESTA SECCIÓN PAGOS CON TARJETA.
+            return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros.
                 data,
                 t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
                     '"monto_pagado_efectivo", "monto_pagado_tarjeta", "id_terminal", "saldo_pendiente") ' +
-                'values($1, $2, $3, $4, $5, $6, $7, $8) returning id', [
+                    'values($1, $2, $3, $4, $5, $6, $7, $8) returning id', [
                     numericCol(req.body.user_id),
                     numericCol(req.body.precio_tot),
                     new Date(),
@@ -445,27 +443,32 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
 router.post('/notes/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
-
     db.task(function (t) {
         return this.batch([
-            this.one('select count(*) from ventas as count where saldo_pendiente = 0'), // Sólo se imprimen las notas de las ventas completas?
-            this.manyOrNone('select * from articulos where n_existencias > 0 ' +
-                ' order by articulo limit $1 offset $2',[ pageSize, offset ]),
-            this.oneOrNone('select * from usuarios where id = $1',[ req.user.id ]),
-            this.manyOrNone('select * from terminales'),
-            this.manyOrNone('select id from articulos where n_existencias > 0 and not exists ' +
-                '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ])
+            this.one('select count(*) from ventas as count where saldo_pendiente = 0 or monto_pagado_tarjeta > 0 and ' +
+                'id_usuario = $1', [req.user.id]), // Sólo se imprimen las notas de las ventas completas o las que tienen pagos con tarjeta
+            this.manyOrNone('select * from ventas where saldo_pendiente = 0 or monto_pagado_tarjeta > 0 and id_usuario = $1' +
+                ' order by id limit $2 offset $3',[ req.user.id, pageSize, offset ])
         ]);
-
     }).then(function (data) {
+        for(var i = 0; i < data[0].count; i++) {
+            console.log("N Sales = " + data[0].count);
+            console.log("PRECIO VENTA = " + data[1][i].precio_venta);
+        }
+        return t.batch([data,
+            t.manyOrNone('select * from venta_articuos where id_venta = $1 order by id_venta limit $2 offset $3', [
+                data[1].id,
+                pageSize,
+                offset
+            ])
+        ])
+    }).then(function(data){
         res.render('partials/sale-item-list',{
             status : 'Ok',
-            items: data[1],
-            user: data[2],
-            terminales:data[3],
-            not_in_carrito: data[4],
+            sales: data[0],
+            items_sale: data[1],
             pageNumber : req.body.page,
-            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
+            numberOfPages: parseInt( (+data[0][0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
         res.json({
