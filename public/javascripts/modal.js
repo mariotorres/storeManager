@@ -81,7 +81,15 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
-        // Editar articulos
+
+        case "find_item":
+            modal.find('.modal-title').text('Buscar artículos');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/item/find',{}, function () {
+
+            });
+            break;
+        // Editar usuarios
         case "edit_user":
             modal.find('.modal-title').text('Editar usuario');
             modal.find('#modal_content').html("");
@@ -266,7 +274,6 @@ function modalEvents(button, modal, page ) {
             });
             break;
         // brands
-
         case "new_brand":
             modal.find('.modal-title').text('Registrar marca');
             modal.find('#modal_content').html("");
@@ -314,9 +321,3 @@ $('#genericModal').on('show.bs.modal', function (event) {
     var page = 0;
     modalEvents(button, modal, page);
 });
-/*
-$('#genericModal').modal({
-    backdrop: 'static',
-    keyboard: false
-});
-*/

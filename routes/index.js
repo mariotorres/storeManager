@@ -1191,8 +1191,8 @@ router.post('/reports/', function (req, res) {
    res.render('partials/reports');
 });
 
-router.post('/item/find', function () {
-   //
+router.post('/item/find', function (req, res) {
+   res.render('partials/find-items');
 });
 
 router.get('/item/:id/image.jpg', isAuthenticated, function (req, res) {
