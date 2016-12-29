@@ -279,11 +279,6 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo', [
                 numericCol(req.body.user_id)
             ]).then(function(data){
-            var precio_venta = 0;
-            for(var i = 0; i < data.length; i++){
-                //precio_venta =+ data[i].precio;
-                precio_venta += data[i].precio*data[i].discount;
-            }
             console.log("PRECIO DE VENTA: " + req.body.precio_tot);
             console.log("MONTO PAGADO: " + req.body.efec_tot);
             return t.batch([ // INCLUIR EN ESTA SECCIÓN PAGOS CON TARJETA.
