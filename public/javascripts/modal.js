@@ -19,6 +19,7 @@ function modalEvents(button, modal, page ) {
                         alert(data.message);
                         if (data.status=='Ok'){
                             modal.modal('hide');
+                            location.reload();
                         }
                     });
                     event.preventDefault();
@@ -94,8 +95,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Editar usuario');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/user/list/',{ page: page }, function(){
-                $(this).find('.list-group-item').click(function(){
-                    // alert("Funciona, item: "+ $(this).data('item_id'));
+                $(this).find('.list-group-item').click(function(){;
                     $("#modal_content").load('/user/edit-user/',{ id: $(this).data('user_id') }, function () {
                         $('#updateUser').submit(function (event) {
                             $.post('/user/update', $(this).serialize()).done(function (data) {
