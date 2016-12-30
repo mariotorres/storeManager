@@ -573,29 +573,33 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
 // Load sales data into  modal.
 router.post('/notes/edit-note/', isAuthenticated, function(req, res){
     var id = req.body.sales_id;
-    //console.log(id);
     db.task(function (t) {
         return this.batch([
             t.oneOrNone(
-            'select * from ventas where id = $1 and (saldo_pendiente = 0 or monto_pagado_tarjeta > 0) and id_usuario = $2', [
+            'select * from ventas where id=$1 and (saldo_pendiente = 0 or monto_pagado_tarjeta > 0) and id_usuario=$2', [
                 numericCol(id),
-                req.user.id
+                numericCol(req.body.user_id)
             ]),
             t.oneOrNone(
-                'select count(*) from venta_articulos where id_venta = $1',
+                'select count(*) from venta_articulos where id_venta=$1',
                 [numericCol(id)]
             ),
             t.manyOrNone(
-                'select * from venta_articulos where id_venta = $1',
+                'select * from venta_articulos where id_venta=$1',
                 [numericCol(id)]
+            ),
+            t.oneOrNone(
+                'select * from usuarios where id=$1',
+                [numericCol(req.body.user_id)]
             )
         ])
     }).then(function(data){
-        res.render('partials/edit-notes', {
+        res.render('partials/edit-note', {
             status:'Ok',
             sale: data[0],
             n_items_sale: data[1],
-            items_sale: data[2]
+            items_sale: data[2],
+            user: data[3]
         });
     }).catch(function(error){
         console.log(error);

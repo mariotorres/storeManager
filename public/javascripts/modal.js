@@ -211,10 +211,13 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Seleccionar notas');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/notes/list/',{ page: page},function(){
-                $(this).find('form').submit(function(){
-                    if (confirm("¿Está seguro que quiere seleccionar la nota: " +  $(this).find('input[name=sales_id]').val())){
+                $(this).find('.list-group-item').click(function(){
+                    if (confirm("¿Está seguro que quiere seleccionar la nota: " +  $(this).data('sales_id'))){
                         // Selected discount
-                        $.post('/notes/edit-note', $(this).serialize()).done(function (data) {
+                        $.post('/notes/edit-note', {
+                            sales_id : $(this).data('sales_id'),
+                            user_id: $(this).data('user_id')
+                        }).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');

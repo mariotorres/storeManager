@@ -1,0 +1,44 @@
+<form id="noteForm">
+    <!--id_proveedor
+    id_tienda-->
+    <input type="text" value="<%=sale.id%>" name="id" hidden>
+
+
+    <p>
+        <label>Usuario</label>
+        <input type="text" value="<%=user.usuario%>" class="form-control" name="articulo" required>
+    </p>
+
+
+    <p>
+        <label>Venta</label>
+        <input type="text" value="<%=sale.id%>" class="form-control" name="articulo" required>
+    </p>
+
+
+    <p>
+        <label>Número de artículos vendidos</label>
+        <input type="text" value="<%=n_items_sale.count%>" name="descripcion" class="form-control" required>
+    </p>
+
+    <%
+    if (items_sale.length > 0){%>
+    <div class="list-group">
+        <% for ( var i =0; i < items_sale.length ; i ++ ){ %>
+        <a href="#" class="list-group-item" data-item_id="<%= items_sale[i].id_articulo %>">
+            <h4 class="list-group-item-heading"> <%= items_sale[i].id_articulo %></h4>
+            <p class="list-group-item-text"><%= items_sale[i].unidades_vendidas %></p>
+        </a>
+        <%}%>
+    </div>
+    <%}else {%>
+    <div class="alert alert-info" role="alert">No hay articulos registrados</div>
+    <%}%>
+
+
+
+    <p>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </p>
+
+</form>
