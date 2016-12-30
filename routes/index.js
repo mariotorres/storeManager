@@ -581,7 +581,7 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
                     numericCol(req.body.user_id)
                 ]),
             t.oneOrNone(
-                'select count(*) from venta_articulos where id_venta=$1',
+                'select sum(unidades_vendidas) as sum from venta_articulos where id_venta=$1',
                 [numericCol(id)]
             ),
             t.manyOrNone(
@@ -594,12 +594,12 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
             )
         ]).then(function(data){
             var queries = [];
-            queries.push(data);
-            for(var i = 0; i < data[1].count; i++){
+            for(var i = 0; i < data[2].length; i++){
+                console.log("ID ARTICULO: " +  data[2][i].id_articulo);
                 queries.push(
                     t.oneOrNone(
                         'select * from articulos where id=$1', [
-                            data[2][i].id
+                            data[2][i].id_articulo
                         ]
                     )
                 )
@@ -609,7 +609,7 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
             ])
         })
     }).then(function(data){
-        console.log("ARTICULO: " + data[1][0].articulo);
+        console.log("Length data: " + JSON.stringify(data[1][0]));
         res.render('partials/edit-note', {
             status:'Ok',
             sale: data[0][0],
