@@ -214,14 +214,12 @@ function modalEvents(button, modal, page ) {
                 $(this).find('.list-group-item').click(function(){
                     if (confirm("¿Está seguro que quiere seleccionar la nota: " +  $(this).data('sales_id'))){
                         // Selected discount
-                        $.post('/notes/edit-note', {
+
+                        modal.find('#modal_content').load('/notes/edit-note',{
                             sales_id : $(this).data('sales_id'),
                             user_id: $(this).data('user_id')
-                        }).done(function (data) {
-                            alert(data.message);
-                            if(data.status=='Ok'){
-                                modal.modal('hide');
-                            }
+                        }, function () {
+
                         });
                     }
                     event.preventDefault();
