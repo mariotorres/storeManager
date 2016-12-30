@@ -194,7 +194,7 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/list/sale',{ page: page},function(){
                 $(this).find('form').submit(function(){
-                    if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).find('input[name=item_id]').val())){
+                    if (confirm("¿Desea agregar el artículo " +  $(this).find('input[name=item_id]').val() + " al carrito?")){
                         // Selected discount
                         $.post('/carrito/new', $(this).serialize()).done(function (data) {
                             alert(data.message);
@@ -236,8 +236,7 @@ function modalEvents(button, modal, page ) {
                     $.post('/carrito/sell', $(this).serialize()).done(function (data) {
                         alert(data.message);
                         if(data.status=='Ok'){
-                            // Obtener HTML del carrito
-                            alert("Venta exitosa");
+                            //alert("Venta exitosa");
                             location.reload();
                         }
                     });
