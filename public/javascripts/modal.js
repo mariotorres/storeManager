@@ -212,9 +212,9 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/notes/list/',{ page: page},function(){
                 $(this).find('form').submit(function(){
-                    if (confirm("¿Está seguro que quiere vender el artículo: " +  $(this).find('input[name=item_id]').val())){
+                    if (confirm("¿Está seguro que quiere seleccionar la nota: " +  $(this).find('input[name=sales_id]').val())){
                         // Selected discount
-                        $.post('/carrito/new', $(this).serialize()).done(function (data) {
+                        $.post('/notes/edit-note', $(this).serialize()).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');

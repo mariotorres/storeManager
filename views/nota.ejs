@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title><%= title %></title>
+
+    <!-- Bootstrap -->
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/stylesheets/style.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- font awesome -->
+    <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+</head>
+<body>
+
+<% include partials/navbar.ejs%>
+
+<div class="container">
+
+    <ul class="nav nav-pills" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Venta</strong></a></li>
+    </ul>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="home">
+
+                    <% if (items.length > 0){%>
+
+                    <% for ( var i =0; i< items.length; i++){%>
+
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h4>
+                                        <label>Vendedor:</label>
+                                        <%= user.nombres %>
+                                    </h4>
+                                    <hr>
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="col-sm-6">
+                                        <p>
+                                            <label>Artículo:</label>
+                                            <%= items[i].articulo %>
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p>
+                                            <label>Descuento:</label>
+                                            <% if (items[i].discount){%>
+                                            <%= items[i].discount %>%
+                                            <%}else{%>
+                                            0%
+                                            <%}%>
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p>
+                                            <label>Unidades:</label>
+                                            <%= items[i].unidades_carrito %>
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p>
+                                            <label>Precio unitario:</label>
+                                            <%= items[i].precio %>
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <label>Monto que se deja a cuenta:</label>
+                                        <input type="number" name="monto_pagado" class="form-control" value="<%= items[i].monto_pagado%>" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" style="vertical-align: middle;">
+                                    <h2>
+                                        <label style="color:#bdbdbd">Precio:</label>
+                                        <span style="color: #e91e63"><%= totales[i].totales %></span>
+                                    </h2>
+                                </div>
+                                <% if (items[i].n_existencias > items[i].unidades_carrito){%>
+                                <div class="col-sm-1" >
+                                    <!--<button class="btn btn-default" ></button>-->
+                                    <i id="inc" data-action="inc_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-up fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                                </div>
+                                <%}%>
+                                <% if (items[i].unidades_carrito > 1){%>
+                                <div class="col-sm-1" >
+                                    <!--<button class="btn btn-default" ></button>-->
+                                    <i id="dec" data-action="dec_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-down fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                                </div>
+                                <%}%>
+                                <div class="col-sm-1" >
+                                    <!--<button class="btn btn-default" ></button>-->
+                                    <i id="rem" data-action="rem_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-times-circle-o fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <%}%>
+
+                    <h1 style="float: right;"><strong>Total: </strong> <%= total[0].sum%></h1>
+                    <button data-toggle="modal" data-target="#genericModal" data-action="make_sale" data-user_id="<%=user.id%>" class="btn btn-primary">Realizar venta </button>
+                    <%}else{%>
+                    <div class="alert alert-info" role="alert">El carrito está vacio</div>
+                    <%}%>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<% include partials/modal.ejs %>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modal.js"></script>
+<script src="/javascripts/carrito.js"></script>
+</body>
+</html>
