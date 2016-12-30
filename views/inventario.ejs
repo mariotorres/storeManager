@@ -28,20 +28,23 @@
 
 <div class="container">
 
-    <!-- Nav tabs -->
+    <!-- Nav tabs-->
+    <!--
     <ul class="nav nav-pills" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Artículos</strong> </a></li>
         <li role="presentation"><a href="#marcas" aria-controls="marcas" role="tab" data-toggle="tab"><strong>Marcas</strong> </a></li>
         <li role="presentation"><a href="#articulos" aria-controls="articulos" role="tab" data-toggle="tab"><strong>Proveedores</strong> </a></li>
     </ul>
-
+    -->
+    
+    <!--
     <div class="panel panel-default">
         <div class="panel-body">
 
-            <!-- Tab panes -->
+
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="home">
-                    <!--<p>Permite añadir, actualizar y eliminar productos del inventario</p>-->
+
                     <div class="list-group">
                         <button type="button" data-action="new_item" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-plus-square"></i> <strong>Nuevo producto</strong></button>
                         <button type="button" data-action="edit_item" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-edit"></i> <strong>Editar productos</strong></button>
@@ -63,6 +66,44 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>-->
+
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Artículos</div>
+                <div class="panel-body">
+                    <div class="list-group">
+                        <button type="button" data-action="new_item" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-plus-square"></i> <strong>Nuevo producto</strong></button>
+                        <button type="button" data-action="edit_item" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-edit"></i> <strong>Editar productos</strong></button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Proveedores</div>
+                <div class="panel-body">
+                    <div class="list-group">
+                        <button type="button" data-action="new_supplier" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-user-plus"></i> <strong>Nuevo proveedor</strong></button>
+                        <button type="button" data-action="edit_supplier" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-users"></i> <strong>Editar proveedor</strong></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Marcas</div>
+                <div class="panel-body">
+                    <div class="list-group">
+                        <button type="button" data-action="new_brand" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-plus-square"></i> <strong>Registrar marca</strong></button>
+                        <button type="button" data-action="edit_brand" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-edit"></i> <strong>Editar marcas</strong></button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
