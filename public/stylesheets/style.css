@@ -79,6 +79,11 @@ body.modal-open .supreme-container{
     box-shadow: none;
 }
 
+.panel-heading {
+    background: #E91E63 !important;
+    color: white !important;
+    font-weight: bold;
+}
 /*
 .tab-pane{
     background-color: white;
