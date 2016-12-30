@@ -576,10 +576,10 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
     db.task(function (t) {
         return this.batch([
             t.oneOrNone(
-            'select * from ventas where id=$1 and (saldo_pendiente = 0 or monto_pagado_tarjeta > 0) and id_usuario=$2', [
-                numericCol(id),
-                numericCol(req.body.user_id)
-            ]),
+                'select * from ventas where id=$1 and (saldo_pendiente = 0 or monto_pagado_tarjeta > 0) and id_usuario=$2', [
+                    numericCol(id),
+                    numericCol(req.body.user_id)
+                ]),
             t.oneOrNone(
                 'select count(*) from venta_articulos where id_venta=$1',
                 [numericCol(id)]
@@ -592,14 +592,31 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
                 'select * from usuarios where id=$1',
                 [numericCol(req.body.user_id)]
             )
-        ])
+        ]).then(function(data){
+            var queries = [];
+            queries.push(data);
+            for(var i = 0; i < data[1].count; i++){
+                queries.push(
+                    t.oneOrNone(
+                        'select * from articulos where id=$1', [
+                            data[2][i].id
+                        ]
+                    )
+                )
+            }
+            return t.batch([
+                data, queries
+            ])
+        })
     }).then(function(data){
+        console.log("ARTICULO: " + data[1][0].articulo);
         res.render('partials/edit-note', {
             status:'Ok',
-            sale: data[0],
-            n_items_sale: data[1],
-            items_sale: data[2],
-            user: data[3]
+            sale: data[0][0],
+            n_items_sale: data[0][1],
+            items_sale: data[0][2],
+            user: data[0][3],
+            items: data[1]
         });
     }).catch(function(error){
         console.log(error);

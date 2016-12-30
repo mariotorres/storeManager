@@ -19,13 +19,16 @@
         <input type="text" value="<%=n_items_sale.count%>" name="descripcion" class="form-control" required>
     </p>
 
+    <label>Artículos</label>
     <%
     if (items_sale.length > 0){%>
     <div class="list-group">
-        <% for ( var i =0; i < items_sale.length ; i ++ ){ %>
-        <a href="#" class="list-group-item" data-item_id="<%= items_sale[i].id_articulo %>">
-            <h4 class="list-group-item-heading"> <%= items_sale[i].id_articulo %></h4>
-            <p class="list-group-item-text"><%= items_sale[i].unidades_vendidas %></p>
+        <% for ( var i =0; i < items.length ; i ++ ){ %>
+        <a href="#" class="list-group-item" data-item_id="<%= items[i].id %>">
+            <h4 class="list-group-item-heading"> <strong>Artículo: </strong> <%= items[i].articulo %></h4>
+            <p class="list-group-item-text"> <strong>Marca:</strong> <%= items[i].marca %></p>
+            <p class="list-group-item-text"> <strong>Unidades vendidas:</strong> <%= items_sale[i].unidades_vendidas %></p>
+            <p class="list-group-item-text"> <strong>Precio unitario: </strong> <%= items[i].precio %></p>
         </a>
         <%}%>
     </div>
