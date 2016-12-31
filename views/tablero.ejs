@@ -58,6 +58,7 @@
 <div class="container">
 
     <!-- Nav tabs -->
+    <!--
     <ul class="nav nav-pills" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Visualización 1</strong> </a></li>
         <li role="presentation"><a href="#tablero2" aria-controls="tablero2" role="tab" data-toggle="tab"><strong>Visualización 2 </strong></a></li>
@@ -66,8 +67,6 @@
 
     <div class="panel panel-default">
         <div class="panel-body">
-
-            <!-- Tab panes -->
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="home" style="overflow: auto">
                     <svg id="barchart" width="1024" height="500"></svg>
@@ -80,7 +79,39 @@
                 </div>
             </div>
         </div>
+    </div>-->
+
+    <div class="row">
+        <div class="col-sm-6">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Bar chart</div>
+                <div class="panel-body">
+                    <svg id="linechart" width="500" height="500"></svg>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Pie chart</div>
+                <div class="panel-body">
+                    <canvas id="piechart" width="500" height="500"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Line chart</div>
+        <div class="panel-body">
+            <svg id="barchart" width="1024" height="500"></svg>
+        </div>
+    </div>
+
+
+
 </div>
 
 <% include partials/modal.ejs %>
