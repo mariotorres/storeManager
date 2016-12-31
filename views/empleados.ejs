@@ -29,11 +29,12 @@
 
 <div class="container">
     <!-- Nav tabs -->
+    <!--
     <ul class="nav nav-pills" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Ventas</strong></a></li>
     </ul>
 
-    <!-- Tab panes -->
+
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="tab-content">
@@ -46,6 +47,21 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    -->
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Ventas</div>
+        <div class="panel-body">
+
+            <div class="list-group">
+                <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_sale" class="list-group-item"><i class="fa fa-list"></i> <strong>Lista de artículos</strong></button>
+                <button type="button" data-toggle="modal" data-target="#genericModal" data-action="find_item" class="list-group-item"><i class="fa fa-search"></i> <strong>Buscar artículos</strong></button>
+                <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_dev" class="list-group-item"><i class="fa fa-edit"></i> <strong>Registrar devolución</strong></button>
+            </div>
+
         </div>
     </div>
 </div>
