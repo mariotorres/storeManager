@@ -32,6 +32,7 @@
 <div class="container">
 
     <!-- Nav tabs -->
+    <!--
     <ul class="nav nav-pills" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Reportes</strong></a></li>
         <li role="presentation"><a href="#sucursales" aria-controls="sucursales" role="tab" data-toggle="tab"><strong>Sucursales</strong></a></li>
@@ -44,11 +45,10 @@
     <div class="panel panel-default">
         <div class="panel-body">
 
-            <!-- Tab panes -->
+
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="home">
-                    <!--<h3> Revisar operación global de la empresa </h3>-->
-                    <!--<h3>Historial de ventas devoluciones y transferencias de mercancía</h3>-->
+
 
                     <div class="list-group">
                         <button type="button" class="list-group-item" data-toggle="modal" data-target="#genericModal" data-action="reports"><i class="fa fa-file-text"></i> <strong>Generar reportes</strong></button>
@@ -79,7 +79,7 @@
                 </div>
 
                 <div role="tabpanel" class="tab-pane fade" id="usuarios">
-                    <!--<h3>Permite añadir, actualizar y eliminar usuarios</h3>-->
+
                     <div class="list-group">
                         <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_user" class="list-group-item"><i class="fa fa-user-plus"></i> <strong>Crear usuario </strong></button>
                         <button type="button" data-action="edit_user" data-toggle="modal" data-target="#genericModal"  class="list-group-item"><i class="fa fa-users"></i> <strong>Editar usuarios</strong></button>
@@ -90,7 +90,85 @@
                 </div>
             </div>
         </div>
+    </div>-->
+
+
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Reportes</div>
+                <div class="panel-body">
+                    <div class="list-group">
+                        <button type="button" class="list-group-item" data-toggle="modal" data-target="#genericModal" data-action="reports"><i class="fa fa-file-text"></i> <strong>Generar reportes</strong></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Sucursales</div>
+                <div class="panel-body">
+                    <div class="list-group">
+                        <button type="button" data-action="new_store" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-plus-square"></i> <strong>Añadir sucursal<strong></strong></strong></button>
+                        <button type="button" data-action="edit_store" data-toggle="modal" data-target="#genericModal"  class="list-group-item"><i class="fa fa-edit"></i> <strong>Editar sucursales</strong></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Terminales</div>
+                <div class="panel-body">
+                    <div class="list-group">
+                        <button type="button" data-action="new_terminal" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-plus-square"></i> <strong>Añadir terminal<strong></strong></strong></button>
+                        <button type="button" data-action="edit_terminal" data-toggle="modal" data-target="#genericModal"  class="list-group-item"><i class="fa fa-edit"></i> <strong>Editar terminal</strong></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+
+
+
+
+
+<div class="row">
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Notas</div>
+            <div class="panel-body">
+                <div class="list-group">
+                    <button type="button" data-action="list_notes" data-toggle="modal" data-target="#genericModal"  class="list-group-item"><i class="fa fa-list"></i> <strong>Listar Notas</strong></button>
+                    <button type="button" data-action="find_notes" data-toggle="modal" data-target="#genericModal"  class="list-group-item"><i class="fa fa-search"></i> <strong>Buscar Notas</strong></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Administración de usuarios</div>
+            <div class="panel-body">
+                <div class="list-group">
+                    <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_user" class="list-group-item"><i class="fa fa-user-plus"></i> <strong>Crear usuario </strong></button>
+                    <button type="button" data-action="edit_user" data-toggle="modal" data-target="#genericModal"  class="list-group-item"><i class="fa fa-users"></i> <strong>Editar usuarios</strong></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Nómina</div>
+            <div class="panel-body">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 </div>
 
