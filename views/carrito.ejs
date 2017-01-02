@@ -27,19 +27,10 @@
 <% include partials/navbar.ejs%>
 
 <div class="container">
-<!--
-    <ul class="nav nav-pills" role="tablist">
-        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Venta</strong></a></li>
-    </ul>-->
 
     <div class="panel panel-default">
         <div class="panel-heading">Venta en proceso</div>
         <div class="panel-body">
-
-            <!-- Tab panes -->
-            <!--
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="home">-->
 
                     <% if (items.length > 0){%>
 
@@ -123,8 +114,6 @@
                     <%}else{%>
                     <div class="alert alert-info" role="alert">El carrito está vacio</div>
                     <%}%>
-                <!--</div>
-            </div>-->
         </div>
     </div>
 
