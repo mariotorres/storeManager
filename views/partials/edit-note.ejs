@@ -1,25 +1,28 @@
 <form id="noteForm">
     <!--id_proveedor
     id_tienda-->
+
     <input type="text" value="<%=sale.id%>" name="id" hidden>
+
     <p>
         <label>Usuario</label>
-        <input type="text" value="<%=user.usuario%>" class="form-control" name="articulo" required>
+        <input type="text" value="<%= user.usuario%>" class="form-control" name="articulo" disabled>
     </p>
 
 
     <p>
-        <label>Venta</label>
-        <input type="text" value="<%=sale.id%>" class="form-control" name="articulo" required>
+        <label>ID de venta</label>
+        <input type="text" value="<%=sale.id%>" class="form-control" name="articulo" disabled>
     </p>
 
 
     <p>
         <label>Número de artículos vendidos</label>
-        <input type="text" value="<%=n_items_sale.sum%>" name="descripcion" class="form-control" required>
+        <input type="text" value="<%=n_items_sale.sum%>" name="descripcion" class="form-control" disabled>
     </p>
 
     <label>Artículos</label>
+
     <%
     if (items_sale.length > 0){%>
     <div class="list-group">

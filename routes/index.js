@@ -573,12 +573,18 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
 // Load sales data into  modal.
 router.post('/notes/edit-note/', isAuthenticated, function(req, res){
     var id = req.body.sales_id;
+    var user_id = req.body.user_id;
+
+    console.log('user_id: ',user_id);
+    console.log( 'sale_id: ',id );
+
     db.task(function (t) {
+
         return this.batch([
             t.oneOrNone(
-                'select * from ventas where id=$1 and (saldo_pendiente = 0 or monto_pagado_tarjeta > 0) and id_usuario=$2', [
+                'select * from ventas where id=$1 ' /*and (saldo_pendiente = 0 or monto_pagado_tarjeta > 0)*/ + 'and id_usuario=$2', [
                     numericCol(id),
-                    numericCol(req.body.user_id)
+                    numericCol(user_id)
                 ]),
             t.oneOrNone(
                 'select sum(unidades_vendidas) as sum from venta_articulos where id_venta=$1',
@@ -590,33 +596,36 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
             ),
             t.oneOrNone(
                 'select * from usuarios where id=$1',
-                [numericCol(req.body.user_id)]
+                [numericCol(user_id)]
             )
         ]).then(function(data){
-            var queries = [];
-            for(var i = 0; i < data[2].length; i++){
-                console.log("ID ARTICULO: " +  data[2][i].id_articulo);
-                queries.push(
-                    t.oneOrNone(
-                        'select * from articulos where id=$1', [
-                            data[2][i].id_articulo
-                        ]
-                    )
-                )
+
+            var identifiers = [];
+            for(var i = 0; i < data[2].length; i++){  // data[2] -> Artículos
+                identifiers.push( data[2][i].id_articulo);
             }
+            console.log('Artículos: ', identifiers);
+
             return t.batch([
-                data, queries
-            ])
+                {venta: data[0]}, //venta
+                {total_unidades: data[1]}, //unidades vendidas
+                {articulos: data[2]}, //artículos vendidos
+                {vendedor: data[3]}, //vendedor
+                t.manyOrNone('select * from articulos where id IN ($1:csv)', [ identifiers ])
+            ]);
+
+
         })
+
     }).then(function(data){
-        console.log("Length data: " + JSON.stringify(data[1][0]));
+        //console.log("Length data: " + JSON.stringify(data[1][0]));
         res.render('partials/edit-note', {
             status:'Ok',
-            sale: data[0][0],
-            n_items_sale: data[0][1],
-            items_sale: data[0][2],
-            user: data[0][3],
-            items: data[1]
+            sale: data[0].venta,
+            n_items_sale: data[1].total_unidades,
+            items_sale: data[2].articulos,
+            user: data[3].vendedor,
+            items: data[4]
         });
     }).catch(function(error){
         console.log(error);
