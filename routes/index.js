@@ -1277,7 +1277,21 @@ router.post('/reports/', function (req, res) {
 });
 
 router.post('/item/find', function (req, res) {
-   res.render('partials/find-items');
+
+    db.task(function (t) {
+        return this.batch([
+            this.manyOrNone('select id, nombre from proveedores'),
+            this.manyOrNone('select * from marcas')
+        ]);
+    }).then(function (data) {
+        res.render('partials/find-items',{
+            proveedores: data[0],
+            marcas: data[1]
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
+
 });
 
 router.get('/item/:id/image.jpg', isAuthenticated, function (req, res) {

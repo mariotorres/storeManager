@@ -3,7 +3,9 @@
     <p>
     <label>Seleccione un proveedor</label>
     <select class="form-control" name="proveedor">
-        <option value="">Todos los proveedores</option>
+        <%for ( var i=0; i < proveedores.length; i++){%>
+        <option value="<%= proveedores[i].id %>"><%= proveedores[i].nombre %></option>
+        <%}%>
     </select>
     </p>
 
@@ -11,16 +13,16 @@
     <p>
     <label>Seleccione la marca</label>
     <select class="form-control" name="marca">
-        <option>Todas las marcas</option>
+        <%for ( var i=0; i < marcas.length; i++){%>
+        <option value="<%= marcas[i].id %>"><%= marcas[i].nombre %></option>
+        <%}%>
     </select>
     </p>
 
 
     <p>
     <label>Seleccione el modelo</label>
-    <select class="form-control">
-        <option>Todos los modelos</option>
-    </select>
+<input type="text"  class="form-control" placeholder="Modelo...">
     </p>
 
    <p>
