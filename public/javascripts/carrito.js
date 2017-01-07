@@ -1,19 +1,26 @@
 //Código de los botones del carrito
-/*$('.btn').click(function () {
+
+$('body').find('form').submit(function (e) {
     var button = $(this);
-    if (confirm("¿Está seguro que quiere realizar la venta?")){
-        // Selected discount
-        $.post('/carrito/sell', {user_id: button.data('user_id')}).done(function (data) {
-            alert(data.message);
-            if(data.status=='Ok'){
-                // Obtener HTML del carrito
-                alert("Venta exitosa");
-                location.reload();
-            }
+    var modal  = $("#genericModal");
+    modal.find('.modal-title').text('Seleccionar tipo de pago');
+    modal.find('#modal_content').html("");
+    modal.find('#modal_content').load('/type/payment', {page:1}, function(){
+        modal.find('form').submit(function(event){
+            $.post('/carrito/sell', $(this).serialize()).done(function (data) {
+                alert(data.message);
+                if(data.status=='Ok'){
+                    //alert("Venta exitosa");
+                    location.reload();
+                }
+            });
+            event.preventDefault();
         });
-    }
+    });
+    modal.modal("show");
+    e.preventDefault();
 });
-*/
+
 
 $('.fa').click(function(){
     var button = $(this);

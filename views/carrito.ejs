@@ -27,7 +27,7 @@
 <% include partials/navbar.ejs%>
 
 <div class="container">
-
+<form>
     <div class="panel panel-default">
         <div class="panel-heading">Venta en proceso</div>
         <div class="panel-body">
@@ -110,13 +110,14 @@
                         <%}%>
 
                         <h1 style="float: right;"><strong>Total: </strong> <%= total[0].sum%></h1>
-                    <button data-toggle="modal" data-target="#genericModal" data-action="make_sale" data-user_id="<%=user.id%>" class="btn btn-primary">Realizar venta </button>
+                    <!--<button data-toggle="modal" data-target="#genericModal" data-action="make_sale" data-user_id="<%=user.id%>" class="btn btn-primary">Realizar venta </button>-->
+                    <button class="btn btn-primary" data-action="make_sale" data-user_id="<%=user.id%>" type="submit">Realizar venta</button>
                     <%}else{%>
                     <div class="alert alert-info" role="alert">El carrito está vacio</div>
                     <%}%>
         </div>
     </div>
-
+</form>
 </div>
 
 <% include partials/modal.ejs %>

@@ -233,7 +233,7 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
-        case "make_sale":
+       /* case "make_sale":
             modal.find('.modal-title').text('Seleccionar tipo de pago');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/type/payment', { page:page }, function(){
@@ -248,7 +248,7 @@ function modalEvents(button, modal, page ) {
                     event.preventDefault();
                 });
             });
-            break;
+            break;*/
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");
