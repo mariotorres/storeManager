@@ -779,28 +779,23 @@ router.post('/supplier/new',function(req, res ){
 });
 
 router.post('/type/payment',function(req, res ){
-    var page = req.body.page;
-    var pageSize = 10;
-    var offset = page * pageSize;
+
     db.task(function(t){
         return this.batch([
-            this.manyOrNone('select * from terminales order by nombre_facturador limit $1 offset $2',
-            [pageSize, offset]),
+            this.manyOrNone('select * from terminales order by nombre_facturador '),
             this.manyOrNone('select sum(monto_pagado) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
             this.manyOrNone('select sum(precio*unidades_carrito*(1- discount/100)) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ])
         ]);
     }).then(function(data){
-        console.log("PRECIO TOT: " + data[2][0].sum);
+        console.log("PRECIO TOT: " + data[2].sum);
         res.render('partials/type-payment', {
             status: "Ok",
             user:req.user,
             terminales : data[0],
             total: data[1],
-            precio: data[2],
-            pageNumber : page,
-            numberOfPages: parseInt( (+data[0].count + pageSize - 1 ) / pageSize )
+            precio: data[2]
             });
     }).catch(function (error) {
         console.log(error);

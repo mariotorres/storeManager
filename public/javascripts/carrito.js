@@ -5,7 +5,7 @@ $('body').find('form').submit(function (e) {
     var modal  = $("#genericModal");
     modal.find('.modal-title').text('Seleccionar tipo de pago');
     modal.find('#modal_content').html("");
-    modal.find('#modal_content').load('/type/payment', {page:1}, function(){
+    modal.find('#modal_content').load('/type/payment', { /*page:1*/ }, function(){
         modal.find('form').submit(function(event){
             $.post('/carrito/sell', $(this).serialize()).done(function (data) {
                 alert(data.message);
