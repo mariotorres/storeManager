@@ -58,16 +58,16 @@ if (items.length > 0){%>
                 <div class="col-sm-6">
                     <p>
                         <label>Unidades:</label>
-                        <input type="number" name="existencias" class="form-control" max="<%= items[i].n_existencias%>" min="1" value="1">
+                        <input type="number" name="existencias" class="form-control" max="<%= items[i].n_existencias %>" min="1" value="1">
                     </p>
                 </div>
             </div>
 
-            <div class="row" hidden>
+            <div class="row">
                 <div class="col-sm-6">
                     <label>Estatus transacción:</label>
                     <select id="estatus" name="id_estatus" class="form-control">
-                        <option value="venta">Entregada</option>
+                        <option value="entregada">Entregada</option>
                         <option value="modificacion">Modificación</option>
                     </select>
                 </div>

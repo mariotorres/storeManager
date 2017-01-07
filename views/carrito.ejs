@@ -75,9 +75,13 @@
                                             <%= items[i].precio %>
                                         </p>
                                     </div>
-                                        <div class="col-sm-12">
-                                            <label>Monto que se deja a cuenta:</label>
-                                            <input type="number" name="monto_pagado" class="form-control" max="<%= totales[i].totales%>" value="<%= totales[i].totales%>">
+                                        <div class="col-sm-6">
+                                            <label>Monto a cuenta:</label>
+                                            <input type="number" name="monto_pagado" class="form-control" max="<%= totales[i].totales%>" value="<%= totales[i].totales%>" disabled>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label>Estatus:</label>
+                                            <input name="estatus" class="form-control" value="<%= items[i].estatus%>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-sm-4" style="vertical-align: middle;">
