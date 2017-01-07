@@ -1,0 +1,93 @@
+<form id="itemForm">
+    <!--id_proveedor
+    id_tienda-->
+    <input type="text" value="<%=item.id%>" name="id" hidden>
+    <div class="row">
+                    <div class="col-sm-8">
+    <p>
+        <label>articulo</label>
+        <input type="text" value="<%=item.articulo%>" class="form-control" name="articulo" required>
+    </p>
+
+
+    <p>
+        <label>Descripcion</label>
+        <input type="text" value="<%=item.descripcion%>" name="descripcion" class="form-control" required disabled>
+    </p>
+
+    </div>
+      <div class="col-sm-4">
+                     <a href="#" class="thumbnail" style="height: 80px; text-align:center; width: 100px;">
+                          <!--Aquí va la foto
+                      <img src="">-->
+                          <i class="fa fa-picture-o fa-5x" aria-hidden="true"></i>
+                      </a>
+
+      </div>
+    </div>
+
+  <p>
+        <label>Marca</label>
+        <select class="form-control" name="id_marca" disabled>
+            <option value="">Ninguna</option>
+            <% for ( var i =0; i < marcas ; i++ ){%>
+            <option value="<%= marcas[i].id %>" <%= ( item.id_marca == marcas[i].id )?'selected':null%> > <%= marcas[i].nombre %></option>
+            <%}%>
+        </select>
+    </p>
+    <p>
+        <label>Modelo</label>
+        <input name="modelo" value="<%=item.modelo%>" type="text" class="form-control" required disabled>
+    </p>
+    <p>
+        <label>Tienda</label>
+        <select name = "id_tienda" class="form-control" disabled>
+            <%
+            if (tiendas.length > 0 ){
+            for (var i =0; i < tiendas.length; i++){
+            %>
+            <option value="<%= tiendas[i].id %>" <%= tiendas[i].id == item.id_tienda ? 'selected': null %> > <%= tiendas[i].nombre %> </option>
+            <%
+            }
+            }else {
+            %>
+            <option value="">Ninguna</option>
+            <% }%>
+        </select>
+    </p>
+    <p>
+        <label>Proveedor</label>
+        <select name="id_proveedor" class="form-control" disabled>
+            <%
+            if (proveedores.length > 0 ){
+            for (var i =0; i < proveedores.length; i++){
+            %>
+            <option value="<%= proveedores[i].id %>" <%= item.id_proveedor == proveedores[i].id?'selected' : null %> > <%= proveedores[i].nombre %> </option>
+            <%
+            }
+            }else {
+            %>
+            <option value="">Ninguno</option>
+            <% }%>
+        </select>
+    </p>
+
+    <p>
+        <label>Costo unitario</label>
+        <input type="number" name="costo" value="<%= item.costo %>" class="form-control" disabled>
+    </p>
+
+    <p>
+        <label>Número de existencias</label>
+        <input type="number" min="0" class="form-control" value="<%= item.n_existencias%>" name="n_existencias" disabled>
+    </p>
+     <p>
+            <label><h3>Número de unidades a devolver</h3></label>
+            <input type="number" min="0" class="form-control" max="<%= item.n_existencias%>" value="<%= item.n_existencias%>" name="n_existencias">
+      </p>
+
+    <p>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </p>
+
+</form>

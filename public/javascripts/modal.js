@@ -59,6 +59,29 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "back_item":
+            modal.find('.modal-title').text('Devolución de artículos');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/item/list/',{ page: page }, function(){
+                $(this).find('.list-group-item').click(function(){
+                    // alert("Funciona, item: "+ $(this).data('item_id'));
+                    $("#modal_content").load('/item/return-item/',{ id: $(this).data('item_id') }, function () {
+                        modal.find('form').submit(function (event) {
+                            $.post('/item/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
+                    });
+                });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
+                });
+            });
+            break;
         case "edit_item":
             modal.find('.modal-title').text('Editar artículos');
             modal.find('#modal_content').html("");

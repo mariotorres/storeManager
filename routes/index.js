@@ -774,6 +774,34 @@ router.post('/item/edit-item/', isAuthenticated, function(req, res){
    });
 });
 
+// Load item data into modal
+router.post('/item/return-item/', isAuthenticated, function(req, res){
+    var id = req.body.id;
+    console.log(id);
+    db.task(function (t){
+        return this.batch([
+            this.one('select * from articulos where id = $1', [id]),
+            this.manyOrNone('select * from tiendas'),
+            this.manyOrNone('select * from proveedores'),
+            this.manyOrNone('select * from marcas')
+        ]);
+    }).then(function(data){
+        res.render('partials/return-item', {
+            status:'Ok',
+            item: data[0],
+            tiendas: data[1],
+            proveedores: data[2],
+            marcas: data[3]
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status:'Error',
+            data:error
+        });
+    });
+});
+
 router.post('/supplier/new',function(req, res ){
     res.render('partials/new-supplier');
 });
@@ -1195,6 +1223,7 @@ router.post('/item/update', function(req, res){
         });
     });
 });
+
 
 /*
  * Actualización de usuario
