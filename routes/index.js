@@ -1227,13 +1227,16 @@ router.post('/item/update', function(req, res){
  * Devolución de items
  */
 router.post('/item/return', function(req, res){
+
+    console.log(req.body);
+
     db.tx(function(t){
         return t.batch([
-            t.oneOrNone('update articulos set n_existencias = $2 where id=$1 returning id, articulo', [
+            t.one('update articulos set n_existencias = $2 where id=$1 returning id, articulo', [
                 req.body.id,
                 numericCol(req.body.n_existencias) - numericCol(req.body.n_devoluciones)
             ]),
-            t.oneOrNone('update proveedores set a_cuenta = a_cuenta - $2 where id = $1 returning nombre', [
+            t.one('update proveedores set a_cuenta = a_cuenta + $2 where id = $1 returning nombre', [
                 numericCol( req.body.id_proveedor),
                 numericCol( req.body.costo *  req.body.n_devoluciones)
             ])
