@@ -67,7 +67,7 @@ function modalEvents(button, modal, page ) {
                     // alert("Funciona, item: "+ $(this).data('item_id'));
                     $("#modal_content").load('/item/return-item/',{ id: $(this).data('item_id') }, function () {
                         modal.find('form').submit(function (event) {
-                            $.post('/item/update', $(this).serialize()).done(function (data) {
+                            $.post('/item/return', $(this).serialize()).done(function (data) {
                                 alert(data.message);
                                 if(data.status=='Ok'){
                                     modal.modal('hide');
