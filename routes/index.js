@@ -1239,7 +1239,12 @@ router.post('/item/return', function(req, res){
             t.one('update proveedores set a_cuenta = a_cuenta + $2 where id = $1 returning nombre', [
                 numericCol( req.body.id_proveedor),
                 numericCol( req.body.costo *  req.body.n_devoluciones)
-            ])
+            ])/*,
+            t.one('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", "discount", "monto_pagado", "monto_por_pagar", "estatus") values ( ' +
+                '$1, $2, $3, $4, $5, $6, $7 )', [
+                numericCol( req.body.id_proveedor),
+                numericCol( req.body.costo *  req.body.n_devoluciones)
+            ])*/
         ])
     }).then(function (data) {
         res.json({
