@@ -789,7 +789,7 @@ router.post('/type/payment',function(req, res ){
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ])
         ]);
     }).then(function(data){
-        console.log("PRECIO TOT: " + data[2].sum);
+        console.log("PRECIO TOT: " + data[2][0].sum);
         res.render('partials/type-payment', {
             status: "Ok",
             user:req.user,
