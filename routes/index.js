@@ -229,9 +229,8 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
     console.log("id ITEM: " + req.body.item_id);
     db.task(function (t) {
         return this.batch([
-            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 from usuarios, articulos ' +
-                'where carrito.id_articulo=$1 and carrito.id_usuario=$2 ' +
-                ' and carrito.unidades_carrito > 0', [
+            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 '+//from usuarios, articulos ' +
+                'where id_articulo=$1 and id_usuario=$2 and carrito.unidades_carrito > 0', [
                 numericCol(req.body.item_id),
                 numericCol(req.body.user_id)
             ])
@@ -251,10 +250,10 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/rem', isAuthenticated, function (req, res) {
-    db.manyOrNone('delete from carrito where id_usuario=$1 and id_articulo=$2', [ req.body.user_id, req.body.item_id ]).then(function (data) {
+    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 returning id', [ req.body.user_id, req.body.item_id ]).then(function (data) {
         res.json({
             status: 'Ok',
-            message : 'El producto se ha removido del carrito'
+            message : 'El producto '+ data.id +' se ha removido del carrito'
         })
     }).catch(function (error) {
         console.log(error);
