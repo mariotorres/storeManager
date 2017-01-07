@@ -14,7 +14,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Editar información del usuario');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/user/profile', { user_id: button.data('user_id')  }, function(){
-                $('#form_updateprofile').submit(function(event){
+                modal.find('form').submit(function(event){
                     $.post('/user/update', $(this).serialize()).done(function (data) {
                         alert(data.message);
                         if (data.status=='Ok'){
@@ -30,7 +30,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Cambiar contraseña');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/user/change-password', { user_id: button.data('user_id')  }, function(){
-                $('#form_updatepassword').submit(function (event) {
+                modal.find('form').submit(function (event) {
                     $.post('/user/update-password', $(this).serialize()).done(function (data) {
                         alert(data.message);
                         if(data.status=='Ok'){
@@ -45,7 +45,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar artículo');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/new', {}, function(){
-                $('#itemForm').submit(function(event) {
+                modal.find('form').submit(function(event) {
                     var n_articles = $('input[id=nArts]').val();
                     if (confirm("¿Está seguro que quiere registrar " + n_articles + " artículos?")){
                             $.post('/item/register', $(this).serialize()).done(function (data) {
@@ -66,7 +66,7 @@ function modalEvents(button, modal, page ) {
                 $(this).find('.list-group-item').click(function(){
                     // alert("Funciona, item: "+ $(this).data('item_id'));
                     $("#modal_content").load('/item/edit-item/',{ id: $(this).data('item_id') }, function () {
-                        $('#itemForm').submit(function (event) {
+                        modal.find('form').submit(function (event) {
                             $.post('/item/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
                                 if(data.status=='Ok'){
@@ -86,7 +86,14 @@ function modalEvents(button, modal, page ) {
         case "find_item":
             modal.find('.modal-title').text('Buscar artículos');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/item/find',{}, function () {
+            modal.find('#modal_content').load('/item/find-items-view',{}, function () {
+
+                modal.find('form').submit(function (e) {
+
+                    // Mostrar resultados y boton de regresar ...
+                    alert(';)');
+                    e.preventDefault();
+                });
 
             });
             break;
@@ -118,7 +125,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar sucursal');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/store/new', { /* post body data */ }, function(){
-                $('#storeForm').submit(function(event){
+                modal.find('form').submit(function(event){
                     $.post('/store/register', $(this).serialize()).done(function (data){
                         alert(data.message);
                         if(data.status == 'Ok'){
@@ -134,7 +141,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar terminal');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/terminal/new', { /* post body data */ }, function(){
-                $('#terminalForm').submit(function(event){
+                modal.find('form').submit(function(event){
                     $.post('/terminal/register', $(this).serialize()).done(function (data){
                         alert(data.message);
                         if(data.status == 'Ok'){
@@ -151,7 +158,7 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/terminal/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/terminal/edit-terminal/', {id: $(this).data('terminal_id')}, function () {
-                        $('#terminalForm').submit(function (event) {
+                        modal.find('form').submit(function (event) {
                             $.post('/terminal/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
                                 if(data.status=='Ok'){
@@ -173,7 +180,7 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/store/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/store/edit-store/', {id: $(this).data('store_id')}, function () {
-                        $('#storeForm').submit(function (event) {
+                        modal.find('form').submit(function (event) {
                             $.post('/store/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
                                 if(data.status=='Ok'){
@@ -193,7 +200,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Agregar productos a carrito');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/list/sale',{ page: page},function(){
-                $(this).find('form').submit(function(){
+                $(this).find('form').submit(function( event ){
                     if (confirm("¿Desea agregar el artículo " +  $(this).find('input[name=item_id]').val() + " al carrito?")){
                         // Selected discount
                         $.post('/carrito/new', $(this).serialize()).done(function (data) {
@@ -230,7 +237,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Seleccionar tipo de pago');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/type/payment', { page:page }, function(){
-                $('#typeForm').submit(function(event){
+                modal.find('form').submit(function(event){
                     $.post('/carrito/sell', $(this).serialize()).done(function (data) {
                         alert(data.message);
                         if(data.status=='Ok'){
@@ -246,7 +253,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/supplier/new', { /* post body data */ }, function(){
-                $('#supplierForm').submit(function(event){
+                modal.find('form').submit(function(event){
                     $.post('/supplier/register', $(this).serialize()).done(function (data){
                         alert(data.message);
                         if(data.status == 'Ok'){
@@ -263,7 +270,7 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/supplier/list/', { page : page } , function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load("/supplier/edit-supplier/", {id: $(this).data('supplier_id')}, function(){
-                        $('#supplierForm').submit(function (event) {
+                        modal.find('form').submit(function (event) {
                             $.post('/supplier/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
                                 if(data.status=='Ok'){
@@ -296,7 +303,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar marca');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/brand/new', { /* post body data */ }, function(){
-                $('#brandForm').submit(function(event){
+                modal.find('form').submit(function(event){
                     $.post('/brand/register', $(this).serialize()).done(function (data){
                         alert(data.message);
                         if(data.status == 'Ok'){
@@ -313,7 +320,7 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/marca/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/brand/edit-brand/', {id: $(this).data('marca_id')}, function () {
-                        $('#brandForm').submit(function (event) {
+                        modal.find('form').submit(function (event) {
                             $.post('/brand/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
                                 if(data.status=='Ok'){

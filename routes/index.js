@@ -1294,7 +1294,7 @@ router.post('/reports/', function (req, res) {
    res.render('partials/reports');
 });
 
-router.post('/item/find', function (req, res) {
+router.post('/item/find-items-view', function (req, res) {
 
     db.task(function (t) {
         return this.batch([
