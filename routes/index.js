@@ -1303,6 +1303,7 @@ router.post('/item/find', function (req, res) {
 
 });
 
+
 router.get('/item/:id/image.jpg', isAuthenticated, function (req, res) {
    res.sendFile( path.resolve('../images/items/item_1.jpg'));
 });
