@@ -99,8 +99,8 @@ create table articulos (
     codigo_barras numeric,
     url_imagen text,
     n_existencias numeric,
-    fecha_registro date,
-    fecha_ultima_modificacion date
+    fecha_registro timestamp,
+    fecha_ultima_modificacion timestamp
 );
 
 
