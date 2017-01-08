@@ -939,7 +939,7 @@ router.post('/item/register', function(req, res){
 
         return this.batch([
             this.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
-                'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) returning id, articulo, n_existencias', [
+                'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias', [
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.id_tienda),
                 req.body.articulo,
@@ -952,9 +952,7 @@ router.post('/item/register', function(req, res){
                 numericCol(req.body.costo),
                 numericCol(req.body.codigo_barras),
                 req.body.url_imagen,
-                numericCol(req.body.n_arts),
-                new Date(),
-                new Date()
+                numericCol(req.body.n_arts)
             ]),
             proveedor
         ])
@@ -1190,7 +1188,7 @@ router.post('/brand/update', function(req, res){
  */
 router.post('/item/update', function(req, res){
     db.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-        'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11, n_existencias= $12, fecha_ultima_modificacion = $13' +
+        'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11, n_existencias= $12, fecha_ultima_modificacion = Now()' +
         'where id=$1 returning id, articulo ',[
         req.body.id,
         req.body.articulo,
@@ -1203,8 +1201,7 @@ router.post('/item/update', function(req, res){
         numericCol(req.body.costo),
         numericCol(req.body.codigo_barras),
         req.body.url_imagen,
-        numericCol(req.body.n_existencias),
-        new Date()
+        numericCol(req.body.n_existencias)
     ]).then(function (data) {
         res.json({
             status :'Ok',
@@ -1238,11 +1235,10 @@ router.post('/item/return', function(req, res){
                 numericCol( req.body.costo *  req.body.n_devoluciones)
             ]),
             t.one('insert into devolucion_prov_articulos ("id_articulo" , "id_proveedor", "unidades_regresadas", "fecha", "costo_unitario") values( ' +
-                '$1, $2, $3, $4, $5) returning id', [
+                '$1, $2, $3, Now(), $4) returning id', [
                 numericCol(req.body.id),
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.n_devoluciones),
-                new Date(),
                 numericCol(req.body.costo)
             ])
         ])
