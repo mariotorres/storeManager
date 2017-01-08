@@ -204,13 +204,13 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
     db.one('update carrito set unidades_carrito = unidades_carrito + 1 ' +
-        'where carrito.id_articulo = $1 and carrito.id_usuario = $2 returning id', [
+        'where carrito.id_articulo = $1 and carrito.id_usuario = $2 returning id_articulo', [
         numericCol(req.body.item_id),
         numericCol(req.body.user_id)
     ]).then(function (data) {
         res.json({
             status : 'Ok',
-            message: 'Se ha agregado una unidad del artículo: ' + data.item_id
+            message: 'Se ha agregado una unidad del artículo: ' + data.id_articulo
         })
     }).catch(function (error) {
         console.log(error);
@@ -224,13 +224,13 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
 router.post('/carrito/dec', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
     db.oneOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 '+//from usuarios, articulos ' +
-        'where id_articulo=$1 and id_usuario=$2 and carrito.unidades_carrito > 1 returning id', [
+        'where id_articulo=$1 and id_usuario=$2 and carrito.unidades_carrito > 1 returning id_articulo', [
         numericCol(req.body.item_id),
         numericCol(req.body.user_id)
     ]).then(function (data) {
         res.json({
             status : 'Ok',
-            message: (data?'Se ha eliminado una unidad del artículo: ' + data.item_id : 'Solo queda una unidad del artículo: '+ data.item_id)
+            message: (data?'Se ha eliminado una unidad del artículo: ' + data.id_articulo : 'Solo queda una unidad del artículo: '+ data.id_articulo)
         });
     }).catch(function (error) {
         console.log(error);
@@ -242,10 +242,10 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/rem', isAuthenticated, function (req, res) {
-    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 returning id', [ req.body.user_id, req.body.item_id ]).then(function (data) {
+    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 returning id_articulo', [ req.body.user_id, req.body.item_id ]).then(function (data) {
         res.json({
             status: 'Ok',
-            message : 'El producto '+ data.id +' se ha removido del carrito'
+            message : 'El producto '+ data.id_articulo +' se ha removido del carrito'
         })
     }).catch(function (error) {
         console.log(error);
