@@ -204,13 +204,13 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
     db.one('update carrito set unidades_carrito = unidades_carrito + 1 ' +
-        'where carrito.id_articulo = $1 and carrito.id_usuario = $2 ', [
+        'where carrito.id_articulo = $1 and carrito.id_usuario = $2 returning id', [
         numericCol(req.body.item_id),
         numericCol(req.body.user_id)
     ]).then(function (data) {
         res.json({
             status : 'Ok',
-            message: 'Se ha agregado una unidad del artículo: ' + req.body.item_id
+            message: 'Se ha agregado una unidad del artículo: ' + data.id
         })
     }).catch(function (error) {
         console.log(error);
