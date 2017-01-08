@@ -311,9 +311,10 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     numericCol(data[0][i].id_articulo)
                 ]));
 
-                queries.push(t.manyOrNone('update articulos set n_existencias = n_existencias - $2 where id =$1',[
+                queries.push(t.manyOrNone('update articulos set n_existencias = n_existencias - $2, fecha_ultima_modificacion = $3 where id =$1',[
                     numericCol(data[0][i].id_articulo),
-                    numericCol(data[0][i].unidades_carrito)
+                    numericCol(data[0][i].unidades_carrito),
+                    new Date()
                 ]));
             }
 
@@ -937,8 +938,8 @@ router.post('/item/register', function(req, res){
         }
 
         return this.batch([
-            this.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias) ' +
-                'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, articulo, n_existencias', [
+            this.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
+                'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) returning id, articulo, n_existencias', [
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.id_tienda),
                 req.body.articulo,
@@ -951,7 +952,9 @@ router.post('/item/register', function(req, res){
                 numericCol(req.body.costo),
                 numericCol(req.body.codigo_barras),
                 req.body.url_imagen,
-                numericCol(req.body.n_arts)
+                numericCol(req.body.n_arts),
+                new Date(),
+                new Date()
             ]),
             proveedor
         ])
@@ -1187,7 +1190,7 @@ router.post('/brand/update', function(req, res){
  */
 router.post('/item/update', function(req, res){
     db.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-        'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11, n_existencias= $12 ' +
+        'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11, n_existencias= $12, fecha_ultima_modificacion = $13' +
         'where id=$1 returning id, articulo ',[
         req.body.id,
         req.body.articulo,
@@ -1200,7 +1203,8 @@ router.post('/item/update', function(req, res){
         numericCol(req.body.costo),
         numericCol(req.body.codigo_barras),
         req.body.url_imagen,
-        numericCol(req.body.n_existencias)
+        numericCol(req.body.n_existencias),
+        new Date()
     ]).then(function (data) {
         res.json({
             status :'Ok',
@@ -1224,9 +1228,10 @@ router.post('/item/return', function(req, res){
 
     db.tx(function(t){
         return t.batch([
-            t.one('update articulos set n_existencias = $2 where id=$1 returning id, articulo', [
+            t.one('update articulos set n_existencias = $2, fecha_ultima_modificacion = $3 where id=$1 returning id, articulo', [
                 req.body.id,
-                numericCol(req.body.n_existencias) - numericCol(req.body.n_devoluciones)
+                numericCol(req.body.n_existencias) - numericCol(req.body.n_devoluciones),
+                new Date()
             ]),
             t.one('update proveedores set a_cuenta = a_cuenta + $2 where id = $1 returning nombre', [
                 numericCol( req.body.id_proveedor),

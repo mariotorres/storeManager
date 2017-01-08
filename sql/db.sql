@@ -98,7 +98,9 @@ create table articulos (
     costo numeric,
     codigo_barras numeric,
     url_imagen text,
-    n_existencias numeric
+    n_existencias numeric,
+    fecha_registro date,
+    fecha_ultima_modificacion date,
 );
 
 
@@ -176,6 +178,7 @@ create table devolucion_prov_articulos(
     fecha date,
     costo_unitario numeric
 );
+
 
 
 /*
