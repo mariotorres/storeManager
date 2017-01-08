@@ -100,7 +100,7 @@ create table articulos (
     url_imagen text,
     n_existencias numeric,
     fecha_registro date,
-    fecha_ultima_modificacion date,
+    fecha_ultima_modificacion date
 );
 
 
