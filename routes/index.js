@@ -203,15 +203,11 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
-    db.task(function (t) {
-        return this.batch([
-            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito + 1 ' +
-                'where carrito.id_articulo = $1 and carrito.id_usuario = $2 ', [
-                numericCol(req.body.item_id),
-                numericCol(req.body.user_id)
-            ])
-        ])
-    }).then(function (data) {
+    db.one('update carrito set unidades_carrito = unidades_carrito + 1 ' +
+        'where carrito.id_articulo = $1 and carrito.id_usuario = $2 ', [
+        numericCol(req.body.item_id),
+        numericCol(req.body.user_id)
+    ]).then(function (data) {
         res.json({
             status : 'Ok',
             message: 'Se ha agregado una unidad del artículo: ' + req.body.item_id
@@ -226,19 +222,15 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/dec', isAuthenticated, function (req, res) {
-    console.log("id ITEM: " + req.body.item_id);
-    db.task(function (t) {
-        return this.batch([
-            this.manyOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 '+//from usuarios, articulos ' +
-                'where id_articulo=$1 and id_usuario=$2 and carrito.unidades_carrito > 0', [
-                numericCol(req.body.item_id),
-                numericCol(req.body.user_id)
-            ])
-        ])
-    }).then(function (data) {
+    //console.log("id ITEM: " + req.body.item_id);
+    db.oneOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 '+//from usuarios, articulos ' +
+        'where id_articulo=$1 and id_usuario=$2 and carrito.unidades_carrito > 1 returning id', [
+        numericCol(req.body.item_id),
+        numericCol(req.body.user_id)
+    ]).then(function (data) {
         res.json({
             status : 'Ok',
-            message: (data?'Se ha eliminado una unidad del artículo: ' + req.body.item_id : 'Solo queda una unidad del artículo: '+ req.body.item_id)
+            message: (data?'Se ha eliminado una unidad del artículo: ' + data.id : 'Solo queda una unidad del artículo: '+ data.id)
         });
     }).catch(function (error) {
         console.log(error);
