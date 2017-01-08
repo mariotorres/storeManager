@@ -210,7 +210,7 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
     ]).then(function (data) {
         res.json({
             status : 'Ok',
-            message: 'Se ha agregado una unidad del artículo: ' + data.id
+            message: 'Se ha agregado una unidad del artículo: ' + data.item_id
         })
     }).catch(function (error) {
         console.log(error);
@@ -230,7 +230,7 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
     ]).then(function (data) {
         res.json({
             status : 'Ok',
-            message: (data?'Se ha eliminado una unidad del artículo: ' + data.id : 'Solo queda una unidad del artículo: '+ data.id)
+            message: (data?'Se ha eliminado una unidad del artículo: ' + data.item_id : 'Solo queda una unidad del artículo: '+ data.item_id)
         });
     }).catch(function (error) {
         console.log(error);
