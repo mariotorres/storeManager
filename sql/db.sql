@@ -166,6 +166,17 @@ create table venta_articulos(
     estatus  text
 );
 
+/* Devolución de artículos */
+drop table if exists devolucion_prov_articulos;
+create table devolucion_prov_articulos(
+    id serial primary key,
+    id_articulo integer references articulos(id),
+    id_proveedor integer references proveedores(id),
+    unidades_regresadas numeric,
+    fecha date,
+    costo_unitario numeric
+);
+
 
 /*
 tipo_transaccion
