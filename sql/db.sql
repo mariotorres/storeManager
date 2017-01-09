@@ -152,7 +152,8 @@ create table ventas (
     monto_pagado_efectivo numeric,
     monto_pagado_tarjeta  numeric,
     saldo_pendiente numeric,
-    id_terminal integer references terminales(id)
+    id_terminal integer references terminales(id),
+    estatus text
 );
 
 drop table if exists venta_articulos;

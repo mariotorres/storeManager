@@ -273,8 +273,8 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros.
                 data,
                 t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
-                    '"monto_pagado_efectivo", "monto_pagado_tarjeta", "id_terminal", "saldo_pendiente") ' +
-                    'values($1, $2, $3, $4, $5, $6, $7, $8) returning id', [
+                    '"monto_pagado_efectivo", "monto_pagado_tarjeta", "id_terminal", "saldo_pendiente", "estatus") ' +
+                    'values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id', [
                     numericCol(req.body.user_id),
                     numericCol(req.body.precio_tot),
                     new Date(),
@@ -282,7 +282,8 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     numericCol(req.body.monto_efec),
                     (numericCol(req.body.efec_tot) - numericCol(req.body.monto_efec)),
                     req.body.terminal,
-                    numericCol(req.body.precio_tot) - numericCol(req.body.efec_tot)
+                    numericCol(req.body.precio_tot) - numericCol(req.body.efec_tot),
+                    "activa"
                 ])
             ]);
         }).then(function(data){
@@ -1258,19 +1259,12 @@ router.post('/item/return', function(req, res){
 * Cancelar nota
  */
 router.post('/cancel/note', function(req, res){
-
-    console.log(req.user.id);
-    console.log(req.body.note_id);
-
     db.tx(function(t){
-
         return t.manyOrNone('select * from venta_articulos where id_venta = $1 ',[
             numericCol(req.body.note_id)
         ]).then(function( articulos ){
-
             var queries = [];
             for(var i = 0; i < articulos.length; i++){
-                console.log( articulos[i].id_articulo );
                 queries.push(
                     t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id', [
                     articulos[i].id_articulo,
