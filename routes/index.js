@@ -1220,9 +1220,6 @@ router.post('/item/update', function(req, res){
  * Devolución de items
  */
 router.post('/item/return', function(req, res){
-
-    console.log(req.body);
-
     db.tx(function(t){
         return t.batch([
             t.one('update articulos set n_existencias = $2, fecha_ultima_modificacion = $3 where id=$1 returning id, articulo', [
@@ -1255,6 +1252,41 @@ router.post('/item/return', function(req, res){
         });
     });
 });
+
+
+/*
+* Cancelar nota
+ */
+router.post('/cancel/note', function(req, res){
+    console.log(req.user.id);
+    console.log(req.body.note_id);
+    db.tx(function(t){
+        return t.manyOrNone('select * from venta_articulos where id_venta = $1 returning id_articulo, unidades_vendidas',
+            numericCol(req.body.note_id)
+        ).then(function(data){
+            console.log("INSIDE");
+            var queries = [];
+            for(var i = 0; i < data.length; i++){
+                console.log(data[i].id_articulo);
+                queries.push(t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id', [
+                    data[i].id_articulo,
+                    data[i].unidades_vendidas
+                ]))
+            }
+        })
+    }).then(function(data){
+            res.json({
+                status: 'Ok',
+                message: 'Se ha cancelado la nota'
+            });
+    }).catch(function(error){
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al cancelar la nota'
+        });
+    });
+})
+
 
 /*
  * Actualización de usuario

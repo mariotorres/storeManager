@@ -237,41 +237,23 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
-        case "list_notes":
+        case "cancel_notes":
             modal.find('.modal-title').text('Seleccionar notas');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/notes/list/',{ page: page},function(){
                 $(this).find('.list-group-item').click(function(){
-                    if (confirm("¿Está seguro que quiere seleccionar la nota: " +  $(this).data('sales_id'))){
-                        // Selected discount
-
-                        modal.find('#modal_content').load('/notes/edit-note',{
-                            sales_id : $(this).data('sales_id'),
-                            user_id: $(this).data('user_id')
-                        }, function () {
-
+                    if (confirm("¿Está seguro que quiere eliminar la nota: " +  $(this).data('sales_id'))){
+                        $.post('/cancel/note', {note_id: $(this).data('sales_id')}).done(function (data) {
+                            alert(data.message);
+                            if(data.status=='Ok'){
+                                modal.modal('hide');
+                            }
                         });
                     }
                     event.preventDefault();
                 });
             });
             break;
-       /* case "make_sale":
-            modal.find('.modal-title').text('Seleccionar tipo de pago');
-            modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/type/payment', { page:page }, function(){
-                modal.find('form').submit(function(event){
-                    $.post('/carrito/sell', $(this).serialize()).done(function (data) {
-                        alert(data.message);
-                        if(data.status=='Ok'){
-                            //alert("Venta exitosa");
-                            location.reload();
-                        }
-                    });
-                    event.preventDefault();
-                });
-            });
-            break;*/
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");
