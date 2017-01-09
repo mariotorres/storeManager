@@ -449,7 +449,7 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
         return this.batch([
             this.one('select count(*) from ventas as count where saldo_pendiente = 0 or monto_pagado_tarjeta > 0 and ' +
                 'id_usuario = $1', [req.user.id]), // Sólo se imprimen las notas de las ventas completas o las que tienen pagos con tarjeta
-            this.manyOrNone('select * from ventas where (saldo_pendiente = 0 or monto_pagado_tarjeta > 0) and id_usuario = $1 and estatus = $4' +
+            this.manyOrNone('select * from ventas where id_usuario = $1 and estatus = $4 ' +
                 ' order by id desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
         ]);
     }).then(function(data){
@@ -1275,14 +1275,15 @@ router.post('/cancel/note', function(req, res){
                 ])
                 );
             }
-            return t.batch(queries);
+            return t.batch([queries, articulos]); // Aquí no puedo accesar viewjo
         }).then(function( data ){
             var proveedores = [];
             for(var i = 0; i < data.length; i++){
                 proveedores.push(
-                    t.one('update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1', [
-                        data[i].id_proveedor,
-                        data[i].costo
+                    t.one('update proveedores set a_cuenta = a_cuenta - ($2 * $3), por_pagar = por_pagar + ($2 * $3) where id = $1', [
+                        data[0][i].id_proveedor,
+                        data[0][i].costo,
+                        data[1][i].unidades_vendidas
                     ])
                 )
             }
