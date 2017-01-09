@@ -18,12 +18,13 @@
                 if (user.permiso_administrador){%>
                 <li class="<%= section=='admin'?'active':'' %>"><a href="/admin">Administrador</a></li>
                 <%}
-                if (user.permiso_empleados){%>
-                <li class="<%= section=='empleados'?'active':'' %>"><a href="/empleados">Empleados</a></li>
-                <%}
                 if (user.permiso_inventario){%>
                 <li class="<%= section=='inventario'?'active':'' %>"><a href="/inventario">Inventario</a></li>
+                <%}
+                if (user.permiso_empleados){%>
+                <li class="<%= section=='empleados'?'active':'' %>"><a href="/empleados">Empleados</a></li>
                 <%}%>
+
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <% if ( user.permiso_empleados ){%>

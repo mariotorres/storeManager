@@ -2,12 +2,25 @@
     <input type="text" value="<%=user.id%>" name="id" hidden>
     <p>
         <label>Nombre de usuario</label>
-        <input type="text" value="<%=user.id%>" class="form-control" name="usuario" required>
+        <input type="text" value="<%=user.usuario%>" class="form-control" name="usuario" disabled>
     </p>
-<!--    <p>
-        <label>Contraseña</label>
-        <input type="text" class="form-control" name="contrasena" required>
-    </p>-->
+<!--
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Contraseña</label>
+                <input type="text" class="form-control" name="contrasena" required>
+            </p>
+        </div>
+
+        <div class="col-sm-6">
+            <p>
+                <label>Confirmar contraseña</label>
+                <input type="text" class="form-control" name="confirmar_contrasena" required>
+            </p>
+        </div>
+    </div>
+    -->
     <p>
         <label>E-mail</label>
         <input type="email" value="<%=user.email%>" class="form-control" name="email">

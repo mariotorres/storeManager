@@ -32,16 +32,7 @@
 <div class="container">
 
     <div class="row">
-        <div class="col-sm-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">Reportes</div>
-                <div class="panel-body">
-                    <div class="list-group">
-                        <button type="button" class="list-group-item" data-toggle="modal" data-target="#genericModal" data-action="reports"><i class="fa fa-file-text"></i> <strong>Generar reportes</strong></button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <div class="col-sm-4">
             <div class="panel panel-default">
                 <div class="panel-heading">Sucursales</div>
@@ -64,6 +55,18 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Administración de usuarios</div>
+                <div class="panel-body">
+                    <div class="list-group">
+                        <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_user" class="list-group-item"><i class="fa fa-user-plus"></i> <strong>Crear usuario </strong></button>
+                        <button type="button" data-action="edit_user" data-toggle="modal" data-target="#genericModal"  class="list-group-item"><i class="fa fa-users"></i> <strong>Editar usuarios</strong></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -81,17 +84,19 @@
             </div>
         </div>
     </div>
+
     <div class="col-sm-4">
         <div class="panel panel-default">
-            <div class="panel-heading">Administración de usuarios</div>
+            <div class="panel-heading">Reportes</div>
             <div class="panel-body">
                 <div class="list-group">
-                    <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_user" class="list-group-item"><i class="fa fa-user-plus"></i> <strong>Crear usuario </strong></button>
-                    <button type="button" data-action="edit_user" data-toggle="modal" data-target="#genericModal"  class="list-group-item"><i class="fa fa-users"></i> <strong>Editar usuarios</strong></button>
+                    <button type="button" class="list-group-item" data-toggle="modal" data-target="#genericModal" data-action="reports"><i class="fa fa-file-text"></i> <strong>Generar reportes</strong></button>
                 </div>
             </div>
         </div>
     </div>
+
+
     <div class="col-sm-4">
 
         <div class="panel panel-default">
@@ -113,6 +118,8 @@
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<script src="/bower_components/jspdf/dist/jspdf.min.js"></script>
 
 <!-- datepicker -->
 <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
