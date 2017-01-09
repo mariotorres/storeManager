@@ -1269,13 +1269,24 @@ router.post('/cancel/note', function(req, res){
             var queries = [];
             for(var i = 0; i < articulos[0].length; i++){
                 queries.push(
-                    t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id', [
+                    t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id, id_proveedor, costo', [
                     articulos[0][i].id_articulo,
                     articulos[0][i].unidades_vendidas
                 ])
                 );
             }
             return t.batch(queries);
+        }).then(function( data ){
+            var proveedores = [];
+            for(var i = 0; i < data.length; i++){
+                proveedores.push(
+                    t.one('update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1', [
+                        data[i].id_proveedor,
+                        data[i].costo
+                    ])
+                )
+            }
+            return t.batch(data);
         });
     }).then(function(data){
         console.log('Nota cancelada: ',data);
