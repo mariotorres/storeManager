@@ -250,7 +250,6 @@ function modalEvents(button, modal, page ) {
                             }
                         });
                     }
-                    event.preventDefault();
                 });
             });
             break;
