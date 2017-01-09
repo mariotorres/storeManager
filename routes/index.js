@@ -1274,6 +1274,7 @@ router.post('/cancel/note', function(req, res){
                 ]))
             }
         })
+        return t.batch(queries);
     }).then(function(data){
             res.json({
                 status: 'Ok',
