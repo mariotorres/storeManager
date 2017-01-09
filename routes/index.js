@@ -449,8 +449,8 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
         return this.batch([
             this.one('select count(*) from ventas as count where saldo_pendiente = 0 or monto_pagado_tarjeta > 0 and ' +
                 'id_usuario = $1', [req.user.id]), // Sólo se imprimen las notas de las ventas completas o las que tienen pagos con tarjeta
-            this.manyOrNone('select * from ventas where saldo_pendiente = 0 or monto_pagado_tarjeta > 0 and id_usuario = $1' +
-                ' order by id limit $2 offset $3',[ req.user.id, pageSize, offset ])
+            this.manyOrNone('select * from ventas where (saldo_pendiente = 0 or monto_pagado_tarjeta > 0) and id_usuario = $1 and estatus = $4' +
+                ' order by id desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
         ]);
     }).then(function(data){
         res.render('partials/notes-list',{
@@ -1260,33 +1260,31 @@ router.post('/item/return', function(req, res){
  */
 router.post('/cancel/note', function(req, res){
     db.tx(function(t){
-        return t.manyOrNone('select * from venta_articulos where id_venta = $1 ',[
+        return t.batch([
+            t.manyOrNone('select * from venta_articulos where id_venta = $1 ',[
             numericCol(req.body.note_id)
+        ]),
+            t.one('update ventas set estatus = $2 where id = $1 returning id', [req.body.note_id, "cancelada"])
         ]).then(function( articulos ){
             var queries = [];
-            for(var i = 0; i < articulos.length; i++){
+            for(var i = 0; i < articulos[0].length; i++){
                 queries.push(
                     t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id', [
-                    articulos[i].id_articulo,
-                    articulos[i].unidades_vendidas
+                    articulos[0][i].id_articulo,
+                    articulos[0][i].unidades_vendidas
                 ])
                 );
             }
-
             return t.batch(queries);
-
         });
-
     }).then(function(data){
         console.log('Nota cancelada: ',data);
-
             res.json({
                 status: 'Ok',
                 message: 'Se ha cancelado la nota'
             });
     }).catch(function(error){
         console.log(error);
-
         res.json({
             status: 'Error',
             message: 'Ocurrió un error al cancelar la nota'
