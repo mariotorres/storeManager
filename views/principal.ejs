@@ -40,26 +40,25 @@
                     <h3>Seleccione una opción</h3>
 
                     <div class="list-group">
-
                         <% if (user.permiso_empleados){%>
                         <a href="/empleados" class="list-group-item">
                             <h4 class="list-group-item-heading">Empleados</h4>
                             <p class="list-group-item-text"> Panel de empleados</p>
                         </a>
-                        <%} if(user.permiso_tablero){%>
-                        <a href="/tablero" class="list-group-item">
-                            <h4 class="list-group-item-heading">Tablero de control</h4>
-                            <p class="list-group-item-text"> Administración del negocio </p>
+                        <%} if (user.permiso_inventario){%>
+                        <a href="/inventario" class="list-group-item">
+                            <h4 class="list-group-item-heading">Inventario</h4>
+                            <p class="list-group-item-text"> Permite administrar el inventario </p>
                         </a>
                         <%} if (user.permiso_administrador){%>
                         <a href="/admin" class="list-group-item">
                             <h4 class="list-group-item-heading">Administrador</h4>
                             <p class="list-group-item-text"> Permite administrar funciones del sistema </p>
                         </a>
-                        <%} if (user.permiso_inventario){%>
-                        <a href="/inventario" class="list-group-item">
-                            <h4 class="list-group-item-heading">Inventario</h4>
-                            <p class="list-group-item-text"> Permite administrar el inventario </p>
+                        <%} if(user.permiso_tablero){ %>
+                        <a href="/tablero" class="list-group-item">
+                            <h4 class="list-group-item-heading">Tablero de control</h4>
+                            <p class="list-group-item-text"> Administración del negocio </p>
                         </a>
                         <%}%>
                     </div>
