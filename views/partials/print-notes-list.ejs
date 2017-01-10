@@ -25,6 +25,9 @@ if (sales.length > 0){%>
                         <p class="list-group-item-text"><%= sales[i].saldo_pendiente %></p>
                     </div>
                 </div>
+                <!--
+                Si hay saldo con tarjeta, se debe imprimir por default.
+                -->
                 <h2 style="color:#E0E0E0"><strong>Imprimir:</strong></h2>
                 <input type="checkbox" name="print" value="print">
             </form>
