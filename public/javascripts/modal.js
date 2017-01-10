@@ -253,6 +253,22 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "print_notes":
+            modal.find('.modal-title').text('Seleccionar notas');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/print/notes/list/',{ page: page},function(){
+                $(this).find('.list-group-item').click(function(){
+                    if (confirm("¿Está seguro que quiere imprimir?")){
+                        $.post('/print/note', {note_id: $(this).data('sales_id')}).done(function (data) {
+                            alert(data.message);
+                            if(data.status=='Ok'){
+                                modal.modal('hide');
+                            }
+                        });
+                    }
+                });
+            });
+            break;
         case "new_supplier":
             modal.find('.modal-title').text('Registrar proveedor');
             modal.find('#modal_content').html("");

@@ -468,6 +468,34 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
     });
 });
 
+
+// Display de notas para imprimir
+router.post('/print/notes/list/', isAuthenticated, function (req, res) {
+    var pageSize = 10;
+    var offset = req.body.page * pageSize;
+    db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from ventas as count where saldo_pendiente = 0 or monto_pagado_tarjeta > 0 and ' +
+                'id_usuario = $1', [req.user.id]), // Sólo se imprimen las notas de las ventas completas o las que tienen pagos con tarjeta
+            this.manyOrNone('select * from ventas where id_usuario = $1 and estatus = $4 ' +
+                ' order by id desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
+        ]);
+    }).then(function(data){
+        res.render('partials/print-notes-list',{
+            status : 'Ok',
+            count: data[0],
+            sales: data[1],
+            pageNumber : req.body.page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
+        });
+    }).catch(function (error) {
+        res.json({
+            status: 'Error',
+            data : error
+        });
+    });
+});
+
 // Display de objetos
 router.post('/item/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
