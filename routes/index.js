@@ -201,6 +201,23 @@ router.get('/carrito', isAuthenticated, function (req, res) {
     });
 });
 
+// Impresión de notas
+router.get('/nota', isAuthenticated, function (req, res) {
+    db.task(function (t) {
+
+    }).then(function (data) {
+        res.render('nota',{
+            title : "Impresión en proceso",
+            user: req.user,
+            section: 'nota',
+            items:[]
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
+});
+
+
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
     db.one('update carrito set unidades_carrito = unidades_carrito + 1 ' +
