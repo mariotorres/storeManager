@@ -1275,16 +1275,17 @@ router.post('/cancel/note', function(req, res){
                 ])
                 );
             }
-            queries.push(articulos);
+            queries.push(articulos[0]);
             return t.batch(queries); // Aquí no puedo accesar viewjo
         }).then(function( data ){
             var proveedores = [];
             for(var i = 0; i < (data.length - 1); i++){
+                console.log(data[i].id_proveedor);
+                console.log(data[data.length - 1][i].unidades_vendidas);
                 proveedores.push(
-                    t.one('update proveedores set a_cuenta = a_cuenta - ($2 * $3), por_pagar = por_pagar + ($2 * $3) where id = $1', [
-                        data[i].id_proveedor,
-                        data[i].costo,
-                        data[data.length - 1][i].unidades_vendidas
+                    t.one('update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1 returning id', [
+                        numericCol(data[i].id_proveedor),
+                        numericCol(data[i].costo) * numericCol(data[data.length - 1][i].unidades_vendidas)
                     ])
                 )
             }
