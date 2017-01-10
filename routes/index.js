@@ -1288,7 +1288,7 @@ router.post('/cancel/note', function(req, res){
                     ])
                 )
             }
-            return t.batch(data);
+            return t.batch(proveedores);
         });
     }).then(function(data){
         console.log('Nota cancelada: ',data);
