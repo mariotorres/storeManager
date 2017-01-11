@@ -29,9 +29,11 @@
             <% }%>
         </select>
     </p>
-
-    <label class="radio-inline"><input type="radio" name="optradio">Tarjeta crédito</label>
-    <label class="radio-inline"><input type="radio" name="optradio">Tarjeta débito</label>
+    <br>
+    <label>Tipo tarjeta:</label>
+    <label class="radio-inline"><input type="radio" name="opt" disabled>crédito</label>
+    <label class="radio-inline"><input type="radio" name="tDeb" disabled>débito</label>
+    <br>
     <br>
 
     <p>
@@ -43,5 +45,12 @@
     $("#monto_efec").on('keyup', function(){
         document.getElementById("monto_tarj").value = Number(document.getElementById("efec_tot").value) -
            Number(document.getElementById("monto_efec").value);
+    })
+    $("#monto_efec").on('keyup', function(){
+        if(Number(document.getElementById("efec_tot").value) - Number(document.getElementById("monto_efec").value) > 0){
+            $('input[type="radio"]').prop('disabled', false);
+        }else{
+            $('input[type="radio"]').prop('disabled', true);
+        };
     })
 </script>
