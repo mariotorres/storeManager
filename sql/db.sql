@@ -151,6 +151,7 @@ create table ventas (
     hora_venta time,
     monto_pagado_efectivo numeric,
     monto_pagado_tarjeta  numeric,
+    tarjeta_credito  boolean,
     saldo_pendiente numeric,
     id_terminal integer references terminales(id),
     estatus text
