@@ -282,6 +282,7 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 ])*/
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
     db.tx(function (t) {
+        console.log(req);
         return this.manyOrNone(
             'select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
             ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo', [
