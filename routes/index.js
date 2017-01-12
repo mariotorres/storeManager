@@ -274,12 +274,6 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 });
 
 // Carrito Sell
-/*return this.batch([
-    this.manyOrNone('update articulos set n_existencias = n_existencias - carrito.unidades_carrito from usuarios, carrito ' +
-        'where carrito.id_articulo = articulos.id and carrito.id_usuario = usuarios.id and usuarios.id = $1',[
-        req.user.id
-    ])
-])*/
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
     db.tx(function (t) {
         console.log(req.body.optradio == "cred");
