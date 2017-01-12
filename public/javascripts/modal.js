@@ -257,6 +257,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Seleccionar notas');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/print/notes/list/',{ page: page},function(){
+
                 $(this).find('.list-group-item').click(function(){
                     if (confirm("¿Está seguro que quiere imprimir?")){
                         $.post('/print/note', {note_id: $(this).data('sales_id')}).done(function (data) {
@@ -267,6 +268,33 @@ function modalEvents(button, modal, page ) {
                         });
                     }
                 });
+
+                // Nota en PDF
+                $(this).find('.btn').click(function () {
+
+                    var note = new jsPDF({
+                        unit : 'in',
+                        format : [2.91,4.14]
+                    });
+
+                    note.setFontSize(6);
+
+                    $.post('/notes/getbyid', { id : $(this).data('note_id') }, function (data) {
+
+                        var ticket = "";
+
+                        ticket = "ID venta: "+ data.id+"\n";
+                        ticket += "Precio venta: " +data.precio_venta;
+                        
+                        note.text( ticket /*JSON.stringify(data)*/, .3, .3 );
+                        note.save('nota.pdf');
+
+                    });
+
+
+
+                });
+
             });
             break;
         case "new_supplier":

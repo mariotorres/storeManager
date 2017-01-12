@@ -28,7 +28,11 @@ if (sales.length > 0){%>
                 <!--
                 Si hay saldo con tarjeta, se debe imprimir por default.
                 -->
-                <label> Imprimir: <input type="checkbox" name="print" value="print"></label>
+                <h2 style="color:#E0E0E0"><strong>Imprimir:</strong></h2>
+                <input type="checkbox" name="print" value="print">
+                <p>
+                <button class="btn btn-default" type="button" data-note_id="<%= sales[i].id %>"> <i class="fa fa-print"></i> </button>
+                </p>
             </form>
         </div>
     </div>
