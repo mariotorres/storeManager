@@ -11,15 +11,15 @@ if (sales.length > 0){%>
             <form>
                 <div class="row">
                     <div class="col-sm-4">
-                        <p class="list-group-item-text"> <strong>Precio:</strong></p>
+                        <p class="list-group-item-text"> <h3><strong>Nota:</strong></h3></p>
                     </div>
                     <div class="col-sm-1">
-                        <p class="list-group-item-text"> <%= sales[i].precio_venta %></p>
+                        <p class="list-group-item-text"> <h3><%= sales[i].id %></h3></p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-4">
-                        <p class="list-group-item-text"> <strong>Saldo Pendiente:</strong></p>
+                        <p class="list-group-item-text"> <h3><strong>Saldo Pendiente:</strong></h3></p>
                     </div>
                     <div class="col-sm-1">
                         <p class="list-group-item-text"><%= sales[i].saldo_pendiente %></p>
@@ -36,7 +36,6 @@ if (sales.length > 0){%>
             </form>
         </div>
     </div>
-    <!--<a href="#" class="list-group-item" data-user_id="<%= sales[i].id_usuario%>" data-sales_id="<%= sales[i].id %>"></a>-->
     <%}%>
 </div>
 
