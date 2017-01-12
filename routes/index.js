@@ -619,6 +619,15 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
     });
 });
 
+router.post('/notes/getbyid', function ( req, res ){
+    var id = req.body.id;
+
+    db.one('select * from ventas where id = $1', [ id ]).then(function (data) {
+        res.json (data);
+    });
+
+});
+
 // Load sales data into  modal.
 router.post('/notes/edit-note/', isAuthenticated, function(req, res){
     var id = req.body.sales_id;

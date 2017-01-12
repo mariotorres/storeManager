@@ -276,10 +276,15 @@ function modalEvents(button, modal, page ) {
                         unit : 'in',
                         format : [2.91,4.14]
                     });
-                    note.setFontSize(8);
-                    note.text("Nota ");
 
-                    note.save('nota.pdf');
+                    note.setFontSize(8);
+
+                    $.post('/notes/getbyid', { id : $(this).data('note_id') }, function (data) {
+                        note.text( JSON.stringify(data) );
+                        note.save('nota.pdf');
+
+                    });
+
 
 
                 });
