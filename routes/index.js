@@ -622,8 +622,24 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
 router.post('/notes/getbyid', function ( req, res ){
     var id = req.body.id;
 
-    db.one('select * from ventas where id = $1', [ id ]).then(function (data) {
-        res.json (data);
+    db.task(function (t) {
+
+        return this.batch([
+            t.one('select * from ventas where id = $1', [ id ]),
+            t.manyOrNone('select * from venta_articulos, articulos where venta_articulos.id_venta = $1 and ' +
+                'venta_articulos.id_articulo = articulos.id', [ id ])
+            //terminal, tienda, usuarios
+        ]);
+
+    }).then(function (data) {
+
+        res.json({
+            venta: data[0],
+            articulos: data[1]
+        });
+
+    }).then(function (error) {
+        console.log(error);
     });
 
 });

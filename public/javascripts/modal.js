@@ -277,16 +277,26 @@ function modalEvents(button, modal, page ) {
                         format : [2.91,4.14]
                     });
 
-                    note.setFontSize(6);
+                    note.setFontSize(8);
 
                     $.post('/notes/getbyid', { id : $(this).data('note_id') }, function (data) {
 
                         var ticket = "";
 
-                        ticket = "ID venta: "+ data.id+"\n";
-                        ticket += "Precio venta: " +data.precio_venta;
-                        
+                        ticket += "TICKET No. "+ data.venta.id+"\n";
+
+                        ticket += "Artículos: \n";
+
+                        for ( var i=0; i< data.articulos.length; i ++){
+                            ticket += data.articulos[i].articulo+ '\n';
+                        }
+
+                        ticket += "\nTOTAL $" +data.venta.precio_venta+"\n";
+
+                        ticket += "\nPOR HIGIENE Y SEGURIDAD \nNO SE ACEPTAN DEVOLUCIONES\n";
+
                         note.text( ticket /*JSON.stringify(data)*/, .3, .3 );
+
                         note.save('nota.pdf');
 
                     });
