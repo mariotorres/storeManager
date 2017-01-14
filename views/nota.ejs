@@ -28,103 +28,98 @@
 
 <div class="container">
 
-    <ul class="nav nav-pills" role="tablist">
-        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><strong>Impresión de notas</strong></a></li>
-    </ul>
+<div class="panel panel-default">
+    <div class="panel-heading">
+Impresión de notas
+    </div>
+    <div class="panel-body">
 
-    <div class="panel panel-default">
-        <div class="panel-body">
+        <% if (items.length > 0){%>
 
-            <!-- Tab panes -->
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="home">
+        <% for ( var i =0; i< items.length; i++){%>
 
-                    <% if (items.length > 0){%>
-
-                    <% for ( var i =0; i< items.length; i++){%>
-
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <h4>
-                                        <label>Vendedor:</label>
-                                        <%= user.nombres %>
-                                    </h4>
-                                    <hr>
-                                </div>
-                                <div class="col-sm-5">
-                                    <div class="col-sm-6">
-                                        <p>
-                                            <label>Artículo:</label>
-                                            <%= items[i].articulo %>
-                                        </p>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <p>
-                                            <label>Descuento:</label>
-                                            <% if (items[i].discount){%>
-                                            <%= items[i].discount %>%
-                                            <%}else{%>
-                                            0%
-                                            <%}%>
-                                        </p>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <p>
-                                            <label>Unidades:</label>
-                                            <%= items[i].unidades_carrito %>
-                                        </p>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <p>
-                                            <label>Precio unitario:</label>
-                                            <%= items[i].precio %>
-                                        </p>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <label>Monto que se deja a cuenta:</label>
-                                        <input type="number" name="monto_pagado" class="form-control" value="<%= items[i].monto_pagado%>" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4" style="vertical-align: middle;">
-                                    <h2>
-                                        <label style="color:#bdbdbd">Precio:</label>
-                                        <span style="color: #e91e63"><%= totales[i].totales %></span>
-                                    </h2>
-                                </div>
-                                <% if (items[i].n_existencias > items[i].unidades_carrito){%>
-                                <div class="col-sm-1" >
-                                    <!--<button class="btn btn-default" ></button>-->
-                                    <i id="inc" data-action="inc_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-up fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
-                                </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>
+                            <label>Vendedor:</label>
+                            <%= user.nombres %>
+                        </h4>
+                        <hr>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="col-sm-6">
+                            <p>
+                                <label>Artículo:</label>
+                                <%= items[i].articulo %>
+                            </p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p>
+                                <label>Descuento:</label>
+                                <% if (items[i].discount){%>
+                                <%= items[i].discount %>%
+                                <%}else{%>
+                                0%
                                 <%}%>
-                                <% if (items[i].unidades_carrito > 1){%>
-                                <div class="col-sm-1" >
-                                    <!--<button class="btn btn-default" ></button>-->
-                                    <i id="dec" data-action="dec_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-down fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
-                                </div>
-                                <%}%>
-                                <div class="col-sm-1" >
-                                    <!--<button class="btn btn-default" ></button>-->
-                                    <i id="rem" data-action="rem_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-times-circle-o fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
-                                </div>
-                            </div>
-
+                            </p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p>
+                                <label>Unidades:</label>
+                                <%= items[i].unidades_carrito %>
+                            </p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p>
+                                <label>Precio unitario:</label>
+                                <%= items[i].precio %>
+                            </p>
+                        </div>
+                        <div class="col-sm-12">
+                            <label>Monto que se deja a cuenta:</label>
+                            <input type="number" name="monto_pagado" class="form-control" value="<%= items[i].monto_pagado%>" disabled>
                         </div>
                     </div>
-
+                    <div class="col-sm-4" style="vertical-align: middle;">
+                        <h2>
+                            <label style="color:#bdbdbd">Precio:</label>
+                            <span style="color: #e91e63"><%= totales[i].totales %></span>
+                        </h2>
+                    </div>
+                    <% if (items[i].n_existencias > items[i].unidades_carrito){%>
+                    <div class="col-sm-1" >
+                        <!--<button class="btn btn-default" ></button>-->
+                        <i id="inc" data-action="inc_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-up fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                    </div>
                     <%}%>
-
-                    <h1 style="float: right;"><strong>Total: </strong> <%= total[0].sum%></h1>
-                    <button data-toggle="modal" data-target="#genericModal" data-action="make_sale" data-user_id="<%=user.id%>" class="btn btn-primary">Realizar venta </button>
-                    <%}else{%>
-                    <div class="alert alert-info" role="alert">El carrito está vacio</div>
+                    <% if (items[i].unidades_carrito > 1){%>
+                    <div class="col-sm-1" >
+                        <!--<button class="btn btn-default" ></button>-->
+                        <i id="dec" data-action="dec_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-down fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                    </div>
                     <%}%>
+                    <div class="col-sm-1" >
+                        <!--<button class="btn btn-default" ></button>-->
+                        <i id="rem" data-action="rem_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-times-circle-o fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                    </div>
                 </div>
+
             </div>
         </div>
+
+        <%}%>
+
+        <h1 style="float: right;"><strong>Total: </strong> <%= total[0].sum%></h1>
+        <button data-toggle="modal" data-target="#genericModal" data-action="make_sale" data-user_id="<%=user.id%>" class="btn btn-primary">Realizar venta </button>
+        <%}else{%>
+        <div class="alert alert-info" role="alert">El carrito está vacio</div>
+        <%}%>
+
     </div>
+</div>
+
 
 </div>
 

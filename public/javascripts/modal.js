@@ -293,7 +293,7 @@ function modalEvents(button, modal, page ) {
 
                         ticket += "\nTOTAL $" +data.venta.precio_venta+"\n";
 
-                        ticket += "\nPOR HIGIENE Y SEGURIDAD \nNO SE ACEPTAN DEVOLUCIONES\n";
+                            ticket += "\nPOR HIGIENE Y SEGURIDAD \nNO SE ACEPTAN DEVOLUCIONES\n";
 
                         note.text( ticket /*JSON.stringify(data)*/, .3, .3 );
 
