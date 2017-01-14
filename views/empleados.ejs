@@ -29,18 +29,33 @@
 
 <div class="container">
 
-    <div class="panel panel-default">
-        <div class="panel-heading">Ventas</div>
-        <div class="panel-body">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Ventas</div>
+                <div class="panel-body">
 
-            <div class="list-group">
-                <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_sale" class="list-group-item"><i class="fa fa-list"></i> <strong>Lista de artículos</strong></button>
-                <button type="button" data-toggle="modal" data-target="#genericModal" data-action="find_item" class="list-group-item"><i class="fa fa-search"></i> <strong>Buscar artículos</strong></button>
-                <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_dev" class="list-group-item"><i class="fa fa-edit"></i> <strong>Registrar devolución</strong></button>
+                    <div class="list-group">
+                        <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_sale" class="list-group-item"><i class="fa fa-list"></i> <strong>Lista de artículos</strong></button>
+                        <button type="button" data-toggle="modal" data-target="#genericModal" data-action="find_item" class="list-group-item"><i class="fa fa-search"></i> <strong>Buscar artículos</strong></button>
+                        <button type="button" data-toggle="modal" data-target="#genericModal" data-action="new_dev" class="list-group-item"><i class="fa fa-edit"></i> <strong>Registrar devolución</strong></button>
+                    </div>
+
+                </div>
             </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                Notas emitidas
+                </div>
+                <div class="panel-body">
 
+                </div>
+            </div>
         </div>
     </div>
+
 </div>
 <% include partials/modal.ejs %>
 

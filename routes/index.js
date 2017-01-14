@@ -619,10 +619,10 @@ router.post('/notes/getbyid', function ( req, res ){
     db.task(function (t) {
 
         return this.batch([
-            t.one('select * from ventas where id = $1', [ id ]),
+            t.one('select * from ventas, terminales where ventas.id = $1 and ventas.id_terminal = terminales.id', [ id ]),
             t.manyOrNone('select * from venta_articulos, articulos where venta_articulos.id_venta = $1 and ' +
                 'venta_articulos.id_articulo = articulos.id', [ id ])
-            //terminal, tienda, usuarios
+            //tienda, usuario
         ]);
 
     }).then(function (data) {
