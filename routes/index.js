@@ -1484,7 +1484,7 @@ router.post('/item/find-items-view', function (req, res) {
 
 router.post('/search/items/results', function (req, res) {
     console.log(req.body);
-    db.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and articulo ilike '%$4#%'", [
+    db.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%'", [
         req.body.id_proveedor,
         req.body.id_marca,
         req.body.articulo,
