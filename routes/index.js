@@ -1005,7 +1005,7 @@ router.post('/item/register', function(req, res){
         }
 
         return this.batch([
-            this.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, url_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
+            this.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
                 'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias', [
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.id_tienda),
@@ -1018,7 +1018,7 @@ router.post('/item/register', function(req, res){
                 numericCol(req.body.precio),
                 numericCol(req.body.costo),
                 numericCol(req.body.codigo_barras),
-                req.body.url_imagen,
+                req.body.imagen,
                 numericCol(req.body.n_arts)
             ]),
             proveedor
@@ -1482,6 +1482,20 @@ router.post('/item/find-items-view', function (req, res) {
 
 });
 
+router.post('/search/items/results', function (req, res) {
+    console.log(req.body);
+    db.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and articulo ilike '%$4#%'", [
+        req.body.id_proveedor,
+        req.body.id_marca,
+        req.body.articulo,
+        req.body.modelo
+    ]).then(function (data) {
+        res.render('partials/search-items-results',{ items: data });
+    }).catch(function (error) {
+        console.log(error);
+    });
+
+});
 
 router.get('/item/:id/image.jpg', isAuthenticated, function (req, res) {
    res.sendFile( path.resolve('../images/items/item_1.jpg'));

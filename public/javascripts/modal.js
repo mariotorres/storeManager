@@ -45,7 +45,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar artículo');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/new', {}, function(){
-                modal.find('form').submit(function(event) {
+               modal.find('form').submit(function(event) {
                     var n_articles = $('input[id=nArts]').val();
                     if (confirm("¿Está seguro que quiere registrar " + n_articles + " artículos?")){
                             $.post('/item/register', $(this).serialize()).done(function (data) {
@@ -113,8 +113,10 @@ function modalEvents(button, modal, page ) {
 
                 modal.find('form').submit(function (e) {
 
-                    // Mostrar resultados y boton de regresar ...
-                    alert(';)');
+                    // Mostrar resultados
+                    modal.find('#search_results').load('/search/items/results', $(this).serializeArray(),function (req, res) {
+
+                    });
                     e.preventDefault();
                 });
 
@@ -125,7 +127,7 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Editar usuario');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/user/list/',{ page: page }, function(){
-                $(this).find('.list-group-item').click(function(){;
+                $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/user/edit-user/',{ id: $(this).data('user_id') }, function () {
                         $('#updateUser').submit(function (event) {
                             $.post('/user/update', $(this).serialize()).done(function (data) {

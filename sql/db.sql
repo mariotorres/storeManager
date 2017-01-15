@@ -97,7 +97,7 @@ create table articulos (
     precio numeric,
     costo numeric,
     codigo_barras numeric,
-    url_imagen text,
+    imagen bytea,
     n_existencias numeric,
     fecha_registro timestamp,
     fecha_ultima_modificacion timestamp
