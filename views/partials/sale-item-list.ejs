@@ -2,13 +2,15 @@
 if (items.length > 0){%>
 <% for ( var i =0; i < items.length ; i ++ ){ %>
 <div class="panel panel-default">
+    <!--
     <div class="panel-heading" name="item_name">
        <strong><%= items[i].articulo %></strong>
-    </div>
+    </div>-->
 
     <div class="panel-body">
 
         <form>
+            <h3>Artículo: <%= items[i].articulo %></h3>
             <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
             <input type="text" name="item_id" value="<%= items[i].id %>" hidden>
 

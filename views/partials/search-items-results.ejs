@@ -13,6 +13,7 @@ for (var i=0; i< items.length; i++){%>
         <p><%= items[i].descripcion%></p>
         <label>Modelo</label>
         <p><%= items[i].modelo%></p>
+        <button class="btn btn-default" type="button" data-item_id="<%= items[i].id %>"> <i class="fa fa-cart-plus"></i> </button>
     </form>
 
 </div>
