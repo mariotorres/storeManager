@@ -115,11 +115,18 @@ function modalEvents(button, modal, page ) {
                     var params = $(this).serializeArray();
                     params[params.length] = {name:'page', value:page};
                     modal.find('#search_results').load('/search/items/results', params, function (req, res) {
-
+                        if (confirm("¿Desea agregar el artículo " +  $('#search_results').find('input[name=item_id]').val() + " al carrito?")){
+                            // Selected discount
+                            $.post('/carrito/new', $('#search_results').serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                        }
                     });
                     e.preventDefault();
                 });
-
             });
             break;
         // Editar usuarios
