@@ -1485,6 +1485,24 @@ router.post('/item/find-items-view', function (req, res) {
 
 });
 
+router.post('/notes/find-notes-view', function (req, res) {
+
+    db.task(function (t) {
+        return this.batch([
+            this.manyOrNone('select id, nombre from proveedores'),
+            this.manyOrNone('select * from marcas')
+        ]);
+    }).then(function (data) {
+        res.render('partials/find-notes',{
+            proveedores: data[0],
+            marcas: data[1]
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
+
+});
+
 router.post('/search/items/results', function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
@@ -1498,9 +1516,7 @@ router.post('/search/items/results', function (req, res) {
                 req.body.modelo
             ]),
             t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
-            t.manyOrNone('select * from terminales'),
-            //t.manyOrNone('select id from articulos where n_existencias > 0 and not exists ' +
-              //  '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ])
+            t.manyOrNone('select * from terminales')
         ])
     }).then(function (data) {
         res.render('partials/search-items-results',{
@@ -1514,6 +1530,31 @@ router.post('/search/items/results', function (req, res) {
     });
 
 });
+
+router.post('/search/notes/results', function (req, res) {
+    console.log(req.body);
+    db.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios " +
+        " where ventas.id = venta_articulos.id_venta and venta_articulos.id = articulos.id " +
+        " and ventas.id_usuario = usuarios.id and usuarios.id = $1" +
+        " and id_proveedor = $2 and id_marca = $3 and articulo ilike '%$4#%' and modelo ilike '%$5#%' and " +
+        " fecha_venta > $6 and fecha_venta < $7", [
+                req.user.id,
+                req.body.id_proveedor,
+                req.body.id_marca,
+                req.body.articulo,
+                req.body.modelo,
+                req.body.init_date,
+                req.body.end_date
+            ]).then(function (data) {
+        res.render('partials/search-notes-results',{
+            sales: data,
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
+
+});
+
 
 router.get('/item/:id/image.jpg', isAuthenticated, function (req, res) {
    res.sendFile( path.resolve('../images/items/item_1.jpg'));

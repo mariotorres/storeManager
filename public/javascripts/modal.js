@@ -105,7 +105,25 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "find_notes":
+            modal.find('.modal-title').text('Buscar notas');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/notes/find-notes-view',{}, function () {
+                $('#notes_datepicker1').datetimepicker();
+                $('#notes_datepicker2').datetimepicker();
+                modal.find('form').submit(function (e) {
+                    // Mostrar resultados
+                    modal.find('#search_results').load('/search/notes/results', $(this).serializeArray(), function () {
+                        $('#search_results').find('form').submit(function (e) {
 
+                            e.preventDefault();
+                        });
+
+                    });
+                    e.preventDefault();
+                });
+            });
+            break;
         case "find_item":
             modal.find('.modal-title').text('Buscar artículos');
             modal.find('#modal_content').html("");
