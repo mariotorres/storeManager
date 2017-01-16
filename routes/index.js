@@ -1543,8 +1543,8 @@ router.post('/search/notes/results', function (req, res) {
                 req.body.id_marca,
                 req.body.articulo,
                 req.body.modelo,
-                req.body.init_date,
-                req.body.end_date
+                new Date(req.body.init_date).toDateString(),
+                new Date(req.body.end_date).toDateString()
             ]).then(function (data) {
         res.render('partials/search-notes-results',{
             sales: data,
