@@ -1538,14 +1538,15 @@ router.post('/search/notes/results', function (req, res) {
         " and ventas.id_usuario = usuarios.id and usuarios.id = $1" +
         " and id_proveedor = $2 and id_marca = $3 and articulo ilike '%$4#%' and modelo ilike '%$5#%' and " +
         " fecha_venta >= $6 and fecha_venta <= $7", [
-                req.user.id,
-                req.body.id_proveedor,
-                req.body.id_marca,
-                req.body.articulo,
-                req.body.modelo,
-                new Date(req.body.init_date).toDateString(),
-                new Date(req.body.end_date).toDateString()
-            ]).then(function (data) {
+        req.user.id,
+        req.body.id_proveedor,
+        req.body.id_marca,
+        req.body.articulo,
+        req.body.modelo,
+        new Date(req.body.init_date).toDateString(),
+        new Date(req.body.end_date).toDateString()
+    ]).then(function (data) {
+        console.log(data.length);
         res.render('partials/search-notes-results',{
             sales: data,
         });
