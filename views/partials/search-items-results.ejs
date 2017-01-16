@@ -5,15 +5,9 @@ for (var i=0; i< items.length; i++){%>
 
 <div class="well">
 
-    <!--
-    <div class="panel-heading" name="item_name">
-       <strong><%= items[i].articulo %></strong>
-    </div>-->
-
-    <div class="panel-body">
-
         <form>
-            <h3>Artículo: <%= items[i].articulo %></h3>
+            <h3>Artículo: </h3>
+            <input class="form-control" type="text" value="<%= items[i].articulo %>" name="articulo" disabled>
             <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
             <input type="text" name="item_id" value="<%= items[i].id %>" hidden>
 

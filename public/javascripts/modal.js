@@ -112,20 +112,26 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/item/find-items-view',{}, function () {
                 modal.find('form').submit(function (e) {
                     // Mostrar resultados
-                    var params = $(this).serializeArray();
-                    params[params.length] = {name:'page', value:page};
-                    modal.find('#search_results').load('/search/items/results', params, function (req, res) {
-                        if (confirm("¿Desea agregar el artículo " +  $('#search_results').find('input[name=item_id]').val() + " al carrito?")){
-                            // Selected discount
-                            $.post('/carrito/new', $('#search_results').serialize()).done(function (data) {
-                                alert(data.message);
-                                if(data.status=='Ok'){
-                                    modal.modal('hide');
-                                }
-                            });
-                        }
+                   // var params = $(this).serializeArray();
+                    //params[params.length] = {name:'page', value:page};
+                    modal.find('#search_results').load('/search/items/results', $(this).serializeArray()/*params*/, function () {
+
+
+                        $('#search_results').find('form').submit(function (e) {
+                            if (confirm("¿Desea agregar el artículo " +  $('#search_results').find('input[name=articulo]').val() + " al carrito?")){
+                                // Selected discount
+                                $.post('/carrito/new', $(this).serialize()).done(function (data) {
+                                    alert(data.message);
+                                    if(data.status=='Ok'){
+                                        modal.modal('hide');
+                                    }
+                                });
+                            }
+                            e.preventDefault();
+                        });
+
                     });
-                    e.preventDefault();
+                e.preventDefault();
                 });
             });
             break;

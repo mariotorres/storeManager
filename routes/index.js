@@ -1484,8 +1484,8 @@ router.post('/item/find-items-view', function (req, res) {
 
 router.post('/search/items/results', function (req, res) {
     console.log(req.body);
-    var pageSize = 10;
-    var offset = req.body.page * pageSize;
+    //var pageSize = 10;
+    //var offset = req.body.page * pageSize;
     db.task(function (t) {
         return this.batch([
             t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%'", [
@@ -1496,15 +1496,15 @@ router.post('/search/items/results', function (req, res) {
             ]),
             t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
             t.manyOrNone('select * from terminales'),
-            t.manyOrNone('select id from articulos where n_existencias > 0 and not exists ' +
-                '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ])
+            //t.manyOrNone('select id from articulos where n_existencias > 0 and not exists ' +
+              //  '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ])
         ])
     }).then(function (data) {
         res.render('partials/search-items-results',{
             items: data[0],
             user: data[1],
             terminales: data[2],
-            not_in_carrito: data[3]
+            //not_in_carrito: data[3]
         });
     }).catch(function (error) {
         console.log(error);
