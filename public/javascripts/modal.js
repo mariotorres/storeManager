@@ -121,7 +121,7 @@ function modalEvents(button, modal, page ) {
                 modal.find('#findbyid').submit(function (e) {
                     // Mostrar resultados
                         modal.find('#search_results').load('/search/notes/resultsbyid', $(this).serializeArray(), function () {
-                            //
+                            //poner código para hacer algo con la nota seleccionada
                         });
                     e.preventDefault();
                 });
@@ -129,7 +129,7 @@ function modalEvents(button, modal, page ) {
                 modal.find('#findbyperiod').submit(function (e) {
                     // Mostrar resultados
                     modal.find('#search_results').load('/search/notes/resultsbyperiod', $(this).serializeArray(), function () {
-                        //
+                        //poder código para hacer algo con la nota seleccionada
                     });
                     e.preventDefault();
                 });
