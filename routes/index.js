@@ -1548,6 +1548,21 @@ router.post('/search/notes/resultsbyid', function (req, res) {
 });
 
 
+router.post('/search/notes/resultsbyperiod', function (req, res) {
+    db.manyOrNone("select * from ventas where fecha_venta > $1 and fecha_venta < $2", [
+        req.body.fecha_inicial,
+        req.body.fecha_final
+    ]).then(function (data) {
+        res.render('partials/search-notes-results',{
+            sales: data
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
+
+});
+
+
 router.get('/item/:id/image.jpg', isAuthenticated, function (req, res) {
    res.sendFile( path.resolve('../images/items/item_1.jpg'));
 });

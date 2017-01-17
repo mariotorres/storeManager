@@ -1,4 +1,4 @@
-<form>
+<form id="findbyid">
 
     <p>
     <label>Buscar por id de nota</label>
@@ -8,18 +8,18 @@
     <button type="submit" class="btn btn-default" >Buscar </button>
 </form>
 <hr>
-<form>
+<form id="findbyperiod">
     <label>Buscar notas por periodo</label>
     <div class="row">
 
         <div class="col-sm-6">
             <p>
-                <input type="text" name="init_date" id="notes_datepicker1" class="form-control">
+                <input type="text" name="fecha_inicial" id="notes_datepicker1" class="form-control" required>
             </p>
         </div>
         <div class="col-sm-6">
             <p>
-                <input type="text" name="end_date" id="notes_datepicker2" class="form-control">
+                <input type="text" name="fecha_final" id="notes_datepicker2" class="form-control" required>
             </p>
         </div>
     </div>

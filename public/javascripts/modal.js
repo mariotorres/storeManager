@@ -109,15 +109,28 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Buscar notas');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/notes/find-notes-view',{}, function () {
-                $('#notes_datepicker1').datetimepicker();
-                $('#notes_datepicker2').datetimepicker();
-                modal.find('form').submit(function (e) {
+                $('#notes_datepicker1').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    //defaultDate: (new Date().getDate() - 1)
+                });
+                $('#notes_datepicker2').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date()
+                });
+
+                modal.find('#findbyid').submit(function (e) {
                     // Mostrar resultados
                         modal.find('#search_results').load('/search/notes/resultsbyid', $(this).serializeArray(), function () {
                             //
                         });
+                    e.preventDefault();
+                });
 
-
+                modal.find('#findbyperiod').submit(function (e) {
+                    // Mostrar resultados
+                    modal.find('#search_results').load('/search/notes/resultsbyperiod', $(this).serializeArray(), function () {
+                        //
+                    });
                     e.preventDefault();
                 });
             });
