@@ -117,18 +117,9 @@ function modalEvents(button, modal, page ) {
                     format: 'YYYY-MM-DD',
                     defaultDate: new Date()
                 });
-
-                modal.find('#findbyid').submit(function (e) {
+                modal.find('#find').submit(function (e) {
                     // Mostrar resultados
-                        modal.find('#search_results').load('/search/notes/resultsbyid', $(this).serializeArray(), function () {
-                            //poner código para hacer algo con la nota seleccionada
-                        });
-                    e.preventDefault();
-                });
-
-                modal.find('#findbyperiod').submit(function (e) {
-                    // Mostrar resultados
-                    modal.find('#search_results').load('/search/notes/resultsbyperiod', $(this).serializeArray(), function () {
+                    modal.find('#search_results').load('/search/notes/results', $(this).serializeArray(), function () {
                         //poder código para hacer algo con la nota seleccionada
                     });
                     e.preventDefault();

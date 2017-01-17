@@ -1534,22 +1534,10 @@ router.post('/notes/find-notes-view', function (req, res) {
 
 });
 
-router.post('/search/notes/resultsbyid', function (req, res) {
-    db.manyOrNone("select * from ventas where id = $1 ", [
-        numericCol(req.body.id_nota)
-    ]).then(function (data) {
-        res.render('partials/search-notes-results',{
-            sales: data
-        });
-    }).catch(function (error) {
-        console.log(error);
-    });
 
-});
-
-
-router.post('/search/notes/resultsbyperiod', function (req, res) {
-    db.manyOrNone("select * from ventas where fecha_venta > $1 and fecha_venta < $2", [
+router.post('/search/notes/results', function (req, res) {
+    db.manyOrNone("select * from ventas where (fecha_venta > $2 and fecha_venta < $3) or id = $1", [
+        numericCol(req.body.id_nota),
         req.body.fecha_inicial,
         req.body.fecha_final
     ]).then(function (data) {
