@@ -1485,23 +1485,7 @@ router.post('/item/find-items-view', function (req, res) {
 
 });
 
-router.post('/notes/find-notes-view', function (req, res) {
 
-    db.task(function (t) {
-        return this.batch([
-            this.manyOrNone('select id, nombre from proveedores'),
-            this.manyOrNone('select * from marcas')
-        ]);
-    }).then(function (data) {
-        res.render('partials/find-notes',{
-            proveedores: data[0],
-            marcas: data[1]
-        });
-    }).catch(function (error) {
-        console.log(error);
-    });
-
-});
 
 router.post('/search/items/results', function (req, res) {
     console.log(req.body);
@@ -1531,24 +1515,31 @@ router.post('/search/items/results', function (req, res) {
 
 });
 
-router.post('/search/notes/results', function (req, res) {
-    console.log(req.body);
-    db.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios " +
-        " where ventas.id = venta_articulos.id_venta and venta_articulos.id = articulos.id " +
-        " and ventas.id_usuario = usuarios.id and usuarios.id = $1" +
-        " and id_proveedor = $2 and id_marca = $3 and articulo ilike '%$4#%' and modelo ilike '%$5#%' and " +
-        " fecha_venta >= $6 and fecha_venta <= $7", [
-        req.user.id,
-        req.body.id_proveedor,
-        req.body.id_marca,
-        req.body.articulo,
-        req.body.modelo,
-        new Date(req.body.init_date).toDateString(),
-        new Date(req.body.end_date).toDateString()
+
+router.post('/notes/find-notes-view', function (req, res) {
+
+    db.task(function (t) {
+        return this.batch([
+            this.manyOrNone('select id, nombre from proveedores'),
+            this.manyOrNone('select * from marcas')
+        ]);
+    }).then(function (data) {
+        res.render('partials/find-notes',{
+            proveedores: data[0],
+            marcas: data[1]
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
+
+});
+
+router.post('/search/notes/resultsbyid', function (req, res) {
+    db.manyOrNone("select * from ventas where id = $1 ", [
+        numericCol(req.body.id_nota)
     ]).then(function (data) {
-        console.log(data.length);
         res.render('partials/search-notes-results',{
-            sales: data,
+            sales: data
         });
     }).catch(function (error) {
         console.log(error);

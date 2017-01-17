@@ -113,13 +113,11 @@ function modalEvents(button, modal, page ) {
                 $('#notes_datepicker2').datetimepicker();
                 modal.find('form').submit(function (e) {
                     // Mostrar resultados
-                    modal.find('#search_results').load('/search/notes/results', $(this).serializeArray(), function () {
-                        $('#search_results').find('form').submit(function (e) {
-
-                            e.preventDefault();
+                        modal.find('#search_results').load('/search/notes/resultsbyid', $(this).serializeArray(), function () {
+                            //
                         });
 
-                    });
+
                     e.preventDefault();
                 });
             });
