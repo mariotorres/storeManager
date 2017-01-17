@@ -153,6 +153,33 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "new_dev":
+            modal.find('.modal-title').text('Buscar artículo');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/item/find-items-view',{}, function () {
+                modal.find('form').submit(function (e) {
+                    // Mostrar resultados
+                    // var params = $(this).serializeArray();
+                    //params[params.length] = {name:'page', value:page};
+                    modal.find('#search_results').load('/search/items/devs', $(this).serializeArray()/*params*/, function () {
+                        $('#search_results').find('form').submit(function (e) {
+                            if (confirm("¿Desea Devolver el artículo " +  $('#search_results').find('input[name=articulo]').val() + " ?")){
+                                // Selected discount
+                                $.post('/carrito/new', $(this).serialize()).done(function (data) {
+                                    alert(data.message);
+                                    if(data.status=='Ok'){
+                                        modal.modal('hide');
+                                    }
+                                });
+                            }
+                            e.preventDefault();
+                        });
+
+                    });
+                    e.preventDefault();
+                });
+            });
+            break;
         // Editar usuarios
         case "edit_user":
             modal.find('.modal-title').text('Editar usuario');
