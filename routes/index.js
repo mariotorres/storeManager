@@ -993,9 +993,19 @@ router.post('/user/profile', function(req,res){
  function numericCol ( x ){
      return ( x == '' || isNaN(x))?null:x;
  }
-router.post('/item/register', function(req, res){
 
-    console.log(req.body);
+
+
+/* uploads */
+var multer = require ('multer');
+
+var upload = multer({
+    dest: path.resolve('../uploads/')
+});
+
+router.post('/item/register', upload.single('imagen'),function(req, res){
+
+    console.log(req.file );
     db.task(function(t) {
 
         var proveedor = null;
@@ -1008,7 +1018,7 @@ router.post('/item/register', function(req, res){
         }
 
         return this.batch([
-            this.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
+            this.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
                 'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias', [
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.id_tienda),
@@ -1021,24 +1031,25 @@ router.post('/item/register', function(req, res){
                 numericCol(req.body.precio),
                 numericCol(req.body.costo),
                 numericCol(req.body.codigo_barras),
-                req.body.imagen,
+                req.file.filename,
                 numericCol(req.body.n_arts)
             ]),
             proveedor
         ])
     }).then(function(data) {
-            res.json({
+        res.render('inventario',{ title: "Inventario", user: req.user, section : 'inventario'});
+            /*res.json({
                 status: 'Ok',
                 message: 'Se '+(data[0].n_existencias == 1?'ha':'han')+' registrado ' + data[0].n_existencias + ' existencia'+(data[0].n_existencias == 1?'':'s')+'  de la prenda ' + data[0].articulo +
                 (data[1]?' del proveedor ' + data[1].nombre:'')
-            });
+            });*/
 
     }).catch(function(error){
         console.log(error);
-        res.json({
+        /*res.json({
             status: 'Error',
             message: 'Ocurrió un error al registrar el artículo'
-        });
+        });*/
     });
 });
 /*
@@ -1573,8 +1584,10 @@ router.post('/search/notes/results', function (req, res) {
 });
 
 
-router.get('/item/:id/image.jpg', isAuthenticated, function (req, res) {
-   res.sendFile( path.resolve('../images/items/item_1.jpg'));
+
+
+router.get('/item/:filename/image.jpg',  function (req, res) {
+   res.sendFile( path.resolve('../uploads/'+req.params.filename));
 });
 
 router.get('/user/:id/image.jpg', function (req, res) {

@@ -45,10 +45,12 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar artículo');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/new', {}, function(){
+
+              /*
                modal.find('form').submit(function(event) {
                     var n_articles = $('input[id=nArts]').val();
                     if (confirm("¿Está seguro que quiere registrar " + n_articles + " artículos?")){
-                            $.post('/item/register', $(this).serialize()).done(function (data) {
+                            $.post('/item/register', $(this).serializeArray()).done(function (data) {
                                 alert(data.message);
                                 if (data.status == 'Ok') {
                                     modal.modal('hide');
@@ -56,7 +58,9 @@ function modalEvents(button, modal, page ) {
                             });
                 }
                     event.preventDefault();
-                });
+                });*/
+
+
             });
             break;
         case "back_item":
