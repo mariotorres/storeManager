@@ -1519,18 +1519,12 @@ router.post('/search/items/devs', function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
     //var offset = req.body.page * pageSize;
-    db.task(function (t) {
-        return this.batch([
-            t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%'", [
-                req.body.id_proveedor,
-                req.body.id_marca,
-                req.body.articulo,
-                req.body.modelo
-            ]),
-            t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
-            t.manyOrNone('select * from terminales')
-        ])
-    }).then(function (data) {
+    db.manyOrNone("select * from ventas, venta_articulos, articulos where ventas.id = venta_articulos.id_venta and venta_articulos.id_articulo = articulos.id and ventas.id = $1 or " +
+                "(fecha_venta > $2 and fecha_venta < $3)", [
+                numericCol(req.body.id_nota),
+                req.body.fecha_inicial,
+                req.body.fecha_final
+            ]).then(function (data) {
         res.render('partials/find-item-dev',{
             items: data[0],
             user: data[1],
