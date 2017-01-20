@@ -58,22 +58,22 @@ function modalEvents(button, modal, page ) {
                     var img = document.getElementById('imagen');
                     formData.append('imagen', img.files[0] );
 
-
-                    $.ajax({
-                        url: '/item/register',
-                        data: formData,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        type: 'POST',
-                        success: function(data){
-                            alert(data.message);
-                            if (data.status == 'Ok') {
-                                modal.modal('hide');
+                    if (confirm("¿Está seguro que quiere registrar " + $('input[id=nArts]').val() + " artículos?")) {
+                        $.ajax({
+                            url: '/item/register',
+                            data: formData,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            type: 'POST',
+                            success: function (data) {
+                                alert(data.message);
+                                if (data.status == 'Ok') {
+                                    modal.modal('hide');
+                                }
                             }
-                        }
-                    });
-
+                        });
+                    }
                     e.preventDefault();
                 });
 
