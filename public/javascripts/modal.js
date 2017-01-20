@@ -76,22 +76,6 @@ function modalEvents(button, modal, page ) {
                     }
                     e.preventDefault();
                 });
-
-              /*
-               modal.find('form').submit(function(event) {
-                    var n_articles = $('input[id=nArts]').val();
-                    if (confirm("¿Está seguro que quiere registrar " + n_articles + " artículos?")){
-                            $.post('/item/register', $(this).serializeArray()).done(function (data) {
-                                alert(data.message);
-                                if (data.status == 'Ok') {
-                                    modal.modal('hide');
-                                }
-                            });
-                }
-                    event.preventDefault();
-                });*/
-
-
             });
             break;
         case "back_item":
