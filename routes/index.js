@@ -1005,7 +1005,8 @@ var upload = multer({
 
 router.post('/item/register', upload.single('imagen'),function(req, res){
 
-    console.log(req.file );
+    console.log(req.body);
+    //console.log(req.file );
     db.task(function(t) {
 
         var proveedor = null;
@@ -1031,25 +1032,25 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                 numericCol(req.body.precio),
                 numericCol(req.body.costo),
                 numericCol(req.body.codigo_barras),
-                req.file.filename,
+                typeof req.file != 'undefined'?req.file.filename:null,
                 numericCol(req.body.n_arts)
             ]),
             proveedor
         ])
     }).then(function(data) {
-        res.render('inventario',{ title: "Inventario", user: req.user, section : 'inventario'});
-            /*res.json({
+        //res.render('inventario',{ title: "Inventario", user: req.user, section : 'inventario'});
+            res.json({
                 status: 'Ok',
                 message: 'Se '+(data[0].n_existencias == 1?'ha':'han')+' registrado ' + data[0].n_existencias + ' existencia'+(data[0].n_existencias == 1?'':'s')+'  de la prenda ' + data[0].articulo +
                 (data[1]?' del proveedor ' + data[1].nombre:'')
-            });*/
+            });
 
     }).catch(function(error){
         console.log(error);
-        /*res.json({
+        res.json({
             status: 'Error',
             message: 'Ocurrió un error al registrar el artículo'
-        });*/
+        });
     });
 });
 /*

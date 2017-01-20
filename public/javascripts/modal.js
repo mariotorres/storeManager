@@ -46,6 +46,37 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/new', {}, function(){
 
+                modal.find('form').submit(function (e) {
+                    var formData = new FormData();
+
+                    var arr = $(this).serializeArray();
+
+                    for ( var i =0; i < arr.length ; i++){
+                        formData.append(arr[i].name, arr[i].value);
+                    }
+
+                    var img = document.getElementById('imagen');
+                    formData.append('imagen', img.files[0] );
+
+
+                    $.ajax({
+                        url: '/item/register',
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        type: 'POST',
+                        success: function(data){
+                            alert(data.message);
+                            if (data.status == 'Ok') {
+                                modal.modal('hide');
+                            }
+                        }
+                    });
+
+                    e.preventDefault();
+                });
+
               /*
                modal.find('form').submit(function(event) {
                     var n_articles = $('input[id=nArts]').val();

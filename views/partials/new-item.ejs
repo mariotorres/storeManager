@@ -1,4 +1,4 @@
-<form id="itemForm" method="post" action="/item/register" enctype="multipart/form-data">
+<form id="itemForm"> <!--method="post" action="/item/register" enctype="multipart/form-data"> -->
     <!--id_proveedor
     id_tienda-->
     <p>
@@ -82,7 +82,7 @@
     <!--url_imagen-->
     <p>
         <label>Fotografía</label>
-        <input class="form-control" type="file" name="imagen">
+        <input class="form-control" type="file" name="imagen" id="imagen" required>
     </p>
     <p>
         <label>Código de barras</label>
