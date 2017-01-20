@@ -1530,8 +1530,8 @@ router.post('/search/items/devs', function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
     //var offset = req.body.page * pageSize;
-    db.manyOrNone("select * from ventas, venta_articulos, articulos where ventas.id = venta_articulos.id_venta and venta_articulos.id_articulo = articulos.id and ventas.id = $1 or " +
-                "(fecha_venta > $2 and fecha_venta < $3)", [
+    db.manyOrNone("select * from ventas, venta_articulos, articulos where ventas.id = venta_articulos.id_venta and venta_articulos.id_articulo = articulos.id and ( ventas.id = $1 or " +
+                " (fecha_venta > $2 and fecha_venta < $3)) ", [
                 numericCol(req.body.id_nota),
                 req.body.fecha_inicial,
                 req.body.fecha_final
