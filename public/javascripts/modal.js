@@ -58,7 +58,7 @@ function modalEvents(button, modal, page ) {
                     var img = document.getElementById('imagen');
                     formData.append('imagen', img.files[0] );
 
-                    if (confirm("¿Está seguro que quiere registrar " + $('input[id=nArts]').val() + " artículos?")) {
+                    if (confirm("¿Está seguro que quiere registrar " + $('#nArts').val() + " artículos?")) {
                         $.ajax({
                             url: '/item/register',
                             data: formData,
@@ -346,6 +346,7 @@ function modalEvents(button, modal, page ) {
                 // Nota en PDF
                 $(this).find('.btn').click(function () {
 
+                    /*
                     var note = new jsPDF({
                         unit : 'in',
                         format : [2.91,4.14]
@@ -369,13 +370,34 @@ function modalEvents(button, modal, page ) {
 
                             ticket += "\nPOR HIGIENE Y SEGURIDAD \nNO SE ACEPTAN DEVOLUCIONES\n";
 
-                        note.text( ticket /*JSON.stringify(data)*/, .3, .3 );
+                        note.text( ticket , .3, .3 );
 
                         note.save('nota.pdf');
 
                     });
+*/
 
 
+                    var doc = new jsPDF('mm','pt','A7');
+
+// We'll make our own renderer to skip this editor
+                    var specialElementHandlers = {
+                        '#editor': function(element, renderer){
+                            return true;
+                        }
+                    };
+
+// All units are in the set measurement for the document
+// This can be changed to "pt" (points), "mm" (Default), "cm", "in"
+
+
+                    doc.fromHTML(modal.get(0), 10, 10, {
+                        'width': 100,
+                        'heigth': 100,
+                        'elementHandlers': specialElementHandlers
+                    });
+
+                    doc.save('fuck.pdf');
 
                 });
 
