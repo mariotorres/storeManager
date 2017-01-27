@@ -357,9 +357,7 @@ function modalEvents(button, modal, page ) {
                     $.post('/notes/getbyid', { id : $(this).data('note_id') }, function (data) {
 
                         var ticket = "";
-
                         ticket += "TICKET No. "+ data.venta.id+"\n";
-
                         ticket += "Artículos: \n";
 
                         for ( var i=0; i< data.articulos.length; i ++){
@@ -371,33 +369,34 @@ function modalEvents(button, modal, page ) {
                             ticket += "\nPOR HIGIENE Y SEGURIDAD \nNO SE ACEPTAN DEVOLUCIONES\n";
 
                         note.text( ticket , .3, .3 );
-
                         note.save('nota.pdf');
 
                     });
-*/
+                    */
 
 
-                    var doc = new jsPDF('mm','pt','A7');
 
-// We'll make our own renderer to skip this editor
-                    var specialElementHandlers = {
-                        '#editor': function(element, renderer){
-                            return true;
-                        }
-                    };
+                    $.post('/notes/getbyid', { id : $(this).data('note_id') }, function ( ticket) {
+                        var doc = new jsPDF('mm', 'pt', 'A7');
 
-// All units are in the set measurement for the document
-// This can be changed to "pt" (points), "mm" (Default), "cm", "in"
+                        // We'll make our own renderer to skip this editor
+                        var specialElementHandlers = {
+                            '#editor': function (element, renderer) {
+                                return true;
+                            }
+                        };
 
+                        // All units are in the set measurement for the document
+                        // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
 
-                    doc.fromHTML(modal.get(0), 10, 10, {
-                        'width': 100,
-                        'heigth': 100,
-                        'elementHandlers': specialElementHandlers
+                        doc.fromHTML(/* ticket */modal.find('.modal-body').get(0), 10, 10, {
+                            'width': 100,
+                            'heigth': 100,
+                            'elementHandlers': specialElementHandlers
+                        });
+
+                        doc.save('ticket.pdf');
                     });
-
-                    doc.save('fuck.pdf');
 
                 });
 
