@@ -1,6 +1,19 @@
 <!-- incluir estilos -->
+<p>
 <b>Nota <%= venta.id %></b>
-<br>
+</p>
+
+<p>
+Fecha:<br>
+<%= venta.fecha_venta.toString() %>
+</p>
+
+<p>
+Hora:<br>
+<%= venta.hora_venta.toString() %>
+</p>
+
+
 
 <p>Artículos</p>
 <% for ( var i=0; i< articulos.length; i++){%>
