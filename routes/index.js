@@ -630,10 +630,11 @@ router.post('/notes/getbyid', function ( req, res ){
 
     }).then(function (data) {
 
-        res.json({
+        res.render('partials/ticket',{ venta: data[0], articulos: data[1] });
+        /*res.json({
             venta: data[0],
             articulos: data[1]
-        });
+        });*/
 
     }).then(function (error) {
         console.log(error);
