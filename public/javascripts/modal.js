@@ -346,37 +346,7 @@ function modalEvents(button, modal, page ) {
                 // Nota en PDF
                 $(this).find('.btn').click(function () {
 
-                    /*
-                    var note = new jsPDF({
-                        unit : 'in',
-                        format : [2.91,4.14]
-                    });
-
-                    note.setFontSize(8);
-
-                    $.post('/notes/getbyid', { id : $(this).data('note_id') }, function (data) {
-
-                        var ticket = "";
-                        ticket += "TICKET No. "+ data.venta.id+"\n";
-                        ticket += "Artículos: \n";
-
-                        for ( var i=0; i< data.articulos.length; i ++){
-                            ticket += data.articulos[i].articulo+ '\n';
-                        }
-
-                        ticket += "\nTOTAL $" +data.venta.precio_venta+"\n";
-
-                            ticket += "\nPOR HIGIENE Y SEGURIDAD \nNO SE ACEPTAN DEVOLUCIONES\n";
-
-                        note.text( ticket , .3, .3 );
-                        note.save('nota.pdf');
-
-                    });
-                    */
-
-
-
-                    $.post('/notes/getbyid', { id : $(this).data('note_id') }, function ( ticket) {
+                    $.get('/notes/getbyid/'+ $(this).data('note_id'),/* { id : $(this).data('note_id') },*/ function ( ticket) {
                         var doc = new jsPDF('mm', 'pt', 'A7');
 
                         // We'll make our own renderer to skip this editor

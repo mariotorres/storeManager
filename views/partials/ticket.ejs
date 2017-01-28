@@ -1,8 +1,20 @@
-<!-- incluir estilos -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Bootstrap -->
+<link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+
 <p>
 <b>Nota <%= venta.id %></b>
 </p>
+<p>
+<b>Tienda: <%= tienda.nombre %> </b>
+</p>
 
+<b>Vendedor: <%= usuario.nombres +" "+usuario.apellido_paterno+ " "+ usuario.apellido_materno  %></b>
 <p>
 Fecha:<br>
 <%= venta.fecha_venta.toString() %>
@@ -10,7 +22,7 @@ Fecha:<br>
 
 <p>
 Hora:<br>
-<%= venta.hora_venta.toString() %>
+<%= venta.hora_venta.toString()%>
 </p>
 
 
@@ -22,7 +34,9 @@ Hora:<br>
 <%}%>
 
 
-<p><b>TOTAL:</b></p>
+<p><b>TOTAL:</b><br>
+<%= venta.precio_venta%>
+</p>
 
 <p>Saldo pendiente:<br>
 
@@ -30,3 +44,10 @@ Hora:<br>
     <%= venta.saldo_pendiente %></b>
 
 </p>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -616,8 +616,8 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
     });
 });
 
-router.post('/notes/getbyid', function ( req, res ){
-    var id = req.body.id;
+router.get('/notes/getbyid/:id', function ( req, res ){
+    var id = req.params.id;
 
     db.task(function (t) {
 
@@ -625,18 +625,26 @@ router.post('/notes/getbyid', function ( req, res ){
             t.one('select * from ventas, terminales where ventas.id = $1 and ventas.id_terminal = terminales.id', [ id ]),
             t.manyOrNone('select * from venta_articulos, articulos where venta_articulos.id_venta = $1 and ' +
                 'venta_articulos.id_articulo = articulos.id', [ id ])
-            //tienda, usuario
-        ]);
+        ]).then(function (data) {
+
+            return t.batch([
+                data[0],
+                t.one('select * from terminales, tiendas where terminales.id = $1 and tiendas.id = terminales.id_tienda', data[0].id_terminal),
+                t.one('select * from usuarios where id = $1', data[0].id_usuario),
+                data[1]
+            ]);
+
+        });
 
     }).then(function (data) {
 
-        res.render('partials/ticket',{ venta: data[0], articulos: data[1] });
-        /*res.json({
+        res.render('partials/ticket',{
             venta: data[0],
-            articulos: data[1]
-        });*/
-
-    }).then(function (error) {
+            tienda: data[1],
+            usuario: data[2],
+            articulos: data[3]
+        });
+    }).catch(function (error) {
         console.log(error);
     });
 
