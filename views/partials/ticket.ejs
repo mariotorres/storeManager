@@ -5,7 +5,11 @@
 <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-
+<%
+ function getStr( str) {
+     return str!= null && str !=''?str:''
+ }
+ %>
 
 <p>
 <b>Nota <%= venta.id %></b>
@@ -14,7 +18,7 @@
 <b>Tienda: <%= tienda.nombre %> </b>
 </p>
 
-<b>Vendedor: <%= usuario.nombres +" "+usuario.apellido_paterno+ " "+ usuario.apellido_materno  %></b>
+<b>Vendedor: <%= getStr(usuario.nombres) +" "+ getStr(usuario.apellido_paterno) + " "+ getStr(usuario.apellido_materno)  %></b>
 <p>
 Fecha:<br>
 <%= venta.fecha_venta.toString() %>
@@ -44,6 +48,8 @@ Hora:<br>
     <%= venta.saldo_pendiente %></b>
 
 </p>
+
+<p>Por higiene y seguridad, NO SE ACEPTAN DEVOLUCIONES</p>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
