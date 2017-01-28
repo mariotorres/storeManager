@@ -360,8 +360,8 @@ function modalEvents(button, modal, page ) {
                         // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
 
                         doc.fromHTML(ticket /*modal.find('.modal-body').get(0)*/, 10, 10, {
-                            'width': 100,
-                            'heigth': 100,
+                            'width': 200,
+                            //'heigth': 100,
                             'elementHandlers': specialElementHandlers
                         });
 

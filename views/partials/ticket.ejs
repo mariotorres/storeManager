@@ -20,13 +20,11 @@
 
 <b>Vendedor: <%= getStr(usuario.nombres) +" "+ getStr(usuario.apellido_paterno) + " "+ getStr(usuario.apellido_materno)  %></b>
 <p>
-Fecha:<br>
-<%= venta.fecha_venta.toString() %>
+Fecha: <%= venta.fecha_venta.toLocaleString() %>
 </p>
 
 <p>
-Hora:<br>
-<%= venta.hora_venta.toString()%>
+Hora: <%= venta.hora_venta.toString()%>
 </p>
 
 
