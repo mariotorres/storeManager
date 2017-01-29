@@ -12,19 +12,24 @@
  %>
 
 <p>
-<b>Nota <%= venta.id %></b>
+    <b>Nota <%= venta.id %></b>
 </p>
 <p>
-<b>Tienda: <%= tienda.nombre %> </b>
+    <b>Tienda: <%= tienda.nombre %> </b>
+</p>
+<p>
+    <% if ( tienda.rfc != '' && tienda.rfc != null ){%>
+    <b>RFC: <%= tienda.rfc %> </b>
+    <%}%>
 </p>
 
 <b>Vendedor: <%= getStr(usuario.nombres) +" "+ getStr(usuario.apellido_paterno) + " "+ getStr(usuario.apellido_materno)  %></b>
 <p>
-Fecha: <%= venta.fecha_venta.toLocaleString() %>
+    Fecha: <%= venta.fecha_venta.toLocaleString() %>
 </p>
 
 <p>
-Hora: <%= venta.hora_venta.toString()%>
+    Hora: <%= venta.hora_venta.toString()%>
 </p>
 
 
@@ -35,15 +40,16 @@ Hora: <%= venta.hora_venta.toString()%>
 <p><%= articulos[i].articulo %></p>
 <%}%>
 
+<p>Forma de pago</p>
 
 <p><b>TOTAL:</b><br>
-<%= venta.precio_venta%>
+    <%= venta.precio_venta%>
 </p>
 
 <p>Saldo pendiente:<br>
 
     <b>
-    <%= venta.saldo_pendiente %></b>
+        <%= venta.saldo_pendiente %></b>
 
 </p>
 
