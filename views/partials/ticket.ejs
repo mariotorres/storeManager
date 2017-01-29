@@ -4,7 +4,7 @@
 <!-- Bootstrap -->
 <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body style="font-size: 12px">
 <%
  function getStr( str) {
      return str!= null && str !=''?str:''
@@ -16,6 +16,7 @@
 </p>
 <p>
     <b>Tienda: <%= tienda.nombre %> </b>
+    <!-- Dirección-->
 </p>
 <p>
     <% if ( tienda.rfc != '' && tienda.rfc != null ){%>
@@ -23,16 +24,12 @@
     <%}%>
 </p>
 
-<b>Vendedor: <%= getStr(usuario.nombres) +" "+ getStr(usuario.apellido_paterno) + " "+ getStr(usuario.apellido_materno)  %></b>
 <p>
     Fecha: <%= venta.fecha_venta.toLocaleString() %>
-</p>
-
-<p>
+<br>
     Hora: <%= venta.hora_venta.toString()%>
 </p>
-
-
+<b>Vendedor: <%= getStr(usuario.nombres) +" "+ getStr(usuario.apellido_paterno) + " "+ getStr(usuario.apellido_materno)  %></b>
 
 <p>Artículos</p>
 <% for ( var i=0; i< articulos.length; i++){%>
@@ -40,7 +37,7 @@
 <p><%= articulos[i].articulo %></p>
 <%}%>
 
-<p>Forma de pago</p>
+<p>Forma de pago:</p>
 
 <p><b>TOTAL:</b><br>
     <%= venta.precio_venta%>
@@ -54,7 +51,6 @@
 </p>
 
 <p>Por higiene y seguridad, NO SE ACEPTAN DEVOLUCIONES</p>
-
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->

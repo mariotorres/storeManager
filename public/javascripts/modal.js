@@ -361,7 +361,7 @@ function modalEvents(button, modal, page ) {
 
                         doc.fromHTML(ticket /*modal.find('.modal-body').get(0)*/, 10, 10, {
                             'width': 200,
-                            //'heigth': 100,
+                        //'heigth': 60,
                             'elementHandlers': specialElementHandlers
                         });
 
