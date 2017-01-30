@@ -6,7 +6,7 @@ $(document).ready(function() {
     $('#calendar').fullCalendar({
         // put your options and callbacks here
 
-        events: [
+       /* events: [
             {
                 title  : 'event1',
                 start  : '2017-01-01'
@@ -21,7 +21,12 @@ $(document).ready(function() {
                 start  : '2017-01-09T12:30:00',
                 allDay : false // will make the time show
             }
-        ]
+        ]*/
+
+        events: {
+            url: '/calendar/sales/',
+            type: 'POST'
+        }
 
     })
 
