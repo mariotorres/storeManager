@@ -279,7 +279,7 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 // Carrito Sell
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
     db.tx(function (t) {
-        console.log(req.body.optradio == "cred");
+        console.log(req.body);
         return this.manyOrNone(
             'select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
             ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo', [
@@ -288,8 +288,8 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros.
                 data,
                 t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
-                    '"monto_pagado_efectivo", "monto_pagado_tarjeta", "id_terminal", "saldo_pendiente", "estatus", "tarjeta_credito") ' +
-                    'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id', [
+                    '"monto_pagado_efectivo", "monto_pagado_tarjeta", "id_terminal", "saldo_pendiente", "estatus", "tarjeta_credito", "monto_cambio") ' +
+                    'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id', [
                     numericCol(req.body.user_id),
                     numericCol(req.body.precio_tot),
                     new Date(),
@@ -299,7 +299,8 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     req.body.terminal,
                     numericCol(req.body.precio_tot) - numericCol(req.body.efec_tot),
                     "activa",
-                    req.body.optradio == "cred"
+                    req.body.optradio == "cred",
+                    (numericCol(req.body.monto_rec) - numericCol(req.body.monto_efec))
                 ])
             ]);
         }).then(function(data){

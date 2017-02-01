@@ -151,6 +151,7 @@ create table ventas (
     fecha_venta date,
     hora_venta time,
     monto_pagado_efectivo numeric,
+    monto_cambio numeric,
     monto_pagado_tarjeta  numeric,
     tarjeta_credito  boolean,
     saldo_pendiente numeric,
