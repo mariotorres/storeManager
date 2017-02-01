@@ -1369,14 +1369,15 @@ router.post('/item/return', function(req, res){
                 numericCol(req.body.costo)
             ]),
             t.one('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
-                '  "estatus", "monto_pagado_efectivo") ' +
-                'values($1, $2, $3, $4, $5, $6) returning id', [
-                numericCol(req.body.user_id),
+                '  "estatus", "monto_pagado_efectivo", "saldo_pendiente") ' +
+                'values($1, $2, $3, $4, $5, $6, $7) returning id', [
+                numericCol(req.user.id),
                 numericCol(req.body.costo)*numericCol(req.body.n_devoluciones),
                 new Date(),
                 new Date().toLocaleTimeString(),
                 "activa",
-                numericCol(req.body.costo)*numericCol(req.body.n_devoluciones)
+                numericCol(req.body.costo)*numericCol(req.body.n_devoluciones),
+                0
             ])
         ]).then(function(data){
             t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", ' +
