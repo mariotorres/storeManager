@@ -1367,6 +1367,15 @@ router.post('/item/return', function(req, res){
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.n_devoluciones),
                 numericCol(req.body.costo)
+            ]),
+            t.one('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
+                '  "estatus") ' +
+                'values($1, $2, $3, $4, $5) returning id', [
+                numericCol(req.body.user_id),
+                numericCol(req.body.precio_tot),
+                new Date(),
+                new Date().toLocaleTimeString(),
+                "dev_proveedor"
             ])
         ])
     }).then(function (data) {
