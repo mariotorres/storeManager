@@ -68,6 +68,7 @@ function modalEvents(button, modal, page ) {
                             type: 'POST',
                             success: function (data) {
                                 alert(data.message);
+                                if (data)
                                 if (data.status == 'Ok') {
                                     modal.modal('hide');
                                 }

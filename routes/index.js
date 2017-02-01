@@ -1041,7 +1041,7 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                 return t.batch([
                     t.one('update articulos set id_proveedor=$1, id_tienda=$2, articulo=$3, descripcion=$4, id_marca=$5, modelo=$6, talla=$7, notas=$8, ' +
                         'precio=$9, costo=$10, codigo_barras=$11, ' +
-                        'nombre_imagen=$12, n_existencias= n_existencias + $13, fecha_ultima_modificacion = Now() returning id, articulo, n_existencias', [
+                        'nombre_imagen=$12, n_existencias= n_existencias + $13, fecha_ultima_modificacion = Now() returning id, articulo, n_existencias, id_tienda', [
                         numericCol(req.body.id_proveedor),
                         numericCol(req.body.id_tienda),
                         req.body.articulo,
@@ -1081,12 +1081,18 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
         })
     }).then(function(data) {
         //res.render('inventario',{ title: "Inventario", user: req.user, section : 'inventario'});
+        if(data[0].id_tienda){
             res.json({
                 status: 'Ok',
-                message: 'Se '+(data[0].n_existencias == 1?'ha':'han')+' registrado ' + data[0].n_existencias + ' existencia'+(data[0].n_existencias == 1?'':'s')+'  de la prenda ' + data[0].articulo +
-                (data[1]?' del proveedor ' + data[1].nombre:'')
+                message: '¡Precaución! Existe un registro previo de la prenda ' + data[0].articulo + '. Se han actualizado las existencias de la misma exitosamente.'
+            })
+        }else {
+            res.json({
+                status: 'Ok',
+                message: 'Se ' + (data[0].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[0].n_existencias + ' existencia' + (data[0].n_existencias == 1 ? '' : 's') + '  de la prenda ' + data[0].articulo +
+                (data[1] ? ' del proveedor ' + data[1].nombre : '')
             });
-
+        }
     }).catch(function(error){
         console.log(error);
         res.json({
