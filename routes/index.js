@@ -1017,35 +1017,68 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
     console.log(req.body);
     //console.log(req.file );
     db.task(function(t) {
+        return this.oneOrNone('select * from articulos where id_proveedor = $1 and id_tienda = $2 and articulo = $3 and' +
+            ' modelo = $4 and id_marca = $5 and precio = $6 and costo = $7',[
+            numericCol(req.body.id_proveedor),
+            numericCol(req.body.id_tienda),
+            req.body.articulo,
+            req.body.modelo,
+            numericCol(req.body.id_marca),
+            numericCol(req.body.precio),
+            numericCol(req.body.costo)
+        ]).then(function(data){
 
-        var proveedor = null;
+            var proveedor = null;
 
-        if (req.body.id_proveedor != null && req.body.id_proveedor != ''){
-            proveedor = this.one('update proveedores set a_cuenta=a_cuenta - $2 where id=$1 returning id, nombre',[
-                numericCol(req.body.id_proveedor),
-                numericCol(req.body.costo)*numericCol(req.body.n_arts)
-            ]);
-        }
+            if (req.body.id_proveedor != null && req.body.id_proveedor != ''){
+                proveedor = t.one('update proveedores set a_cuenta=a_cuenta - $2 where id=$1 returning id, nombre',[
+                    numericCol(req.body.id_proveedor),
+                    numericCol(req.body.costo)*numericCol(req.body.n_arts)
+                ]);
+            }
 
-        return this.batch([
-            this.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
-                'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias', [
-                numericCol(req.body.id_proveedor),
-                numericCol(req.body.id_tienda),
-                req.body.articulo,
-                req.body.descripcion,
-                numericCol(req.body.id_marca),
-                req.body.modelo,
-                req.body.talla,
-                req.body.notas,
-                numericCol(req.body.precio),
-                numericCol(req.body.costo),
-                numericCol(req.body.codigo_barras),
-                typeof req.file != 'undefined'?req.file.filename:null,
-                numericCol(req.body.n_arts)
-            ]),
-            proveedor
-        ])
+            if(data) {
+                return t.batch([
+                    t.one('update articulos set id_proveedor=$1, id_tienda=$2, articulo=$3, descripcion=$4, id_marca=$5, modelo=$6, talla=$7, notas=$8, ' +
+                        'precio=$9, costo=$10, codigo_barras=$11, ' +
+                        'nombre_imagen=$12, n_existencias= n_existencias + $13, fecha_ultima_modificacion = Now() returning id, articulo, n_existencias', [
+                        numericCol(req.body.id_proveedor),
+                        numericCol(req.body.id_tienda),
+                        req.body.articulo,
+                        req.body.descripcion,
+                        numericCol(req.body.id_marca),
+                        req.body.modelo,
+                        req.body.talla,
+                        req.body.notas,
+                        numericCol(req.body.precio),
+                        numericCol(req.body.costo),
+                        numericCol(req.body.codigo_barras),
+                        typeof req.file != 'undefined'?req.file.filename:null,
+                        numericCol(req.body.n_arts)
+                    ]),
+                    proveedor
+                ])
+            }
+            return t.batch([
+                t.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
+                    'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias', [
+                    numericCol(req.body.id_proveedor),
+                    numericCol(req.body.id_tienda),
+                    req.body.articulo,
+                    req.body.descripcion,
+                    numericCol(req.body.id_marca),
+                    req.body.modelo,
+                    req.body.talla,
+                    req.body.notas,
+                    numericCol(req.body.precio),
+                    numericCol(req.body.costo),
+                    numericCol(req.body.codigo_barras),
+                    typeof req.file != 'undefined'?req.file.filename:null,
+                    numericCol(req.body.n_arts)
+                ]),
+                proveedor
+            ])
+        })
     }).then(function(data) {
         //res.render('inventario',{ title: "Inventario", user: req.user, section : 'inventario'});
             res.json({
@@ -1514,7 +1547,7 @@ router.post('/search/items/results', function (req, res) {
     //var offset = req.body.page * pageSize;
     db.task(function (t) {
         return this.batch([
-            t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%'", [
+            t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%' and n_existencias > 0", [
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,
@@ -1560,7 +1593,6 @@ router.post('/search/items/devs', function (req, res) {
 
 
 router.post('/notes/find-notes-view', function (req, res) {
-
     db.task(function (t) {
         return this.batch([
             this.manyOrNone('select id, nombre from proveedores'),
