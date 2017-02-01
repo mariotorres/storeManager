@@ -1369,15 +1369,27 @@ router.post('/item/return', function(req, res){
                 numericCol(req.body.costo)
             ]),
             t.one('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
-                '  "estatus") ' +
-                'values($1, $2, $3, $4, $5) returning id', [
+                '  "estatus", "monto_pagado_efectivo") ' +
+                'values($1, $2, $3, $4, $5, $6) returning id', [
                 numericCol(req.body.user_id),
-                numericCol(req.body.precio_tot),
+                numericCol(req.body.costo)*numericCol(req.body.n_devoluciones),
                 new Date(),
                 new Date().toLocaleTimeString(),
+                "activa",
+                numericCol(req.body.costo)*numericCol(req.body.n_devoluciones)
+            ])
+        ]).then(function(data){
+            t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", ' +
+                '"monto_pagado", "estatus") ' +
+                ' values($1, $2, $3, $4, $5)', [
+                numericCol(req.body.id),
+                numericCol(data[3].id),
+                numericCol(req.body.n_devoluciones),
+                numericCol(req.body.costo),
                 "dev_proveedor"
             ])
-        ])
+            return data;
+        });
     }).then(function (data) {
         res.json({
             status :'Ok',
