@@ -29,7 +29,7 @@
 
     <p>
         <label>Tienda</label>
-        <select name = "id_tienda" class="form-control">
+        <select name = "id_tienda" class="form-control" required>
             <%
             if (tiendas.length > 0 ){
             for (var i =0; i < tiendas.length; i++){
@@ -70,22 +70,22 @@
     </p>
     <p>
         <label>Precio unitario</label>
-        <input type="number" name="precio" value="<%= item.precio %>" class="form-control">
+        <input type="number" name="precio" step="any" value="<%= item.precio %>" class="form-control">
     </p>
     <p>
         <label>Costo unitario</label>
-        <input type="number" name="costo" value="<%= item.costo %>" class="form-control">
+        <input type="number" name="costo" step="any" value="<%= item.costo %>" class="form-control">
     </p>
-    <!--codigo_barras-->
-    <!--url_imagen-->
     <p>
         <label>Fotografía</label>
-        <input class="form-control" type="file" name="url_imagen">
+        <input class="form-control" type="file" name="url_imagen" accept="image/*">
     </p>
+    <!--
     <p>
         <label>Código de barras</label>
         <input type="number" class="form-control" name="codigo_barras">
     </p>
+    -->
     <p>
         <label>Número de existencias</label>
         <input type="number" min="0" class="form-control" value="<%= item.n_existencias%>" name="n_existencias" disabled>

@@ -1004,8 +1004,6 @@ router.post('/user/profile', function(req,res){
      return ( x == '' || isNaN(x))?null:x;
  }
 
-
-
 /* uploads */
 var multer = require ('multer');
 
@@ -1014,35 +1012,37 @@ var upload = multer({
 });
 
 router.post('/item/register', upload.single('imagen'),function(req, res){
-
-    console.log(req.body);
+    //console.log(req.body);
     //console.log(req.file );
     db.task(function(t) {
-        return this.oneOrNone('select * from articulos where id_proveedor = $1 and id_tienda = $2 and articulo = $3 and' +
-            ' modelo = $4 and id_marca = $5 and precio = $6 and costo = $7',[
+
+        return this.oneOrNone('select count(*) as count from articulos where id_proveedor = $1 and id_tienda = $2 and articulo = $3 and' +
+            ' modelo = $4 and id_marca = $5',[
             numericCol(req.body.id_proveedor),
             numericCol(req.body.id_tienda),
             req.body.articulo,
             req.body.modelo,
-            numericCol(req.body.id_marca),
-            numericCol(req.body.precio),
-            numericCol(req.body.costo)
+            numericCol(req.body.id_marca)
         ]).then(function(data){
 
-            var proveedor = null;
+            //Si el producto se registró previamente
+            if ( data.count > 0 ) {
+                return [{count: data.count }];
+            } else {
+                //Si el artículo tiene un proveedor, se agrega a la cuenta
+                var proveedor = null;
+                if (req.body.id_proveedor != null && req.body.id_proveedor != ''){
+                    proveedor = t.one('update proveedores set a_cuenta=a_cuenta - $2 where id=$1 returning id, nombre',[
+                        numericCol(req.body.id_proveedor),
+                        numericCol(req.body.costo)*numericCol(req.body.n_arts)
+                    ]);
+                }
 
-            if (req.body.id_proveedor != null && req.body.id_proveedor != ''){
-                proveedor = t.one('update proveedores set a_cuenta=a_cuenta - $2 where id=$1 returning id, nombre',[
-                    numericCol(req.body.id_proveedor),
-                    numericCol(req.body.costo)*numericCol(req.body.n_arts)
-                ]);
-            }
-
-            if(data) {
+                // retorna los queries
                 return t.batch([
-                    t.one('update articulos set id_proveedor=$1, id_tienda=$2, articulo=$3, descripcion=$4, id_marca=$5, modelo=$6, talla=$7, notas=$8, ' +
-                        'precio=$9, costo=$10, codigo_barras=$11, ' +
-                        'nombre_imagen=$12, n_existencias= n_existencias + $13, fecha_ultima_modificacion = Now() returning id, articulo, n_existencias, id_tienda', [
+                    {count : data.count},
+                    t.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
+                        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias', [
                         numericCol(req.body.id_proveedor),
                         numericCol(req.body.id_tienda),
                         req.body.articulo,
@@ -1058,40 +1058,20 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                         numericCol(req.body.n_arts)
                     ]),
                     proveedor
-                ])
+                ]);
             }
-            return t.batch([
-                t.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
-                    'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias', [
-                    numericCol(req.body.id_proveedor),
-                    numericCol(req.body.id_tienda),
-                    req.body.articulo,
-                    req.body.descripcion,
-                    numericCol(req.body.id_marca),
-                    req.body.modelo,
-                    req.body.talla,
-                    req.body.notas,
-                    numericCol(req.body.precio),
-                    numericCol(req.body.costo),
-                    numericCol(req.body.codigo_barras),
-                    typeof req.file != 'undefined'?req.file.filename:null,
-                    numericCol(req.body.n_arts)
-                ]),
-                proveedor
-            ])
         })
     }).then(function(data) {
-        //res.render('inventario',{ title: "Inventario", user: req.user, section : 'inventario'});
-        if(data[0].id_tienda){
+        if ( data[0].count == 0 ){
             res.json({
                 status: 'Ok',
-                message: '¡Precaución! Existe un registro previo de la prenda ' + data[0].articulo + '. Se han actualizado las existencias de la misma exitosamente.'
-            })
-        }else {
+                message: 'Se ' + (data[1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[1].n_existencias + ' existencia' + (data[1].n_existencias == 1 ? '' : 's') + '  de la prenda ' + data[1].articulo +
+                (data[2] ? ' del proveedor ' + data[2].nombre : '')
+            });
+        }else{
             res.json({
-                status: 'Ok',
-                message: 'Se ' + (data[0].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[0].n_existencias + ' existencia' + (data[0].n_existencias == 1 ? '' : 's') + '  de la prenda ' + data[0].articulo +
-                (data[1] ? ' del proveedor ' + data[1].nombre : '')
+                status: 'Error',
+                message: '¡Precaución! Existe un registro previo de la prenda ' + data[1].articulo
             });
         }
     }).catch(function(error){
@@ -1317,9 +1297,12 @@ router.post('/brand/update', function(req, res){
 /*
  * Actualización de items
  */
-router.post('/item/update', function(req, res){
+router.post('/item/update', upload.single('imagen'), function(req, res){
+
+    //borrar imagen anterior
+
     db.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-        'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11, n_existencias= $12, fecha_ultima_modificacion = Now()' +
+        'precio=$8, costo=$9, codigo_barras=$10, nombre_imagen=$11, n_existencias= $12, fecha_ultima_modificacion = Now()' +
         'where id=$1 returning id, articulo ',[
         req.body.id,
         req.body.articulo,
@@ -1331,7 +1314,7 @@ router.post('/item/update', function(req, res){
         numericCol(req.body.precio),
         numericCol(req.body.costo),
         numericCol(req.body.codigo_barras),
-        req.body.url_imagen,
+        typeof req.file != 'undefined'?req.file.filename:null,
         numericCol(req.body.n_existencias)
     ]).then(function (data) {
         res.json({
@@ -1654,18 +1637,15 @@ router.post('/search/notes/results', function (req, res) {
 
 });
 
-
-
-
-router.get('/item/:filename/image.jpg',  function (req, res) {
+router.get('/item/:filename/image.jpg', isAuthenticated, function (req, res) {
    res.sendFile( path.resolve('../uploads/'+req.params.filename));
 });
 
+/*
 router.get('/user/:id/image.jpg', function (req, res) {
     res.sendFile( path.resolve('../images/users/user_1.png'));
 });
-
-
+*/
 
 //eventos del calendario
 

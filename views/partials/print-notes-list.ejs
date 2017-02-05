@@ -3,10 +3,8 @@ if (sales.length > 0){%>
 <div class="list-group">
     <% for ( var i =0; i < sales.length ; i ++ ){ %>
     <div class="panel panel-default">
-        <div class="panel-heading" name="item_name">
-            <strong><%= sales[i].fecha_venta.toLocaleString() %></strong>
-        </div>
         <div class="panel-body">
+            <p>Fecha: <strong><%= sales[i].fecha_venta.toLocaleString() %></strong></p>
 
             <form>
                 <div class="row">
