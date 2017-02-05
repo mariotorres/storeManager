@@ -9,6 +9,29 @@ grant all privileges on database business to smuser;
 \c business;
 set role smuser;
 
+/* Penalizaciones */
+drop table if exists penalizaciones cascade;
+create table penalizaciones (
+    id serial primary key,
+    nombre text,
+    monto numeric,
+    descripcion text,
+    dias_retraso integer,  /* Debe reiniciar cada semana.*/
+    dias_ausencia integer /* Debe reiniciar cada semana.*/
+    );
+
+/* Bonos */
+create table bonos (
+    id serial primary key,
+    nombre text,
+    monto numeric,
+    descripcion text,
+    monto_alcanzar numeric,
+    por_tienda boolean
+    );
+
+
+
 /* Usuarios */
 drop table if exists usuarios cascade;
 create table usuarios(
@@ -33,12 +56,40 @@ create table usuarios(
     permiso_tablero boolean,
     permiso_administrador boolean,
     permiso_empleados boolean,
-    permiso_inventario boolean
+    permiso_inventario boolean,
+    total_comisiones numeric,
+    id_penalizacion integer references penalizaciones(id),
+    fecha_penalizacion date,
+    id_bono integer references bonos(id),
+    fecha_bono date
 );
 
 insert into usuarios ("usuario","contrasena","nombres","permiso_tablero","permiso_administrador","permiso_empleados", "permiso_inventario") values
 ('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador', true, true, true, true),
 ('empleado','$2a$10$3NNCPr4qaxS7JjwmTygBLuIXClsDaXVT2HoE40rh2WyEwqLFwLy6m','Empleado', false, false, true, true);
+
+/* prestamos */
+drop table if exists prestamos cascade;
+create table prestamos (
+    id serial primary key,
+    id_usuario integer references usuarios(id),
+    monto numeric,
+    descripcion text,
+    fecha_prestamo date,
+    fecha_liquidacion date
+);
+
+/* prestamos */
+drop table if exists asistencia cascade;
+create table asistencia (
+    id serial primary key,
+    id_usuario integer references usuarios(id),
+    fecha date,
+    hora_llegada time,
+    hora_salida time
+);
+
+
 
 /* Proveedores */
 drop table if exists proveedores cascade;
