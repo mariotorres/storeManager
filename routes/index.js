@@ -1318,6 +1318,9 @@ router.post('/brand/update', function(req, res){
  * Actualización de items
  */
 router.post('/item/update', function(req, res){
+
+    //borrar imagen anterior
+
     db.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
         'precio=$8, costo=$9, codigo_barras=$10, url_imagen=$11, n_existencias= $12, fecha_ultima_modificacion = Now()' +
         'where id=$1 returning id, articulo ',[

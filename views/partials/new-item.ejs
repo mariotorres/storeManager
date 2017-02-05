@@ -72,22 +72,22 @@
     </p>
     <p>
         <label>Precio unitario</label>
-        <input type="text" name="precio" class="form-control" required>
+        <input type="number" step="any" name="precio" class="form-control" required>
     </p>
     <p>
         <label>Costo unitario</label>
-        <input type="text" name="costo" class="form-control" required>
+        <input type="number" step="any" name="costo" class="form-control" required>
     </p>
-    <!--codigo_barras-->
-    <!--url_imagen-->
     <p>
         <label>Fotografía</label>
-        <input class="form-control" type="file" name="imagen" id="imagen" required>
+        <input class="form-control" type="file" name="imagen" id="imagen" accept="image/*" required>
     </p>
+    <!--
     <p>
         <label>Código de barras</label>
         <input type="number" class="form-control" name="codigo_barras">
     </p>
+    -->
     <p>
         <!--No se debe permitir mismo código de barras para cada uno de los vestidos ver cómo adaptar el código de barras-->
         <label>Número de existencias</label>
