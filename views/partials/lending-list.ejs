@@ -1,0 +1,16 @@
+<%
+if (lendings[1].length > 0){%>
+<div class="list-group">
+    <%
+    for ( var i =0; i < lendings[1].length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-lendings_id="<%= lendings[1][i].id %>">
+        <h4 class="list-group-item-heading"><%= usuarios[i].nombres %></h4>
+    </a>
+    <%}%>
+</div>
+
+<% include pagination.ejs %>
+
+<%}else {%>
+<div class="alert alert-info" role="alert">No hay préstamos registrados</div>
+<%}%>
