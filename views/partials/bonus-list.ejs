@@ -1,0 +1,16 @@
+<%
+if (bonos.length > 0){%>
+<div class="list-group">
+    <%
+    for ( var i =0; i < bonos.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-bonos_id="<%= bonos[i].id %>">
+        <h4 class="list-group-item-heading"><%= bonos[i].nombre %></h4>
+    </a>
+    <%}%>
+</div>
+
+<% include pagination.ejs %>
+
+<%}else {%>
+<div class="alert alert-info" role="alert">No hay bonos registrados</div>
+<%}%>

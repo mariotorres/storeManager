@@ -1,0 +1,45 @@
+<form id="bonusForm">
+    <p>
+        <label>Nombre del bono</label>
+        <input name="nombre" class="form-control" required>
+    </p>
+
+    <p>
+        <label>Monto del bono</label>
+        <input name="monto" class = "form-control">
+    </p>
+    <p>
+        <label>Descripción</label>
+        <textarea rows="5" name="desc" class = "form-control"></textarea>
+    </p>
+    <p>
+        <label>Monto en ventas para alcanzar el bono</label>
+        <input name="monto_alcanzar" class = "form-control">
+    </p>
+    <br>
+    <row>
+        <div class="col-md-5">
+            <p>
+                <label>Criterio</label>
+                <select name="criterio" class="selectpicker">
+                    <option>Tienda</option>
+                    <option>Individual</option>
+                </select>
+            </p>
+        </div>
+        <div class="col-md-5">
+            <p>
+                <label>Temporalidad</label>
+                <select name="temporalidad" class="selectpicker">
+                    <option>Semanal</option>
+                    <option>Quincenal</option>
+                    <option>Mensual</option>
+                </select>
+            </p>
+        </div>
+    </row>
+    <br>
+    <p>
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </p>
+</form>

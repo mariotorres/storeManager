@@ -1,0 +1,66 @@
+<form id="bonusForm">
+    <input type="text" value="<%=bonus.id%>" name="id" hidden>
+    <p>
+        <label>Nombre del bono</label>
+        <input value="<%=bonus.nombre%>" name="nombre" class="form-control" required>
+    </p>
+
+    <p>
+        <label>Monto del bono</label>
+        <input value="<%=bonus.monto%>" name="monto" class = "form-control">
+    </p>
+    <p>
+        <label>Descripción</label>
+        <textarea placeholder="<%=bonus.descripcion%>" rows="5" name="desc" class = "form-control"></textarea>
+    </p>
+    <p>
+        <label>Monto en ventas para alcanzar el bono</label>
+        <input value="<%=bonus.monto_alcanzar%>" name="monto_alcanzar" class = "form-control">
+    </p>
+    <br>
+    <row>
+        <div class="col-md-5">
+            <p>
+                <label>Criterio</label>
+                <select name="criterio" class="selectpicker">
+                    <% if (bonus.criterio == "Tienda"){%>
+                    <option selected>Tienda</option>
+                    <%}else{%>
+                    <option>Tienda</option>
+                    <%}%>
+                    <% if (bonus.criterio == "Individual"){%>
+                    <option selected>Individual</option>
+                    <%}else{%>
+                    <option>Individual</option>
+                    <%}%>
+                </select>
+            </p>
+        </div>
+        <div class="col-md-5">
+            <p>
+                <label>Temporalidad</label>
+                <select name="temporalidad" class="selectpicker">
+                    <% if (bonus.temporalidad == "Semanal"){%>
+                    <option selected>Semanal</option>
+                    <%}else{%>
+                    <option>Semanal</option>
+                    <%}%>
+                    <% if (bonus.temporalidad == "Quincenal"){%>
+                    <option selected>Quincenal</option>
+                    <%}else{%>
+                    <option>Quincenal</option>
+                    <%}%>
+                    <% if (bonus.temporalidad == "Mensual"){%>
+                    <option selected>Mensual</option>
+                    <%}else{%>
+                    <option>Mensual</option>
+                    <%}%>
+                </select>
+            </p>
+        </div>
+    </row>
+    <br>
+    <p>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </p>
+</form>
