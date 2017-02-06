@@ -591,6 +591,30 @@ router.post('/terminal/list/', isAuthenticated, function (req, res) {
         });
     });
 });
+// Display de bonos
+router.post('/bonus/list/', isAuthenticated, function (req, res) {
+    var pageSize = 10;
+    var offset = req.body.page * pageSize;
+
+    db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from bonos as count'),
+            this.manyOrNone('select * from bonos order by nombre limit $1 offset $2',[ pageSize, offset ])
+        ]);
+    }).then(function (data) {
+        res.render('partials/bonus-list',{
+            status : 'Ok',
+            bonos: data[1],
+            pageNumber : req.body.page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
+        });
+    }).catch(function (error) {
+        res.json({
+            status: 'Error',
+            data : error
+        });
+    });
+});
 
 // Display de penalizaciones
 router.post('/penalization/list/', isAuthenticated, function (req, res) {
@@ -785,7 +809,26 @@ router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
     });
 });
 
-// Load brand data into  modal.
+// Load bonus data into  modal.
+router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
+    var id = req.body.id;
+    db.one('select * from bonos where id = $1', [
+        id
+    ]).then(function(data){
+        res.render('partials/edit-bonus', {
+            status:'Ok',
+            bonus: data
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status:'Error',
+            data:error
+        });
+    });
+});
+
+// Load penalization data into  modal.
 router.post('/penalization/edit-penalization/', isAuthenticated, function(req, res){
     var id = req.body.id;
     db.one('select * from penalizaciones where id = $1', [
@@ -1023,6 +1066,15 @@ router.post('/employees/penalization/new', function (req, res) {
     });
 });
 
+router.post('/employees/bonus/new', function (req, res) {
+    db.task(function (t) {
+    }).then(function (data) {
+        res.render('partials/new-bonus', {});
+    }).catch(function(error){
+        console.log(error);
+    });
+});
+
 router.post('/brand/new', function (req, res) {
     db.task(function (t) {
         return this.batch([
@@ -1185,6 +1237,33 @@ router.post('/terminal/register', function(req, res){
 });
 
 /*
+ * Registro de bono
+ */
+router.post('/employees/bonus/register', function(req, res){
+    console.log(req.body);
+    db.one('insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad) ' +
+        ' values($1, $2, $3, $4, $5, $6) returning id, nombre', [
+        req.body.nombre,
+        numericCol(req.body.monto),
+        req.body.desc,
+        numericCol(req.body.monto_alcanzar),
+        req.body.criterio,
+        req.body.temporalidad
+    ]).then(function(data){
+        res.json({
+            status:'Ok',
+            message: '¡El bono: "' + data.nombre + '" ha sido registrado!'
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar el bono.'
+        });
+    });
+});
+
+/*
  * Registro de penalizacion
  */
 router.post('/employees/penalization/register', function(req, res){
@@ -1193,7 +1272,7 @@ router.post('/employees/penalization/register', function(req, res){
         ' values($1, $2, $3, $4, $5) returning id, nombre', [
         req.body.nombre,
         numericCol(req.body.monto),
-        req.body.descripcion,
+        req.body.desc,
         numericCol(req.body.retraso),
         numericCol(req.body.ausencia)
     ]).then(function(data){
@@ -1374,6 +1453,32 @@ router.post('/brand/update', function(req, res){
 });
 
 /*
+ * Actualización de bonos
+ */
+router.post('/bonus/update', function(req, res){
+    db.one('update bonos set nombre=$2, monto=$3, descripcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7 where id=$1 returning id, nombre ',[
+        req.body.id,
+        req.body.nombre,
+        numericCol(req.body.monto),
+        req.body.desc,
+        numericCol(req.body.monto_alcanzar),
+        req.body.criterio,
+        req.body.temporalidad
+    ]).then(function (data) {
+        res.json({
+            status :'Ok',
+            message : 'Los datos del bono "'+ data.nombre +'" han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al actualizar los datos del bono'
+        });
+    });
+});
+
+/*
  * Actualización de penalizaciones
  */
 router.post('/penalization/update', function(req, res){
@@ -1381,7 +1486,7 @@ router.post('/penalization/update', function(req, res){
         req.body.id,
         req.body.nombre,
         numericCol(req.body.monto),
-        req.body.descripcion,
+        req.body.desc,
         numericCol(req.body.retraso),
         numericCol(req.body.ausencia)
     ]).then(function (data) {

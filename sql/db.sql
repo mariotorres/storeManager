@@ -27,7 +27,8 @@ create table bonos (
     monto numeric,
     descripcion text,
     monto_alcanzar numeric,
-    por_tienda boolean
+    criterio text,
+    temporalidad text
     );
 
 

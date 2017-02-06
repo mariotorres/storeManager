@@ -422,6 +422,22 @@ function modalEvents(button, modal, page ) {
 
             });
             break;
+        // Bonus
+        case "new_bonus":
+            modal.find('.modal-title').text('Registrar bono');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employees/bonus/new', {}, function(){
+                modal.find('form').submit(function(event){
+                    $.post('/employees/bonus/register', $(this).serialize()).done(function (data){
+                        alert(data.message);
+                        if(data.status == 'Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    event.preventDefault();
+                });
+            });
+            break;
         // Penalizations
         case "new_penalization":
             modal.find('.modal-title').text('Registrar penalización');
@@ -435,6 +451,28 @@ function modalEvents(button, modal, page ) {
                         }
                     });
                     event.preventDefault();
+                });
+            });
+            break;
+        case "edit_bonus":
+            modal.find('.modal-title').text('Editar bono');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/bonus/list/',{ page: page }, function(){
+                $(this).find('.list-group-item').click(function(){
+                    $("#modal_content").load('/bonus/edit-bonus/', {id: $(this).data('bonos_id')}, function () {
+                        modal.find('form').submit(function (event) {
+                            $.post('/bonus/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
+                    });
+                });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
                 });
             });
             break;
