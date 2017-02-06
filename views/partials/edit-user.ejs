@@ -27,19 +27,19 @@
     </p>
     <p>
         <label>Nombre(s)</label>
-        <input type="text" value="<%=user.nombres%>" class="form-control" name="nombres">
+        <input type="text" value="<%=user.nombres%>" class="form-control" name="nombres" required>
     </p>
     <div class="row">
         <div class="col-sm-6">
             <p>
                 <label>Apellido paterno</label>
-                <input type="text" value="<%=user.apellido_paterno%>" class="form-control" name="apellido_paterno">
+                <input type="text" value="<%=user.apellido_paterno%>" class="form-control" name="apellido_paterno" required>
             </p>
         </div>
         <div class="col-sm-6">
             <p>
                 <label>Apellido materno</label>
-                <input type="text" value="<%=user.apellido_materno%>" class="form-control" name="apellido_materno">
+                <input type="text" value="<%=user.apellido_materno%>" class="form-control" name="apellido_materno" required>
             </p>
         </div>
     </div>
@@ -87,6 +87,10 @@
         <input type="text" value="<%=user.direccion_ciudad%>" class="form-control" name="direccion_ciudad">
     </p>
     <p>
+        <label>Estado</label>
+        <input type="text" value="<%=user.direccion_estado%>" class="form-control" name="direccion_estado">
+    </p>
+    <p>
         <label>País</label>
         <input type="text" value="<%=user.direccion_pais%>" class="form-control" name="direccion_pais">
     </p>
@@ -110,13 +114,24 @@
     <div class="row">
         <div class="col-sm-3">
             <p>
-                <label>Tablero</label>
-                <select class="form-control" name="permiso_tablero">
+                <label>Vendedor</label>
+                <select class="form-control" name="permiso_empleados">
+                    <option value="true">Sí</option>
+                    <option value="false">No</option>
+                </select>
+            </p>
+        </div>
+        <div class="col-sm-3">
+            <p>
+                <label>Inventario</label>
+                <select class="form-control" name="permiso_inventario">
                     <option value="false">No</option>
                     <option value="true">Sí</option>
                 </select>
             </p>
         </div>
+
+
         <div class="col-sm-3">
             <p>
                 <label>Administrador</label>
@@ -126,19 +141,11 @@
                 </select>
             </p>
         </div>
+
         <div class="col-sm-3">
             <p>
-                <label>Vendedor</label>
-                <select class="form-control" name="permiso_empleados">
-                    <option value="false">No</option>
-                    <option value="true">Sí</option>
-                </select>
-            </p>
-        </div>
-        <div class="col-sm-3">
-            <p>
-                <label>Inventario</label>
-                <select class="form-control" name="permiso_inventario">
+                <label>Tablero</label>
+                <select class="form-control" name="permiso_tablero">
                     <option value="false">No</option>
                     <option value="true">Sí</option>
                 </select>

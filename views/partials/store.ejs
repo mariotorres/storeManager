@@ -5,20 +5,20 @@
     </p>
     <p>
         <label>Calle</label>
-        <input type="text" class="form-control" name="direccion_calle">
+        <input type="text" class="form-control" name="direccion_calle" required>
     </p>
 
     <div class="row">
         <div class="col-sm-6">
             <p>
-                <label>Número interior</label>
-                <input type="text" class="form-control" name="direccion_numero_int">
+                <label>Número exterior</label>
+                <input type="text" class="form-control" name="direccion_numero_ext" required>
             </p>
         </div>
         <div class="col-sm-6">
             <p>
-                <label>Número exterior</label>
-                <input type="text" class="form-control" name="direccion_numero_ext">
+                <label>Número interior</label>
+                <input type="text" class="form-control" name="direccion_numero_int">
             </p>
 
         </div>
@@ -26,7 +26,7 @@
 
     <p>
         <label>Colonia</label>
-        <input type="text" class="form-control" name="direccion_colonia">
+        <input type="text" class="form-control" name="direccion_colonia" required>
     </p>
     <p>
         <label>Localidad</label>
@@ -38,11 +38,15 @@
     </p>
     <p>
         <label>Ciudad</label>
-        <input type="text" class="form-control" name="direccion_ciudad">
+        <input type="text" class="form-control" name="direccion_ciudad" required>
+    </p>
+    <p>
+        <label>Estado</label>
+        <input type="text" class="form-control" name="direccion_estado" required>
     </p>
     <p>
         <label>País</label>
-        <input type="text" class="form-control" name = "direccion_pais">
+        <input type="text" class="form-control" name = "direccion_pais" value="México" required>
     </p>
     <p>
         <button type="submit" class="btn btn-primary">Crear</button>

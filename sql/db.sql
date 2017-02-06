@@ -51,6 +51,7 @@ create table usuarios(
     direccion_localidad text,
     direccion_municipio text,
     direccion_ciudad text,
+    direccion_estado text,
     direccion_pais text,
     empleado boolean,
     salario numeric,
@@ -110,6 +111,7 @@ create table proveedores (
     direccion_localidad text,
     direccion_municipio text,
     direccion_ciudad text,
+    direccion_estado text,
     direccion_pais text,
     a_cuenta  numeric, /* Esta cantidad se registra en el momento en el que se registra una prenda del proveedor*/
     por_pagar numeric  /* Esta cantidad se registra en el momento en el que se vende una prenda del proveedor */
@@ -127,6 +129,7 @@ create table tiendas (
     direccion_localidad text,
     direccion_municipio text,
     direccion_ciudad text,
+    direccion_estado text,
     direccion_pais text
 );
 

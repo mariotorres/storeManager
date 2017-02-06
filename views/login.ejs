@@ -22,11 +22,10 @@
 
     <!-- font awesome -->
     <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+
+    <!-- ¿?-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-
     <link rel='stylesheet prefetch' href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900|RobotoDraft:400,100,300,500,700,900'>
-    <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css'>
-
     <link rel="stylesheet" href="/stylesheets/testStyle.css">
 </head>
 
@@ -44,32 +43,33 @@
         <form action="/login" method="POST">
             <div class="input-container">
                 <input type="text" name="username" required/>
-                <label for="Username">Username</label>
+                <label for="Username">Usuario</label>
                 <div class="bar"></div>
             </div>
             <div class="input-container">
                 <input type="password" name="password" required/>
-                <label for="Password">Password</label>
+                <label for="Password">Contraseña</label>
                 <div class="bar"></div>
             </div>
             <div class="button-container">
                 <button><span>Go</span></button>
             </div>
-            <div class="footer"><a href="#">Forgot your password?</a></div>
+            <div class="footer"><a href="#">¿Olvídó su contraseña?</a></div>
         </form>
-
-        <!-- alerta -->
-        <% if ( message != '' ){%>
-        <p>
-        <div class="alert alert-danger alert-dismissible" align="left">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Atención:</strong> <%= message %> </div>
-        </p>
-        <%}%>
-
     </div>
+    <!-- alerta -->
+    <% if ( message != '' ){%>
+    <br>
+    <div class="alert alert-danger alert-dismissible" align="left">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Atención:</strong> <%= message %>
+    </div>
+
+    <%}%>
+
 </div>
 <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="javascripts/testIndex.js"></script>
 </body>
 </html>
