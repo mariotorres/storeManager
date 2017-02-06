@@ -1141,6 +1141,32 @@ router.post('/terminal/register', function(req, res){
 });
 
 /*
+ * Registro de penalizacion
+ */
+router.post('/employees/penalization/register', function(req, res){
+    console.log(req.body);
+    db.one('insert into penalizaciones(nombre, monto, descripcion, dias_retraso, dias_ausencia) ' +
+        ' values($1, $2, $3, $4, $5) returning id, nombre', [
+        req.body.nombre,
+        numericCol(req.body.monto),
+        req.body.descripcion,
+        numericCol(req.body.retraso),
+        numericCol(req.body.ausencia)
+    ]).then(function(data){
+        res.json({
+            status:'Ok',
+            message: '¡La penalización: "' + data.nombre + '" ha sido registrada!'
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar la penalización.'
+        });
+    });
+});
+
+/*
  * Registro de marca
  */
 router.post('/brand/register', function(req, res){

@@ -57,6 +57,8 @@ create table usuarios(
     permiso_administrador boolean,
     permiso_empleados boolean,
     permiso_inventario boolean,
+    hora_llegada time,
+    hora_salida time,
     total_comisiones numeric,
     id_penalizacion integer references penalizaciones(id),
     fecha_penalizacion date,
