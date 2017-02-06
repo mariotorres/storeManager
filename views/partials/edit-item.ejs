@@ -68,14 +68,29 @@
         <label>Notas</label>
         <input type="text" name="notas" value="<%= item.notas %>" class="form-control">
     </p>
-    <p>
-        <label>Precio unitario</label>
-        <input type="number" name="precio" step="any" value="<%= item.precio %>" class="form-control">
-    </p>
-    <p>
-        <label>Costo unitario</label>
-        <input type="number" name="costo" step="any" value="<%= item.costo %>" class="form-control">
-    </p>
+
+
+    <div class="row">
+    <div class="col-sm-4">
+        <p>
+            <label>Precio unitario</label>
+            <input type="number" name="precio" step="any" value="<%= item.precio %>" class="form-control">
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Costo unitario</label>
+            <input type="number" name="costo" step="any" value="<%= item.costo %>" class="form-control">
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Número de existencias</label>
+            <input type="number" min="0" class="form-control" value="<%= item.n_existencias%>" name="n_existencias" disabled>
+        </p>
+    </div>
+    </div>
+
     <p>
         <label>Fotografía</label>
         <input class="form-control" type="file" name="url_imagen" accept="image/*">
@@ -86,10 +101,7 @@
         <input type="number" class="form-control" name="codigo_barras">
     </p>
     -->
-    <p>
-        <label>Número de existencias</label>
-        <input type="number" min="0" class="form-control" value="<%= item.n_existencias%>" name="n_existencias" disabled>
-    </p>
+
     <p>
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </p>

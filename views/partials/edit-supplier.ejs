@@ -16,14 +16,23 @@
         <label>Calle</label>
         <input type="text" value="<%=supplier.direccion_calle%>" class="form-control" name="direccion_calle">
     </p>
-    <p>
-        <label>Número interior</label>
-        <input type="text" value="<%=supplier.direccion_numero_int%>" class="form-control" name="direccion_numero_int">
-    </p>
-    <p>
-        <label>Número exterior</label>
-        <input type="text" value="<%=supplier.direccion_numero_ext%>" class="form-control" name="direccion_numero_ext">
-    </p>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Número interior</label>
+                <input type="text" value="<%=supplier.direccion_numero_int%>" class="form-control" name="direccion_numero_int">
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>Número exterior</label>
+                <input type="text" value="<%=supplier.direccion_numero_ext%>" class="form-control" name="direccion_numero_ext">
+            </p>
+        </div>
+    </div>
+
+
     <p>
         <label>Colonia</label>
         <input type="text" value="<%=supplier.direccion_colonia%>" class="form-control" name="direccion_colonia">
