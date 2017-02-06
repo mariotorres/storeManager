@@ -6,8 +6,8 @@ if ( users.length > 0){%>
     <%
     for ( var i =0; i < users.length ; i ++ ){ %>
     <a href="#" class="list-group-item" data-user_id="<%= users[i].id %>">
-        <h4 class="list-group-item-heading"> <%= users[i].usuario %></h4>
-        <p class="list-group-item-text"><%= users[i].nombres %></p>
+        <h4 class="list-group-item-heading"> <i class="fa fa-address-card"></i> <%= users[i].usuario %></h4>
+        <p class="list-group-item-text"><%= users[i].nombres + " "+ users[i].apellido_paterno +" "+ users[i].apellido_materno%></p>
     </a>
     <%}%>
 </div>

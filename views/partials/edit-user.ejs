@@ -1,9 +1,21 @@
 <form id="updateUser">
     <input type="text" value="<%=user.id%>" name="id" hidden>
-    <p>
-        <label>Nombre de usuario</label>
-        <input type="text" value="<%=user.usuario%>" class="form-control" name="usuario" disabled>
-    </p>
+    <label>Usuario</label>
+    <div class="row">
+
+        <div class="col-sm-9">
+            <p>
+                <input type="text" value="<%=user.usuario%>" class="form-control" name="usuario" disabled>
+            </p>
+        </div>
+        <div class="col-sm-3">
+            <p>
+                <button type="button" class="btn btn-primary"><i class="fa fa-trash"></i> Eliminar</button>
+            </p>
+        </div>
+    </div>
+
+
 <!--
     <div class="row">
         <div class="col-sm-6">
@@ -69,31 +81,53 @@
 
     </div>
 
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Colonia</label>
+                <input type="text" value="<%=user.direccion_colonia%>" class="form-control" name="direccion_colonia">
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>Localidad</label>
+                <input type="text" value="<%=user.direccion_localidad%>" class="form-control" name="direccion_localidad">
+            </p>
+        </div>
+    </div>
 
-    <p>
-        <label>Colonia</label>
-        <input type="text" value="<%=user.direccion_colonia%>" class="form-control" name="direccion_colonia">
-    </p>
-    <p>
-        <label>Localidad</label>
-        <input type="text" value="<%=user.direccion_localidad%>" class="form-control" name="direccion_localidad">
-    </p>
-    <p>
-        <label>Municipio</label>
-        <input type="text" value="<%=user.direccion_municipio%>" class="form-control" name="direccion_municipio">
-    </p>
-    <p>
-        <label>Ciudad</label>
-        <input type="text" value="<%=user.direccion_ciudad%>" class="form-control" name="direccion_ciudad">
-    </p>
-    <p>
-        <label>Estado</label>
-        <input type="text" value="<%=user.direccion_estado%>" class="form-control" name="direccion_estado">
-    </p>
-    <p>
-        <label>País</label>
-        <input type="text" value="<%=user.direccion_pais%>" class="form-control" name="direccion_pais">
-    </p>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Municipio</label>
+                <input type="text" value="<%=user.direccion_municipio%>" class="form-control" name="direccion_municipio">
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>Ciudad</label>
+                <input type="text" value="<%=user.direccion_ciudad%>" class="form-control" name="direccion_ciudad">
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Estado</label>
+                <input type="text" value="<%=user.direccion_estado%>" class="form-control" name="direccion_estado">
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>País</label>
+                <input type="text" value="<%=user.direccion_pais%>" class="form-control" name="direccion_pais">
+            </p>
+        </div>
+    </div>
+
+
+
     <div class="row">
         <div class="col-sm-3">
             <p>
@@ -152,10 +186,11 @@
             </p>
         </div>
     </div>
+    
+        <p>
+            <button class="btn btn-primary" type="submit"> <i class="fa fa-save"></i> Actualizar</button>
+        </p>
 
 
-    <p>
-        <button class="btn btn-primary" type="submit">Registrar</button>
-    </p>
 
 </form>
