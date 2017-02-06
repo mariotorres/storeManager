@@ -1944,22 +1944,7 @@ router.get('/item/:filename/image.jpg', isAuthenticated, function (req, res) {
 //eventos del calendario
 router.post('/calendar/sales/', isAuthenticated, function (req, res ){
    db.manyOrNone("select concat ( 'Ventas: ', count(*) ) as title, to_char(fecha_venta, 'YYYY-MM-DD') as start from ventas group by fecha_venta").then(function (data) {
-       res.json( /*[
-           {
-               title  : 'event1',
-               start  : '2017-01-01'
-           },
-           {
-               title  : 'event2',
-               start  : '2017-01-05',
-               end    : '2017-01-07'
-           },
-           {
-               title  : 'event3',
-               start  : '2017-01-09T12:30:00',
-               allDay : false // will make the time show
-           }
-       ]*/data);
+       res.json( data );
    }).catch(function (error) {
        console.log(error);
    });
