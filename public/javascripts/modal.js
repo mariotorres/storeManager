@@ -470,3 +470,18 @@ $('#genericModal').on('show.bs.modal', function (event) {
     var page = 0;
     modalEvents(button, modal, page);
 });
+
+$('#check-in').click(function(){
+    $.post('/employee/check-in', {}).done(function (data) {
+        alert(data.message);
+        if (data.status == 'Ok') {
+            // Obtener HTML del carrito
+            // location.reload();
+        }
+    });
+    alert("¡Hola, que tengas un buen día!")
+});
+
+$('#check-out').click(function(){
+    alert("¡Descansa, nos vemos mañana!")
+});
