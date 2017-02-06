@@ -1393,11 +1393,49 @@ router.post('/item/return', function(req, res){
 /*
 * Ingreso empleados
 */
-// New item
 router.post('/employee/check-in', function(req,res ){
-    db.one('insert into asistencia ("id_usuario", "fecha", "hora" ) ' +
-        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id').then(function (data) {
-        res.render('partials/new-item', {tiendas: data[0], marcas: data[2], proveedores: data[1]});
+    db.task(function(t){
+        return t.batch([
+            t.one('insert into asistencia ("id_usuario", "fecha", "hora", "tipo" ) ' +
+                'values($1, $2, $3, $4) returning id', [
+                numericCol(req.user.id),
+                new Date(),
+                new Date().toLocaleTimeString(),
+                "entrada"
+            ]),
+            t.one('select * from usuarios where id = $1', req.user.id)
+            ])
+    }).then(function (data) {
+        res.json({
+            status: 'Ok',
+            message: 'Que tengas  un buen día ' + data[1].nombres
+        });
+    }).catch(function(error){
+        console.log(error);
+    });
+});
+
+
+/*
+ * Salida empleados
+ */
+router.post('/employee/check-out', function(req,res ){
+    db.task(function(t){
+        return t.batch([
+            t.one('insert into asistencia ("id_usuario", "fecha", "hora", "tipo" ) ' +
+                'values($1, $2, $3, $4) returning id', [
+                numericCol(req.user.id),
+                new Date(),
+                new Date().toLocaleTimeString(),
+                "salida"
+            ]),
+            t.one('select * from usuarios where id = $1', req.user.id)
+        ])
+    }).then(function (data) {
+        res.json({
+            status: 'Ok',
+            message: '!Descansa ' + data[1].nombres + ', nos vemos mañana¡'
+        });
     }).catch(function(error){
         console.log(error);
     });

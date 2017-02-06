@@ -474,14 +474,13 @@ $('#genericModal').on('show.bs.modal', function (event) {
 $('#check-in').click(function(){
     $.post('/employee/check-in', {}).done(function (data) {
         alert(data.message);
-        if (data.status == 'Ok') {
-            // Obtener HTML del carrito
-            // location.reload();
-        }
+        if (data.status == 'Ok') {}
     });
-    alert("¡Hola, que tengas un buen día!")
 });
 
 $('#check-out').click(function(){
-    alert("¡Descansa, nos vemos mañana!")
+    $.post('/employee/check-out', {}).done(function (data) {
+        alert(data.message);
+        if (data.status == 'Ok') {}
+    });
 });
