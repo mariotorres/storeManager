@@ -56,14 +56,16 @@ create table usuarios(
     permiso_tablero boolean,
     permiso_administrador boolean,
     permiso_empleados boolean,
-    permiso_inventario boolean,
-    hora_llegada time,
-    hora_salida time,
-    total_comisiones numeric,
+    permiso_inventario boolean
+/* Creo que no es necesario tener esto como atributos,
+se pueden calcular al vuelo cada vez que se haga una
+consulta sobre un empleado.
+total_comisiones numeric,
     id_penalizacion integer references penalizaciones(id),
     fecha_penalizacion date,
     id_bono integer references bonos(id),
     fecha_bono date
+*/
 );
 
 insert into usuarios ("usuario","contrasena","nombres","permiso_tablero","permiso_administrador","permiso_empleados", "permiso_inventario") values
