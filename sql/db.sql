@@ -280,8 +280,8 @@ create table asistencia(
 id serial primary key,
 id_usuario integer references usuarios(id),
 fecha date,
-hora_entrada time,
-hora_salida time
+hora time,
+tipo text
 );
 
 

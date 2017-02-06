@@ -1152,6 +1152,7 @@ router.post('/brand/register', function(req, res){
     });
 });
 
+
 /*
  * Registro de proveedores
  */
@@ -1389,6 +1390,18 @@ router.post('/item/return', function(req, res){
     });
 });
 
+/*
+* Ingreso empleados
+*/
+// New item
+router.post('/employee/check-in', function(req,res ){
+    db.one('insert into asistencia ("id_usuario", "fecha", "hora" ) ' +
+        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id').then(function (data) {
+        res.render('partials/new-item', {tiendas: data[0], marcas: data[2], proveedores: data[1]});
+    }).catch(function(error){
+        console.log(error);
+    });
+});
 
 /*
 * Cancelar nota
