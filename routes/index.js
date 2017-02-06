@@ -622,24 +622,15 @@ router.post('/lending/list/', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return t.batch([
             t.one('select count(*) from prestamos as count'),
-            t.manyOrNone('select * from prestamos order by nombre limit $1 offset $2',[ pageSize, offset ])
-        ]).then(function (lendings){
-            console.log("length:" + lendings[1].length);
-            var queries= [];
-            queries.push(lendings);
-            for(var i = 0; i < lendings[1].length; i++){
-                queries.push(t.oneOrNone("select * from usuarios where id = $1", lendings[1].id_usuario))
-            }
-            return t.batch(queries);
-        });
+            t.manyOrNone('select * from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by nombres limit $1 offset $2', [pageSize, offset])
+        ])
     }).then(function (data) {
         console.log(data.length);
         res.render('partials/lending-list',{
             status : 'Ok',
-            lendings: data[0],
-            usuarios: data[1],
+            lendings: data[1],
             pageNumber : req.body.page,
-            numberOfPages: parseInt( (+data[0][0].count + pageSize - 1 )/ pageSize )
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
         res.json({
