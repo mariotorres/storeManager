@@ -85,6 +85,12 @@ body.modal-open .supreme-container{
     font-weight: bold;
 }
 
+.selectpicker {
+    border-color: #E91E63 !important;
+    background-color: white !important;
+    color: #E91E63  !important;
+    font-weight: bold;
+}
 /*
 .tab-pane{
     background-color: white;

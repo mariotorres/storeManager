@@ -970,6 +970,15 @@ router.post('/terminal/new', function (req, res) {
     });
 });
 
+router.post('/employees/penalization/new', function (req, res) {
+    db.task(function (t) {
+    }).then(function (data) {
+        res.render('partials/new-penalization', {});
+    }).catch(function(error){
+        console.log(error);
+    });
+});
+
 router.post('/brand/new', function (req, res) {
     db.task(function (t) {
         return this.batch([

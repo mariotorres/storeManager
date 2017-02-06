@@ -422,6 +422,22 @@ function modalEvents(button, modal, page ) {
 
             });
             break;
+        // Penalizations
+        case "new_penalization":
+            modal.find('.modal-title').text('Registrar penalization');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employees/penalization/new', { /* post body data */ }, function(){
+                modal.find('form').submit(function(event){
+                    $.post('/employees/penalization/register', $(this).serialize()).done(function (data){
+                        alert(data.message);
+                        if(data.status == 'Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    event.preventDefault();
+                });
+            });
+            break;
         // brands
         case "new_brand":
             modal.find('.modal-title').text('Registrar marca');
