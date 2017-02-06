@@ -141,7 +141,7 @@
         <div class="col-sm-9">
             <p>
                 <label>Salario</label>
-                <input type="number" value="<%=user.salario%>" class="form-control" name="salario">
+                <input type="number" value="<%=user.salario%>" step="any" class="form-control" name="salario">
             </p>
         </div>
     </div>
@@ -150,8 +150,8 @@
             <p>
                 <label>Vendedor</label>
                 <select class="form-control" name="permiso_empleados">
-                    <option value="true">Sí</option>
-                    <option value="false">No</option>
+                    <option value="true" <%= user.permiso_empleados?'selected':''%> >Sí</option>
+                    <option value="false" <%= !user.permiso_empleados?'selected':''%>>No</option>
                 </select>
             </p>
         </div>
@@ -159,8 +159,8 @@
             <p>
                 <label>Inventario</label>
                 <select class="form-control" name="permiso_inventario">
-                    <option value="false">No</option>
-                    <option value="true">Sí</option>
+                    <option value="false" <%= !user.permiso_inventario?'selected':''%>>No</option>
+                    <option value="true" <%= user.permiso_inventario?'selected':''%>>Sí</option>
                 </select>
             </p>
         </div>
@@ -170,8 +170,8 @@
             <p>
                 <label>Administrador</label>
                 <select class="form-control" name="permiso_administrador">
-                    <option value="false">No</option>
-                    <option value="true">Sí</option>
+                    <option value="false" <%= !user.permiso_administrador?'selected':''%>>No</option>
+                    <option value="true" <%= user.permiso_administrador?'selected':''%>>Sí</option>
                 </select>
             </p>
         </div>
@@ -180,8 +180,8 @@
             <p>
                 <label>Tablero</label>
                 <select class="form-control" name="permiso_tablero">
-                    <option value="false">No</option>
-                    <option value="true">Sí</option>
+                    <option value="false" <%= !user.permiso_tablero?'selected':''%>>No</option>
+                    <option value="true" <%= user.permiso_tablero?'selected':''%>>Sí</option>
                 </select>
             </p>
         </div>

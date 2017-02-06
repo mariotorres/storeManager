@@ -410,7 +410,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
 });
 
 // New item
-router.post('/item/new', function(req,res ){
+router.post('/item/new', isAuthenticated,function(req,res ){
     db.task(function (t) {
         return this.batch([
             this.manyOrNone('select * from tiendas'),
@@ -699,7 +699,7 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
     });
 });
 
-router.get('/notes/getbyid/:id', function ( req, res ){
+router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
     var id = req.params.id;
 
     db.task(function (t) {
@@ -994,7 +994,7 @@ router.post('/item/return-item/', isAuthenticated, function(req, res){
     });
 });
 
-router.post('/supplier/new',function(req, res ){
+router.post('/supplier/new', isAuthenticated,function(req, res ){
     res.render('partials/new-supplier');
 });
 
@@ -1026,7 +1026,7 @@ router.post('/type/payment',function(req, res ){
 });
 
 // Listar proveedores
-router.post('/supplier/list/',function(req, res ){
+router.post('/supplier/list/', isAuthenticated,function(req, res ){
     var page = req.body.page;
     var pageSize = 10;
     var offset = page * pageSize;
@@ -1051,7 +1051,7 @@ router.post('/supplier/list/',function(req, res ){
 });
 
 // Listar usuarios
-router.post('/user/list/', function(req, res){
+router.post('/user/list/', isAuthenticated, function(req, res){
     var page = req.body.page;
     var pageSize = 10;
     var offset = page * pageSize;
@@ -1075,12 +1075,12 @@ router.post('/user/list/', function(req, res){
     });
 });
 
-router.post('/store/new', function (req, res) {
+router.post('/store/new', isAuthenticated,function (req, res) {
     res.render('partials/store');
 });
 
 
-router.post('/terminal/new', function (req, res) {
+router.post('/terminal/new', isAuthenticated,function (req, res) {
     db.task(function(t){
         return this.manyOrNone('select * from tiendas')
     }).then(function(data){
@@ -1116,7 +1116,7 @@ router.post('/employees/lending/new', function (req, res) {
     });
 });
 
-router.post('/brand/new', function (req, res) {
+router.post('/brand/new',isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.manyOrNone('select * from proveedores')
@@ -1128,11 +1128,11 @@ router.post('/brand/new', function (req, res) {
     });
 });
 
-router.post('/user/new',function (req, res) {
+router.post('/user/new',isAuthenticated,function (req, res) {
     res.render('partials/new-user');
 });
 
-router.post('/user/profile', function(req,res){
+router.post('/user/profile', isAuthenticated, function(req,res){
     var user_id = req.body.user_id;
     db.one('select * from usuarios where id = $1', user_id).then(function (user) {
         res.render('partials/user-profile', { user: user });
@@ -1231,7 +1231,7 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
 /*
  * Registro de tiendas
  */
-router.post('/store/register', function(req, res){
+router.post('/store/register', isAuthenticated,function(req, res){
     db.one('insert into tiendas(nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id, nombre ', [
         req.body.nombre,
         req.body.direccion_calle,
@@ -1259,7 +1259,7 @@ router.post('/store/register', function(req, res){
 /*
  * Registro de terminal
  */
-router.post('/terminal/register', function(req, res){
+router.post('/terminal/register', isAuthenticated, function(req, res){
     db.one('insert into terminales(nombre_facturador, id_tienda) values($1, $2) returning id, nombre_facturador ', [
         req.body.nombre,
         req.body.id_tienda
@@ -1364,7 +1364,7 @@ router.post('/employees/penalization/register', function(req, res){
 /*
  * Registro de marca
  */
-router.post('/brand/register', function(req, res){
+router.post('/brand/register', isAuthenticated, function(req, res){
     db.one('insert into marcas(nombre, id_proveedor) values($1, $2) returning id, nombre', [
         req.body.nombre,
         numericCol(req.body.id_proveedor)
@@ -1386,8 +1386,10 @@ router.post('/brand/register', function(req, res){
 /*
  * Registro de proveedores
  */
-router.post('/supplier/register', function(req, res){
-  db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, a_cuenta, por_pagar) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, nombre ', [
+router.post('/supplier/register', isAuthenticated,function(req, res){
+  db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
+      'direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, a_cuenta, por_pagar) ' +
+      'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, nombre ', [
     req.body.nombre,
     req.body.razon_social,
     req.body.rfc,
@@ -1417,7 +1419,7 @@ router.post('/supplier/register', function(req, res){
 /*
  * Actualizacion de proveedores
  */
-router.post('/supplier/update', function(req, res){
+router.post('/supplier/update', isAuthenticated,function(req, res){
     db.one('update proveedores set nombre=$2, razon_social=$3, rfc=$4, direccion_calle=$5,'+
         'direccion_numero_int=$6, direccion_numero_ext=$7, direccion_colonia=$8, direccion_localidad=$9,' +
         'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12, a_cuenta=$13, por_pagar=$14 where id=$1 returning id, nombre ', [
@@ -1452,7 +1454,7 @@ router.post('/supplier/update', function(req, res){
 /*
  * Actualización de tiendas
  */
-router.post('/store/update', function(req, res){
+router.post('/store/update', isAuthenticated, function(req, res){
     db.one('update tiendas set nombre=$2, direccion_calle=$3, direccion_numero_int=$4, direccion_numero_ext=$5, direccion_colonia=$6, direccion_localidad=$7, ' +
         'direccion_municipio=$8, direccion_ciudad=$9, direccion_pais=$10 ' +
         'where id=$1 returning id, nombre ',[
@@ -1483,7 +1485,7 @@ router.post('/store/update', function(req, res){
 /*
  * Actualización de terminales
  */
-router.post('/terminal/update', function(req, res){
+router.post('/terminal/update', isAuthenticated,function(req, res){
     db.one('update terminales set nombre_facturador=$2, id_tienda=$3 where id=$1 returning id, nombre_facturador ',[
         req.body.id,
         req.body.nombre,
@@ -1505,7 +1507,7 @@ router.post('/terminal/update', function(req, res){
 /*
  * Actualización de marcas
  */
-router.post('/brand/update', function(req, res){
+router.post('/brand/update', isAuthenticated, function(req, res){
     db.one('update marcas set nombre=$2, id_proveedor=$3 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.marca,
@@ -1527,7 +1529,7 @@ router.post('/brand/update', function(req, res){
 /*
  * Actualización de bonos
  */
-router.post('/bonus/update', function(req, res){
+router.post('/bonus/update', isAuthenticated, function(req, res){
     db.one('update bonos set nombre=$2, monto=$3, descripcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.nombre,
@@ -1614,7 +1616,7 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
 /*
  * Devolución de items
  */
-router.post('/item/return', function(req, res){
+router.post('/item/return', isAuthenticated, function(req, res){
     db.tx(function(t){
         return t.batch([
             t.one('update articulos set n_existencias = $2, fecha_ultima_modificacion = $3 where id=$1 returning id, articulo', [
@@ -1724,7 +1726,7 @@ router.post('/employee/check-out', function(req,res ){
 /*
 * Cancelar nota
  */
-router.post('/cancel/note', function(req, res){
+router.post('/cancel/note', isAuthenticated,function(req, res){
     db.tx(function(t){
         return t.batch([
             t.manyOrNone('select * from venta_articulos where id_venta = $1 ',[
@@ -1774,7 +1776,7 @@ router.post('/cancel/note', function(req, res){
 /*
  * Actualización de usuario
  */
-router.post('/user/update', function(req, res){
+router.post('/user/update', isAuthenticated, function(req, res){
     db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
         'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13, email=$14 ' +
         'where id = $1 returning id, usuario ',[
@@ -1860,11 +1862,11 @@ router.post('/user/update-password',isAuthenticated,function (req, res ) {
 
 });
 
-router.post('/reports/', function (req, res) {
+router.post('/reports/', isAuthenticated, function (req, res) {
    res.render('partials/reports');
 });
 
-router.post('/item/find-items-view', function (req, res) {
+router.post('/item/find-items-view', isAuthenticated, function (req, res) {
 
     db.task(function (t) {
         return this.batch([
@@ -1884,7 +1886,7 @@ router.post('/item/find-items-view', function (req, res) {
 
 
 
-router.post('/search/items/results', function (req, res) {
+router.post('/search/items/results', isAuthenticated, function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
     //var offset = req.body.page * pageSize;
@@ -1972,15 +1974,8 @@ router.get('/item/:filename/image.jpg', isAuthenticated, function (req, res) {
    res.sendFile( path.resolve('../uploads/'+req.params.filename));
 });
 
-/*
-router.get('/user/:id/image.jpg', function (req, res) {
-    res.sendFile( path.resolve('../images/users/user_1.png'));
-});
-*/
-
 //eventos del calendario
-
-router.post('/calendar/sales/', function (req, res ){
+router.post('/calendar/sales/', isAuthenticated, function (req, res ){
    db.manyOrNone("select concat ( 'Ventas: ', count(*) ) as title, to_char(fecha_venta, 'YYYY-MM-DD') as start from ventas group by fecha_venta").then(function (data) {
        res.json( /*[
            {
