@@ -1075,6 +1075,14 @@ router.post('/employees/bonus/new', function (req, res) {
     });
 });
 
+router.post('/employees/lending/new', function (req, res) {
+    db.manyOrNone('select * from usuarios').then(function (data) {
+        res.render('partials/new-lending', {usuarios: data});
+    }).catch(function(error){
+        console.log(error);
+    });
+});
+
 router.post('/brand/new', function (req, res) {
     db.task(function (t) {
         return this.batch([
@@ -1232,6 +1240,37 @@ router.post('/terminal/register', function(req, res){
         res.json({
             status: 'Error',
             message: 'Ocurrió un error al registrar la terminal'
+        });
+    });
+});
+
+/*
+ * Registro de préstamo
+ */
+router.post('/employees/lending/register', function(req, res){
+    console.log(req.body);
+    db.tx(function(t){
+        return t.batch([
+            db.one('insert into prestamos(id_usuario, monto, descripcion, fecha_prestamo, fecha_liquidacion) ' +
+                ' values($1, $2, $3, $4, $5) returning id, monto', [
+                req.body.id_usuario,
+                numericCol(req.body.monto),
+                req.body.desc,
+                req.body.fecha_prestamo,
+                req.body.fecha_liquidacion
+            ]),
+            db.one('select * from usuarios where id = $1', req.body.id_usuario)
+        ])
+    }).then(function(data){
+        res.json({
+            status:'Ok',
+            message: '¡El préstamo de "' + data[0].monto + '" pesos para el usuario "' + data[1].nombres + '" ha sido registrado!'
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar el préstamo.'
         });
     });
 });

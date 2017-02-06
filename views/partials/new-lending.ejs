@@ -1,0 +1,45 @@
+<form id="lendingForm">
+    <p>
+        <label>Nombre del empleado</label>
+        <select name = "id_usuario" class="form-control" required>
+            <%
+            if (usuarios.length > 0 ){
+            for (var i =0; i < usuarios.length; i++){
+            %>
+            <option value="<%= usuarios[i].id %>"> <%= usuarios[i].nombres %> </option>
+            <%
+            }
+            }else {
+            %>
+            <option value="">Ninguno</option>
+            <% }%>
+        </select>
+    </p>
+
+    <p>
+        <label>Monto del préstamo</label>
+        <input name="monto" class = "form-control">
+    </p>
+
+    <p>
+        <label>Descripción</label>
+        <input name="desc" class = "form-control">
+    </p>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Fecha préstamo</label>
+                <input type="text" name="fecha_prestamo" id="lending_datepicker1" class="form-control" required>
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>Fecha liquidación</label>
+                <input type="text" name="fecha_liquidacion" id="lending_datepicker2" class="form-control" required>
+            </p>
+        </div>
+    </div>
+    <p>
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </p>
+</form>
