@@ -592,6 +592,31 @@ router.post('/terminal/list/', isAuthenticated, function (req, res) {
     });
 });
 
+// Display de penalizaciones
+router.post('/penalization/list/', isAuthenticated, function (req, res) {
+    var pageSize = 10;
+    var offset = req.body.page * pageSize;
+
+    db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from penalizaciones as count'),
+            this.manyOrNone('select * from penalizaciones order by nombre limit $1 offset $2',[ pageSize, offset ])
+        ]);
+    }).then(function (data) {
+        res.render('partials/penalization-list',{
+            status : 'Ok',
+            penalizations: data[1],
+            pageNumber : req.body.page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
+        });
+    }).catch(function (error) {
+        res.json({
+            status: 'Error',
+            data : error
+        });
+    });
+});
+
 // Display de marcas
 router.post('/marca/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
@@ -750,6 +775,25 @@ router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
             status:'Ok',
             terminal: data[0],
             tiendas:data[1]
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status:'Error',
+            data:error
+        });
+    });
+});
+
+// Load brand data into  modal.
+router.post('/penalization/edit-penalization/', isAuthenticated, function(req, res){
+    var id = req.body.id;
+    db.one('select * from penalizaciones where id = $1', [
+        id
+    ]).then(function(data){
+        res.render('partials/edit-penalization', {
+            status:'Ok',
+            penalization: data
         });
     }).catch(function(error){
         console.log(error);

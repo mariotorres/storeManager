@@ -1,0 +1,116 @@
+<form id="penalizationForm">
+    <p>
+        <label>Nombre de la penalización</label>
+        <input value="<%=penalization.nombre%>"  name="nombre" class="form-control" required>
+    </p>
+
+    <p>
+        <label>Monto</label>
+        <input value="<%=penalization.monto%>" name="monto" class = "form-control">
+    </p>
+    <p>
+        <label>Descripción</label>
+        <textarea value="<%=penalization.descripcion%>" rows="5" name="desc" class = "form-control"></textarea>
+    </p>
+    <br>
+    <row>
+        <div class="col-md-6">
+            <p>
+                <label>Días de retraso</label>
+                <select name="retraso" class="selectpicker">
+                    <% if (penalization.dias_retraso == 0){%>
+                    <option selected>0</option>
+                    <%}else{%>
+                    <option>0</option>
+                    <%}%>
+                    <% if (penalization.dias_retraso == 1){%>
+                    <option selected>1</option>
+                    <%}else{%>
+                    <option>1</option>
+                    <%}%>
+                    <%if (penalization.dias_retraso == 2) {%>
+                    <option selected>2</option>
+                    <%}else{%>
+                    <option>2</option>
+                    <%}%>
+                    <%if (penalization.dias_retraso == 3) {%>
+                    <option selected>3</option>
+                    <%}else{%>
+                    <option>3</option>
+                    <%}%>
+                    <%if (penalization.dias_retraso == 4) {%>
+                    <option selected>4</option>
+                    <%}else{%>
+                    <option>4</option>
+                    <%}%>
+                    <%if (penalization.dias_retraso == 5) {%>
+                    <option selected>5</option>
+                    <%}else{%>
+                    <option>5</option>
+                    <%}%>
+                    <%if (penalization.dias_retraso == 6) {%>
+                    <option selected>6</option>
+                    <%}else{%>
+                    <option>6</option>
+                    <%}%>
+                    <%if (penalization.dias_retraso == 7) {%>
+                    <option selected>7</option>
+                    <%}else{%>
+                    <option>7</option>
+                    <%}%>
+                </select>
+            </p>
+        </div>
+        <div class="col-md-6">
+            <p>
+                <label>Ausencias</label>
+                <select name="ausencia" class="selectpicker">
+                    <% if (penalization.dias_ausencia == 0){%>
+                    <option selected>0</option>
+                    <%}else{%>
+                    <option>0</option>
+                    <%}%>
+                    <% if (penalization.dias_ausencia == 1){%>
+                    <option selected>1</option>
+                    <%}else{%>
+                    <option>1</option>
+                    <%}%>
+                    <%if (penalization.dias_ausencia == 2) {%>
+                    <option selected>2</option>
+                    <%}else{%>
+                    <option>2</option>
+                    <%}%>
+                    <%if (penalization.dias_ausencia == 3) {%>
+                    <option selected>3</option>
+                    <%}else{%>
+                    <option>3</option>
+                    <%}%>
+                    <%if (penalization.dias_ausencia == 4) {%>
+                    <option selected>4</option>
+                    <%}else{%>
+                    <option>4</option>
+                    <%}%>
+                    <%if (penalization.dias_ausencia == 5) {%>
+                    <option selected>5</option>
+                    <%}else{%>
+                    <option>5</option>
+                    <%}%>
+                    <%if (penalization.dias_ausencia == 6) {%>
+                    <option selected>6</option>
+                    <%}else{%>
+                    <option>6</option>
+                    <%}%>
+                    <%if (penalization.dias_ausencia == 7) {%>
+                    <option selected>7</option>
+                    <%}else{%>
+                    <option>7</option>
+                    <%}%>
+                </select>
+            </p>
+        </div>
+    </row>
+    <br>
+    <p>
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </p>
+</form>

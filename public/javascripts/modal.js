@@ -424,7 +424,7 @@ function modalEvents(button, modal, page ) {
             break;
         // Penalizations
         case "new_penalization":
-            modal.find('.modal-title').text('Registrar penalization');
+            modal.find('.modal-title').text('Registrar penalización');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/employees/penalization/new', { /* post body data */ }, function(){
                 modal.find('form').submit(function(event){
@@ -435,6 +435,28 @@ function modalEvents(button, modal, page ) {
                         }
                     });
                     event.preventDefault();
+                });
+            });
+            break;
+        case "edit_penalization":
+            modal.find('.modal-title').text('Editar penalización');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/penalization/list/',{ page: page }, function(){
+                $(this).find('.list-group-item').click(function(){
+                    $("#modal_content").load('/penalization/edit-penalization/', {id: $(this).data('penalization_id')}, function () {
+                        modal.find('form').submit(function (event) {
+                            $.post('/brand/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
+                    });
+                });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
                 });
             });
             break;

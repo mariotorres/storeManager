@@ -1,0 +1,16 @@
+<%
+if (penalizations.length > 0){%>
+<div class="list-group">
+    <%
+    for ( var i =0; i < penalizations.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-penalization_id="<%= penalizations[i].id %>">
+        <h4 class="list-group-item-heading"><%= penalizations[i].nombre %></h4>
+    </a>
+    <%}%>
+</div>
+
+<% include pagination.ejs %>
+
+<%}else {%>
+<div class="alert alert-info" role="alert">No hay penalizaciones registradas</div>
+<%}%>
