@@ -5,8 +5,9 @@ if (stores.length > 0){%>
     <%
     for ( var i =0; i < stores.length ; i ++ ){ %>
     <a href="#" class="list-group-item" data-store_id="<%= stores[i].id %>">
-        <h4 class="list-group-item-heading"> <%= stores[i].nombre %></h4>
-        <p class="list-group-item-text"><%= stores[i].direccion_calle %></p>
+        <h4 class="list-group-item-heading"> <i class="fa fa-shopping-bag"></i> Tienda <%= stores[i].nombre %></h4>
+        <p class="list-group-item-text"><%= "Calle "+stores[i].direccion_calle+", número "+ stores[i].direccion_numero_ext + ", colonia "+ stores[i].direccion_colonia +
+            ", ciudad "+ stores[i].direccion_ciudad%></p>
     </a>
     <%}%>
 </div>

@@ -7,11 +7,11 @@
     </p>
     <p>
         <label>Calle</label>
-        <input type="text" value="<%=store.direccion_calle%>"  class="form-control" name="direccion_calle">
+        <input type="text" value="<%=store.direccion_calle%>"  class="form-control" name="direccion_calle" required>
     </p>
     <p>
         <label>Número interior</label>
-        <input type="text" value="<%=store.direccion_numero_int%>"  class="form-control" name="direccion_numero_int">
+        <input type="text" value="<%=store.direccion_numero_int%>"  class="form-control" name="direccion_numero_int" required>
     </p>
     <p>
         <label>Número exterior</label>
@@ -19,7 +19,7 @@
     </p>
     <p>
         <label>Colonia</label>
-        <input type="text" value="<%=store.direccion_colonia%>"  class="form-control" name="direccion_colonia">
+        <input type="text" value="<%=store.direccion_colonia%>"  class="form-control" name="direccion_colonia" required>
     </p>
     <p>
         <label>Localidad</label>
@@ -31,11 +31,15 @@
     </p>
     <p>
         <label>Ciudad</label>
-        <input type="text" value="<%=store.direccion_ciudad%>"  class="form-control" name="direccion_ciudad">
+        <input type="text" value="<%=store.direccion_ciudad%>"  class="form-control" name="direccion_ciudad" required>
     </p>
     <p>
-        <label>Pais</label>
-        <input type="text" value="<%=store.direccion_pais%>" class="form-control" name = "direccion_pais">
+        <label>Estado</label>
+        <input type="text" value="<%=store.direccion_estado%>"  class="form-control" name="direccion_estado" required>
+    </p>
+    <p>
+        <label>País</label>
+        <input type="text" value="<%=store.direccion_pais%>" class="form-control" name = "direccion_pais" required>
     </p>
     <p>
         <button type="submit" class="btn btn-primary">Actualizar</button>
