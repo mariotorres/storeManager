@@ -29,14 +29,22 @@
         <label>Nombre(s)</label>
         <input type="text" value="<%=user.nombres%>" class="form-control" name="nombres">
     </p>
-    <p>
-        <label>Apellido paterno</label>
-        <input type="text" value="<%=user.apellido_paterno%>" class="form-control" name="apellido_paterno">
-    </p>
-    <p>
-        <label>Apellido materno</label>
-        <input type="text" value="<%=user.apellido_materno%>" class="form-control" name="apellido_materno">
-    </p>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Apellido paterno</label>
+                <input type="text" value="<%=user.apellido_paterno%>" class="form-control" name="apellido_paterno">
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>Apellido materno</label>
+                <input type="text" value="<%=user.apellido_materno%>" class="form-control" name="apellido_materno">
+            </p>
+        </div>
+    </div>
+
+
     <p>
         <label>RFC</label>
         <input type="text" value="<%=user.rfc%>" class="form-control" name="rfc">
@@ -45,14 +53,23 @@
         <label>Calle</label>
         <input type="text" value="<%=user.direccion_calle%>" class="form-control" name="direccion_calle">
     </p>
-    <p>
-        <label>Número interior</label>
-        <input type="text" value="<%=user.direccion_numero_int%>" class="form-control" name="direccion_numero_int">
-    </p>
-    <p>
-        <label>Número exterior</label>
-        <input type="text" value="<%=user.direccion_numero_ext%>"  class="form-control" name="direccion_numero_ext">
-    </p>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Número interior</label>
+                <input type="text" value="<%=user.direccion_numero_int%>" class="form-control" name="direccion_numero_int">
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>Número exterior</label>
+                <input type="text" value="<%=user.direccion_numero_ext%>"  class="form-control" name="direccion_numero_ext">
+            </p>
+        </div>
+
+    </div>
+
+
     <p>
         <label>Colonia</label>
         <input type="text" value="<%=user.direccion_colonia%>" class="form-control" name="direccion_colonia">
