@@ -1373,6 +1373,30 @@ router.post('/brand/update', function(req, res){
     });
 });
 
+/*
+ * Actualización de penalizaciones
+ */
+router.post('/penalization/update', function(req, res){
+    db.one('update penalizaciones set nombre=$2, monto=$3, descripcion=$4, dias_retraso=$5, dias_ausencia=$6 where id=$1 returning id, nombre ',[
+        req.body.id,
+        req.body.nombre,
+        numericCol(req.body.monto),
+        req.body.descripcion,
+        numericCol(req.body.retraso),
+        numericCol(req.body.ausencia)
+    ]).then(function (data) {
+        res.json({
+            status :'Ok',
+            message : 'Los datos de la penalización "'+ data.nombre +'" han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al actualizar los datos de la penalización'
+        });
+    });
+});
 
 /*
  * Actualización de items

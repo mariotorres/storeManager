@@ -445,7 +445,7 @@ function modalEvents(button, modal, page ) {
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/penalization/edit-penalization/', {id: $(this).data('penalization_id')}, function () {
                         modal.find('form').submit(function (event) {
-                            $.post('/brand/update', $(this).serialize()).done(function (data) {
+                            $.post('/penalization/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
                                 if(data.status=='Ok'){
                                     modal.modal('hide');
