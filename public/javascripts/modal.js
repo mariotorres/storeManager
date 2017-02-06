@@ -423,6 +423,30 @@ function modalEvents(button, modal, page ) {
             });
             break;
         // Bonus
+        case "new_lending":
+            modal.find('.modal-title').text('Registrar préstamo');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employees/lending/new', {}, function(){
+                $('#lending_datepicker1').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    //defaultDate: (new Date().getDate() - 1)
+                });
+                $('#lending_datepicker2').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date()
+                });
+                modal.find('form').submit(function(event){
+                    $.post('/employees/lending/register', $(this).serialize()).done(function (data){
+                        alert(data.message);
+                        if(data.status == 'Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    event.preventDefault();
+                });
+            });
+            break;
+        // Bonus
         case "new_bonus":
             modal.find('.modal-title').text('Registrar bono');
             modal.find('#modal_content').html("");
