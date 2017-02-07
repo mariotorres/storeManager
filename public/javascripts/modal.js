@@ -110,12 +110,34 @@ function modalEvents(button, modal, page ) {
                     // alert("Funciona, item: "+ $(this).data('item_id'));
                     $("#modal_content").load('/item/edit-item/',{ id: $(this).data('item_id') }, function () {
                         modal.find('form').submit(function (event) {
-                            $.post('/item/update', $(this).serialize()).done(function (data) {
-                                alert(data.message);
-                                if(data.status=='Ok'){
-                                    modal.modal('hide');
+
+                            var formData = new FormData();
+
+                            var arr = $(this).serializeArray();
+
+                            for ( var i =0; i < arr.length ; i++){
+                                formData.append(arr[i].name, arr[i].value);
+                            }
+
+                            var img = document.getElementById('imagen');
+                            formData.append('imagen', img.files[0] );
+                            
+                            $.ajax({
+                                url: '/item/update',
+                                data: formData,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                type: 'POST',
+                                success: function (data) {
+                                    alert(data.message);
+                                    if (data)
+                                        if (data.status == 'Ok') {
+                                            modal.modal('hide');
+                                        }
                                 }
                             });
+
                             event.preventDefault();
                         });
                     });
