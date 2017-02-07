@@ -452,6 +452,7 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
+        console.log(error);
         res.json({
             status: 'Error',
             data : error
