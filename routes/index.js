@@ -437,8 +437,8 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
                 'order by articulo limit $1 offset $2',[ pageSize, offset ]),
             this.oneOrNone('select * from usuarios where id = $1',[ req.user.id ]),
             this.manyOrNone('select * from terminales'),
-            this.manyOrNone('select id from articulos where'+ /*n_existencias > 0*/' and not exists ' +
-                '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ])
+            /*this.manyOrNone('select id from articulos where n_existencias > 0 and not exists ' +
+                '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ])*/
         ]);
 
     }).then(function (data) {
@@ -447,7 +447,7 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
             items: data[1],
             user: data[2],
             terminales:data[3],
-            not_in_carrito: data[4],
+            //not_in_carrito: data[4],
             pageNumber : req.body.page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
