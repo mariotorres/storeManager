@@ -425,18 +425,19 @@ router.post('/item/new', isAuthenticated,function(req,res ){
 });
 
 // Display de objetos para venta
+//esto está mal
 router.post('/item/list/sale', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
 
     db.task(function (t) {
         return this.batch([
-            this.one('select count(*) from articulos as count where n_existencias > 0'),
-            this.manyOrNone('select * from articulos where n_existencias > 0 ' +
-                ' order by articulo limit $1 offset $2',[ pageSize, offset ]),
+            this.one('select count(*) from articulos as count '/*where n_existencias > 0'*/),
+            this.manyOrNone('select * from articulos ' /*where n_existencias > 0 '*/ +
+                'order by articulo limit $1 offset $2',[ pageSize, offset ]),
             this.oneOrNone('select * from usuarios where id = $1',[ req.user.id ]),
             this.manyOrNone('select * from terminales'),
-            this.manyOrNone('select id from articulos where n_existencias > 0 and not exists ' +
+            this.manyOrNone('select id from articulos where'+ /*n_existencias > 0*/' and not exists ' +
                 '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ])
         ]);
 
@@ -520,8 +521,8 @@ router.post('/item/list/', isAuthenticated, function (req, res) {
 
     db.task(function (t) {
         return this.batch([
-            this.one('select count(*) from articulos as count where n_existencias > 0'),
-            this.manyOrNone('select * from articulos where n_existencias > 0 order by articulo limit $1 offset $2',[ pageSize, offset ])
+            this.one('select count(*) from articulos as count '/*where n_existencias > 0'*/),
+            this.manyOrNone('select * from articulos '/*where n_existencias > 0*/+' order by articulo limit $1 offset $2',[ pageSize, offset ])
         ]);
 
     }).then(function (data) {
@@ -1892,7 +1893,7 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
     //var offset = req.body.page * pageSize;
     db.task(function (t) {
         return this.batch([
-            t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%' and n_existencias > 0", [
+            t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%' "/*and n_existencias > 0"*/, [
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,
