@@ -121,7 +121,6 @@ function modalEvents(button, modal, page ) {
 
                             var img = document.getElementById('imagen');
                             formData.append('imagen', img.files[0] );
-                            
                             $.ajax({
                                 url: '/item/update',
                                 data: formData,
