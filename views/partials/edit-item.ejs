@@ -6,7 +6,11 @@
         <label>articulo</label>
         <input type="text" value="<%=item.articulo%>" class="form-control" name="articulo" required>
     </p>
-
+    <a href="#" class="thumbnail" style="min-height: 200px; text-align:center; min-width: 200px;">
+        <!--Aquí va la foto-->
+        <img src="<%= '/item/' + item.nombre_imagen +'/image.jpg'%>">
+        <!--<i class="fa fa-picture-o fa-5x" aria-hidden="true"></i>-->
+    </a>
 
     <p>
         <label>Descripcion</label>
@@ -86,14 +90,14 @@
     <div class="col-sm-4">
         <p>
             <label>Número de existencias</label>
-            <input type="number" min="0" class="form-control" value="<%= item.n_existencias%>" name="n_existencias" disabled>
+            <input type="number" min="0" class="form-control" value="<%= item.n_existencias%>" name="n_existencias">
         </p>
     </div>
     </div>
 
     <p>
         <label>Fotografía</label>
-        <input class="form-control" type="file" name="url_imagen" accept="image/*">
+        <input class="form-control" type="file" name="imagen" id="imagen" accept="image/*" required>
     </p>
     <!--
     <p>
