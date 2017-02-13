@@ -505,7 +505,7 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/lending/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
-                    $("#modal_content").load('/bonus/edit-bonus/', {id: $(this).data('bonos_id')}, function () {
+                    $("#modal_content").load('/lending/edit-lending/', {id: $(this).data('bonos_id')}, function () {
                         modal.find('form').submit(function (event) {
                             $.post('/bonus/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
