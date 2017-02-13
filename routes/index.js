@@ -1523,6 +1523,7 @@ router.post('/brand/update', isAuthenticated, function(req, res){
  * Actualización de bonos
  */
 router.post('/bonus/update', isAuthenticated, function(req, res){
+    console.log(req.body);
     db.one('update bonos set nombre=$2, monto=$3, descripcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.nombre,
@@ -1548,7 +1549,7 @@ router.post('/bonus/update', isAuthenticated, function(req, res){
 /*
  * Actualización de penalizaciones
  */
-router.post('/penalization/update', function(req, res){
+router.post('/penalization/update', isAuthenticated, function(req, res){
     db.one('update penalizaciones set nombre=$2, monto=$3, descripcion=$4, dias_retraso=$5, dias_ausencia=$6 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.nombre,
