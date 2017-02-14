@@ -2011,7 +2011,26 @@ router.post('/notes/find-notes-view', function (req, res) {
     }).catch(function (error) {
         console.log(error);
     });
+});
 
+router.post('/employee/details', function (req, res) {
+    console.log(req.body);
+    var id = req.body.user_id;
+    db.task(function (t) {
+        return this.batch([
+            this.oneOrNone('select * from usuarios where id = $1', id),
+            this.manyOrNone('select * from asistencia where id_usuario = $1', id),
+            this.manyOrNone('select * from prestamos where id_usuario = $1', id)
+        ]);
+    }).then(function (data) {
+        res.render('partials/employee-detail',{
+            usuario: data[0],
+            asistencias: data[1],
+            prestamos:data[2]
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
 });
 
 router.post('/search/employees/results', function (req, res) {

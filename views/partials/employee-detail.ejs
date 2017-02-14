@@ -1,0 +1,25 @@
+<form id="userDetail">
+<p>
+    <label>Nombre(s)</label>
+    <input type="text" value="<%=user.nombres%>" class="form-control" name="nombres" required>
+</p>
+<div class="row">
+    <div class="col-sm-6">
+        <p>
+            <label>Apellido paterno</label>
+            <input type="text" value="<%=user.apellido_paterno%>" class="form-control" name="apellido_paterno" required>
+        </p>
+    </div>
+    <div class="col-sm-6">
+        <p>
+            <label>Apellido materno</label>
+            <input type="text" value="<%=user.apellido_materno%>" class="form-control" name="apellido_materno" required>
+        </p>
+    </div>
+</div>
+
+    <p>
+        <button class="btn btn-primary" type="submit"> <i class="fa fa-print"></i> Imprimir reporte</button>
+    </p>
+
+</form>

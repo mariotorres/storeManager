@@ -150,10 +150,17 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Buscar empleados');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/employees/find-employees-view',{}, function () {
-                modal.find('form').submit(function (e) {
-                    // Mostrar resultados
+                modal.find('#findEmployees').submit(function (e) {
                     modal.find('#search_results').load('/search/employees/results', $(this).serializeArray(), function () {
-                        //poder código para hacer algo con la nota seleccionada
+                        $('#search_results').find('#findEmployees').submit(function(e){
+                            $.post('/employee/details', $(this).serialize()/*{id: $(this).data('user_id') }*/).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            e.preventDefault();
+                        })
                     });
                     e.preventDefault();
                 });
