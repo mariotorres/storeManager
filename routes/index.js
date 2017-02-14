@@ -857,12 +857,18 @@ router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
 // Load bonus data into  modal.
 router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    db.one('select * from prestamos, usuarios where prestamos.id = $1 and prestamos.id_usuario = usuarios.id ', [
-        id
-    ]).then(function(data){
+    db.task(function(t){
+        return t.batch([
+            db.one('select * from prestamos, usuarios where prestamos.id = $1 and prestamos.id_usuario = usuarios.id ', [
+                id
+            ]),
+            db.manyOrNone('select * from usuarios')
+        ])
+    }).then(function(data){
         res.render('partials/edit-lending', {
             status:'Ok',
-            lendings: data
+            lendings: data[0],
+            usuarios: data[1]
         });
     }).catch(function(error){
         console.log(error);
@@ -1534,6 +1540,32 @@ router.post('/brand/update', isAuthenticated, function(req, res){
         res.json({
             status : 'Error',
             message: 'Ocurrió un error al actualizar los datos de la marca'
+        });
+    });
+});
+
+/*
+ * Actualización de prestamos
+ */
+router.post('/lendings/update', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db.one('update prestamos set id_usuario=$2, monto=$3, descripcion=$4, fecha_prestamo=$5, fecha_liquidacion=$6 where id=$1 returning id, monto ',[
+        req.body.id,
+        req.body.id_usuario,
+        numericCol(req.body.monto),
+        req.body.desc,
+        new Date(req.body.fecha_prestamo),
+        new Date(req.body.fecha_liquidacion)
+    ]).then(function (data) {
+        res.json({
+            status :'Ok',
+            message : 'Los datos del prestamo "'+ data.id +'" han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al actualizar los datos del bono'
         });
     });
 });

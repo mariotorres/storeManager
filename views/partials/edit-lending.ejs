@@ -1,12 +1,13 @@
 <form id="lendingForm">
+    <input type="text" value="<%=lendings.id%>" name="id" hidden>
     <p>
         <label>Nombre del empleado</label>
-        <select name="id_empleado" class="form-control">
+        <select name="id_usuario" class="form-control">
             <%
-            if (lendings.length > 0 ){
-            for (var i =0; i < lendings.length; i++){
+            if (usuarios.length > 0 ){
+            for (var i =0; i < usuarios.length; i++){
             %>
-            <option value="<%= lendings[i].id %>" <%= lendings[i].id == lendings.id_usuario ? 'selected': null %> > <%= lendings[i].nombres %> </option>
+            <option value="<%= usuarios[i].id %>" <%= usuarios[i].id == lendings.id_usuario ? 'selected': null %> > <%= usuarios[i].nombres %> </option>
             <%
             }
             }else {
