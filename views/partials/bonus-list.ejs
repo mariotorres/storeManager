@@ -4,7 +4,8 @@ if (bonos.length > 0){%>
     <%
     for ( var i =0; i < bonos.length ; i ++ ){ %>
     <a href="#" class="list-group-item" data-bonos_id="<%= bonos[i].id %>">
-        <h4 class="list-group-item-heading"><%= bonos[i].nombre %></h4>
+        <h4 class="list-group-item-heading"><i class="fa fa-usd"></i> <%= bonos[i].nombre %></h4>
+        <p class="list-group-item-text"><%= "Monto: " + bonos[i].monto + ", Descripción: " +  bonos[i].descripcion%></p>
     </a>
     <%}%>
 </div>

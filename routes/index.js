@@ -1763,7 +1763,7 @@ router.post('/employee/check-out', function(req,res ){
     }).then(function (data) {
         res.json({
             status: 'Ok',
-            message: '!Descansa ' + data[1].nombres + ', nos vemos mañana¡'
+            message: '¡Descansa ' + data[1].nombres + ', nos vemos mañana!'
         });
     }).catch(function(error){
         console.log(error);
