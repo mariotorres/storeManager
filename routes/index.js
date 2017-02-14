@@ -1369,13 +1369,14 @@ router.post('/employees/lending/register', function(req, res){
     console.log(req.body);
     db.tx(function(t){
         return t.batch([
-            db.one('insert into prestamos(id_usuario, monto, descripcion, fecha_prestamo, fecha_liquidacion) ' +
-                ' values($1, $2, $3, $4, $5) returning id, monto', [
+            db.one('insert into prestamos(id_usuario, monto, descripcion, fecha_prestamo, fecha_liquidacion, pago_semanal) ' +
+                ' values($1, $2, $3, $4, $5, $6) returning id, monto', [
                 req.body.id_usuario,
                 numericCol(req.body.monto),
                 req.body.desc,
                 req.body.fecha_prestamo,
-                req.body.fecha_liquidacion
+                req.body.fecha_liquidacion,
+                numericCol(req.body.monto_semanal)
             ]),
             db.one('select * from usuarios where id = $1', req.body.id_usuario)
         ])
@@ -1617,13 +1618,14 @@ router.post('/brand/update', isAuthenticated, function(req, res){
  */
 router.post('/lendings/update', isAuthenticated, function(req, res){
     console.log(req.body);
-    db.one('update prestamos set id_usuario=$2, monto=$3, descripcion=$4, fecha_prestamo=$5, fecha_liquidacion=$6 where id=$1 returning id, monto ',[
+    db.one('update prestamos set id_usuario=$2, monto=$3, descripcion=$4, fecha_prestamo=$5, fecha_liquidacion=$6, pago_semanal=$7 where id=$1 returning id, monto ',[
         req.body.id,
         req.body.id_usuario,
         numericCol(req.body.monto),
         req.body.desc,
         new Date(req.body.fecha_prestamo),
-        new Date(req.body.fecha_liquidacion)
+        new Date(req.body.fecha_liquidacion),
+        numericCol(req.body.monto_semanal)
     ]).then(function (data) {
         res.json({
             status :'Ok',
