@@ -172,7 +172,7 @@ create table terminales(
         id serial primary key,
         id_tienda integer references tiendas(id),
         nombre_facturador varchar(30),
-        RFC text
+        rfc text
 );
 
 

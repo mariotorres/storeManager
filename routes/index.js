@@ -814,7 +814,7 @@ router.post('/store/edit-store/', isAuthenticated, function(req, res){
 // Load terminal data into  modal.
 router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    //console.log(id);
+    console.log(id);
     db.task(function(t){
         return this.batch([
             db.one('select * from terminales where id = $1', [id]),
@@ -1278,8 +1278,9 @@ router.post('/store/register', isAuthenticated,function(req, res){
  * Registro de terminal
  */
 router.post('/terminal/register', isAuthenticated, function(req, res){
-    db.one('insert into terminales(nombre_facturador, id_tienda) values($1, $2) returning id, nombre_facturador ', [
+    db.one('insert into terminales(nombre_facturador, rfc, id_tienda) values($1, $2, $3) returning id, nombre_facturador ', [
         req.body.nombre,
+        req.body.rfc,
         req.body.id_tienda
     ]).then(function(data){
         res.json({
@@ -1504,10 +1505,11 @@ router.post('/store/update', isAuthenticated, function(req, res){
  * Actualización de terminales
  */
 router.post('/terminal/update', isAuthenticated,function(req, res){
-    db.one('update terminales set nombre_facturador=$2, id_tienda=$3 where id=$1 returning id, nombre_facturador ',[
+    db.one('update terminales set nombre_facturador=$2, id_tienda=$3, rfc=$4 where id=$1 returning id, nombre_facturador ',[
         req.body.id,
         req.body.nombre,
-        req.body.id_tienda
+        req.body.id_tienda,
+        req.body.rfc
     ]).then(function (data) {
         res.json({
             status :'Ok',

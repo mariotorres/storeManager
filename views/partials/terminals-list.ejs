@@ -4,7 +4,8 @@ if (terminals.length > 0){%>
     <%
     for ( var i =0; i < terminals.length ; i ++ ){ %>
     <a href="#" class="list-group-item" data-terminal_id="<%= terminals[i].id %>">
-        <h4 class="list-group-item-heading"> <%= terminals[i].nombre_facturador %></h4>
+        <h4 class="list-group-item-heading"> <i class="fa fa-credit-card"></i> <%= terminals[i].nombre_facturador %></h4>
+        <p class="list-group-item-text"><%= "RFC: "+ terminals[i].rfc %></p>
     </a>
     <%}%>
 </div>
