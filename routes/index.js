@@ -2013,7 +2013,7 @@ router.post('/notes/find-notes-view', function (req, res) {
 
 router.post('/employee/details', function (req, res) {
     console.log(req.body);
-    var id = req.body.user_id;
+    var id = req.body.id;
     db.task(function (t) {
         return this.batch([
             this.oneOrNone('select * from usuarios where id = $1', id),
