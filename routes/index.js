@@ -2018,7 +2018,8 @@ router.post('/employee/details', function (req, res) {
         return this.batch([
             this.oneOrNone('select * from usuarios where id = $1', id),
             this.manyOrNone('select * from asistencia where id_usuario = $1', id),
-            this.manyOrNone('select * from prestamos where id_usuario = $1', id)
+            this.manyOrNone('select * from prestamos where id_usuario = $1', id),
+            this.manyOrNone('select * from ventas where id_usuario = $1', id)
         ]);
     }).then(function (data) {
         res.render('partials/employee-detail',{
