@@ -31,6 +31,21 @@ create table bonos (
     temporalidad text
     );
 
+/* Tiendas */
+drop table if exists tiendas cascade;
+create table tiendas (
+    id serial primary key,
+    nombre text,
+    direccion_calle text,
+    direccion_numero_int text,
+    direccion_numero_ext text,
+    direccion_colonia text,
+    direccion_localidad text,
+    direccion_municipio text,
+    direccion_ciudad text,
+    direccion_estado text,
+    direccion_pais text
+);
 
 
 /* Usuarios */
@@ -58,16 +73,10 @@ create table usuarios(
     permiso_tablero boolean,
     permiso_administrador boolean,
     permiso_empleados boolean,
-    permiso_inventario boolean
-/* Creo que no es necesario tener esto como atributos,
-se pueden calcular al vuelo cada vez que se haga una
-consulta sobre un empleado.
-total_comisiones numeric,
-    id_penalizacion integer references penalizaciones(id),
-    fecha_penalizacion date,
-    id_bono integer references bonos(id),
-    fecha_bono date
-*/
+    permiso_inventario boolean,
+    id_tienda integer references tiendas(id),
+    hora_llegada time,
+    hora_salida time
 );
 
 insert into usuarios ("usuario","contrasena","nombres","permiso_tablero","permiso_administrador","permiso_empleados", "permiso_inventario") values
@@ -116,23 +125,6 @@ create table proveedores (
     a_cuenta  numeric, /* Esta cantidad se registra en el momento en el que se registra una prenda del proveedor*/
     por_pagar numeric  /* Esta cantidad se registra en el momento en el que se vende una prenda del proveedor */
 );
-
-/* Tiendas */
-drop table if exists tiendas cascade;
-create table tiendas (
-    id serial primary key,
-    nombre text,
-    direccion_calle text,
-    direccion_numero_int text,
-    direccion_numero_ext text,
-    direccion_colonia text,
-    direccion_localidad text,
-    direccion_municipio text,
-    direccion_ciudad text,
-    direccion_estado text,
-    direccion_pais text
-);
-
 
 drop table if exists marcas cascade;
 create table marcas (
