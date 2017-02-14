@@ -854,6 +854,25 @@ router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
     });
 });
 
+// Load bonus data into  modal.
+router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
+    var id = req.body.id;
+    db.one('select * from prestamos, usuarios where prestamos.id = $1 and prestamos.id_usuario = usuarios.id ', [
+        id
+    ]).then(function(data){
+        res.render('partials/edit-lending', {
+            status:'Ok',
+            lendings: data
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status:'Error',
+            data:error
+        });
+    });
+});
+
 // Load penalization data into  modal.
 router.post('/penalization/edit-penalization/', isAuthenticated, function(req, res){
     var id = req.body.id;
