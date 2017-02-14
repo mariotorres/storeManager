@@ -4,8 +4,8 @@ if (items.length > 0){%>
 <div class="list-group">
 <% for ( var i =0; i < items.length ; i ++ ){ %>
     <a href="#" class="list-group-item" data-item_id="<%= items[i].id %>">
-        <h4 class="list-group-item-heading"> <%= items[i].articulo %></h4>
-        <p class="list-group-item-text"><%= items[i].descripcion %></p>
+        <h4 class="list-group-item-heading"><i class="fa fa-female"></i>   <%= items[i].articulo %></h4>
+        <p class="list-group-item-text"><%= "Proveedor: " + items[i].descripcion + ", Precio: " +  items[i].precio + ", Existencias: " + items[i].n_existencias%></p>
     </a>
 <%}%>
 </div>
