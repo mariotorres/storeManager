@@ -1285,6 +1285,61 @@ router.post('/store/register', isAuthenticated,function(req, res){
     });
 });
 
+
+/*
+ * Nuevos usuarios
+ */
+router.post('/user/signup', isAuthenticated, function(req, res){
+
+    db.one('select count(*) as count from usuarios where usuario =$1',[ req.body.usuario ]).then(function (data) {
+
+        if ( data.count == 0) {
+
+            return db.one('insert into usuarios ( nombres, apellido_paterno, apellido_materno, rfc, direccion_calle, direccion_numero_int, ' +
+                'direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, email) values' +
+                '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id, usuario ', [
+                req.body.id,
+                req.body.nombres,
+                req.body.apellido_paterno,
+                req.body.apellido_materno,
+                req.body.rfc,
+                req.body.direccion_calle,
+                req.body.direccion_numero_int,
+                req.body.direccion_numero_ext,
+                req.body.direccion_colonia,
+                req.body.direccion_localidad,
+                req.body.direccion_municipio,
+                req.body.direccion_ciudad,
+                req.body.direccion_pais,
+                req.body.email,
+                //req.body.id_tienda
+            ]);
+        }
+
+        return { id : -1 };
+
+    }).then(function (data) {
+
+        var response = { status : '', message: ''};
+        if ( data.id == -1 ) {
+            response.status ='Error';
+            response.message = 'Ya existe un usuario registrado con ese nombre, pruebe uno distinto';
+        } else {
+            response.status = 'Ok';
+            response.message = 'El usuario "' + data.usuario + '" ha sido registrado';
+        }
+
+        res.json(response);
+
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al registrar el nuevo usuario'
+        });
+    });
+});
+
 /*
  * Registro de terminal
  */

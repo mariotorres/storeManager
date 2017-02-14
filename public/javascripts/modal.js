@@ -6,8 +6,16 @@ function modalEvents(button, modal, page ) {
         case "new_user":
             modal.find('.modal-title').text('Registrar usuario');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/user/new', { user_id: button.data('user_id')  }, function(){
-
+            modal.find('#modal_content').load('/user/new', { }, function(){
+                modal.find('form').submit(function (e) {
+                    $.post('/user/signup/', $(this).serializeArray()).done(function (data) {
+                        alert(data.message);
+                        if (data.status== 'Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    e.preventDefault();
+                });
             });
             break;
         case "user_profile":
