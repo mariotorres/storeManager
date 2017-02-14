@@ -1,0 +1,15 @@
+<%
+if (employees.length > 0){%>
+<div class="list-group">
+    <% for ( var i =0; i < employees.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-user_id="<%= employees[i].id%>">
+        <h4 class="list-group-item-heading"><%= employees[i].nombres%></h4>
+        <p class="list-group-item-text"> <strong>Apellido Paterno:</strong> <%= employees[i].apellido_paterno %></p>
+        <p class="list-group-item-text"> <strong>Apellido Materno:</strong> <%= employees[i].apellido_materno %></p>
+    </a>
+    <%}%>
+</div>
+
+<%}else {%>
+<div class="alert alert-info" role="alert">No hay usuarios registrados con ese nombre</div>
+<%}%>

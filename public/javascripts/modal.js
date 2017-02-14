@@ -146,6 +146,19 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "find_employee":
+            modal.find('.modal-title').text('Buscar empleados');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employees/find-employees-view',{}, function () {
+                modal.find('form').submit(function (e) {
+                    // Mostrar resultados
+                    modal.find('#search_results').load('/search/employees/results', $(this).serializeArray(), function () {
+                        //poder código para hacer algo con la nota seleccionada
+                    });
+                    e.preventDefault();
+                });
+            });
+            break;
         case "find_notes":
             modal.find('.modal-title').text('Buscar notas');
             modal.find('#modal_content').html("");

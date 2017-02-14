@@ -1984,6 +1984,19 @@ router.post('/search/items/devs', function (req, res) {
 });
 
 
+router.post('/employees/find-employees-view', function (req, res) {
+    db.task(function (t) {
+
+    }).then(function (data) {
+        res.render('partials/find-employees',{
+
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
+
+});
+
 router.post('/notes/find-notes-view', function (req, res) {
     db.task(function (t) {
         return this.batch([
@@ -2001,6 +2014,20 @@ router.post('/notes/find-notes-view', function (req, res) {
 
 });
 
+router.post('/search/employees/results', function (req, res) {
+    console.log(req.body);
+    db.manyOrNone("select * from usuarios where nombres = $1 or apellido_paterno = $2 or apellido_materno = $3", [
+        req.body.nombres,
+        req.body.apellido_paterno,
+        req.body.apellido_materno
+    ]).then(function (data) {
+        res.render('partials/search-employees-results',{
+            employees: data
+        });
+    }).catch(function (error) {
+        console.log(error);
+    });
+});
 
 router.post('/search/notes/results', function (req, res) {
     db.manyOrNone("select * from ventas where (fecha_venta > $2 and fecha_venta < $3) or id = $1", [
@@ -2014,7 +2041,6 @@ router.post('/search/notes/results', function (req, res) {
     }).catch(function (error) {
         console.log(error);
     });
-
 });
 
 router.get('/item/:filename/image.jpg', isAuthenticated, function (req, res) {
