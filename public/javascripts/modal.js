@@ -161,10 +161,8 @@ function modalEvents(button, modal, page ) {
                             });
                             e.preventDefault();
                         })*/
-
                         $('#search_results').find('.list-group-item').click(function () {
-                            $.post('/employee/details', { id: $(this).data('user_id') }).done(function (data) {
-                                //alert(data.message);
+                            modal.find('#modal_content').load('/employee/details', { id: $(this).data('user_id') }).done(function (data) {
                                 if(data.status=='Ok'){
                                     modal.modal('hide');
                                 }
