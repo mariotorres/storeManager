@@ -89,6 +89,7 @@ create table prestamos (
     id serial primary key,
     id_usuario integer references usuarios(id),
     monto numeric,
+    pago_semanal numeric,
     descripcion text,
     fecha_prestamo date,
     fecha_liquidacion date
