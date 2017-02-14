@@ -942,10 +942,16 @@ router.post('/supplier/edit-supplier/', isAuthenticated, function(req, res){
 // Load user data into modal
 router.post('/user/edit-user/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    db.one('select * from usuarios where id = $1', [id]).then(function(data){
+    db.task(function(t){
+        return t.batch([
+            db.one('select * from usuarios where id = $1', [id]),
+            db.manyOrNone('select * from tiendas')
+        ])
+    }).then(function(data){
         res.render('partials/edit-user', {
             status: 'Ok',
-            user:data
+            user: data[0],
+            tiendas: data[1]
         });
     }).catch(function(error){
         conslole.log(error);
@@ -1838,7 +1844,7 @@ router.post('/cancel/note', isAuthenticated,function(req, res){
  */
 router.post('/user/update', isAuthenticated, function(req, res){
     db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
-        'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13, email=$14 ' +
+        'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13, email=$14, id_tienda=$15' +
         'where id = $1 returning id, usuario ',[
         req.body.id,
         req.body.nombres,
@@ -1853,7 +1859,8 @@ router.post('/user/update', isAuthenticated, function(req, res){
         req.body.direccion_municipio,
         req.body.direccion_ciudad,
         req.body.direccion_pais,
-        req.body.email
+        req.body.email,
+        req.body.id_tienda
     ]).then(function (data) {
         res.json({
             status :'Ok',

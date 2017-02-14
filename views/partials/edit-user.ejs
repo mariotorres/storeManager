@@ -129,22 +129,54 @@
 
 
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <p>
-                <label>¿Empleado?</label>
+                <label>¿Es empleado?</label>
                 <select class="form-control" name="empleado">
                     <option value="true">Sí</option>
                     <option value="false">No</option>
                 </select>
             </p>
         </div>
-        <div class="col-sm-9">
+        <div class="col-sm-3">
+            <p>
+                <label>Tienda</label>
+                <select name="id_tienda" class="form-control">
+                    <%
+                    if (tiendas.length > 0 ){
+                    for (var i =0; i < tiendas.length; i++){
+                    %>
+                    <option value="<%= tiendas[i].id %>" <%= tiendas[i].id == user.id_tienda ? 'selected': null %> > <%= tiendas[i].nombre %> </option>
+                    <%
+                    }
+                    }else {
+                    %>
+                    <option value="">Ninguna</option>
+                    <% }%>
+                </select>
+            </p>
+            <p>
+        </div>
+        <div class="col-sm-3">
             <p>
                 <label>Salario</label>
-                <input type="number" value="<%=user.salario%>" step="any" class="form-control" name="salario">
+                <input type="number" step="any" class="form-control" name="salario">
+            </p>
+        </div>
+        <div class="col-sm-2">
+            <p>
+                <label>Hora Llegada</label>
+                <input type="number" step="any" class="form-control" name="llegada">
+            </p>
+        </div>
+        <div class="col-sm-2">
+            <p>
+                <label>Hora Salida</label>
+                <input type="number" step="any" class="form-control" name="salida">
             </p>
         </div>
     </div>
+
     <div class="row">
         <div class="col-sm-3">
             <p>
