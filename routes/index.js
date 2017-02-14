@@ -1901,7 +1901,7 @@ router.post('/cancel/note', isAuthenticated,function(req, res){
  */
 router.post('/user/update', isAuthenticated, function(req, res){
     db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
-        'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13, email=$14, id_tienda=$15' +
+        'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13, email=$14, id_tienda=$15, salario=$16' +
         'where id = $1 returning id, usuario ',[
         req.body.id,
         req.body.nombres,
@@ -1917,7 +1917,8 @@ router.post('/user/update', isAuthenticated, function(req, res){
         req.body.direccion_ciudad,
         req.body.direccion_pais,
         req.body.email,
-        req.body.id_tienda
+        req.body.id_tienda,
+        req.body.salario
     ]).then(function (data) {
         res.json({
             status :'Ok',
@@ -2088,13 +2089,16 @@ router.post('/employee/details', function (req, res) {
             this.oneOrNone('select * from usuarios where id = $1', id),
             this.manyOrNone('select * from asistencia where id_usuario = $1', id),
             this.manyOrNone('select * from prestamos where id_usuario = $1', id),
-            this.manyOrNone('select * from ventas where id_usuario = $1', id)
+            this.manyOrNone('select * from ventas where id_usuario = $1', id),
+            this.oneOrNone('select * from tiendas, usuarios where tiendas.id = usuarios.id_tienda and usuarios.id = $1', id),
         ]);
     }).then(function (data) {
         res.render('partials/employee-detail',{
             usuario: data[0],
             asistencias: data[1],
-            prestamos:data[2]
+            prestamos:data[2],
+            ventas: data[3],
+            tienda: data[4]
         });
     }).catch(function (error) {
         console.log(error);

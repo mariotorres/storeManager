@@ -1,26 +1,42 @@
 <form id="userDetail">
     <h3><strong>Datos Generales</strong></h3>
-<p>
-    <label>Nombre(s)</label>
-    <!--<input type="text" value="<%=usuario.nombres%>" class="form-control" name="nombres" required>-->
+    <p>
+        <label>Nombre(s)</label>
+        <!--<input type="text" value="<%=usuario.nombres%>" class="form-control" name="nombres" required>-->
     <h5 style="color: #9E9E9E;"><%=usuario.nombres%></h5>
-</p>
-<div class="row">
-    <div class="col-sm-6">
-        <p>
-            <label>Apellido paterno</label>
-            <!--<input type="text" value="<%=usuario.apellido_paterno%>" class="form-control" name="apellido_paterno" required>-->
-        <h5 style="color: #9E9E9E;"><%=usuario.apellido_paterno%></h5>
-        </p>
+    </p>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Apellido paterno</label>
+                <!--<input type="text" value="<%=usuario.apellido_paterno%>" class="form-control" name="apellido_paterno" required>-->
+            <h5 style="color: #9E9E9E;"><%=usuario.apellido_paterno%></h5>
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>Apellido materno</label>
+                <!--<input type="text" value="<%=usuario.apellido_materno%>" class="form-control" name="apellido_materno" required>-->
+            <h5 style="color: #9E9E9E;"><%=usuario.apellido_materno%></h5>
+            </p>
+        </div>
     </div>
-    <div class="col-sm-6">
-        <p>
-            <label>Apellido materno</label>
-            <!--<input type="text" value="<%=usuario.apellido_materno%>" class="form-control" name="apellido_materno" required>-->
-        <h5 style="color: #9E9E9E;"><%=usuario.apellido_materno%></h5>
-        </p>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Tienda</label>
+                <!--<input type="text" value="<%=usuario.apellido_paterno%>" class="form-control" name="apellido_paterno" required>-->
+            <h5 style="color: #9E9E9E;"><%=tienda.nombre%></h5>
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>Salario base</label>
+                <!--<input type="text" value="<%=usuario.apellido_materno%>" class="form-control" name="apellido_materno" required>-->
+            <h5 style="color: #9E9E9E;"><%=usuario.salario%></h5>
+            </p>
+        </div>
     </div>
-</div>
     <hr>
     <h4 style="color: #9E9E9E;"><strong>Comisiones</strong></h4>
     <br>
