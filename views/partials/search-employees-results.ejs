@@ -1,5 +1,6 @@
 <%
 if (employees.length > 0){%>
+<label>Resultados</label>
 <div class="list-group">
     <% for ( var i =0; i < employees.length ; i ++ ){ %>
     <a href="#" class="list-group-item" data-user_id="<%= employees[i].id%>">
