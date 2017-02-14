@@ -1629,27 +1629,35 @@ router.post('/penalization/update', isAuthenticated, function(req, res){
  */
 router.post('/item/update', upload.single('imagen'), function(req, res){
 
-    //borrar imagen anterior
+    db.tx(function (t) {
+        return this.batch([
+            t.one('select nombre_imagen from articulos where id = $1',[req.body.id ]),
+            t.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
+                'precio=$8, costo=$9, codigo_barras=$10, nombre_imagen=$11, n_existencias= $12, fecha_ultima_modificacion = Now() ' +
+                'where id=$1 returning id, articulo ',[
+                req.body.id,
+                req.body.articulo,
+                req.body.descripcion,
+                numericCol(req.body.id_marca),
+                req.body.modelo,
+                req.body.talla,
+                req.body.notas,
+                numericCol(req.body.precio),
+                numericCol(req.body.costo),
+                numericCol(req.body.codigo_barras),
+                typeof req.file != 'undefined'?req.file.filename:null,
+                numericCol(req.body.n_existencias)
+            ])
+        ]);
+    }).then(function (data) {
 
-    db.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-        'precio=$8, costo=$9, codigo_barras=$10, nombre_imagen=$11, n_existencias= $12, fecha_ultima_modificacion = Now()' +
-        'where id=$1 returning id, articulo ',[
-        req.body.id,
-        req.body.articulo,
-        req.body.descripcion,
-        numericCol(req.body.id_marca),
-        req.body.modelo,
-        req.body.talla,
-        req.body.notas,
-        numericCol(req.body.precio),
-        numericCol(req.body.costo),
-        numericCol(req.body.codigo_barras),
-        typeof req.file != 'undefined'?req.file.filename:null,
-        numericCol(req.body.n_existencias)
-    ]).then(function (data) {
+        // borra la imagen anterior
+        fs.unlinkSync(path.resolve('../uploads/'+ data[0].nombre_imagen));
+        console.log('successfully deleted '+ path.resolve('../uploads/'+ data[0].nombre_imagen));
+        
         res.json({
             status :'Ok',
-            message : 'Los datos del articulo "'+ data.articulo +'" han sido actualizados'
+            message : 'Los datos del articulo "'+ data[1].articulo +'" han sido actualizados'
         });
     }).catch(function (error) {
         console.log(error);
