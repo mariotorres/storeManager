@@ -1147,7 +1147,12 @@ router.post('/brand/new',isAuthenticated, function (req, res) {
 });
 
 router.post('/user/new',isAuthenticated,function (req, res) {
-    res.render('partials/new-user');
+    db.manyOrNone('select * from tiendas').then(function(data){
+        res.render('partials/new-user', {tiendas: data});
+    }).catch(function (error) {
+        console.log(error);
+        res.send("Error");
+    });
 });
 
 router.post('/user/profile', isAuthenticated, function(req,res){
