@@ -478,13 +478,15 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar préstamo');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/employees/lending/new', {}, function(){
+                var today = new Date();
                 $('#lending_datepicker1').datetimepicker({
                     format: 'YYYY-MM-DD',
+                    defaultDate: today
                     //defaultDate: (new Date().getDate() - 1)
                 });
                 $('#lending_datepicker2').datetimepicker({
                     format: 'YYYY-MM-DD',
-                    defaultDate: new Date()
+                    defaultDate: today.setDate(today.getDate() + 7)
                 });
                 modal.find('form').submit(function(event){
                     $.post('/employees/lending/register', $(this).serialize()).done(function (data){

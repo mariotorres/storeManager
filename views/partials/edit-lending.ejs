@@ -19,12 +19,12 @@
 
     <p>
         <label>Monto del préstamo</label>
-        <input value="<%=lendings.monto%>" name="monto" class = "form-control">
+        <input id="monto" value="<%=lendings.monto%>" name="monto" class = "form-control">
     </p>
 
     <p>
         <label>Pago Semanal</label>
-        <input value="<%=lendings.pago_semanal%>" name="monto_semanal" class = "form-control">
+        <input id="monto_semanal" value="<%=lendings.pago_semanal%>" name="monto_semanal" class = "form-control">
     </p>
 
 
@@ -50,3 +50,13 @@
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </p>
 </form>
+
+<script>
+    $("#monto_semanal").change(function(){
+        var month  = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+        var n_dias = Number(document.getElementById("monto").value) / Number(document.getElementById("monto_semanal").value);
+        var new_date = new Date(document.getElementById("lending_datepicker1").value);
+        new_date.setDate(new_date.getDate() + n_dias*7);
+        document.getElementById("lending_datepicker2").value = new_date.getFullYear() + "-" + month[new_date.getMonth()] + "-" + new_date.getDate();
+    })
+</script>
