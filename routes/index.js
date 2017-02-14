@@ -1654,7 +1654,7 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
         // borra la imagen anterior
         fs.unlinkSync(path.resolve('../uploads/'+ data[0].nombre_imagen));
         console.log('successfully deleted '+ path.resolve('../uploads/'+ data[0].nombre_imagen));
-        
+
         res.json({
             status :'Ok',
             message : 'Los datos del articulo "'+ data[1].articulo +'" han sido actualizados'
@@ -1991,18 +1991,8 @@ router.post('/search/items/devs', function (req, res) {
 
 });
 
-
 router.post('/employees/find-employees-view', function (req, res) {
-    db.task(function (t) {
-
-    }).then(function (data) {
-        res.render('partials/find-employees',{
-
-        });
-    }).catch(function (error) {
-        console.log(error);
-    });
-
+    res.render('partials/find-employees');
 });
 
 router.post('/notes/find-notes-view', function (req, res) {
