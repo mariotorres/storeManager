@@ -259,9 +259,9 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/user/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/user/edit-user/',{ id: $(this).data('user_id') }, function () {
-                        $('#timepicker1').timepicker('getTime');
-                        $('#timepicker2').timepicker('getTime');
-                        $('#updateUser').submit(function (event) {
+                        //$('#timepicker1').timepicker('getTime');
+                        //$('#timepicker2').timepicker('getTime');
+                        modal.find('form').submit(function (event) {
                             $.post('/user/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
                                 if(data.status=='Ok'){

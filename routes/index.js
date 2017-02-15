@@ -1313,8 +1313,8 @@ router.post('/user/signup', isAuthenticated, function(req, res){
 
         return db.one('insert into usuarios ( usuario, contrasena, email, nombres, apellido_paterno, apellido_materno, rfc, direccion_calle, direccion_numero_int, ' +
             'direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais,' +
-            'empleado, permiso_tablero, permiso_administrador, permiso_empleados, permiso_inventario, id_tienda) values' +
-            '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22) returning id, usuario ', [
+            'empleado, salario, permiso_tablero, permiso_administrador, permiso_empleados, permiso_inventario, id_tienda) values' +
+            '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) returning id, usuario ', [
             req.body.usuario.trim(),
             bCrypt.hashSync( req.body.contrasena, bCrypt.genSaltSync(10), null),
             req.body.email,
@@ -1331,12 +1331,13 @@ router.post('/user/signup', isAuthenticated, function(req, res){
             req.body.direccion_ciudad,
             req.body.estado,
             req.body.direccion_pais,
-            stob(empleado),
-            stob(permiso_tablero),
-            stob(permiso_administrador),
-            stob(permiso_empleados),
-            stob(permiso_inventario),
-            req.body.id_tienda
+            stob(req.body.empleado),
+            numericCol(req.body.salario),
+            stob(req.body.permiso_tablero),
+            stob(req.body.permiso_administrador),
+            stob(req.body.permiso_empleados),
+            stob(req.body.permiso_inventario),
+            numericCol(req.body.id_tienda)
         ]);
 
 
@@ -1947,13 +1948,13 @@ router.post('/user/update', isAuthenticated, function(req, res){
         req.body.direccion_estado,
         req.body.direccion_pais,
         req.body.email,
-        req.body.id_tienda,
-        req.body.salario,
-        stob(empleado),
-        stob(permiso_tablero),
-        stob(permiso_administrador),
-        stob(permiso_empleados),
-        stob(permiso_inventario)
+        numericCol(req.body.id_tienda),
+        numericCol(req.body.salario),
+        stob(req.body.empleado),
+        stob(req.body.permiso_tablero),
+        stob(req.body.permiso_administrador),
+        stob(req.body.permiso_empleados),
+        stob(req.body.permiso_inventario)
     ]).then(function (data) {
         res.json({
             status :'Ok',
