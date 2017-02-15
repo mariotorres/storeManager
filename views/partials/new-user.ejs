@@ -137,8 +137,26 @@
     </div>
 
 
+        <p>
+            <label>Tienda</label>
+            <select name = "id_tienda" class="form-control" required>
+                <%
+                if (tiendas.length > 0 ){
+                for (var i =0; i < tiendas.length; i++){
+                %>
+                <option value="<%= tiendas[i].id %>"> <%= tiendas[i].nombre %> </option>
+                <%
+                }
+                }else {
+                %>
+                <option value="">Ninguna</option>
+                <% }%>
+            </select>
+        </p>
+
+
     <div class="row">
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             <p>
                 <label>¿Es empleado?</label>
                 <select class="form-control" name="empleado">
@@ -147,38 +165,20 @@
                 </select>
             </p>
         </div>
-        <div class="col-sm-3">
-            <p>
-                <label>Tienda</label>
-                <select name = "id_tienda" class="form-control" required>
-                    <%
-                    if (tiendas.length > 0 ){
-                    for (var i =0; i < tiendas.length; i++){
-                    %>
-                    <option value="<%= tiendas[i].id %>"> <%= tiendas[i].nombre %> </option>
-                    <%
-                    }
-                    }else {
-                    %>
-                    <option value="">Ninguna</option>
-                    <% }%>
-                </select>
-            </p>
-            <p>
-        </div>
+
         <div class="col-sm-3">
             <p>
                 <label>Salario</label>
                 <input type="number" step="any" class="form-control" name="salario">
             </p>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             <p>
                 <label>Hora Llegada</label>
                 <input type="number" step="any" class="form-control" name="llegada">
             </p>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             <p>
                 <label>Hora Salida</label>
                 <input type="number" step="any" class="form-control" name="salida">

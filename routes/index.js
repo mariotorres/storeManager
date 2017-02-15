@@ -1289,44 +1289,70 @@ router.post('/store/register', isAuthenticated,function(req, res){
 /*
  * Nuevos usuarios
  */
+
+
+function stob( str) {
+    return (str == 'true')
+}
 router.post('/user/signup', isAuthenticated, function(req, res){
 
     db.one('select count(*) as count from usuarios where usuario =$1',[ req.body.usuario ]).then(function (data) {
 
-        if ( data.count == 0) {
+        // 8 char pass
+        // no special char in username
 
-            return db.one('insert into usuarios ( nombres, apellido_paterno, apellido_materno, rfc, direccion_calle, direccion_numero_int, ' +
-                'direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, email) values' +
-                '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id, usuario ', [
-                req.body.id,
-                req.body.nombres,
-                req.body.apellido_paterno,
-                req.body.apellido_materno,
-                req.body.rfc,
-                req.body.direccion_calle,
-                req.body.direccion_numero_int,
-                req.body.direccion_numero_ext,
-                req.body.direccion_colonia,
-                req.body.direccion_localidad,
-                req.body.direccion_municipio,
-                req.body.direccion_ciudad,
-                req.body.direccion_pais,
-                req.body.email,
-                //req.body.id_tienda
-            ]);
+        if ( req.body.contrasena != req.body.confirmar_contrasena){
+            return { id: -2 };
         }
 
-        return { id : -1 };
+        if ( data.count > 0) {
+            return { id: -1 };
+        }
+
+        return db.one('insert into usuarios ( usuario, contrasena, email, nombres, apellido_paterno, apellido_materno, rfc, direccion_calle, direccion_numero_int, ' +
+            'direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais,' +
+            'empleado, permiso_tablero, permiso_administrador, permiso_empleados, permiso_inventario, id_tienda) values' +
+            '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22) returning id, usuario ', [
+            req.body.usuario.trim(),
+            bCrypt.hashSync( req.body.contrasena, bCrypt.genSaltSync(10), null),
+            req.body.email,
+            req.body.nombres,
+            req.body.apellido_paterno,
+            req.body.apellido_materno,
+            req.body.rfc,
+            req.body.direccion_calle,
+            req.body.direccion_numero_int,
+            req.body.direccion_numero_ext,
+            req.body.direccion_colonia,
+            req.body.direccion_localidad,
+            req.body.direccion_municipio,
+            req.body.direccion_ciudad,
+            req.body.estado,
+            req.body.direccion_pais,
+            stob(empleado),
+            stob(permiso_tablero),
+            stob(permiso_administrador),
+            stob(permiso_empleados),
+            stob(permiso_inventario),
+            req.body.id_tienda
+        ]);
+
 
     }).then(function (data) {
 
-        var response = { status : '', message: ''};
-        if ( data.id == -1 ) {
-            response.status ='Error';
-            response.message = 'Ya existe un usuario registrado con ese nombre, pruebe uno distinto';
-        } else {
-            response.status = 'Ok';
-            response.message = 'El usuario "' + data.usuario + '" ha sido registrado';
+        var response = { status: '', message: ''};
+        switch ( data.id ){
+            case -1:
+                response.status ='Error';
+                response.message = 'Ya existe un usuario registrado con ese nombre, pruebe uno distinto';
+                break;
+            case -2:
+                response.status = 'Error';
+                response.message = 'La contraseña no coincide';
+                break;
+            default:
+                response.status = 'Ok';
+                response.message = 'El usuario "' + data.usuario + '" ha sido registrado';
         }
 
         res.json(response);
@@ -1901,7 +1927,8 @@ router.post('/cancel/note', isAuthenticated,function(req, res){
  */
 router.post('/user/update', isAuthenticated, function(req, res){
     db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
-        'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_pais=$13, email=$14, id_tienda=$15, salario=$16' +
+        'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_estado= $13,' +
+        'direccion_pais=$14, email=$15, id_tienda=$16, salario=$17, empleado=$18, permiso_tablero=$19, permiso_administrador=$20, permiso_empleados=$21, permiso_inventario=$22 ' +
         'where id = $1 returning id, usuario ',[
         req.body.id,
         req.body.nombres,
@@ -1915,10 +1942,16 @@ router.post('/user/update', isAuthenticated, function(req, res){
         req.body.direccion_localidad,
         req.body.direccion_municipio,
         req.body.direccion_ciudad,
+        req.body.direccion_estado,
         req.body.direccion_pais,
         req.body.email,
         req.body.id_tienda,
-        req.body.salario
+        req.body.salario,
+        stob(empleado),
+        stob(permiso_tablero),
+        stob(permiso_administrador),
+        stob(permiso_empleados),
+        stob(permiso_inventario)
     ]).then(function (data) {
         res.json({
             status :'Ok',
