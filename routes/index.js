@@ -1175,9 +1175,13 @@ router.post('/user/profile', isAuthenticated, function(req,res){
  * Registro de artículos
  */
 
- function numericCol ( x ){
-     return ( x == '' || isNaN(x))?null:x;
- }
+function numericCol ( x ){
+    return ( x == '' || isNaN(x))?null:x;
+}
+
+function stob( str) {
+    return (str == 'true')
+}
 
 /* uploads */
 var multer = require ('multer');
@@ -1291,9 +1295,7 @@ router.post('/store/register', isAuthenticated,function(req, res){
  */
 
 
-function stob( str) {
-    return (str == 'true')
-}
+
 router.post('/user/signup', isAuthenticated, function(req, res){
 
     db.one('select count(*) as count from usuarios where usuario =$1',[ req.body.usuario ]).then(function (data) {
