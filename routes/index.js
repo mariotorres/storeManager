@@ -1830,24 +1830,34 @@ router.post('/item/return', isAuthenticated, function(req, res){
 * Ingreso empleados
 */
 router.post('/employee/check-in', function(req,res ){
-    db.task(function(t){
-        return t.batch([
-            t.one('insert into asistencia ("id_usuario", "fecha", "hora", "tipo" ) ' +
-                'values($1, $2, $3, $4) returning id', [
-                numericCol(req.user.id),
-                new Date(),
-                new Date().toLocaleTimeString(),
-                "entrada"
-            ]),
-            t.one('select * from usuarios where id = $1', req.user.id)
-            ])
-    }).then(function (data) {
+    db.one("select count(*) from asistencia where fecha = date_trunc('day', now()) and tipo = 'entrada' and id_usuario = $1",[
+        numericCol(req.user.id)
+    ]).then(function(data){
+        if(data.count > 0) {
+            return null
+        }
+        return db.one('insert into asistencia ("id_usuario", "fecha", "hora", "tipo" ) ' +
+            'values($1, $2, $3, $4) returning id', [
+            numericCol(req.user.id),
+            new Date(),
+            new Date().toLocaleTimeString(),
+            "entrada"
+        ]);
+    }).then(function (user) {
+        var message = 'El usuario ya había registrado asistencia';
+        if(user != null){
+            message =  'Que tengas  un buen día ' + req.user.nombres;
+        }
         res.json({
             status: 'Ok',
-            message: 'Que tengas  un buen día ' + data[1].nombres
+            message: message
         });
     }).catch(function(error){
         console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error a la hora de registrar la entrada'
+        });
     });
 });
 
