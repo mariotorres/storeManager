@@ -1329,7 +1329,7 @@ router.post('/user/signup', isAuthenticated, function(req, res){
             req.body.direccion_localidad,
             req.body.direccion_municipio,
             req.body.direccion_ciudad,
-            req.body.estado,
+            req.body.direccion_estado,
             req.body.direccion_pais,
             stob(req.body.empleado),
             numericCol(req.body.salario),

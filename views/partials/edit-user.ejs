@@ -128,7 +128,7 @@
 
         <p>
             <label>Tienda</label>
-            <select name="id_tienda" class="form-control">
+            <select name="id_tienda" class="form-control" required>
                 <%
                 if (tiendas.length > 0 ){
                 for (var i =0; i < tiendas.length; i++){
@@ -158,7 +158,7 @@
         <div class="col-sm-3">
             <p>
                 <label>Salario</label>
-                <input type="number" step="any" class="form-control" name="salario">
+                <input type="number" step="any" class="form-control" name="salario" value="<%= user.salario%>">
             </p>
         </div>
         <div class="col-sm-3">
