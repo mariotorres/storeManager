@@ -6,6 +6,9 @@
         <input name="nombre" value="<%=terminal.nombre_facturador%>" class="form-control" required>
     </p>
     <p>
+        <button type="button" class="btn btn-primary" id="deleteterminal" data-id="<%= terminal.id %>"> Eliminar</button>
+    </p>
+    <p>
         <label>RFC del facturador</label>
         <input name="rfc" value="<%=terminal.rfc%>" class="form-control">
     </p>

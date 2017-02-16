@@ -2223,5 +2223,21 @@ router.post('/store/delete', function(req, res){
 });
 
 
+router.post('/terminal/delete', function (req, res) {
+   db.one('delete from terminales cascade where id = $1 returning id ', [ req.body.id  ]).then(function (data) {
+       console.log('Terminal eliminada: ', data.id );
+       res.json({
+           status : 'Ok',
+           message: 'Terminal eliminada'
+       });
+   }).catch(function (error) {
+       console.log(error);
+       res.json({
+           status: 'Error',
+           message: 'Ocurrió un error al eliminar la terminal'
+       });
+   });
+});
+
 
 module.exports = router;
