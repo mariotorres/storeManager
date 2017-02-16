@@ -1,5 +1,5 @@
 <form id="userDetail">
-    <!--   <h3><strong>Datos Generales</strong></h3>
+    <h3><strong>Datos Generales</strong></h3>
     <p>
         <label>Nombre(s)</label>
     <h5 style="color: #9E9E9E;"><%=usuario.nombres%></h5>
@@ -22,7 +22,13 @@
         <div class="col-sm-6">
             <p>
                 <label>Tienda</label>
-            <h5 style="color: #9E9E9E;"><%=tienda.nombre%></h5>
+            <h5 style="color: #9E9E9E;">
+
+            <%if (tienda){%>
+                <%=tienda.nombre%>
+                <%}%>
+
+            </h5>
             </p>
         </div>
         <div class="col-sm-6">
@@ -33,49 +39,12 @@
         </div>
     </div>
     <hr>
- <h4 style="color: #9E9E9E;"><strong>Ventas</strong></h4>
-    <p>
-        <label>Número de ventas</label>
-    <h5 style="color: #9E9E9E;"><%=ventas.length()%></h5>
-    </p>
-    <p>
-        <label>Total vendido</label>
-    <h5 style="color: #9E9E9E;"><%=montoVentas.montoVentas%></h5>
-    </p>
-    <br>
-    <h4 style="color: #9E9E9E;"><strong>Comisiones</strong></h4>
-    <p>
-        <label>Total comisiones</label>
-    <h5 style="color: #9E9E9E;"><%=totalComisiones.comision%></h5>
-    </p>
-    <br>
-    <h4 style="color: #9E9E9E;"><strong>Bonos</strong></h4>
-    <br>
-    <h4 style="color: #9E9E9E;"><strong>Penalizaciones</strong></h4>
-    <p>
-        <label>Entradas después de las 11:00 a.m </label>
-    <h5 style="color: #9E9E9E;"><%=entradasTarde.length()%></h5>
-    </p>
-    <p>
-        <label>Salidas antes de las 18:00 p.m </label>
-    <h5 style="color: #9E9E9E;"><%=salidasTemprano.length()%></h5>
-    </p>
-    <br>
-    <h4 style="color: #9E9E9E;"><strong>Préstamos</strong></h4>
-    <p>
-        <label>Número de préstamos </label>
-    <h5 style="color: #9E9E9E;"><%=prestamos.length()%></h5>
-    </p>
-    <p>
-        <label>Monto por pagar esta semana </label>
-    <h5 style="color: #9E9E9E;"><%=montoPrestamos.pago %></h5>
-    </p>
-    <br>
-    <h2 style="color: #9E9E9E;"><strong>Sueldo Neto:</strong></h2>
-    <p>
-        <label>Número de préstamos </label>
-    <h3 style="color: #9E9E9E;"><%=(usuario.salario + totalComisiones.comision) - montoPrestamos.pago%></h3>
-    </p>-->
+
+
+
+
+
+
     <p>
         <button class="btn btn-primary" type="submit"> <i class="fa fa-print"></i> Imprimir reporte</button>
     </p>

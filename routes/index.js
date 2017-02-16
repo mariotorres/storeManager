@@ -2146,7 +2146,7 @@ router.post('/employee/details', function (req, res) {
     var id = req.body.id;
     db.task(function (t) {
         return this.batch([
-            this.oneOrNone('select * from usuarios where id = $1', id),
+            this.one('select * from usuarios where id = $1', id),
             /* Asistencia */
             this.manyOrNone("select * from asistencia where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
@@ -2156,11 +2156,12 @@ router.post('/employee/details', function (req, res) {
                 "and hora < time '18:00' and tipo = 'salida'", id),
             /* Préstamos */
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
-            this.oneOrNone("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
+            this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             /* Ventas */
             this.manyOrNone("select * from ventas where ventas.id_usuario = $1", id),
-            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1", id),
-            this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id)
+            this.one("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1", id),
+            this.one("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id),
+            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id)
         ]);
     }).then(function (data) {
         console.log(data);
@@ -2172,7 +2173,8 @@ router.post('/employee/details', function (req, res) {
             montoPrestamos:data[4],
             ventas: data[5],
             montoVentas: data[6],
-            totalComision: data[7]
+            totalComision: data[7],
+            tienda: data[8]
         });
     }).catch(function (error) {
         console.log(error);
