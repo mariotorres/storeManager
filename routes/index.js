@@ -2187,4 +2187,23 @@ router.post('/calendar/sales/', isAuthenticated, function (req, res ){
    });
 });
 
+
+/* Borrado */
+router.post('/user/delete', function (req, res ) {
+    db.one('delete from usuarios cascade where id = $1 returning id ', [ req.body.id ]).then(function (data) {
+        console.log('Usuario eliminado: ', data.id );
+        res.json({
+            status: 'Ok',
+            message: 'El usuario ha sido eliminado del sistema'
+        })
+    }). catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al borrar el usuario'
+        })
+    });
+});
+
+
 module.exports = router;

@@ -259,8 +259,21 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/user/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/user/edit-user/',{ id: $(this).data('user_id') }, function () {
-                        //$('#timepicker1').timepicker('getTime');
-                        //$('#timepicker2').timepicker('getTime');
+                        $('#timepicker1').timepicker('getTime');
+                        $('#timepicker2').timepicker('getTime');
+
+                        $('#deleteuser').click(function () {
+                            if ( confirm('¿Está seguro de eliminar el usuario?, se eliminarán todos los datos asociados al mismo.') ){
+                                $.post( '/user/delete', { id: $(this).data('id') }).done(function (data) {
+                                    alert(data.message);
+                                    if (data.status == 'Ok'){
+                                        modal.modal('hide');
+                                    }
+                                });
+                            }
+                        });
+
+
                         modal.find('form').submit(function (event) {
                             $.post('/user/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
