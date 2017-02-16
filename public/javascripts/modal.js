@@ -350,6 +350,18 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/store/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/store/edit-store/', {id: $(this).data('store_id')}, function () {
+                        $('#deletestore').click(function () {
+                           if (confirm('¿Está seguro de eliminar la tienda?, se eliminarán todos los datos asociados a ella')){
+                               $.post('/store/delete',{ id: $(this).data('id')}).done(function (data) {
+                                   alert(data.message);
+                                   if ( data.status == 'Ok'){
+                                       modal.modal('hide');
+                                   }
+                               });
+                           }
+                        });
+
+
                         modal.find('form').submit(function (event) {
                             $.post('/store/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);

@@ -2206,4 +2206,22 @@ router.post('/user/delete', function (req, res ) {
 });
 
 
+router.post('/store/delete', function(req, res){
+   db.one('delete from tiendas cascade where id = $1 returning id',[ req.body.id ]).then(function(data){
+       console.log('Tienda eliminada: ', data.id );
+       res.json({
+           status : 'Ok',
+           message : 'La tienda ha sido eliminada del sistema'
+       });
+   }).catch(function (error) {
+       console.log(error);
+       res.json({
+           status :'Error',
+           message: 'Ocurrió un error al eliminar la tienda'
+       })
+   })
+});
+
+
+
 module.exports = router;
