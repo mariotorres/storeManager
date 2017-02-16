@@ -170,12 +170,7 @@ function modalEvents(button, modal, page ) {
                             e.preventDefault();
                         })*/
                         $('#search_results').find('.list-group-item').click(function () {
-                            modal.find('#modal_content').load('/employee/details', { id: $(this).data('user_id') }).done(function (data) {
-                                if(data.status=='Ok'){
-                                    modal.modal('hide');
-                                }
-                            });
-                            e.preventDefault();
+                            modal.find('#modal_content').load('/employee/details', { id: $(this).data('user_id') });
                         });
                     });
                     e.preventDefault();

@@ -2163,7 +2163,7 @@ router.post('/employee/details', function (req, res) {
             this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id)
         ]);
     }).then(function (data) {
-        console.log(data.length);
+        console.log(data);
         res.render('partials/employee-detail',{
             usuario: data[0],
             entradasTarde: data[1],
