@@ -2141,23 +2141,29 @@ router.post('/notes/find-notes-view', function (req, res) {
 });
 
 router.post('/employee/details', function (req, res) {
+    // Comisión total 3%.
     console.log(req.body);
     var id = req.body.id;
     db.task(function (t) {
         return this.batch([
             this.oneOrNone('select * from usuarios where id = $1', id),
-            this.manyOrNone('select * from asistencia where id_usuario = $1', id),
-            this.manyOrNone('select * from prestamos where id_usuario = $1', id),
-            this.manyOrNone('select * from ventas where id_usuario = $1', id),
-            this.oneOrNone('select * from tiendas, usuarios where tiendas.id = usuarios.id_tienda and usuarios.id = $1', id),
+            this.manyOrNone("select * from asistencia where id_usuario = $1 " +
+                "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
+                "and hora >= time '11:00' and tipo = 'entrada'", id),
+            this.manyOrNone("select * from asistencia where id_usuario = $1 " +
+                "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
+                "and hora < time '18:00' and tipo = 'salida'", id),
+            this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
+            this.manyOrNone("select * from ventas, venta_articulos, articulos where venta_articulos.id_venta = ventas.id and " +
+                "venta_articulos.id_articulo = articulos.id and ventas.id_usuario = 1;")
         ]);
     }).then(function (data) {
         res.render('partials/employee-detail',{
             usuario: data[0],
-            asistencias: data[1],
-            prestamos:data[2],
-            ventas: data[3],
-            tienda: data[4]
+            entradasTarde: data[1],
+            salidasTemprano: data[2],
+            prestamos:data[3],
+            ventas: data[4]
         });
     }).catch(function (error) {
         console.log(error);
