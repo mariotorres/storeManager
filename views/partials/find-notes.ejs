@@ -1,19 +1,34 @@
 <form id="find">
-    <p>
+   <!-- <p>
         <label>Buscar por id de nota</label>
         <input type="number" class="form-control" name="id_nota" required>
-    </p>
-    <label>Buscar notas por periodo</label>
+    </p>-->
+
     <div class="row">
         <div class="col-sm-6">
-            <p>
-                <input type="text" name="fecha_inicial" id="notes_datepicker1" class="form-control" required>
-            </p>
+
+            <label>Fecha inicial</label>
+            <div class="form-group">
+                <div class='input-group'>
+                    <input type="text" name="fecha_inicial" id="notes_datepicker1" class="form-control" required>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
         </div>
         <div class="col-sm-6">
-            <p>
-                <input type="text" name="fecha_final" id="notes_datepicker2" class="form-control" required>
-            </p>
+<label>Fecha final</label>
+            <div class="form-group">
+                <div class='input-group'>
+                    <input type="text" name="fecha_final" id="notes_datepicker2" class="form-control" required>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
         </div>
     </div>
     <p>

@@ -1338,6 +1338,8 @@ router.post('/user/signup', isAuthenticated, function(req, res){
             stob(req.body.permiso_empleados),
             stob(req.body.permiso_inventario),
             numericCol(req.body.id_tienda)
+            //req.body.llegada,
+            //req.body.salida
         ]);
 
 
@@ -1955,6 +1957,8 @@ router.post('/user/update', isAuthenticated, function(req, res){
         stob(req.body.permiso_administrador),
         stob(req.body.permiso_empleados),
         stob(req.body.permiso_inventario)
+        //req.body.llegada,
+        //req.body.salida
     ]).then(function (data) {
         res.json({
             status :'Ok',
@@ -2157,7 +2161,7 @@ router.post('/search/employees/results', function (req, res) {
 });
 
 router.post('/search/notes/results', function (req, res) {
-    db.manyOrNone("select * from ventas where (fecha_venta > $2 and fecha_venta < $3) or id = $1", [
+    db.manyOrNone("select * from ventas where (fecha_venta >= $2 and fecha_venta <= $3)", [
         numericCol(req.body.id_nota),
         req.body.fecha_inicial,
         req.body.fecha_final
