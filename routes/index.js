@@ -2176,6 +2176,10 @@ router.post('/employee/details', function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
+        res.json({
+            status :'Error',
+            message: 'Ocurrió un error al buscar al empleado.'
+        })
     });
 });
 
@@ -2191,6 +2195,10 @@ router.post('/search/employees/results', function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
+        res.json({
+            status :'Error',
+            message: 'Ocurrió un error al buscar al empleado'
+        })
     });
 });
 
@@ -2205,6 +2213,10 @@ router.post('/search/notes/results', function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
+        res.json({
+            status :'Error',
+            message: 'Ocurrió un error al buscar la nota'
+        })
     });
 });
 
