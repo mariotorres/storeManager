@@ -491,6 +491,19 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/supplier/list/', { page : page } , function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load("/supplier/edit-supplier/", {id: $(this).data('supplier_id')}, function(){
+
+
+                        $('#deletesupplier').click(function () {
+                            if (confirm('¿Está seguro de eliminar el proveedor?, se eliminarán todos los datos asociados a el')){
+                                $.post('/supplier/delete', {id : $(this).data('id')}).done(function (data) {
+                                    alert(data.message);
+                                   if (data.status == 'Ok'){
+                                       modal.modal('hide');
+                                   }
+                                });
+                            }
+                        });
+
                         modal.find('form').submit(function (event) {
                             $.post('/supplier/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);

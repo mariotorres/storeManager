@@ -2240,4 +2240,20 @@ router.post('/terminal/delete', function (req, res) {
 });
 
 
+router.post('/supplier/delete', function (req, res) {
+    db.one('delete from proveedores cascade where id = $1 returning id', [ req.body.id ]).then(function (data) {
+        console.log('Proveedor eliminado: ', data.id );
+        res.json({
+            status : 'Ok',
+            message : 'El proveedor fue eliminado del sistema'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al eliminar el proveedor'
+        });
+    });
+});
+
 module.exports = router;
