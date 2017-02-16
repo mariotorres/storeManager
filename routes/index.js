@@ -2147,23 +2147,32 @@ router.post('/employee/details', function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.oneOrNone('select * from usuarios where id = $1', id),
+            /* Asistencia */
             this.manyOrNone("select * from asistencia where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
                 "and hora >= time '11:00' and tipo = 'entrada'", id),
             this.manyOrNone("select * from asistencia where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
                 "and hora < time '18:00' and tipo = 'salida'", id),
+            /* Préstamos */
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
-            this.manyOrNone("select * from ventas, venta_articulos, articulos where venta_articulos.id_venta = ventas.id and " +
-                "venta_articulos.id_articulo = articulos.id and ventas.id_usuario = 1;")
+            this.oneOrNone("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
+            /* Ventas */
+            this.manyOrNone("select * from ventas where ventas.id_usuario = $1", id),
+            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1", id),
+            this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id)
         ]);
     }).then(function (data) {
+        console.log(data.length);
         res.render('partials/employee-detail',{
             usuario: data[0],
             entradasTarde: data[1],
             salidasTemprano: data[2],
             prestamos:data[3],
-            ventas: data[4]
+            montoPrestamos:data[4],
+            ventas: data[5],
+            montoVentas: data[6],
+            totalComision: data[7]
         });
     }).catch(function (error) {
         console.log(error);

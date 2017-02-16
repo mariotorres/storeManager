@@ -2,21 +2,18 @@
     <h3><strong>Datos Generales</strong></h3>
     <p>
         <label>Nombre(s)</label>
-        <!--<input type="text" value="<%=usuario.nombres%>" class="form-control" name="nombres" required>-->
     <h5 style="color: #9E9E9E;"><%=usuario.nombres%></h5>
     </p>
     <div class="row">
         <div class="col-sm-6">
             <p>
                 <label>Apellido paterno</label>
-                <!--<input type="text" value="<%=usuario.apellido_paterno%>" class="form-control" name="apellido_paterno" required>-->
             <h5 style="color: #9E9E9E;"><%=usuario.apellido_paterno%></h5>
             </p>
         </div>
         <div class="col-sm-6">
             <p>
                 <label>Apellido materno</label>
-                <!--<input type="text" value="<%=usuario.apellido_materno%>" class="form-control" name="apellido_materno" required>-->
             <h5 style="color: #9E9E9E;"><%=usuario.apellido_materno%></h5>
             </p>
         </div>
@@ -25,29 +22,60 @@
         <div class="col-sm-6">
             <p>
                 <label>Tienda</label>
-                <!--<input type="text" value="<%=usuario.apellido_paterno%>" class="form-control" name="apellido_paterno" required>-->
             <h5 style="color: #9E9E9E;"><%=tienda.nombre%></h5>
             </p>
         </div>
         <div class="col-sm-6">
             <p>
                 <label>Salario base</label>
-                <!--<input type="text" value="<%=usuario.apellido_materno%>" class="form-control" name="apellido_materno" required>-->
             <h5 style="color: #9E9E9E;"><%=usuario.salario%></h5>
             </p>
         </div>
     </div>
     <hr>
+    <!--<h4 style="color: #9E9E9E;"><strong>Ventas</strong></h4>
+    <p>
+        <label>Número de ventas</label>
+    <h5 style="color: #9E9E9E;"><%=ventas.length()%></h5>
+    </p>
+    <p>
+        <label>Total vendido</label>
+    <h5 style="color: #9E9E9E;"><%=montoVentas.montoVentas%></h5>
+    </p>
+    <br>
     <h4 style="color: #9E9E9E;"><strong>Comisiones</strong></h4>
+    <p>
+        <label>Total comisiones</label>
+    <h5 style="color: #9E9E9E;"><%=totalComisiones.comision%></h5>
+    </p>
     <br>
     <h4 style="color: #9E9E9E;"><strong>Bonos</strong></h4>
     <br>
     <h4 style="color: #9E9E9E;"><strong>Penalizaciones</strong></h4>
+    <p>
+        <label>Entradas después de las 11:00 a.m </label>
+    <h5 style="color: #9E9E9E;"><%=entradasTarde.length()%></h5>
+    </p>
+    <p>
+        <label>Salidas antes de las 18:00 p.m </label>
+    <h5 style="color: #9E9E9E;"><%=salidasTemprano.length()%></h5>
+    </p>
     <br>
     <h4 style="color: #9E9E9E;"><strong>Préstamos</strong></h4>
-
+    <p>
+        <label>Número de préstamos </label>
+    <h5 style="color: #9E9E9E;"><%=prestamos.length()%></h5>
+    </p>
+    <p>
+        <label>Monto por pagar esta semana </label>
+    <h5 style="color: #9E9E9E;"><%=montoPrestamos.pago %></h5>
+    </p>
     <br>
-
+    <h2 style="color: #9E9E9E;"><strong>Sueldo Neto:</strong></h2>
+    <p>
+        <label>Número de préstamos </label>
+    <h3 style="color: #9E9E9E;"><%=(usuario.salario + totalComisiones.comision) - montoPrestamos.pago%></h3>
+    </p>-->
     <p>
         <button class="btn btn-primary" type="submit"> <i class="fa fa-print"></i> Imprimir reporte</button>
     </p>
