@@ -198,6 +198,30 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "note_payment":
+            modal.find('.modal-title').text('Buscar notas');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/notes/find-notes-view',{}, function () {
+                $('#notes_datepicker1').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    //defaultDate: (new Date().getDate() - 1)
+                });
+                $('#notes_datepicker2').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date()
+                });
+                modal.find('#find').submit(function (e) {
+                    // Mostrar resultados
+                    modal.find('#search_results').load('/search/notes/results', $(this).serializeArray(), function () {
+                        //poder código para hacer algo con la nota seleccionada
+                        $('#search_results').find('.list-group-item').click(function () {
+                            modal.find('#modal_content').load('/notes/payment', { id: $(this).data('user_id'), id_sale:$(this).data('sales_id') });
+                        });
+                    });
+                    e.preventDefault();
+                });
+            });
+            break;
         case "find_item":
             modal.find('.modal-title').text('Buscar artículos');
             modal.find('#modal_content').html("");
