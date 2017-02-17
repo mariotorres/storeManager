@@ -83,8 +83,8 @@
             <p>
                 <label>Número de ventas tienda</label>
             <h5 style="color: #9E9E9E;">
-                <%if (ventas){%>
-                <%=ventas.length%>
+                <%if (ventaTiendas){%>
+                <%=ventaTiendas.length%>
                 <%}else{%>
                 <%=0%>
                 <%}%>
@@ -95,8 +95,8 @@
             <p>
                 <label>Monto vendido tienda</label>
             <h5 style="color: #9E9E9E;">
-                <%if (montoVentas){%>
-                <%=montoVentas.montoventas%>
+                <%if (montoVentasTiendas){%>
+                <%=montoVentasTiendas.montotienda%>
                 <%}else{%>
                 <%=0%>
                 <%}%>
@@ -107,8 +107,46 @@
             <p>
                 <label>Bono correspondiente</label>
             <h5 style="color: #9E9E9E;">
-                <%if (totalComision){%>
-                <%=totalComision.comision%>
+                <%if (bono){%>
+                <%=bono[0].nombre%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Descripción</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (bono){%>
+                <%=bono[0].descripcion%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Criterio</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (bono){%>
+                <%=bono[0].criterio%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Monto</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (bono){%>
+                <%=bono[0].monto%>
                 <%}else{%>
                 <%=0%>
                 <%}%>
@@ -147,8 +185,34 @@
             <p>
                 <label>Penalización correspondiente</label>
             <h5 style="color: #9E9E9E;">
-                <%if (totalComision){%>
-                <%=totalComision.comision%>
+                <%if (penalizacion){%>
+                <%=penalizacion[0].nombre%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <p>
+                <label>Descripción</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (penalizacion){%>
+                <%=penalizacion[0].descripcion%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Monto</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (penalizacion){%>
+                <%=penalizacion[0].monto%>
                 <%}else{%>
                 <%=0%>
                 <%}%>
@@ -189,8 +253,8 @@
     <p>
         <label>Sueldo Neto</label>
     <h2 style="color: #E91E63;">
-        <%if (montoPrestamos &&  totalComision && usuario.salario){%>
-        <%=Number(usuario.salario) + Number(totalComision.comision) - Number(montoPrestamos.pago)%>
+        <%if (montoPrestamos &&  totalComision && usuario.salario && penalizacion){%>
+        <%=Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto))%>
         <%}else{%>
         <%=0%>
         <%}%>

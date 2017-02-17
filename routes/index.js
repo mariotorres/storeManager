@@ -2154,6 +2154,9 @@ router.post('/employee/details', function (req, res) {
             this.manyOrNone("select * from asistencia where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
                 "and hora < time '18:00' and tipo = 'salida'", id),
+            this.manyOrNone("select * from asistencia where id_usuario = $1 " +
+                "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
+                "and tipo = 'entrada'", id),
             /* Préstamos */
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
@@ -2172,24 +2175,34 @@ router.post('/employee/details', function (req, res) {
         ]).then(function(data){
             return t.batch([
                 data,
-                t.manyOrNone("select * from penalizaciones where dias_retraso <= $1 order by dias_retraso", data[1].length)
+                /* Penalizaciones: la penalización más grave aplicable es la que se asigna */
+                t.manyOrNone("select * from penalizaciones where dias_retraso <= $1  order by monto desc", [
+                    data[1].length,
+                    7 - data[3].length
+                ]),
+                /* Bonos: el bono más alto aplicable es la que se asigna */
+                t.manyOrNone("select * from bonos where (monto_alcanzar <= $1 and criterio = 'Tienda') or (monto_alcanzar <=  $2 and criterio ='Individual') order by monto desc", [
+                    data[11].montotienda,
+                    data[7].montoventas
+                ])
             ])
         });
     }).then(function (data) {
-        console.log(data[1].length);
         res.render('partials/employee-detail',{
             usuario: data[0][0],
             entradasTarde: data[0][1],
             salidasTemprano: data[0][2],
-            prestamos:data[0][3],
-            montoPrestamos:data[0][4],
-            ventas: data[0][5],
-            montoVentas: data[0][6],
-            totalComision: data[0][7],
-            tienda: data[0][8],
-            ventaTiendas: data[0][9],
-            montoVentasTiendas:data[0][10],
-            penalizacion: data[1][0]
+            asistencias: data[0][3],
+            prestamos:data[0][4],
+            montoPrestamos:data[0][5],
+            ventas: data[0][6],
+            montoVentas: data[0][7],
+            totalComision: data[0][8],
+            tienda: data[0][9],
+            ventaTiendas: data[0][10],
+            montoVentasTiendas:data[0][11],
+            penalizacion: data[1],
+            bono: data[2]
         });
     }).catch(function (error) {
         console.log(error);
