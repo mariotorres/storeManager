@@ -1,5 +1,5 @@
 <form id="userDetail">
-    <h3><strong>Datos Generales</strong></h3>
+    <h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
     <p>
         <label>Nombre(s)</label>
     <h5 style="color: #9E9E9E;"><%=usuario.nombres%></h5>
@@ -24,7 +24,7 @@
                 <label>Tienda</label>
             <h5 style="color: #9E9E9E;">
 
-            <%if (tienda){%>
+                <%if (tienda){%>
                 <%=tienda.nombre%>
                 <%}%>
 
@@ -39,11 +39,11 @@
         </div>
     </div>
     <hr>
-    <h3><strong>Comisiones</strong></h3>
+    <h3 style="color:#9E9E9E"><strong>Comisiones y bonos</strong></h3>
     <div class="row">
         <div class="col-sm-4">
             <p>
-                <label>Número de ventas</label>
+                <label>Número de ventas individuales</label>
             <h5 style="color: #9E9E9E;">
                 <%if (ventas){%>
                 <%=ventas.length%>
@@ -55,7 +55,7 @@
         </div>
         <div class="col-sm-4">
             <p>
-                <label>Total vendido</label>
+                <label>Monto vendido individual</label>
             <h5 style="color: #9E9E9E;">
                 <%if (montoVentas){%>
                 <%=montoVentas.montoventas%>
@@ -78,11 +78,125 @@
             </p>
         </div>
     </div>
-
-
-
-
-
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Número de ventas tienda</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (ventas){%>
+                <%=ventas.length%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Monto vendido tienda</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (montoVentas){%>
+                <%=montoVentas.montoventas%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Bono correspondiente</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (totalComision){%>
+                <%=totalComision.comision%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+    </div>
+    <hr>
+    <h3 style="color:#9E9E9E"><strong>Asistencia</strong></h3>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Número de entradas después de las 11:00 a.m</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (entradasTarde){%>
+                <%=entradasTarde.length%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Número de salidas antes  de las 18:00 p.m</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (salidasTemprano){%>
+                <%=salidasTemprano.length%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Penalización correspondiente</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (totalComision){%>
+                <%=totalComision.comision%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+    </div>
+    <hr>
+    <h3 style="color:#9E9E9E"><strong>Préstamos</strong></h3>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Número de préstamos activos</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (prestamos){%>
+                <%=prestamos.length%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>Total a pagar de préstamos esta semana</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (montoPrestamos){%>
+                <%=montoPrestamos.pago%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+    </div>
+    <hr>
+    <div class="col-sm-3 col-md-offset-9">
+    <p>
+        <label>Sueldo Neto</label>
+    <h2 style="color: #E91E63;">
+        <%if (montoPrestamos &&  totalComision && usuario.salario){%>
+        <%=Number(usuario.salario) + Number(totalComision.comision) - Number(montoPrestamos.pago)%>
+        <%}else{%>
+        <%=0%>
+        <%}%>
+    </h2>
+    </p>
+    </div>
     <p>
         <button class="btn btn-primary" type="submit"> <i class="fa fa-print"></i> Imprimir reporte</button>
     </p>
