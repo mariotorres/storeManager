@@ -2213,6 +2213,26 @@ router.post('/employee/details', function (req, res) {
     });
 });
 
+router.post('/notes/payment', function(req, res){
+    console.log(req.body);
+    db.manyOrNone('select * from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
+        'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
+        ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
+        req.body.id_sale
+    ]).then(function(data){
+        console.log(data);
+        res.render('partials/note-payment',{
+            sales: data
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al buscar la nota.'
+        })
+    })
+})
+
 router.post('/search/employees/results', function (req, res) {
     console.log(req.body);
     db.manyOrNone("select * from usuarios where nombres ilike '%$1#%' and apellido_paterno ilike '%$2#%' and apellido_materno ilike '%$3#%'", [
