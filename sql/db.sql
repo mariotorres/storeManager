@@ -207,7 +207,7 @@ create table ventas (
     monto_pagado_tarjeta  numeric,
     tarjeta_credito  boolean,
     saldo_pendiente numeric,
-    id_terminal integer references terminales(id),
+    id_terminal integer references terminales(id) on delete set null,
     estatus text
 );
 

@@ -673,6 +673,19 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/marca/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/brand/edit-brand/', {id: $(this).data('marca_id')}, function () {
+
+                        $('#deletebrand').click(function () {
+                            if (confirm('¿Está seguro de eliminar la marca?')){
+                                $.post('/brand/delete', {id: $(this).data('id')}).done(function (data) {
+
+                                    alert(data.message);
+                                    if (data.status == 'Ok'){
+                                        modal.modal('hide');
+                                    }
+                                });
+                            }
+                        });
+
                         modal.find('form').submit(function (event) {
                             $.post('/brand/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
