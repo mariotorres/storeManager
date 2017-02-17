@@ -2304,4 +2304,14 @@ router.post('/supplier/delete', function (req, res) {
     });
 });
 
+//borrar marca
+
+
+router.post('/brand/delete', function (req, res) {
+   db.one().then().catch();
+});
+
+//borrar artículo
+
+
 module.exports = router;

@@ -131,7 +131,7 @@ drop table if exists marcas cascade;
 create table marcas (
 id serial primary key,
 nombre text,
-id_proveedor integer references proveedores(id)
+id_proveedor integer references proveedores(id) /* tal vez no sea necesario */
 );
 
 /* Inventario */
@@ -142,7 +142,7 @@ create table articulos (
     id_tienda integer references tiendas(id),
     articulo text,
     descripcion text,
-    id_marca integer references marcas(id),
+    id_marca integer references marcas(id) on delete set null,
     modelo text,
     talla text,
     notas text,
@@ -198,7 +198,7 @@ insert into estatus_ventas ("estatus","descripcion") values
 drop table if exists ventas cascade;
 create table ventas (
     id serial primary key,
-    id_usuario integer references usuarios(id),
+    id_usuario integer references usuarios(id) on delete set null,
     precio_venta numeric,
     fecha_venta date,
     hora_venta time,
