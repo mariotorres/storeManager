@@ -39,7 +39,45 @@
         </div>
     </div>
     <hr>
-
+    <h3><strong>Comisiones</strong></h3>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Número de ventas</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (ventas){%>
+                <%=ventas.length%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Total vendido</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (montoVentas){%>
+                <%=montoVentas.montoventas%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Comision correspondiente</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (totalComision){%>
+                <%=totalComision.comision%>
+                <%}else{%>
+                <%=0%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+    </div>
 
 
 
