@@ -2351,5 +2351,9 @@ router.post('/brand/delete', function (req, res) {
 
 //borrar artículo
 
+router.post('/item/delete', function (req, res ) {
+    //
+});
+
 
 module.exports = router;
