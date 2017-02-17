@@ -2233,6 +2233,16 @@ router.post('/notes/payment', function(req, res){
     })
 })
 
+router.post('/notes/finitPayment', function(req, res){
+    console.log(req.body);
+    db.tx(function(t){
+        return t.batch([
+            db.one('update ventas set estatus = $2 where id = $1 returning id'),
+        ])
+    })
+
+})
+
 router.post('/search/employees/results', function (req, res) {
     console.log(req.body);
     db.manyOrNone("select * from usuarios where nombres ilike '%$1#%' and apellido_paterno ilike '%$2#%' and apellido_materno ilike '%$3#%'", [
