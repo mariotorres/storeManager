@@ -2157,24 +2157,39 @@ router.post('/employee/details', function (req, res) {
             /* Préstamos */
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
-            /* Ventas */
+            /* Ventas Individuales */
             this.manyOrNone("select * from ventas where ventas.id_usuario = $1", id),
             this.one("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1", id),
             this.one("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id),
-            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id)
-        ]);
+            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id),
+            /* Ventas Tienda */
+            this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
+                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and " +
+                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')"),
+            this.one("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
+                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and " +
+                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')")
+        ]).then(function(data){
+            return t.batch([
+                data,
+                t.manyOrNone("select * from penalizaciones where dias_retraso <= $1 order by dias_retraso", data[1].length)
+            ])
+        });
     }).then(function (data) {
-        console.log(data);
+        console.log(data[1].length);
         res.render('partials/employee-detail',{
-            usuario: data[0],
-            entradasTarde: data[1],
-            salidasTemprano: data[2],
-            prestamos:data[3],
-            montoPrestamos:data[4],
-            ventas: data[5],
-            montoVentas: data[6],
-            totalComision: data[7],
-            tienda: data[8]
+            usuario: data[0][0],
+            entradasTarde: data[0][1],
+            salidasTemprano: data[0][2],
+            prestamos:data[0][3],
+            montoPrestamos:data[0][4],
+            ventas: data[0][5],
+            montoVentas: data[0][6],
+            totalComision: data[0][7],
+            tienda: data[0][8],
+            ventaTiendas: data[0][9],
+            montoVentasTiendas:data[0][10],
+            penalizacion: data[1][0]
         });
     }).catch(function (error) {
         console.log(error);
