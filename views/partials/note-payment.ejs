@@ -24,17 +24,49 @@
         </div>
         <div class="col-sm-4">
             <p>
-                <label>Monto Venta</label>
+                <label>Monto venta</label>
             <h5 style="color: #9E9E9E;"><%=sales[0].precio_venta%></h5>
             </p>
         </div>
         <div class="col-sm-4">
             <p>
-                <label>Monto Venta</label>
+                <label>Saldo pendiente</label>
             <h5 style="color: #9E9E9E;"><%=sales[0].saldo_pendiente%></h5>
             </p>
         </div>
     </div>
+    <hr>
+    <h3 style="color:#9E9E9E"><strong>Detalle</strong></h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Artículo</th>
+            <th>Unidades vendidas</th>
+            <th>Monto pagado</th>
+            <th>Monto por pagar</th>
+            <th>Estatus</th>
+        </tr>
+        </thead>
+        <tbody>
+        <%
+        if (sales.length > 0 ){
+        for (var i =0; i < sales.length; i++){
+        %>
+        <tr>
+            <td><%= sales[i].articulo%></td>
+            <td><%= sales[i].unidades_vendidas%></td>
+            <td><%= sales[i].monto_pagado%></td>
+            <td><%= sales[i].monto_por_pagar%></td>
+            <td><%= sales[i].estatus%></td>
+        </tr>
+        <%
+        }
+        }else {
+        %>
+        <option value="">Ninguna</option>
+        <% }%>
+        </tbody>
+    </table>
     <p>
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </p>
