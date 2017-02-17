@@ -1,8 +1,11 @@
 <form id="brandForm">
-<input type="text" value="<%=marca.id%>" name="id" hidden>
+    <input type="text" value="<%=marca.id%>" name="id" hidden>
     <p>
         <label>Nombre de la marca</label>
         <input type="text" value="<%=marca.nombre%>" class="form-control" name="marca" required>
+    </p>
+    <p>
+        <button type="button" id="deletebrand" data-id="<%=  marca.id %>" class="btn btn-primary">Eliminar</button>
     </p>
 
     <p>

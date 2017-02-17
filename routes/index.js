@@ -2333,13 +2333,27 @@ router.post('/supplier/delete', function (req, res) {
 });
 
 //borrar marca
-
-
 router.post('/brand/delete', function (req, res) {
-   db.one().then().catch();
+   db.one('delete from marcas cascade where id = $1 returning id ', [ req.body.id ]).then(function (data) {
+       console.log('Marca eliminada: ', data.id );
+       res.json({
+           status: 'Ok',
+           message: 'La marca ha sido eliminada'
+       })
+   }).catch(function(error){
+       console.log(error);
+       res.json({
+           status: 'Error',
+           message: 'Ocurrió un error al eliminar la marca'
+       })
+   });
 });
 
 //borrar artículo
+
+router.post('/item/delete', function (req, res ) {
+    //
+});
 
 
 module.exports = router;
