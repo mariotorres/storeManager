@@ -2,16 +2,22 @@
     <input type="text" value="<%=sales[0].id%>" name="id" hidden>
     <h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <p>
                 <label>Tienda</label>
             <h5 style="color: #9E9E9E;"><%=sales[0].nombre%></h5>
             </p>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <p>
                 <label>Vendedor</label>
             <h5 style="color: #9E9E9E;"><%=sales[0].nombres%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Fecha de venta</label>
+            <h5 style="color: #9E9E9E;"><%=sales[0].fecha_venta.toLocaleDateString()%></h5>
             </p>
         </div>
     </div>
@@ -68,6 +74,6 @@
         </tbody>
     </table>
     <p>
-        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <button type="submit" class="btn btn-primary">Liquidar</button>
     </p>
 </form>
