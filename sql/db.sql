@@ -31,7 +31,7 @@ create table bonos (
     criterio text,
     temporalidad text
     );
-insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad) values('_', 0, '' ,0,'Tienda','');
+insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad) values('_', 0, '' ,0,'','');
 
 
 /* Tiendas */
