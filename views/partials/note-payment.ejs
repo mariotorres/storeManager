@@ -1,14 +1,40 @@
 <form id="noteForm">
-    <p>
-        <label>Nombre de la tienda</label>
-        <input name="nombre" value="<%=sales[0].nombre%>" class="form-control" required>
-    </p>
-
-    <p>
-        <label>Monto de la venta</label>
-        <input name="nombre" value="<%=sales[0].precio_venta%>" class="form-control" required>
-    </p>
-
+    <input type="text" value="<%=sales[0].id%>" name="id" hidden>
+    <h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Tienda</label>
+            <h5 style="color: #9E9E9E;"><%=sales[0].nombre%></h5>
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>Vendedor</label>
+            <h5 style="color: #9E9E9E;"><%=sales[0].nombres%></h5>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Artiulos vendidos</label>
+            <h5 style="color: #9E9E9E;"><%=sales.length%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Monto Venta</label>
+            <h5 style="color: #9E9E9E;"><%=sales[0].precio_venta%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Monto Venta</label>
+            <h5 style="color: #9E9E9E;"><%=sales[0].saldo_pendiente%></h5>
+            </p>
+        </div>
+    </div>
     <p>
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </p>
