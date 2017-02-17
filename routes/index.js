@@ -2215,7 +2215,7 @@ router.post('/employee/details', function (req, res) {
 
 router.post('/search/employees/results', function (req, res) {
     console.log(req.body);
-    db.manyOrNone("select * from usuarios where nombres ilike '%$1#%' or apellido_paterno ilike '%$2#%' or apellido_materno ilike '%$3#%'", [
+    db.manyOrNone("select * from usuarios where nombres ilike '%$1#%' and apellido_paterno ilike '%$2#%' and apellido_materno ilike '%$3#%'", [
         req.body.nombres,
         req.body.apellido_paterno,
         req.body.apellido_materno
