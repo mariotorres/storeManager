@@ -2373,16 +2373,15 @@ router.post('/brand/delete', function (req, res) {
 router.post('/item/delete', function (req, res ) {
     // Eliminar articulo
     db.tx(function (t) {
-        return this.one("select id, costo, n_existencias, id_proveedor from articulos where id = $1 ", [ req.body.id ])
-    }).then(function (data) {
-
-        return t.batch([
-            t.one("delete from artículo cascade where id = $1 returning id, costo, n_existencias, id_proveedor ", [ data.id ]),
-            t.oneOrNone('update from proveedores set a_cuenta= a_cuenta - $2 where id = $1 returning id, nombre',[
-                data.id_proveedor,
-                data.costo * data.n_existencias
-            ])
-        ]);
+        return this.one("select id, costo, n_existencias, id_proveedor from articulos where id = $1 ", [ req.body.id ]).then(function (data) {
+            return t.batch([
+                t.one("delete from artículo cascade where id = $1 returning id, costo, n_existencias, id_proveedor ", [ data.id ]),
+                t.oneOrNone('update from proveedores set a_cuenta= a_cuenta - $2 where id = $1 returning id, nombre',[
+                    data.id_proveedor,
+                    data.costo * data.n_existencias
+                ])
+            ]);
+        })
 
     }).then(function (data) {
         console.log('Articulo eliminado: ', data[0].id);
@@ -2401,7 +2400,7 @@ router.post('/item/delete', function (req, res ) {
         res.json({
             status: 'Error',
             message: 'Ocurrió un error al eliminar el artículo'
-        })
+        });
     });
 });
 
