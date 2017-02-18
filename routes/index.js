@@ -2234,14 +2234,44 @@ router.post('/notes/payment', function(req, res){
 })
 
 router.post('/notes/finitPayment', function(req, res){
-    console.log(req.body);
+    console.log(req.body.id);
     db.tx(function(t){
-        return t.batch([
-            db.one('update ventas set estatus = $2 where id = $1 returning id'),
-        ])
+        if(req.body.optradio == 'tar') {
+            return t.batch([
+                t.one("update ventas set monto_pagado_tarjeta = monto_pagado_tarjeta + saldo_pendiente, " +
+                    "saldo_pendiente = 0 where id = $1 returning id",[
+                    req.body.id
+                ])/*,
+                t.oneOrNone("update venta_articulos set monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0, " +
+                    "estatus = 'entregada' where id_venta = $1",[
+                        req.body.id
+                ])*/
+            ])
+        }else{
+            return t.batch([
+                db.one("update ventas set monto_pagado_efectivo = monto_pagado_efectivo + saldo_pendiente, " +
+                    "saldo_pendiente = 0 where id = $1 returning id",[
+                    req.body.id
+                ])/*,
+                db.manyOrNone("update venta_articulos set monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0, " +
+                    "estatus = 'entregada' where id_venta = $1", [
+                    req.body.id
+                ])*/
+            ])
+        }
+    }).then(function(data){
+        res.json({
+            status: 'Ok',
+            message: 'La nota '+ data[0].id + ' ha sido liquidada'
+        })
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al liquidar la nota'
+        })
     })
-
-})
+});
 
 router.post('/search/employees/results', function (req, res) {
     console.log(req.body);
