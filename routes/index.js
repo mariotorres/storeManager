@@ -319,21 +319,24 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     data[0][i].estatus
                 ]));
 
-                queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [
-                    numericCol(data[0][i].id_proveedor),
-                    numericCol(data[0][i].costo * data[0][i].unidades_carrito)
-                ]));
-
                 queries.push(t.oneOrNone('delete from carrito where id_usuario=$1 and id_articulo=$2',[
                     numericCol(data[0][i].id_usuario),
                     numericCol(data[0][i].id_articulo)
                 ]));
 
-                queries.push(t.manyOrNone('update articulos set n_existencias = n_existencias - $2, fecha_ultima_modificacion = $3 where id =$1',[
+                queries.push(t.manyOrNone('update articulos set n_existencias = n_existencias - $2, fecha_ultima_modificacion = $3 where id =$1', [
                     numericCol(data[0][i].id_articulo),
                     numericCol(data[0][i].unidades_carrito),
                     new Date()
                 ]));
+
+                // Update saldo con proveedores solo de aquellas prendas que se entregaron.
+                if( data[0][i].estatus == "entregada") {
+                    queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [
+                        numericCol(data[0][i].id_proveedor),
+                        numericCol(data[0][i].costo * data[0][i].unidades_carrito)
+                    ]));
+                }
             }
 
             return t.batch(queries);
@@ -467,8 +470,8 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.one('select count(*) from ventas as count where ' +
-                'id_usuario = $1', [req.user.id]), // Sólo se imprimen las notas de las ventas completas o las que tienen pagos con tarjeta
-            this.manyOrNone('select * from ventas where id_usuario = $1 and estatus = $4 ' +
+                'id_usuario = $1', [req.user.id]), // Sólo se imprimen las notas de las ventas completas o las que tienen pagos con tarjeta:::id_usuario = $1 and
+            this.manyOrNone('select * from ventas where estatus = $4 ' +
                 ' order by id desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
         ]);
     }).then(function(data){
@@ -2233,36 +2236,48 @@ router.post('/notes/payment', function(req, res){
     })
 })
 
+
+/*,
+ t.oneOrNone("update venta_articulos set monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0, " +
+ "estatus = 'entregada' where id_venta = $1",[
+ req.body.id
+ ])*/
 router.post('/notes/finitPayment', function(req, res){
     console.log(req.body.id);
     db.tx(function(t){
+        query = ''
         if(req.body.optradio == 'tar') {
-            return t.batch([
-                t.one("update ventas set monto_pagado_tarjeta = monto_pagado_tarjeta + saldo_pendiente, " +
-                    "saldo_pendiente = 0 where id = $1 returning id",[
-                    req.body.id
-                ])/*,
-                t.oneOrNone("update venta_articulos set monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0, " +
-                    "estatus = 'entregada' where id_venta = $1",[
-                        req.body.id
-                ])*/
-            ])
+            query = "update ventas set monto_pagado_tarjeta = monto_pagado_tarjeta + saldo_pendiente, " +
+                "saldo_pendiente = 0 where id = $1 returning id";
         }else{
-            return t.batch([
-                db.one("update ventas set monto_pagado_efectivo = monto_pagado_efectivo + saldo_pendiente, " +
-                    "saldo_pendiente = 0 where id = $1 returning id",[
-                    req.body.id
-                ])/*,
-                db.manyOrNone("update venta_articulos set monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0, " +
-                    "estatus = 'entregada' where id_venta = $1", [
-                    req.body.id
-                ])*/
-            ])
+            query = "update ventas set monto_pagado_efectivo = monto_pagado_efectivo + saldo_pendiente, " +
+                "saldo_pendiente = 0 where id = $1 returning id"
         }
+        return t.batch([
+            t.one(query,[
+                req.body.id
+            ]),
+            t.manyOrNone("select * from venta_articulos where id_venta = $1 and (monto_por_pagar > 0 or estatus = 'modificacion')", [
+                req.body.id
+            ])
+        ]).then(function(articles){
+            console.log("Articles: " + articles[1]);
+            queries = [];
+            queries.push(articles);
+            for(i = 0; i < articles[1].length; i++){
+                queries.push(
+                    t.oneOrNone("update venta_articulos set monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0, " +
+                        "estatus = 'entregada' where id = $1",[
+                        articles[1][i].id
+                    ])
+                )
+            }
+            return t.batch(queries);
+        })
     }).then(function(data){
         res.json({
             status: 'Ok',
-            message: 'La nota '+ data[0].id + ' ha sido liquidada'
+            message: 'La nota '+ data[0][0].id + ' ha sido liquidada'
         })
     }).catch(function (error) {
         console.log(error);
