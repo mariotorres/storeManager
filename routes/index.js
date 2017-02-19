@@ -1190,7 +1190,7 @@ function stob( str) {
 var multer = require ('multer');
 
 var upload = multer({
-    dest: path.resolve('../uploads/')
+    dest: path.join(__dirname, '..', 'uploads')
 });
 
 router.post('/item/register', upload.single('imagen'),function(req, res){
@@ -1754,8 +1754,9 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
     }).then(function (data) {
 
         // borra la imagen anterior
-        fs.unlinkSync(path.resolve('../uploads/'+ data[0].nombre_imagen));
-        console.log('successfully deleted '+ path.resolve('../uploads/'+ data[0].nombre_imagen));
+        var img_path = path.join(__dirname, '..', 'uploads/', data[0].nombre_imagen);
+        fs.unlinkSync( img_path );
+        console.log('successfully deleted '+ img_path);
 
         res.json({
             status :'Ok',
@@ -2336,7 +2337,9 @@ router.post('/search/notes/results', function (req, res) {
 });
 
 router.get('/item/:filename/image.jpg', isAuthenticated, function (req, res) {
-   res.sendFile( path.resolve('../uploads/'+req.params.filename));
+    var img_path =  path.join(__dirname, '..', 'uploads/',req.params.filename);
+    //console.log( img_path );
+   res.sendFile( img_path );
 });
 
 //eventos del calendario
