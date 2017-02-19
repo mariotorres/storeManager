@@ -227,6 +227,13 @@ create table venta_articulos(
     estatus  text
 );
 
+
+drop table if exists carrito_notas;
+create table carrito_notas(
+id_ventas integer references ventas (id ),
+id_usuario integer references usuarios(id)
+);
+
 /* Devolución de artículos */
 drop table if exists devolucion_prov_articulos;
 create table devolucion_prov_articulos(
