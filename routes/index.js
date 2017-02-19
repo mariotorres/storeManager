@@ -2269,7 +2269,7 @@ router.post('/notes/finitPayment', function(req, res){
             console.log("Articles: " + articles[1]);
             queries = [];
             queries.push(articles);
-            for(i = 0; i < articles[1].length; i++){
+            for(var i = 0; i < articles[1].length; i++){
                 queries.push(
                     t.one("update venta_articulos set estatus = $2, monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0 " +
                         " where id = $1 returning id",[
