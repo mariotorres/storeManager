@@ -2260,6 +2260,10 @@ router.post('/notes/finitPayment', function(req, res){
             t.manyOrNone("select * from venta_articulos, articulos, proveedores where venta_articulos.id_articulo = articulos.id and " +
                 " proveedores.id = articulos.id_proveedor and id_venta = $1 and (monto_por_pagar > 0 or estatus = 'modificacion')", [
                 req.body.id
+            ]),
+            t.manyOrNone("select venta_articulos.id as id_art from venta_articulos, articulos, proveedores where venta_articulos.id_articulo = articulos.id and " +
+                " proveedores.id = articulos.id_proveedor and id_venta = $1 and (monto_por_pagar > 0 or estatus = 'modificacion')", [
+                req.body.id
             ])
         ]).then(function(articles){
             console.log("Articles: " + articles[1]);
@@ -2269,7 +2273,7 @@ router.post('/notes/finitPayment', function(req, res){
                 queries.push(
                     t.one("update venta_articulos set estatus = $2, monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0 " +
                         " where id = $1 returning id",[
-                        articles[1][i].id,
+                        articles[2][i].id_art,
                         "entregada"
                     ]),
                     t.one("update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id",[
