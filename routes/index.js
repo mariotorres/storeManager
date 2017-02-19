@@ -330,8 +330,8 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     new Date()
                 ]));
 
-                // Update saldo con proveedores solo de aquellas prendas que se entregaron.
-                if( data[0][i].estatus == "entregada") {
+                // Update saldo con proveedores solo de aquellas prendas que se entregaron y que están completamente pagadas.
+                if( data[0][i].estatus == "entregada" && data[0][i].monto_por_pagar == 0) {
                     queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [
                         numericCol(data[0][i].id_proveedor),
                         numericCol(data[0][i].costo * data[0][i].unidades_carrito)
@@ -2257,7 +2257,8 @@ router.post('/notes/finitPayment', function(req, res){
             t.one(query,[
                 req.body.id
             ]),
-            t.manyOrNone("select * from venta_articulos where id_venta = $1 and (monto_por_pagar > 0 or estatus = 'modificacion')", [
+            t.manyOrNone("select * from venta_articulos, articulos, proveedores where venta_articulos.id_articulo = articulos.id and " +
+                " proveedores.id = articulos.id_proveedor and id_venta = $1 and (monto_por_pagar > 0 or estatus = 'modificacion')", [
                 req.body.id
             ])
         ]).then(function(articles){
@@ -2266,9 +2267,17 @@ router.post('/notes/finitPayment', function(req, res){
             queries.push(articles);
             for(i = 0; i < articles[1].length; i++){
                 queries.push(
-                    t.oneOrNone("update venta_articulos set monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0, " +
-                        "estatus = 'entregada' where id = $1",[
+                    t.one("update venta_articulos set monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0, " +
+                        "estatus = 'entregada' where id = $1 returning id",[
                         articles[1][i].id
+                    ])
+                )
+            }
+            for(i = 0; i< articles[1].length; i++){
+                queries.push(
+                    t.one("update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id",[
+                        articles[1][i].id_proveedor,
+                        articles[1][i].costo
                     ])
                 )
             }
