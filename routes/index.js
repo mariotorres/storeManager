@@ -2267,14 +2267,11 @@ router.post('/notes/finitPayment', function(req, res){
             queries.push(articles);
             for(i = 0; i < articles[1].length; i++){
                 queries.push(
-                    t.one("update venta_articulos set monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0, " +
-                        "estatus = 'entregada' where id = $1 returning id",[
-                        articles[1][i].id
-                    ])
-                )
-            }
-            for(i = 0; i< articles[1].length; i++){
-                queries.push(
+                    t.one("update venta_articulos set estatus = $2, monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0 " +
+                        " where id = $1 returning id",[
+                        articles[1][i].id,
+                        "entregada"
+                    ]),
                     t.one("update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id",[
                         articles[1][i].id_proveedor,
                         articles[1][i].costo
