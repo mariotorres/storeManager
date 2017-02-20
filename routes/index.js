@@ -82,13 +82,13 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-   db.one(' select * from usuarios where id = $1',[ id ]).then(function (user) {
-       //console.log('deserializing user:',user);
-       done (null, user);
-   }).catch(function (error) {
-       done(error);
-       console.log(error);
-   });
+    db.one(' select * from usuarios where id = $1',[ id ]).then(function (user) {
+        //console.log('deserializing user:',user);
+        done (null, user);
+    }).catch(function (error) {
+        done(error);
+        console.log(error);
+    });
 });
 
 var isAuthenticated = function (req, res, next) {
@@ -109,10 +109,10 @@ var isNotAuthenticated = function (req, res, next) {
 };
 
 
- // Generates hash using bCrypt
- var createHash = function(password){
- return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
- };
+// Generates hash using bCrypt
+var createHash = function(password){
+    return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
+};
 
 /*
  * ############################################
@@ -136,7 +136,7 @@ router.get('/signout', function(req, res) {
 
 /* GET login page. */
 router.get('/', isNotAuthenticated, function(req, res, next) {
-        res.render('login', { title: '', message : req.flash('message') });
+    res.render('login', { title: '', message : req.flash('message') });
 });
 
 router.get('/principal', isAuthenticated, function (req, res) {
@@ -155,7 +155,7 @@ router.get('/empleados',isAuthenticated, function (req, res) {
     if ( req.user.permiso_empleados ) {
         res.render('empleados', {title: "Panel de empleados", user: req.user, section: 'empleados'});
     } else{
-      res.redirect('/principal');
+        res.redirect('/principal');
     }
 
 });
@@ -164,7 +164,7 @@ router.get('/inventario', isAuthenticated, function (req, res ) {
     if ( req.user.permiso_inventario ){
         res.render('inventario',{ title: "Inventario", user: req.user, section : 'inventario'});
     }else {
-      res.redirect('/principal');
+        res.redirect('/principal');
     }
 });
 
@@ -270,7 +270,7 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
     }).catch(function (error) {
         console.log(error);
         res.json({
-           status : 'Error',
+            status : 'Error',
             message : 'Ocurrió un error al remover el producto del carrito'
         });
     });
@@ -439,9 +439,7 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
             this.manyOrNone('select * from articulos ' /*where n_existencias > 0 '*/ +
                 'order by articulo limit $1 offset $2',[ pageSize, offset ]),
             this.oneOrNone('select * from usuarios where id = $1',[ req.user.id ]),
-            this.manyOrNone('select * from terminales'),
-            /*this.manyOrNone('select id from articulos where n_existencias > 0 and not exists ' +
-                '( select id_articulo from carrito where unidades_carrito > 0 and articulos.id = carrito.id_articulo) order by articulo limit $1 offset $2',[ pageSize, offset ])*/
+            this.manyOrNone('select * from terminales')
         ]);
 
     }).then(function (data) {
@@ -525,8 +523,8 @@ router.post('/item/list/', isAuthenticated, function (req, res) {
 
     db.task(function (t) {
         return this.batch([
-            this.one('select count(*) from articulos as count '/*where n_existencias > 0'*/),
-            this.manyOrNone('select * from articulos '/*where n_existencias > 0*/+' order by articulo limit $1 offset $2',[ pageSize, offset ])
+            this.one('select count(*) from articulos as count '),
+            this.manyOrNone('select * from articulos order by articulo limit $1 offset $2',[ pageSize, offset ])
         ]);
 
     }).then(function (data) {
@@ -741,7 +739,7 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
 
         return this.batch([
             t.oneOrNone(
-                'select * from ventas where id=$1 ' /*and (saldo_pendiente = 0 or monto_pagado_tarjeta > 0)*/ + 'and id_usuario=$2', [
+                'select * from ventas where id=$1 and id_usuario=$2', [
                     numericCol(id),
                     numericCol(user_id)
                 ]),
@@ -969,28 +967,28 @@ router.post('/user/edit-user/', isAuthenticated, function(req, res){
 router.post('/item/edit-item/', isAuthenticated, function(req, res){
     var id = req.body.id;
     console.log(id);
-   db.task(function (t){
-       return this.batch([
-           this.one('select * from articulos where id = $1', [id]),
-           this.manyOrNone('select * from tiendas'),
-           this.manyOrNone('select * from proveedores'),
-           this.manyOrNone('select * from marcas')
-       ]);
-   }).then(function(data){
-       res.render('partials/edit-item', {
-           status:'Ok',
-           item: data[0],
-           tiendas: data[1],
-           proveedores: data[2],
-           marcas: data[3]
-       });
-   }).catch(function(error){
-       console.log(error);
-       res.json({
-           status:'Error',
-           data:error
-       });
-   });
+    db.task(function (t){
+        return this.batch([
+            this.one('select * from articulos where id = $1', [id]),
+            this.manyOrNone('select * from tiendas'),
+            this.manyOrNone('select * from proveedores'),
+            this.manyOrNone('select * from marcas')
+        ]);
+    }).then(function(data){
+        res.render('partials/edit-item', {
+            status:'Ok',
+            item: data[0],
+            tiendas: data[1],
+            proveedores: data[2],
+            marcas: data[3]
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status:'Error',
+            data:error
+        });
+    });
 });
 
 // Load item data into modal
@@ -1043,7 +1041,7 @@ router.post('/type/payment',function(req, res ){
             terminales : data[0],
             total: data[1],
             precio: data[2]
-            });
+        });
     }).catch(function (error) {
         console.log(error);
         res.render('partials/type-payment', {
@@ -1507,34 +1505,34 @@ router.post('/brand/register', isAuthenticated, function(req, res){
  * Registro de proveedores
  */
 router.post('/supplier/register', isAuthenticated,function(req, res){
-  db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
-      'direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, a_cuenta, por_pagar) ' +
-      'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, nombre ', [
-    req.body.nombre,
-    req.body.razon_social,
-    req.body.rfc,
-    req.body.direccion_calle,
-    req.body.direccion_numero_int,
-    req.body.direccion_numero_ext,
-    req.body.direccion_colonia,
-    req.body.direccion_localidad,
-    req.body.direccion_municipio,
-    req.body.direccion_ciudad,
-    req.body.direccion_pais,
-    0,
-    0
-  ]).then(function(data){
-    res.json({
-      status: 'Ok',
-      message: '¡El proveedor "' + data.nombre + '" ha sido registrado!'
+    db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
+        'direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, a_cuenta, por_pagar) ' +
+        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, nombre ', [
+        req.body.nombre,
+        req.body.razon_social,
+        req.body.rfc,
+        req.body.direccion_calle,
+        req.body.direccion_numero_int,
+        req.body.direccion_numero_ext,
+        req.body.direccion_colonia,
+        req.body.direccion_localidad,
+        req.body.direccion_municipio,
+        req.body.direccion_ciudad,
+        req.body.direccion_pais,
+        0,
+        0
+    ]).then(function(data){
+        res.json({
+            status: 'Ok',
+            message: '¡El proveedor "' + data.nombre + '" ha sido registrado!'
+        });
+    }).catch(function (error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registar el usuario'
+        });
     });
-  }).catch(function (error){
-    console.log(error);
-    res.json({
-      status: 'Error',
-      message: 'Ocurrió un error al registar el usuario'
-    });
-  });
 });
 /*
  * Actualizacion de proveedores
@@ -1907,17 +1905,17 @@ router.post('/cancel/note', isAuthenticated,function(req, res){
     db.tx(function(t){
         return t.batch([
             t.manyOrNone('select * from venta_articulos where id_venta = $1 ',[
-            numericCol(req.body.note_id)
-        ]),
+                numericCol(req.body.note_id)
+            ]),
             t.one('update ventas set estatus = $2 where id = $1 returning id', [req.body.note_id, "cancelada"])
         ]).then(function( articulos ){
             var queries = [];
             for(var i = 0; i < articulos[0].length; i++){
                 queries.push(
                     t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id, id_proveedor, costo', [
-                    articulos[0][i].id_articulo,
-                    articulos[0][i].unidades_vendidas
-                ])
+                        articulos[0][i].id_articulo,
+                        articulos[0][i].unidades_vendidas
+                    ])
                 );
             }
             queries.push(articulos[0]);
@@ -1936,10 +1934,10 @@ router.post('/cancel/note', isAuthenticated,function(req, res){
         });
     }).then(function(data){
         console.log('Nota cancelada: ',data);
-            res.json({
-                status: 'Ok',
-                message: 'Se ha cancelado la nota'
-            });
+        res.json({
+            status: 'Ok',
+            message: 'Se ha cancelado la nota'
+        });
     }).catch(function(error){
         console.log(error);
         res.json({
@@ -1989,10 +1987,10 @@ router.post('/user/update', isAuthenticated, function(req, res){
         });
     }).catch(function (error) {
         console.log(error);
-       res.json({
-           status : 'Error',
-           message: 'Ocurrió un error al actualizar los datos del usuario'
-       });
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al actualizar los datos del usuario'
+        });
     });
 });
 
@@ -2027,11 +2025,11 @@ router.post('/user/update-password',isAuthenticated,function (req, res ) {
                     message: "Contraseña actualizada"
                 });
             }).catch(function (error) {
-               console.log(error);
-               res.json({
-                   status: "Error",
-                   message: "Ocurrió un error al actualizar la contraseña"
-               });
+                console.log(error);
+                res.json({
+                    status: "Error",
+                    message: "Ocurrió un error al actualizar la contraseña"
+                });
             });
         } else if ( isValidPassword(user, old_pass) && new_pass != confirm_pass ){
             res.json({
@@ -2051,7 +2049,7 @@ router.post('/user/update-password',isAuthenticated,function (req, res ) {
 });
 
 router.post('/reports/', isAuthenticated, function (req, res) {
-   res.render('partials/reports');
+    res.render('partials/reports');
 });
 
 router.post('/item/find-items-view', isAuthenticated, function (req, res) {
@@ -2080,7 +2078,7 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
     //var offset = req.body.page * pageSize;
     db.task(function (t) {
         return this.batch([
-            t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%' "/*and n_existencias > 0"*/, [
+            t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,
@@ -2107,11 +2105,11 @@ router.post('/search/items/devs', function (req, res) {
     //var pageSize = 10;
     //var offset = req.body.page * pageSize;
     db.manyOrNone("select * from ventas, venta_articulos, articulos where ventas.id = venta_articulos.id_venta and venta_articulos.id_articulo = articulos.id and ( ventas.id = $1 or " +
-                " (fecha_venta > $2 and fecha_venta < $3)) ", [
-                numericCol(req.body.id_nota),
-                req.body.fecha_inicial,
-                req.body.fecha_final
-            ]).then(function (data) {
+        " (fecha_venta > $2 and fecha_venta < $3)) ", [
+        numericCol(req.body.id_nota),
+        req.body.fecha_inicial,
+        req.body.fecha_final
+    ]).then(function (data) {
         res.render('partials/find-item-dev',{
             items: data[0],
             user: data[1],
@@ -2238,11 +2236,6 @@ router.post('/notes/payment', function(req, res){
 })
 
 
-/*,
- t.oneOrNone("update venta_articulos set monto_pagado = monto_pagado + monto_por_pagar, monto_por_pagar = 0, " +
- "estatus = 'entregada' where id_venta = $1",[
- req.body.id
- ])*/
 router.post('/notes/finitPayment', function(req, res){
     console.log(req.body.id);
     db.tx(function(t){
@@ -2339,16 +2332,16 @@ router.post('/search/notes/results', function (req, res) {
 router.get('/item/:filename/image.jpg', isAuthenticated, function (req, res) {
     var img_path =  path.join(__dirname, '..', 'uploads/',req.params.filename);
     //console.log( img_path );
-   res.sendFile( img_path );
+    res.sendFile( img_path );
 });
 
 //eventos del calendario
 router.post('/calendar/sales/', isAuthenticated, function (req, res ){
-   db.manyOrNone("select concat ( 'Ventas: ', count(*) ) as title, to_char(fecha_venta, 'YYYY-MM-DD') as start from ventas group by fecha_venta").then(function (data) {
-       res.json( data );
-   }).catch(function (error) {
-       console.log(error);
-   });
+    db.manyOrNone("select concat ( 'Ventas: ', count(*) ) as title, to_char(fecha_venta, 'YYYY-MM-DD') as start from ventas group by fecha_venta").then(function (data) {
+        res.json( data );
+    }).catch(function (error) {
+        console.log(error);
+    });
 });
 
 
@@ -2371,36 +2364,36 @@ router.post('/user/delete', function (req, res ) {
 
 
 router.post('/store/delete', function(req, res){
-   db.one('delete from tiendas cascade where id = $1 returning id',[ req.body.id ]).then(function(data){
-       console.log('Tienda eliminada: ', data.id );
-       res.json({
-           status : 'Ok',
-           message : 'La tienda ha sido eliminada del sistema'
-       });
-   }).catch(function (error) {
-       console.log(error);
-       res.json({
-           status :'Error',
-           message: 'Ocurrió un error al eliminar la tienda'
-       })
-   })
+    db.one('delete from tiendas cascade where id = $1 returning id',[ req.body.id ]).then(function(data){
+        console.log('Tienda eliminada: ', data.id );
+        res.json({
+            status : 'Ok',
+            message : 'La tienda ha sido eliminada del sistema'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status :'Error',
+            message: 'Ocurrió un error al eliminar la tienda'
+        })
+    })
 });
 
 
 router.post('/terminal/delete', function (req, res) {
-   db.one('delete from terminales cascade where id = $1 returning id ', [ req.body.id  ]).then(function (data) {
-       console.log('Terminal eliminada: ', data.id );
-       res.json({
-           status : 'Ok',
-           message: 'Terminal eliminada'
-       });
-   }).catch(function (error) {
-       console.log(error);
-       res.json({
-           status: 'Error',
-           message: 'Ocurrió un error al eliminar la terminal'
-       });
-   });
+    db.one('delete from terminales cascade where id = $1 returning id ', [ req.body.id  ]).then(function (data) {
+        console.log('Terminal eliminada: ', data.id );
+        res.json({
+            status : 'Ok',
+            message: 'Terminal eliminada'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al eliminar la terminal'
+        });
+    });
 });
 
 
@@ -2422,19 +2415,19 @@ router.post('/supplier/delete', function (req, res) {
 
 //borrar marca
 router.post('/brand/delete', function (req, res) {
-   db.one('delete from marcas cascade where id = $1 returning id ', [ req.body.id ]).then(function (data) {
-       console.log('Marca eliminada: ', data.id );
-       res.json({
-           status: 'Ok',
-           message: 'La marca ha sido eliminada'
-       })
-   }).catch(function(error){
-       console.log(error);
-       res.json({
-           status: 'Error',
-           message: 'Ocurrió un error al eliminar la marca'
-       })
-   });
+    db.one('delete from marcas cascade where id = $1 returning id ', [ req.body.id ]).then(function (data) {
+        console.log('Marca eliminada: ', data.id );
+        res.json({
+            status: 'Ok',
+            message: 'La marca ha sido eliminada'
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al eliminar la marca'
+        })
+    });
 });
 
 //borrar artículo
