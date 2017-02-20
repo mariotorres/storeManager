@@ -205,6 +205,7 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 });
 
 // Impresión de notas
+// esto está mal, imcompleto
 router.get('/nota', isAuthenticated, function (req, res) {
     db.task(function (t) {
 
@@ -435,8 +436,8 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
 
     db.task(function (t) {
         return this.batch([
-            this.one('select count(*) from articulos as count '/*where n_existencias > 0'*/),
-            this.manyOrNone('select * from articulos ' /*where n_existencias > 0 '*/ +
+            this.one('select count(*) from articulos as count '),
+            this.manyOrNone('select * from articulos ' +
                 'order by articulo limit $1 offset $2',[ pageSize, offset ]),
             this.oneOrNone('select * from usuarios where id = $1',[ req.user.id ]),
             this.manyOrNone('select * from terminales')
@@ -623,10 +624,10 @@ router.post('/lending/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
     db.task(function (t) {
-        return t.batch([
-            t.one('select count(*) from prestamos as count'),
-            t.manyOrNone('select * from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by nombres limit $1 offset $2', [pageSize, offset])
-        ])
+        return this.batch([
+            this.one('select count(*) from prestamos as count'),
+            this.manyOrNone('select * from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by nombres limit $1 offset $2', [pageSize, offset])
+        ]);
     }).then(function (data) {
         console.log(data.length);
         res.render('partials/lending-list',{
@@ -699,8 +700,8 @@ router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
     db.task(function (t) {
 
         return this.batch([
-            t.one('select * from ventas, terminales where ventas.id = $1 and ventas.id_terminal = terminales.id', [ id ]),
-            t.manyOrNone('select * from venta_articulos, articulos where venta_articulos.id_venta = $1 and ' +
+            this.one('select * from ventas, terminales where ventas.id = $1 and ventas.id_terminal = terminales.id', [ id ]),
+            this.manyOrNone('select * from venta_articulos, articulos where venta_articulos.id_venta = $1 and ' +
                 'venta_articulos.id_articulo = articulos.id', [ id ])
         ]).then(function (data) {
 
@@ -738,20 +739,20 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
     db.task(function (t) {
 
         return this.batch([
-            t.oneOrNone(
+            this.oneOrNone(
                 'select * from ventas where id=$1 and id_usuario=$2', [
                     numericCol(id),
                     numericCol(user_id)
                 ]),
-            t.oneOrNone(
+            this.oneOrNone(
                 'select sum(unidades_vendidas) as sum from venta_articulos where id_venta=$1',
                 [numericCol(id)]
             ),
-            t.manyOrNone(
+            this.manyOrNone(
                 'select * from venta_articulos where id_venta=$1',
                 [numericCol(id)]
             ),
-            t.oneOrNone(
+            this.oneOrNone(
                 'select * from usuarios where id=$1',
                 [numericCol(user_id)]
             )
@@ -818,8 +819,8 @@ router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
     console.log(id);
     db.task(function(t){
         return this.batch([
-            db.one('select * from terminales where id = $1', [id]),
-            db.manyOrNone('select * from tiendas')
+            this.one('select * from terminales where id = $1', [id]),
+            this.manyOrNone('select * from tiendas')
         ])
     }).then(function(data){
         res.render('partials/edit-terminal', {
@@ -859,11 +860,11 @@ router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
 router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
     var id = req.body.id;
     db.task(function(t){
-        return t.batch([
-            db.one('select * from prestamos, usuarios where prestamos.id = $1 and prestamos.id_usuario = usuarios.id ', [
+        return this.batch([
+            this.one('select * from prestamos, usuarios where prestamos.id = $1 and prestamos.id_usuario = usuarios.id ', [
                 id
             ]),
-            db.manyOrNone('select * from usuarios')
+            this.manyOrNone('select * from usuarios')
         ])
     }).then(function(data){
         res.render('partials/edit-lending', {
@@ -1400,8 +1401,8 @@ router.post('/terminal/register', isAuthenticated, function(req, res){
 router.post('/employees/lending/register', function(req, res){
     console.log(req.body);
     db.tx(function(t){
-        return t.batch([
-            db.one('insert into prestamos(id_usuario, monto, descripcion, fecha_prestamo, fecha_liquidacion, pago_semanal) ' +
+        return this.batch([
+            this.one('insert into prestamos(id_usuario, monto, descripcion, fecha_prestamo, fecha_liquidacion, pago_semanal) ' +
                 ' values($1, $2, $3, $4, $5, $6) returning id, monto', [
                 req.body.id_usuario,
                 numericCol(req.body.monto),
@@ -1410,7 +1411,7 @@ router.post('/employees/lending/register', function(req, res){
                 req.body.fecha_liquidacion,
                 numericCol(req.body.monto_semanal)
             ]),
-            db.one('select * from usuarios where id = $1', req.body.id_usuario)
+            this.one('select * from usuarios where id = $1', req.body.id_usuario)
         ])
     }).then(function(data){
         res.json({
@@ -1728,7 +1729,6 @@ router.post('/penalization/update', isAuthenticated, function(req, res){
  * Actualización de items
  */
 router.post('/item/update', upload.single('imagen'), function(req, res){
-
     db.tx(function (t) {
         return this.batch([
             t.one('select nombre_imagen from articulos where id = $1',[req.body.id ]),
@@ -1770,7 +1770,7 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
 });
 
 /*
- * Devolución de items
+ * Devolución de items (Revisar)
  */
 router.post('/item/return', isAuthenticated, function(req, res){
     db.tx(function(t){
@@ -1803,6 +1803,8 @@ router.post('/item/return', isAuthenticated, function(req, res){
                 0
             ])
         ]).then(function(data){
+
+            //Está mal, no estás retornando nada!!!
             t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", ' +
                 '"monto_pagado", "estatus") ' +
                 ' values($1, $2, $3, $4, $5)', [
@@ -1811,7 +1813,7 @@ router.post('/item/return', isAuthenticated, function(req, res){
                 numericCol(req.body.n_devoluciones),
                 numericCol(req.body.costo),
                 "dev_proveedor"
-            ])
+            ]);
             return data;
         });
     }).then(function (data) {
@@ -2091,8 +2093,7 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
         res.render('partials/search-items-results',{
             items: data[0],
             user: data[1],
-            terminales: data[2],
-            //not_in_carrito: data[3]
+            terminales: data[2]
         });
     }).catch(function (error) {
         console.log(error);
@@ -2100,6 +2101,8 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
 
 });
 
+
+//esto está mal, ¿de donde sale data[...]? (revisar)
 router.post('/search/items/devs', function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
@@ -2233,13 +2236,13 @@ router.post('/notes/payment', function(req, res){
             message: 'Ocurrió un error al buscar la nota.'
         })
     })
-})
+});
 
 
 router.post('/notes/finitPayment', function(req, res){
     console.log(req.body.id);
     db.tx(function(t){
-        query = ''
+        var query = '';
         if(req.body.optradio == 'tar') {
             query = "update ventas set monto_pagado_tarjeta = monto_pagado_tarjeta + saldo_pendiente, " +
                 "saldo_pendiente = 0 where id = $1 returning id";
