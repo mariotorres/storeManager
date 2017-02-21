@@ -279,8 +279,8 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 
 // Carrito Sell
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
+    console.log(req.body);
     db.tx(function (t) {
-        console.log(req.body);
         return this.manyOrNone(
             'select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
             ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo', [
@@ -288,7 +288,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             ]).then(function(data){
             return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros.
                 data,
-                t.oneOrNone('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
+                t.one('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
                     '"monto_pagado_efectivo", "monto_pagado_tarjeta", "id_terminal", "saldo_pendiente", "estatus", "tarjeta_credito", "monto_cambio") ' +
                     'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id', [
                     numericCol(req.body.user_id),
@@ -307,9 +307,10 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
         }).then(function(data){
             var queries= [];
             for(var i = 0; i < data[0].length; i++){
-                queries.push(t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", "discount", ' +
-                    '"monto_pagado", "monto_por_pagar", "estatus") ' +
-                    ' values($1, $2, $3, $4, $5, $6, $7)', [
+                queries.push(
+                    t.one('insert into venta_articulos (id_articulo, id_venta, unidades_vendidas, discount, ' +
+                        'monto_pagado, monto_por_pagar, estatus) ' +
+                        ' values($1, $2, $3, $4, $5, $6, $7) returning id_articulo', [
                     numericCol(data[0][i].id_articulo),
                     numericCol(data[1].id),
                     numericCol(data[0][i].unidades_carrito),
@@ -318,14 +319,15 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     numericCol(( numericCol(data[0][i].unidades_carrito)* numericCol(data[0][i].precio)*
                         (1- numericCol(data[0][i].discount)/100)) -  numericCol(data[0][i].monto_pagado)),
                     data[0][i].estatus
-                ]));
+                ])
+                );
 
-                queries.push(t.oneOrNone('delete from carrito where id_usuario=$1 and id_articulo=$2',[
+                queries.push(t.none('delete from carrito where id_usuario=$1 and id_articulo=$2',[
                     numericCol(data[0][i].id_usuario),
                     numericCol(data[0][i].id_articulo)
                 ]));
 
-                queries.push(t.manyOrNone('update articulos set n_existencias = n_existencias - $2, fecha_ultima_modificacion = $3 where id =$1', [
+                queries.push(t.one('update articulos set n_existencias = n_existencias - $2, fecha_ultima_modificacion = $3 where id =$1 returning id', [
                     numericCol(data[0][i].id_articulo),
                     numericCol(data[0][i].unidades_carrito),
                     new Date()
@@ -333,7 +335,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
 
                 // Update saldo con proveedores solo de aquellas prendas que se entregaron y que están completamente pagadas.
                 if( data[0][i].estatus == "entregada" && data[0][i].monto_por_pagar == 0) {
-                    queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1', [
+                    queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id', [
                         numericCol(data[0][i].id_proveedor),
                         numericCol(data[0][i].costo * data[0][i].unidades_carrito)
                     ]));
@@ -344,6 +346,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
 
         });
     }).then(function (data) {
+        console.log('Venta generada: ', data);
         res.json({
             status : 'Ok',
             message : 'La venta ha sido registrada exitosamente'
@@ -377,10 +380,9 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
 
         } else {
 
-            db.oneOrNone('insert into carrito ("fecha", "id_articulo", "id_usuario", "discount",  ' +
-                '"unidades_carrito", "estatus", "monto_pagado") ' +
-                ' values($1, $2, $3, $4, $5, $6, $7) ' +
-                ' returning id_articulo',[
+            db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
+                'unidades_carrito, estatus, monto_pagado) ' +
+                ' values($1, $2, $3, $4, $5, $6, $7) returning id_articulo',[
                 new Date(),
                 numericCol(req.body.item_id),
                 numericCol(req.body.user_id),
@@ -407,7 +409,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
         console.log(error);
         res.json({
             status: 'Error',
-            message: 'Ocurrió un error al registrar el artículo'
+            message: 'Ocurrió un error al agregar al carrito'
         });
     });
 
@@ -798,8 +800,8 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
 // Load store data into  modal.
 router.post('/store/edit-store/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    //console.log(id);
     db.one('select * from tiendas where id = $1', [id]).then(function(data){
+        console.log('Editar tienda: ', data.nombre );
         res.render('partials/edit-store', {
             status:'Ok',
             store: data
@@ -843,6 +845,7 @@ router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
     db.one('select * from bonos where id = $1', [
         id
     ]).then(function(data){
+        console.log('Editar bono: ',data.id );
         res.render('partials/edit-bonus', {
             status:'Ok',
             bonus: data
@@ -2103,7 +2106,7 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
 
 
 //esto está mal, ¿de donde sale data[...]? (revisar)
-router.post('/search/items/devs', function (req, res) {
+router.post('/search/items/devs', isAuthenticated, function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
     //var offset = req.body.page * pageSize;
@@ -2125,7 +2128,7 @@ router.post('/search/items/devs', function (req, res) {
 
 });
 
-router.post('/employees/find-employees-view', function (req, res) {
+router.post('/employees/find-employees-view', isAuthenticated, function (req, res) {
     res.render('partials/find-employees');
 });
 
@@ -2145,7 +2148,7 @@ router.post('/notes/find-notes-view', function (req, res) {
     });
 });
 
-router.post('/employee/details', function (req, res) {
+router.post('/employee/details', isAuthenticated, function (req, res) {
     // Comisión total 3%.
     console.log(req.body);
     var id = req.body.id;
@@ -2218,7 +2221,7 @@ router.post('/employee/details', function (req, res) {
     });
 });
 
-router.post('/notes/payment', function(req, res){
+router.post('/notes/payment', isAuthenticated, function(req, res){
     console.log(req.body);
     db.manyOrNone('select * from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
         'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
@@ -2239,7 +2242,7 @@ router.post('/notes/payment', function(req, res){
 });
 
 
-router.post('/notes/finitPayment', function(req, res){
+router.post('/notes/finitPayment', isAuthenticated, function(req, res){
     console.log(req.body.id);
     db.tx(function(t){
         var query = '';
@@ -2291,11 +2294,11 @@ router.post('/notes/finitPayment', function(req, res){
         res.json({
             status : 'Error',
             message: 'Ocurrió un error al liquidar la nota'
-        })
-    })
+        });
+    });
 });
 
-router.post('/search/employees/results', function (req, res) {
+router.post('/search/employees/results', isAuthenticated, function (req, res) {
     console.log(req.body);
     db.manyOrNone("select * from usuarios where nombres ilike '%$1#%' and apellido_paterno ilike '%$2#%' and apellido_materno ilike '%$3#%'", [
         req.body.nombres,
@@ -2314,7 +2317,7 @@ router.post('/search/employees/results', function (req, res) {
     });
 });
 
-router.post('/search/notes/results', function (req, res) {
+router.post('/search/notes/results', isAuthenticated, function (req, res) {
     db.manyOrNone("select * from ventas where (fecha_venta >= $2 and fecha_venta <= $3)", [
         numericCol(req.body.id_nota),
         req.body.fecha_inicial,
@@ -2349,7 +2352,7 @@ router.post('/calendar/sales/', isAuthenticated, function (req, res ){
 
 
 /* Borrado */
-router.post('/user/delete', function (req, res ) {
+router.post('/user/delete', isAuthenticated, function (req, res ) {
     db.one('delete from usuarios cascade where id = $1 returning id ', [ req.body.id ]).then(function (data) {
         console.log('Usuario eliminado: ', data.id );
         res.json({
@@ -2366,7 +2369,7 @@ router.post('/user/delete', function (req, res ) {
 });
 
 
-router.post('/store/delete', function(req, res){
+router.post('/store/delete', isAuthenticated, function(req, res){
     db.one('delete from tiendas cascade where id = $1 returning id',[ req.body.id ]).then(function(data){
         console.log('Tienda eliminada: ', data.id );
         res.json({
@@ -2383,7 +2386,7 @@ router.post('/store/delete', function(req, res){
 });
 
 
-router.post('/terminal/delete', function (req, res) {
+router.post('/terminal/delete', isAuthenticated, function (req, res) {
     db.one('delete from terminales cascade where id = $1 returning id ', [ req.body.id  ]).then(function (data) {
         console.log('Terminal eliminada: ', data.id );
         res.json({
@@ -2400,7 +2403,7 @@ router.post('/terminal/delete', function (req, res) {
 });
 
 
-router.post('/supplier/delete', function (req, res) {
+router.post('/supplier/delete', isAuthenticated, function (req, res) {
     db.one('delete from proveedores cascade where id = $1 returning id', [ req.body.id ]).then(function (data) {
         console.log('Proveedor eliminado: ', data.id );
         res.json({
@@ -2417,7 +2420,7 @@ router.post('/supplier/delete', function (req, res) {
 });
 
 //borrar marca
-router.post('/brand/delete', function (req, res) {
+router.post('/brand/delete', isAuthenticated, function (req, res) {
     db.one('delete from marcas cascade where id = $1 returning id ', [ req.body.id ]).then(function (data) {
         console.log('Marca eliminada: ', data.id );
         res.json({
@@ -2434,7 +2437,7 @@ router.post('/brand/delete', function (req, res) {
 });
 
 //borrar artículo
-router.post('/item/delete', function (req, res ) {
+router.post('/item/delete', isAuthenticated, function (req, res ) {
     // Eliminar articulo
     db.tx(function (t) {
         return this.one("select id, costo, n_existencias, id_proveedor from articulos where id = $1 ", [ req.body.id ]).then(function (data) {
