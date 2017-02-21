@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-
 var path = require('path');
 var fs = require('fs');
 var pgp = require("pg-promise")();
@@ -201,6 +200,7 @@ router.get('/carrito', isAuthenticated, function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -218,6 +218,7 @@ router.get('/nota', isAuthenticated, function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -227,7 +228,7 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
     db.one('update carrito set unidades_carrito = unidades_carrito + 1 ' +
         'where carrito.id_articulo = $1 and carrito.id_usuario = $2 returning id_articulo', [
         numericCol(req.body.item_id),
-        numericCol(req.body.user_id)
+        numericCol(req.user.id) //numericCol(req.body.user_id)
     ]).then(function (data) {
         res.json({
             status : 'Ok',
@@ -247,7 +248,7 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
     db.oneOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 '+//from usuarios, articulos ' +
         'where id_articulo=$1 and id_usuario=$2 and carrito.unidades_carrito > 1 returning id_articulo', [
         numericCol(req.body.item_id),
-        numericCol(req.body.user_id)
+        numericCol(req.user.id)//numericCol(req.body.user_id)
     ]).then(function (data) {
         res.json({
             status : 'Ok',
@@ -263,7 +264,10 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/rem', isAuthenticated, function (req, res) {
-    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 returning id_articulo', [ req.body.user_id, req.body.item_id ]).then(function (data) {
+    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 returning id_articulo', [
+        req.user.id, //req.body.user_id,
+        req.body.item_id
+    ]).then(function (data) {
         res.json({
             status: 'Ok',
             message : 'El producto '+ data.id_articulo +' se ha removido del carrito'
@@ -282,16 +286,16 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
     console.log(req.body);
     db.tx(function (t) {
         return this.manyOrNone(
-            'select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
-            ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo', [
-                numericCol(req.body.user_id)
+            'select * from carrito, articulos where carrito.id_articulo = articulos.id and ' +
+            ' carrito.id_usuario = $1 and carrito.unidades_carrito > 0 order by articulo', [
+                numericCol(req.user.id) //numericCol(req.body.user_id)
             ]).then(function(data){
             return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros.
                 data,
-                t.one('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
-                    '"monto_pagado_efectivo", "monto_pagado_tarjeta", "id_terminal", "saldo_pendiente", "estatus", "tarjeta_credito", "monto_cambio") ' +
+                t.one('insert into ventas (id_usuario, precio_venta, fecha_venta, hora_venta, ' +
+                    'monto_pagado_efectivo, monto_pagado_tarjeta, id_terminal, saldo_pendiente, estatus, tarjeta_credito, monto_cambio) ' +
                     'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id', [
-                    numericCol(req.body.user_id),
+                    numericCol(req.user.id), //numericCol(req.body.user_id),
                     numericCol(req.body.precio_tot),
                     new Date(),
                     new Date().toLocaleTimeString(),
@@ -308,18 +312,17 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             var queries= [];
             for(var i = 0; i < data[0].length; i++){
                 queries.push(
-                    t.one('insert into venta_articulos (id_articulo, id_venta, unidades_vendidas, discount, ' +
-                        'monto_pagado, monto_por_pagar, estatus) ' +
-                        ' values($1, $2, $3, $4, $5, $6, $7) returning id_articulo', [
-                    numericCol(data[0][i].id_articulo),
-                    numericCol(data[1].id),
-                    numericCol(data[0][i].unidades_carrito),
-                    numericCol(data[0][i].discount),
-                    numericCol(data[0][i].monto_pagado),
-                    numericCol(( numericCol(data[0][i].unidades_carrito)* numericCol(data[0][i].precio)*
-                        (1- numericCol(data[0][i].discount)/100)) -  numericCol(data[0][i].monto_pagado)),
-                    data[0][i].estatus
-                ])
+                    t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, ' +
+                        'monto_pagado, monto_por_pagar, estatus) values($1, $2, $3, $4, $5, $6, $7) returning id_articulo', [
+                        numericCol(data[1].id),
+                        numericCol(data[0][i].id_articulo),
+                        numericCol(data[0][i].unidades_carrito),
+                        numericCol(data[0][i].discount),
+                        numericCol(data[0][i].monto_pagado),
+                        numericCol(( numericCol(data[0][i].unidades_carrito)* numericCol(data[0][i].precio)*
+                            (1- numericCol(data[0][i].discount)/100)) -  numericCol(data[0][i].monto_pagado)),
+                        data[0][i].estatus
+                    ])
                 );
 
                 queries.push(t.none('delete from carrito where id_usuario=$1 and id_articulo=$2',[
@@ -367,12 +370,11 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
 
     db.one('select count(*) as unidades_carrito from carrito where id_articulo = $1 and id_usuario = $2', [
         numericCol(req.body.item_id),
-        numericCol(req.body.user_id)
+        numericCol(req.user.id)//numericCol(req.body.user_id)
     ]).then(function(data){
         if(data.unidades_carrito > 0){
 
             console.log('La prenda ya está en el carrito');
-
             res.json({
                 status:'Ok',
                 message: 'La prenda ya está en el carrito'
@@ -385,7 +387,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
                 ' values($1, $2, $3, $4, $5, $6, $7) returning id_articulo',[
                 new Date(),
                 numericCol(req.body.item_id),
-                numericCol(req.body.user_id),
+                numericCol(req.user.id),//numericCol(req.body.user_id),
                 numericCol(req.body.optradioDesc),
                 req.body.existencias,
                 req.body.id_estatus,
@@ -431,7 +433,6 @@ router.post('/item/new', isAuthenticated,function(req,res ){
 });
 
 // Display de objetos para venta
-//esto está mal
 router.post('/item/list/sale', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
@@ -439,28 +440,21 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.one('select count(*) from articulos as count '),
-            this.manyOrNone('select * from articulos ' +
-                'order by articulo limit $1 offset $2',[ pageSize, offset ]),
-            this.oneOrNone('select * from usuarios where id = $1',[ req.user.id ]),
+            this.manyOrNone('select * from articulos order by articulo limit $1 offset $2',[ pageSize, offset ]),
             this.manyOrNone('select * from terminales')
         ]);
 
     }).then(function (data) {
         res.render('partials/sale-item-list',{
-            status : 'Ok',
             items: data[1],
-            user: data[2],
-            terminales:data[3],
-            //not_in_carrito: data[4],
+            user: req.user,
+            terminales:data[2],
             pageNumber : req.body.page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
         console.log(error);
-        res.json({
-            status: 'Error',
-            data : error
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -484,10 +478,8 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
-        res.json({
-            status: 'Error',
-            data : error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -512,10 +504,8 @@ router.post('/print/notes/list/', isAuthenticated, function (req, res) {
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
-        res.json({
-            status: 'Error',
-            data : error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -538,10 +528,8 @@ router.post('/item/list/', isAuthenticated, function (req, res) {
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
-        res.json({
-            status: 'Error',
-            data : error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -565,10 +553,8 @@ router.post('/store/list/', isAuthenticated, function (req, res) {
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
-        res.json({
-            status: 'Error',
-            data : error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -591,12 +577,11 @@ router.post('/terminal/list/', isAuthenticated, function (req, res) {
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
-        res.json({
-            status: 'Error',
-            data : error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
+
 // Display de bonos
 router.post('/bonus/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
@@ -615,12 +600,11 @@ router.post('/bonus/list/', isAuthenticated, function (req, res) {
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
-        res.json({
-            status: 'Error',
-            data : error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
+
 // Display de préstamos
 router.post('/lending/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
@@ -631,7 +615,7 @@ router.post('/lending/list/', isAuthenticated, function (req, res) {
             this.manyOrNone('select * from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by nombres limit $1 offset $2', [pageSize, offset])
         ]);
     }).then(function (data) {
-        console.log(data.length);
+        console.log('Prestamos: ', data.length);
         res.render('partials/lending-list',{
             status : 'Ok',
             lendings: data[1],
@@ -639,10 +623,8 @@ router.post('/lending/list/', isAuthenticated, function (req, res) {
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
-        res.json({
-            status: 'Error',
-            data : error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -664,10 +646,8 @@ router.post('/penalization/list/', isAuthenticated, function (req, res) {
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
-        res.json({
-            status: 'Error',
-            data : error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -689,10 +669,8 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
-        res.json({
-            status: 'Error',
-            data : error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -726,6 +704,7 @@ router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
         });
     }).catch(function (error) {
         console.log(error);
+        res.send('<b>Error</b>');
     });
 
 });
@@ -789,10 +768,7 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
         });
     }).catch(function(error){
         console.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -808,10 +784,7 @@ router.post('/store/edit-store/', isAuthenticated, function(req, res){
         });
     }).catch(function(error){
         console.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -832,10 +805,7 @@ router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
         });
     }).catch(function(error){
         console.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -847,15 +817,12 @@ router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
     ]).then(function(data){
         console.log('Editar bono: ',data.id );
         res.render('partials/edit-bonus', {
-            status:'Ok',
+            status:'Ok', //???
             bonus: data
         });
     }).catch(function(error){
         console.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -877,10 +844,7 @@ router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
         });
     }).catch(function(error){
         console.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -896,10 +860,7 @@ router.post('/penalization/edit-penalization/', isAuthenticated, function(req, r
         });
     }).catch(function(error){
         console.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -920,10 +881,7 @@ router.post('/brand/edit-brand/', isAuthenticated, function(req, res){
         });
     }).catch(function(error){
         console.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -936,11 +894,8 @@ router.post('/supplier/edit-supplier/', isAuthenticated, function(req, res){
             supplier:data
         });
     }).catch(function(error){
-        conslole.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -959,11 +914,8 @@ router.post('/user/edit-user/', isAuthenticated, function(req, res){
             tiendas: data[1]
         });
     }).catch(function(error){
-        conslole.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -988,10 +940,7 @@ router.post('/item/edit-item/', isAuthenticated, function(req, res){
         });
     }).catch(function(error){
         console.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1016,10 +965,7 @@ router.post('/item/return-item/', isAuthenticated, function(req, res){
         });
     }).catch(function(error){
         console.log(error);
-        res.json({
-            status:'Error',
-            data:error
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1048,9 +994,7 @@ router.post('/type/payment',function(req, res ){
         });
     }).catch(function (error) {
         console.log(error);
-        res.render('partials/type-payment', {
-            status: "Error"
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1073,9 +1017,7 @@ router.post('/supplier/list/', isAuthenticated,function(req, res ){
         });
     }).catch(function (error) {
         console.log(error);
-        res.render('partials/supplier-list', {
-            status: "Error"
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1098,9 +1040,7 @@ router.post('/user/list/', isAuthenticated, function(req, res){
         });
     }).catch(function(error){
         console.log(error);
-        res.render('partials/user-list', {
-            status: "Error"
-        });
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1116,6 +1056,7 @@ router.post('/terminal/new', isAuthenticated,function (req, res) {
         res.render('partials/new-terminal', {tiendas: data});
     }).catch(function(error){
         console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1125,6 +1066,7 @@ router.post('/employees/penalization/new', function (req, res) {
         res.render('partials/new-penalization', {});
     }).catch(function(error){
         console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1134,6 +1076,7 @@ router.post('/employees/bonus/new', function (req, res) {
         res.render('partials/new-bonus', {});
     }).catch(function(error){
         console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1142,18 +1085,16 @@ router.post('/employees/lending/new', function (req, res) {
         res.render('partials/new-lending', {usuarios: data});
     }).catch(function(error){
         console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
 router.post('/brand/new',isAuthenticated, function (req, res) {
-    db.task(function (t) {
-        return this.batch([
-            this.manyOrNone('select * from proveedores')
-        ]);
-    }).then(function (data) {
-        res.render('partials/new-brand', {proveedores: data[0]});
+    db.manyOrNone('select * from proveedores').then(function (data) {
+        res.render('partials/new-brand', {proveedores: data});
     }).catch(function(error){
         console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1162,7 +1103,7 @@ router.post('/user/new',isAuthenticated,function (req, res) {
         res.render('partials/new-user', {tiendas: data});
     }).catch(function (error) {
         console.log(error);
-        res.send("Error");
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1172,7 +1113,7 @@ router.post('/user/profile', isAuthenticated, function(req,res){
         res.render('partials/user-profile', { user: user });
     }).catch(function (error) {
         console.log(error);
-        res.send("Error");
+        res.send('<b>Error</b>');
     });
 });
 
@@ -1299,10 +1240,7 @@ router.post('/store/register', isAuthenticated,function(req, res){
  * Nuevos usuarios
  */
 
-
-
 router.post('/user/signup', isAuthenticated, function(req, res){
-
     db.one('select count(*) as count from usuarios where usuario =$1',[ req.body.usuario ]).then(function (data) {
 
         // 8 char pass
@@ -2071,6 +2009,7 @@ router.post('/item/find-items-view', isAuthenticated, function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
+        res.send('<b>Error</b>');
     });
 
 });
@@ -2100,6 +2039,7 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
+        res.send('<b>Error</b>');
     });
 
 });
@@ -2124,6 +2064,7 @@ router.post('/search/items/devs', isAuthenticated, function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
+        res.send('<b>Error</b>');
     });
 
 });
@@ -2145,6 +2086,7 @@ router.post('/notes/find-notes-view', function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
+        res.send('<b>Error</b>');
     });
 });
 
@@ -2214,10 +2156,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         });
     }).catch(function (error) {
         console.log(error);
-        res.json({
-            status :'Error',
-            message: 'Ocurrió un error al buscar al empleado.'
-        })
+        res.send('<b>Error</b>');
     });
 });
 
@@ -2234,10 +2173,7 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
         })
     }).catch(function(error){
         console.log(error);
-        res.json({
-            status: 'Error',
-            message: 'Ocurrió un error al buscar la nota.'
-        })
+        res.send('<b>Error</b>');
     })
 });
 

@@ -2,10 +2,6 @@
 if (items.length > 0){%>
 <% for ( var i =0; i < items.length ; i ++ ){ %>
 <div class="panel panel-default">
-    <!--
-    <div class="panel-heading" name="item_name">
-       <strong><%= items[i].articulo %></strong>
-    </div>-->
 
     <div class="panel-body">
 
@@ -17,9 +13,8 @@ if (items.length > 0){%>
             <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio %></strong></span></h3>
 
             <a href="#" class="thumbnail" style="min-height: 200px; text-align:center; min-width: 200px;">
-                <!--Aquí va la foto-->
-            <img src="<%= '/item/' + items[i].nombre_imagen +'/image.jpg'%>">
-                <!--<i class="fa fa-picture-o fa-5x" aria-hidden="true"></i>-->
+                <img src="<%= '/item/' + items[i].nombre_imagen +'/image.jpg'%>">
+
             </a>
 
             <label>Descripción:</label><p>
