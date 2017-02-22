@@ -205,16 +205,14 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 });
 
 // Impresión de notas
-// esto está mal, imcompleto
-router.get('/nota', isAuthenticated, function (req, res) {
-    db.task(function (t) {
+router.get('/notas/imprimir', isAuthenticated, function (req, res) {
 
-    }).then(function (data) {
-        res.render('nota',{
+    db.manyOrNone('select * from carrito_notas where id_usuario=$1', req.user.id).then(function (data) {
+        res.render('notas',{
             title : "Impresión en proceso",
             user: req.user,
-            section: 'nota',
-            items:[]
+            section: 'notas',
+            notas: data
         });
     }).catch(function (error) {
         console.log(error);
@@ -743,7 +741,7 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
             for(var i = 0; i < data[2].length; i++){  // data[2] -> Artículos
                 identifiers.push( data[2][i].id_articulo);
             }
-            console.log('Artículos: ', identifiers);
+            //console.log('Artículos: ', identifiers);
 
             return t.batch([
                 {venta: data[0]}, //venta
@@ -816,10 +814,7 @@ router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
         id
     ]).then(function(data){
         console.log('Editar bono: ',data.id );
-        res.render('partials/edit-bonus', {
-            status:'Ok', //???
-            bonus: data
-        });
+        res.render('partials/edit-bonus', { bonus: data });
     }).catch(function(error){
         console.log(error);
         res.send('<b>Error</b>');
