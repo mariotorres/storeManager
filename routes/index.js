@@ -2133,21 +2133,35 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             ])
         });
     }).then(function (data) {
+        var totalComsion       = (data[0][8] === null? data[0][8]:{'comision':0});
+        var montoPrestamos     = (data[0][5] === null? data[0][5]:{'pago':0});
+        var montoVentas        = (data[0][7] === null? data[0][7]:{'montoventas':0});
+        var montoVentasTiendas = (data[0][11] === null? data[0][11]:{'montotienda':0});
+        var bono               = (data[2].length > 0 ? data[2] : []);
+        var penalizacion       = (data[1].length > 0 ? data[1] : []);
+        var prestamos          = (data[0][4].length > 0 ? data[0][4] : []);
+        var asistencias        = (data[0][3].length > 0? data[0][3]: []);
+        var entradasTarde      = (data[0][1].length > 0? data[0][1]: []);
+        var salidasTemprano    = (data[0][2].length > 0? data[0][2]: []);
+        var ventas             = (data[0][6].length > 0? data[0][6]: []);
+        var tienda             = (data[0][9].length > 0? data[0][9]: []);
+        var ventaTiendas       = (data[0][10].length > 0? data[0][10]: []);
+        console.log(bono.length);
         res.render('partials/employee-detail',{
             usuario: data[0][0],
-            entradasTarde: data[0][1],
-            salidasTemprano: data[0][2],
-            asistencias: data[0][3],
-            prestamos:data[0][4],
-            montoPrestamos:data[0][5],
-            ventas: data[0][6],
-            montoVentas: data[0][7],
-            totalComision: data[0][8],
-            tienda: data[0][9],
-            ventaTiendas: data[0][10],
-            montoVentasTiendas:data[0][11],
-            penalizacion: data[1],
-            bono: data[2]
+            entradasTarde: entradasTarde,
+            salidasTemprano: salidasTemprano,
+            asistencias: asistencias,
+            prestamos:prestamos,
+            montoPrestamos:montoPrestamos,
+            ventas: ventas,
+            montoVentas: montoVentas,
+            totalComision: totalComsion,
+            tienda: tienda,
+            ventaTiendas: ventaTiendas,
+            montoVentasTiendas: montoVentasTiendas,
+            penalizacion: penalizacion,
+            bono: bono
         });
     }).catch(function (error) {
         console.log(error);

@@ -19,7 +19,7 @@ create table penalizaciones (
     dias_retraso integer,  /* Debe reiniciar cada semana.*/
     dias_ausencia integer /* Debe reiniciar cada semana.*/
     );
-insert into penalizaciones(nombre, monto, descripcion, dias_retraso, dias_ausencia) values('_', 0, '' ,0, 0);
+/*insert into penalizaciones(nombre, monto, descripcion, dias_retraso, dias_ausencia) values('_', 0, '_' ,0, 0);*/
 
 /* Bonos */
 create table bonos (
@@ -31,7 +31,7 @@ create table bonos (
     criterio text,
     temporalidad text
     );
-insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad) values('_', 0, '' ,0,'','');
+/*insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad) values('_', 0, '_' ,0,'_','_');*/
 
 
 /* Tiendas */

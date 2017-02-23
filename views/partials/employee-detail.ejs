@@ -23,7 +23,6 @@
             <p>
                 <label>Tienda</label>
             <h5 style="color: #9E9E9E;">
-
                 <%if (tienda){%>
                 <%=tienda.nombre%>
                 <%}%>
@@ -45,10 +44,10 @@
             <p>
                 <label>Número de ventas individuales</label>
             <h5 style="color: #9E9E9E;">
-                <%if (ventas){%>
-                <%=ventas.length%>
-                <%}else{%>
+                <%if (ventas === null){%>
                 <%=0%>
+                <%}else{%>
+                <%=ventas.length%>
                 <%}%>
             </h5>
             </p>
@@ -57,10 +56,10 @@
             <p>
                 <label>Monto vendido individual</label>
             <h5 style="color: #9E9E9E;">
-                <%if (montoVentas){%>
-                <%=montoVentas.montoventas%>
-                <%}else{%>
+                <%if (montoVentas === null){%>
                 <%=0%>
+                <%}else{%>
+                <%=montoVentas.montoventas%>
                 <%}%>
             </h5>
             </p>
@@ -69,10 +68,10 @@
             <p>
                 <label>Comision correspondiente</label>
             <h5 style="color: #9E9E9E;">
-                <%if (totalComision){%>
-                <%=totalComision.comision%>
-                <%}else{%>
+                <%if (totalComision === null){%>
                 <%=0%>
+                <%}else{%>
+                <%=totalComision.comision%>
                 <%}%>
             </h5>
             </p>
@@ -83,10 +82,10 @@
             <p>
                 <label>Número de ventas tienda</label>
             <h5 style="color: #9E9E9E;">
-                <%if (ventaTiendas){%>
-                <%=ventaTiendas.length%>
-                <%}else{%>
+                <%if (ventaTiendas === null){%>
                 <%=0%>
+                <%}else{%>
+                <%=ventaTiendas.length%>
                 <%}%>
             </h5>
             </p>
@@ -95,10 +94,10 @@
             <p>
                 <label>Monto vendido tienda</label>
             <h5 style="color: #9E9E9E;">
-                <%if (montoVentasTiendas){%>
-                <%=montoVentasTiendas.montotienda%>
-                <%}else{%>
+                <%if (montoVentasTiendas === null){%>
                 <%=0%>
+                <%}else{%>
+                <%=montoVentasTiendas.montotienda%>
                 <%}%>
             </h5>
             </p>
@@ -107,10 +106,10 @@
             <p>
                 <label>Bono correspondiente</label>
             <h5 style="color: #9E9E9E;">
-                <%if (bono){%>
+                <%if (bono.length > 0){%>
                 <%=bono[0].nombre%>
                 <%}else{%>
-                <%=0%>
+                <%="-"%>
                 <%}%>
             </h5>
             </p>
@@ -121,10 +120,10 @@
             <p>
                 <label>Descripción</label>
             <h5 style="color: #9E9E9E;">
-                <%if (bono){%>
-                <%=bono[0].descripcion%>
+                <%if (bono.length == 0){%>
+                <%="-"%>
                 <%}else{%>
-                <%=0%>
+                <%=bono[0].descripcion%>
                 <%}%>
             </h5>
             </p>
@@ -133,10 +132,10 @@
             <p>
                 <label>Criterio</label>
             <h5 style="color: #9E9E9E;">
-                <%if (bono){%>
-                <%=bono[0].criterio%>
+                <%if (bono.length == 0){%>
+                <%="-"%>
                 <%}else{%>
-                <%=0%>
+                <%=bono[0].criterio%>
                 <%}%>
             </h5>
             </p>
@@ -145,10 +144,10 @@
             <p>
                 <label>Monto</label>
             <h5 style="color: #9E9E9E;">
-                <%if (bono){%>
-                <%=bono[0].monto%>
-                <%}else{%>
+                <%if (bono.length == 0){%>
                 <%=0%>
+                <%}else{%>
+                <%=bono[0].monto%>
                 <%}%>
             </h5>
             </p>
@@ -161,7 +160,7 @@
             <p>
                 <label>Número de entradas después de las 11:00 a.m</label>
             <h5 style="color: #9E9E9E;">
-                <%if (entradasTarde){%>
+                <%if (entradasTarde.length > 0){%>
                 <%=entradasTarde.length%>
                 <%}else{%>
                 <%=0%>
@@ -173,7 +172,7 @@
             <p>
                 <label>Número de salidas antes  de las 18:00 p.m</label>
             <h5 style="color: #9E9E9E;">
-                <%if (salidasTemprano){%>
+                <%if (salidasTemprano.length > 0){%>
                 <%=salidasTemprano.length%>
                 <%}else{%>
                 <%=0%>
@@ -185,10 +184,10 @@
             <p>
                 <label>Penalización correspondiente</label>
             <h5 style="color: #9E9E9E;">
-                <%if (penalizacion){%>
+                <%if (penalizacion.length > 0){%>
                 <%=penalizacion[0].nombre%>
                 <%}else{%>
-                <%=0%>
+                <%="-"%>
                 <%}%>
             </h5>
             </p>
@@ -199,10 +198,10 @@
             <p>
                 <label>Descripción</label>
             <h5 style="color: #9E9E9E;">
-                <%if (penalizacion){%>
+                <%if (penalizacion.length > 0){%>
                 <%=penalizacion[0].descripcion%>
                 <%}else{%>
-                <%=0%>
+                <%="-"%>
                 <%}%>
             </h5>
             </p>
@@ -211,7 +210,7 @@
             <p>
                 <label>Monto</label>
             <h5 style="color: #9E9E9E;">
-                <%if (penalizacion){%>
+                <%if (penalizacion.length > 0){%>
                 <%=penalizacion[0].monto%>
                 <%}else{%>
                 <%=0%>
@@ -227,7 +226,7 @@
             <p>
                 <label>Número de préstamos activos</label>
             <h5 style="color: #9E9E9E;">
-                <%if (prestamos){%>
+                <%if (prestamos.length > 0){%>
                 <%=prestamos.length%>
                 <%}else{%>
                 <%=0%>
@@ -250,17 +249,21 @@
     </div>
     <hr>
     <div class="col-sm-3 col-md-offset-9">
-    <p>
-        <label>Sueldo Neto</label>
-    <h2 style="color: #E91E63;">
-        <%if (montoPrestamos &&  totalComision && usuario.salario && penalizacion){%>
-        <%=Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto))%>
-        <%}else{%>
-            <%=Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto) - (Number(penalizacion[0].monto))%>
-        <%}%>
-    </h2>
-    </p>
+        <p>
+            <label>Sueldo Neto</label>
+        <h2 style="color: #E91E63;">
+            <%if (bono.length > 0 && penalizacion.length > 0){%>
+            <%=Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto))%>
+            <%}else if(penalizacion.length > 0){%>
+            <%=Number(usuario.salario) + Number(totalComision.comision) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto))%>
+            <%}else{%>
+            <%=Number(usuario.salario) + Number(totalComision.comision) - (Number(montoPrestamos.pago))%>
+            <%}%>
+        </h2>
+        </p>
     </div>
+
+
     <p>
         <button class="btn btn-primary" type="submit"> <i class="fa fa-print"></i> Imprimir reporte</button>
     </p>
