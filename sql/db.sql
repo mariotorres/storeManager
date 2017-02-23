@@ -79,8 +79,8 @@ create table usuarios(
     hora_salida time
 );
 
-insert into usuarios ("usuario","contrasena","nombres","permiso_tablero","permiso_administrador","permiso_empleados", "permiso_inventario") values
-('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador', true, true, true, true);
+insert into usuarios ("usuario","contrasena","nombres","apellido_paterno","apellido_materno","permiso_tablero","permiso_administrador","permiso_empleados", "permiso_inventario") values
+('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador','','', true, true, true, true);
 
 /* prestamos */
 drop table if exists prestamos cascade;
