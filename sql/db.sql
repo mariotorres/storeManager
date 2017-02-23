@@ -19,7 +19,6 @@ create table penalizaciones (
     dias_retraso integer,  /* Debe reiniciar cada semana.*/
     dias_ausencia integer /* Debe reiniciar cada semana.*/
     );
-/*insert into penalizaciones(nombre, monto, descripcion, dias_retraso, dias_ausencia) values('_', 0, '_' ,0, 0);*/
 
 /* Bonos */
 create table bonos (
@@ -31,8 +30,6 @@ create table bonos (
     criterio text,
     temporalidad text
     );
-/*insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad) values('_', 0, '_' ,0,'_','_');*/
-
 
 /* Tiendas */
 drop table if exists tiendas cascade;
@@ -175,13 +172,13 @@ create table terminales(
 /* Carrito */
 drop table if exists carrito cascade;
 create table carrito (
-fecha date,
-id_articulo integer references articulos(id),
-id_usuario integer references usuarios(id),
-discount    numeric,
-monto_pagado numeric,
-unidades_carrito numeric,
-estatus text
+        fecha date,
+        id_articulo integer references articulos(id),
+        id_usuario integer references usuarios(id),
+        discount    numeric,
+        monto_pagado numeric,
+        unidades_carrito numeric,
+        estatus text
 );
 
 /* Estatus ventas */
