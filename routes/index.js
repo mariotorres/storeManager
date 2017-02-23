@@ -366,12 +366,12 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
     console.log(req.body);
     // Agregar a carrito
 
-    db.one('select count(*) as unidades_carrito from carrito where id_articulo = $1 and id_usuario = $2', [
+    db.one('select count(*) as unidades_carrito from carrito where id_articulo = $1 and id_usuario = $2 and estatus = $3', [
         numericCol(req.body.item_id),
-        numericCol(req.user.id)//numericCol(req.body.user_id)
+        numericCol(req.user.id),//numericCol(req.body.user_id)
+        req.body.id_estatus // Debe ser posible agregar el mismo artículo al carrito si el estatus de uno es distinto del otro.
     ]).then(function(data){
         if(data.unidades_carrito > 0){
-
             console.log('La prenda ya está en el carrito');
             res.json({
                 status:'Ok',
