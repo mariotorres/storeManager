@@ -265,10 +265,9 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/rem', isAuthenticated, function (req, res) {
-    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 and carrito.estatus=$3 returning id_articulo', [
+    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 returning id_articulo', [
         req.user.id, //req.body.user_id,
-        req.body.item_id,
-        req.body.estatus
+        req.body.item_id
     ]).then(function (data) {
         res.json({
             status: 'Ok',
@@ -370,7 +369,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
     console.log(req.body);
     // Agregar a carrito
 
-    db.one('select count(*) as unidades_carrito from carrito where id_articulo = $1 and id_usuario = $2 and estatus = $3', [
+    db.one('select count(*) as unidades_carrito from carrito where id_articulo = $1 and id_usuario = $2', [
         numericCol(req.body.item_id),
         numericCol(req.user.id),//numericCol(req.body.user_id)
         req.body.id_estatus // Debe ser posible agregar el mismo artículo al carrito si el estatus de uno es distinto del otro.
