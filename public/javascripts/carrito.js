@@ -30,7 +30,7 @@ $('.fa').click(function(){
                $.post('/carrito/rem', {
                    user_id: button.data('user_id'),
                    item_id: button.data('item_id'),
-                   estatus: document.getElementById('estatus').value
+                   estatus: button.data('estatus')
                }).done(function (data) {
                    alert(data.message);
                    if (data.status == 'Ok') {

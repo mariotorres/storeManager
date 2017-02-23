@@ -265,7 +265,7 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/rem', isAuthenticated, function (req, res) {
-    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 and carrito.estatus = $3 returning id_articulo', [
+    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 and carrito.estatus=$3 returning id_articulo', [
         req.user.id, //req.body.user_id,
         req.body.item_id,
         req.body.estatus
