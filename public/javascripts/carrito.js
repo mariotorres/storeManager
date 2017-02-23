@@ -29,7 +29,8 @@ $('.fa').click(function(){
            if (confirm('¿Seguro que quieres quitar el artículo: ' +  button.data('item_name') + ' del carrito?') ) {
                $.post('/carrito/rem', {
                    user_id: button.data('user_id'),
-                   item_id: button.data('item_id')
+                   item_id: button.data('item_id'),
+                   estatus: document.getElementById('estatus').value
                }).done(function (data) {
                    alert(data.message);
                    if (data.status == 'Ok') {
@@ -42,7 +43,8 @@ $('.fa').click(function(){
        case 'inc_item':
            $.post('/carrito/inc', {
                user_id: button.data('user_id'),
-               item_id: button.data('item_id')
+               item_id: button.data('item_id'),
+               estatus: document.getElementById('estatus').value
            }).done(function (data) {
                alert(data.message);
                if (data.status == 'Ok') {
@@ -54,7 +56,8 @@ $('.fa').click(function(){
        case 'dec_item':
            $.post('/carrito/dec', {
                user_id: button.data('user_id'),
-               item_id: button.data('item_id')
+               item_id: button.data('item_id'),
+               estatus: document.getElementById('estatus').value
            }).done(function (data) {
                alert(data.message);
                if (data.status == 'Ok') {

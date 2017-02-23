@@ -223,10 +223,12 @@ router.get('/notas/imprimir', isAuthenticated, function (req, res) {
 
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
+    console.log(req.body);
     db.one('update carrito set unidades_carrito = unidades_carrito + 1 ' +
-        'where carrito.id_articulo = $1 and carrito.id_usuario = $2 returning id_articulo', [
+        'where carrito.id_articulo = $1 and carrito.id_usuario = $2 and carrito.estatus = $3 returning id_articulo', [
         numericCol(req.body.item_id),
-        numericCol(req.user.id) //numericCol(req.body.user_id)
+        numericCol(req.user.id), //numericCol(req.body.user_id)
+        req.body.estatus
     ]).then(function (data) {
         res.json({
             status : 'Ok',
@@ -244,9 +246,10 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
 router.post('/carrito/dec', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
     db.oneOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 '+//from usuarios, articulos ' +
-        'where id_articulo=$1 and id_usuario=$2 and carrito.unidades_carrito > 1 returning id_articulo', [
+        'where id_articulo=$1 and id_usuario=$2 and carrito.unidades_carrito > 1 and carrito.estatus = $3 returning id_articulo', [
         numericCol(req.body.item_id),
-        numericCol(req.user.id)//numericCol(req.body.user_id)
+        numericCol(req.user.id), //numericCol(req.body.user_id)
+        req.body.estatus
     ]).then(function (data) {
         res.json({
             status : 'Ok',
@@ -262,9 +265,10 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/rem', isAuthenticated, function (req, res) {
-    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 returning id_articulo', [
+    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 and carrito.estatus = $3 returning id_articulo', [
         req.user.id, //req.body.user_id,
-        req.body.item_id
+        req.body.item_id,
+        req.body.estatus
     ]).then(function (data) {
         res.json({
             status: 'Ok',

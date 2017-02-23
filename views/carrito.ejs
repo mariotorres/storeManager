@@ -83,7 +83,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Estatus:</label>
-                                    <input name="estatus" class="form-control" value="<%= items[i].estatus%>" disabled>
+                                    <input id="estatus" name="estatus" class="form-control" value="<%= items[i].estatus%>" disabled>
                                 </div>
                             </div>
                             <div class="col-sm-4" style="vertical-align: middle;">
@@ -96,7 +96,7 @@
                             <% if ( +items[i].n_existencias > +items[i].unidades_carrito){%>
                             <div class="col-sm-1" >
                                 <!--<button class="btn btn-default" ></button>-->
-                                <i id="inc" data-action="inc_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-up fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                                <i id="inc" data-action="inc_item" data-item_name="<%=items[i].articulo%>"  data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-chevron-circle-up fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
 
                             </div>
                             <%}%>
@@ -113,7 +113,7 @@
 
                             <div class="col-sm-1" >
                                 <!--<button class="btn btn-default" ></button>-->
-                                <i id="rem" data-action="rem_item" data-item_name="<%=items[i].articulo%>" data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-times-circle-o fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                                <i id="rem" data-action="rem_item" data-item_name="<%=items[i].articulo%>"  data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-times-circle-o fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
                             </div>
 
 
