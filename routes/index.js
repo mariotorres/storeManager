@@ -221,6 +221,49 @@ router.get('/notas/imprimir', isAuthenticated, function (req, res) {
 });
 
 
+router.post('/notas/imprimir/agregar', function (req, res) {
+
+    db.one('insert into carrito notas (id_venta, id_usuario ) values ($1, $2) returning id_venta',[
+        req.body.id, //id de la venta
+        req.user.id
+    ]).then(function (data) {
+
+        console.log('Nota añadida al carrito: ', data.id );
+        res.json({
+            status: 'Ok',
+            message: 'Nota añadida correctamente'
+        });
+        
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al añadir la nota'
+        });
+    });
+
+});
+
+router.post('/notas/imprimir/remover', function (req, res) {
+
+    db.one('delete from carrito_notas where id_venta=$1 and id_usuario=$2', [ req.body.id, req.user.id ]).then(function (data) {
+        console.log('Nota removida del carrito', data.id);
+        res.json({
+            status: 'Ok',
+            message: 'La nota se removó correctamente'
+        })
+    }).catch(function (error) {
+       console.log(error);
+       res.json({
+          status : 'Ok',
+           message: 'Ocurrió un error al quitar la nota'
+       });
+
+    });
+
+});
+
+
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
     console.log(req.body);
