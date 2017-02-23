@@ -1185,8 +1185,8 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
         if ( data[0].count == 0 ){
             res.json({
                 status: 'Ok',
-                message: 'Se ' + (data[1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[1].n_existencias + ' existencia' + (data[1].n_existencias == 1 ? '' : 's') + '  de la prenda ' + data[1].articulo +
-                (data[2] ? ' del proveedor ' + data[2].nombre : '')
+                message: 'Se ' + (data[1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[1].n_existencias + ' existencia' + (data[1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[1].articulo +
+                '" modelo "' + data[1].modelo + '" ' + (data[2] ? ' del proveedor "' + data[2].nombre + '" ': '')
             });
         }else{
             res.json({
