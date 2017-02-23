@@ -2043,23 +2043,25 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
 
 });
 
-
-//esto está mal, ¿de donde sale data[...]? (revisar)
 router.post('/search/items/devs', isAuthenticated, function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
     //var offset = req.body.page * pageSize;
-    db.manyOrNone("select * from ventas, venta_articulos, articulos where ventas.id = venta_articulos.id_venta and venta_articulos.id_articulo = articulos.id and ( ventas.id = $1 or " +
-        " (fecha_venta > $2 and fecha_venta < $3)) ", [
-        numericCol(req.body.id_nota),
-        req.body.fecha_inicial,
-        req.body.fecha_final
-    ]).then(function (data) {
+    db.task(function (t) {
+        return this.batch([
+            this.manyOrNone("select * from ventas, venta_articulos, articulos where ventas.id = venta_articulos.id_venta and venta_articulos.id_articulo = articulos.id and ( ventas.id = $1 or " +
+                " (fecha_venta > $2 and fecha_venta < $3)) ", [
+                numericCol(req.body.id_nota),
+                req.body.fecha_inicial,
+                req.body.fecha_final
+            ]),
+            this.manyOrNone("select from terminales")
+        ]);
+    }).then(function (data) {
         res.render('partials/find-item-dev',{
             items: data[0],
-            user: data[1],
             terminales: data[2],
-            //not_in_carrito: data[3]
+            user:  req.user
         });
     }).catch(function (error) {
         console.log(error);
