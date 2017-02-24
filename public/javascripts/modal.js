@@ -452,6 +452,7 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+            /*
         case "cancel_notes":
             modal.find('.modal-title').text('Seleccionar notas');
             modal.find('#modal_content').html("");
@@ -467,27 +468,31 @@ function modalEvents(button, modal, page ) {
                     }
                 });
             });
-            break;
+            break;*/
         case "print_notes":
             modal.find('.modal-title').text('Seleccionar notas');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/print/notes/list/',{ page: page},function(){
+            modal.find('#modal_content').load('/print/notes/list/',{ page: page}, function(){
 
-                $(this).find('.list-group-item').click(function(){
-                    if (confirm("¿Está seguro que quiere imprimir?")){
-                        $.post('/print/note', {note_id: $(this).data('sales_id')}).done(function (data) {
+                $(this).find('form').submit(function(e){
+                    if (confirm("¿Está seguro que quiere agregar la nota a la lista de impresión?")){
+                        /*$.post('/notas/imprimir/agregar', {id: $(this).data('sales_id')}).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');
                             }
-                        });
+                        });*/
                     }
+                    e.preventDefault();
                 });
 
                 // Nota en PDF
-                $(this).find('.btn').click(function () {
 
-                    $.get('/notes/getbyid/'+ $(this).data('note_id'),/* { id : $(this).data('note_id') },*/ function ( ticket) {
+                $(this).find("button[name='print-note']").click(function () {
+
+                    $.get('/notes/getbyid/'+ $(this).data('note_id'),
+                   // { id : $(this).data('note_id') },
+                function ( ticket) {
                         var doc = new jsPDF('mm', 'pt', 'A7');
 
                         // We'll make our own renderer to skip this editor
@@ -500,7 +505,9 @@ function modalEvents(button, modal, page ) {
                         // All units are in the set measurement for the document
                         // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
 
-                        doc.fromHTML(ticket /*modal.find('.modal-body').get(0)*/, 10, 10, {
+                        doc.fromHTML(ticket ,
+                            ///*modal.find('.modal-body').get(0),
+                            10, 10, {
                             'width': 200,
                         //'heigth': 60,
                             'elementHandlers': specialElementHandlers
@@ -510,6 +517,7 @@ function modalEvents(button, modal, page ) {
                     });
 
                 });
+
 
             });
             break;
@@ -570,8 +578,14 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/reports',{},function(){
 
-                $('#reports_datepicker1').datetimepicker();
-                $('#reports_datepicker2').datetimepicker();
+                $('#reports_datepicker1').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date().setDate(new Date().getDate( ) - 1)
+                });
+                $('#reports_datepicker2').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date()
+                });
 
             });
             break;

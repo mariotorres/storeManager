@@ -28,34 +28,34 @@
 
 <div class="container">
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-Impresión de notas
-    </div>
-    <div class="panel-body">
-
-        <% if (notas.length > 0){%>
-
-        <% for ( var i =0; i< notas.length; i++){%>
-
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="row">
-                    <!-- -->
-                </div>
-
-            </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Impresión de notas
         </div>
+        <div class="panel-body">
 
-        <%}%>
+            <% if (notas.length > 0){%>
 
-        <button data-user_id="<%=user.id%>" class="btn btn-primary">Imprimir notas </button>
-        <%}else{%>
-        <div class="alert alert-info" role="alert">No se han agregado notas</div>
-        <%}%>
+            <% for ( var i =0; i< notas.length; i++){%>
 
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <!-- -->
+                    </div>
+
+                </div>
+            </div>
+
+            <%}%>
+
+            <button data-user_id="<%=user.id%>" class="btn btn-primary">Imprimir notas </button>
+            <%}else{%>
+            <div class="alert alert-info" role="alert">No se han agregado notas</div>
+            <%}%>
+
+        </div>
     </div>
-</div>
 
 
 </div>
