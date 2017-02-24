@@ -189,12 +189,13 @@ function modalEvents(button, modal, page ) {
             });
             break;
         case "find_notes":
+            // buscar notas para impresión
             modal.find('.modal-title').text('Buscar notas');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/notes/find-notes-view',{}, function () {
                 $('#notes_datepicker1').datetimepicker({
                     format: 'YYYY-MM-DD',
-                    //defaultDate: (new Date().getDate() - 1)
+                    defaultDate: new Date().setDate(new Date().getDate( ) - 1)
                 });
                 $('#notes_datepicker2').datetimepicker({
                     format: 'YYYY-MM-DD',
@@ -215,7 +216,7 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/notes/find-notes-view',{}, function () {
                 $('#notes_datepicker1').datetimepicker({
                     format: 'YYYY-MM-DD',
-                    //defaultDate: (new Date().getDate() - 1)
+                    defaultDate: new Date().setDate(new Date().getDate( ) - 1)
                 });
                 $('#notes_datepicker2').datetimepicker({
                     format: 'YYYY-MM-DD',
@@ -272,12 +273,13 @@ function modalEvents(button, modal, page ) {
             });
             break;
         case "new_dev":
+            /* ojo con esto */
             modal.find('.modal-title').text('Buscar notas');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/notes/find-notes-view',{}, function () {
                 $('#notes_datepicker1').datetimepicker({
                     format: 'YYYY-MM-DD',
-                    //defaultDate: (new Date().getDate() - 1)
+                    defaultDate: new Date().setDate(new Date().getDate( ) - 1)
                 });
                 $('#notes_datepicker2').datetimepicker({
                     format: 'YYYY-MM-DD',
