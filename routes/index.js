@@ -2155,14 +2155,14 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             /* Ventas Individuales */
             this.manyOrNone("select * from ventas where ventas.id_usuario = $1", id),
-            this.one("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1", id),
-            this.one("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id),
-            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id),
+            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1", id),
+            this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id),
+            this.manyOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id),
             /* Ventas Tienda */
             this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and " +
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')"),
-            this.one("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
+            this.oneOrNone("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and " +
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')")
         ]).then(function(data){
