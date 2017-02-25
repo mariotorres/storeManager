@@ -130,7 +130,7 @@ drop table if exists marcas cascade;
 create table marcas (
 id serial primary key,
 nombre text,
-id_proveedor integer references proveedores(id) /* tal vez no sea necesario */
+descripcion text
 );
 
 /* Inventario */

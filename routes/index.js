@@ -908,18 +908,8 @@ router.post('/penalization/edit-penalization/', isAuthenticated, function(req, r
 // Load brand data into  modal.
 router.post('/brand/edit-brand/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    //console.log(id);
-    db.task(function (t) {
-        return this.batch([
-            this.one('select * from marcas where id = $1', [id]),
-            this.manyOrNone('select * from proveedores')
-        ]);
-    }).then(function(data){
-        res.render('partials/edit-brand', {
-            status:'Ok',
-            marca: data[0],
-            proveedores: data[1]
-        });
+    db.one('select * from marcas where id = $1', [id]).then(function(data){
+        res.render('partials/edit-brand', { marca: data });
     }).catch(function(error){
         console.log(error);
         res.send('<b>Error</b>');
@@ -1131,12 +1121,7 @@ router.post('/employees/lending/new', function (req, res) {
 });
 
 router.post('/brand/new',isAuthenticated, function (req, res) {
-    db.manyOrNone('select * from proveedores').then(function (data) {
-        res.render('partials/new-brand', {proveedores: data});
-    }).catch(function(error){
-        console.log(error);
-        res.send('<b>Error</b>');
-    });
+    res.render('partials/new-brand');
 });
 
 router.post('/user/new',isAuthenticated,function (req, res) {
@@ -1466,9 +1451,9 @@ router.post('/employees/penalization/register', function(req, res){
  * Registro de marca
  */
 router.post('/brand/register', isAuthenticated, function(req, res){
-    db.one('insert into marcas(nombre, id_proveedor) values($1, $2) returning id, nombre', [
+    db.one('insert into marcas(nombre, descripcion) values($1, $2) returning id, nombre', [
         req.body.nombre,
-        numericCol(req.body.id_proveedor)
+        req.body.descripcion
     ]).then(function(data){
         res.json({
             status:'Ok',
@@ -1478,7 +1463,7 @@ router.post('/brand/register', isAuthenticated, function(req, res){
         console.log(error);
         res.json({
             status: 'Error',
-            message: 'Ocurrió un error al registrar la terminal'
+            message: 'Ocurrió un error al registrar la marca'
         });
     });
 });
@@ -1610,10 +1595,10 @@ router.post('/terminal/update', isAuthenticated,function(req, res){
  * Actualización de marcas
  */
 router.post('/brand/update', isAuthenticated, function(req, res){
-    db.one('update marcas set nombre=$2, id_proveedor=$3 where id=$1 returning id, nombre ',[
+    db.one('update marcas set nombre=$2, descripcion=$3 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.marca,
-        numericCol(req.body.id_proveedor)
+        req.body.descripcion
     ]).then(function (data) {
         res.json({
             status :'Ok',
@@ -2415,7 +2400,7 @@ router.post('/supplier/delete', isAuthenticated, function (req, res) {
 
 //borrar marca
 router.post('/brand/delete', isAuthenticated, function (req, res) {
-    db.one('delete from marcas cascade where id = $1 returning id ', [ req.body.id ]).then(function (data) {
+    db.one('delete from marcas where id = $1 returning id ', [ req.body.id ]).then(function (data) {
         console.log('Marca eliminada: ', data.id );
         res.json({
             status: 'Ok',
