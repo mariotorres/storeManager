@@ -64,7 +64,7 @@ for (var i=0; i< items.length; i++){%>
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" style="visibility: hidden">
                 <div class="col-sm-6">
                     <label>Estatus transacción:</label>
                     <select id="estatus" name="id_estatus" class="form-control">
@@ -73,7 +73,7 @@ for (var i=0; i< items.length; i++){%>
                         <option value="pendiente">Pendiente</option>
                     </select>
                 </div>
-                <div class="col-sm-6" style="visibility: hidden">
+                <div class="col-sm-6">
                     <label>Monto que se deja a cuenta:</label>
                     <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="0" value="0">
                 </div>
