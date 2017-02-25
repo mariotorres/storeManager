@@ -21,6 +21,22 @@
         <input type="text" value="<%=item.descripcion%>" name="descripcion" class="form-control" required>
     </p>
     <p>
+        <label>Proveedor</label>
+        <select name="id_proveedor" class="form-control">
+            <%
+            if (proveedores.length > 0 ){
+            for (var i =0; i < proveedores.length; i++){
+            %>
+            <option value="<%= proveedores[i].id %>" <%= item.id_proveedor == proveedores[i].id?'selected' : null %> > <%= proveedores[i].nombre %> </option>
+            <%
+            }
+            }else {
+            %>
+            <option value="">Ninguno</option>
+            <% }%>
+        </select>
+    </p>
+    <p>
         <label>Marca</label>
         <select class="form-control" name="id_marca" required>
             <% if (marcas.length > 0){
@@ -53,22 +69,6 @@
             }else {
             %>
             <option value="">Ninguna</option>
-            <% }%>
-        </select>
-    </p>
-    <p>
-        <label>Proveedor</label>
-        <select name="id_proveedor" class="form-control">
-            <%
-            if (proveedores.length > 0 ){
-            for (var i =0; i < proveedores.length; i++){
-            %>
-            <option value="<%= proveedores[i].id %>" <%= item.id_proveedor == proveedores[i].id?'selected' : null %> > <%= proveedores[i].nombre %> </option>
-            <%
-            }
-            }else {
-            %>
-            <option value="">Ninguno</option>
             <% }%>
         </select>
     </p>
