@@ -20,7 +20,7 @@ if (items.length > 0){%>
             <label>Descripción:</label><p>
                 <%= items[i].descripcion %></p>
 
-            <label>Descuento aplicable:</label>
+            <label>Descuento:</label>
             <div class="row">
                 <div class="col-sm-3">
                     <p>
@@ -54,7 +54,7 @@ if (items.length > 0){%>
                 <div class="col-sm-6">
                     <p>
                         <label>Unidades:</label>
-                        <input type="number" name="existencias" class="form-control" max="<%= items[i].n_existencias %>" min="1" value="1">
+                        <input type="number" id="existencias" name="existencias" class="form-control" max="<%= items[i].n_existencias %>" min="1" value="1">
                     </p>
                 </div>
             </div>
@@ -70,7 +70,7 @@ if (items.length > 0){%>
                 </div>
                 <div class="col-sm-6">
                     <label>Monto que se deja a cuenta:</label>
-                    <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="1" value="<%= items[i].precio%>">
+                    <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="0" value="0">
                 </div>
             </div>
 
@@ -87,4 +87,3 @@ if (items.length > 0){%>
 <%}else {%>
 <div class="alert alert-info" role="alert">No hay articulos registrados</div>
 <%}%>
-

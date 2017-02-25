@@ -73,17 +73,16 @@
     </p>
 
     <div class="row">
-
         <div class="col-sm-4">
             <p>
-                <label>Precio unitario</label>
-                <input type="number" step="any" name="precio" class="form-control" required>
+                <label>Costo unitario</label>
+                <input type="number" step="any" id="costo" name="costo" class="form-control" required>
             </p>
         </div>
         <div class="col-sm-4">
             <p>
-                <label>Costo unitario</label>
-                <input type="number" step="any" name="costo" class="form-control" required>
+                <label>Precio unitario</label>
+                <input type="number" step="any" id="precio" name="precio" class="form-control" required>
             </p>
         </div>
         <div class="col-sm-4">
@@ -111,3 +110,9 @@
         <button type="submit" class="btn btn-primary">Registrar</button>
     </p>
 </form>
+
+<script>
+    $("#costo").on("keyup", function(){
+        $("#precio").val($("#costo").val()*2);
+    })
+</script>

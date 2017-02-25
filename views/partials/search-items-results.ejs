@@ -25,7 +25,7 @@ for (var i=0; i< items.length; i++){%>
             <label>Descripción:</label><p>
                 <%= items[i].descripcion %></p>
 
-            <label>Descuento aplicable:</label>
+            <label>Descuento:</label>
             <div class="row">
                 <div class="col-sm-3">
                     <p>
@@ -70,11 +70,12 @@ for (var i=0; i< items.length; i++){%>
                     <select id="estatus" name="id_estatus" class="form-control">
                         <option value="">Entregada</option>
                         <option value="modificacion">Modificación</option>
+                        <option value="pendiente">Pendiente</option>
                     </select>
                 </div>
                 <div class="col-sm-6">
                     <label>Monto que se deja a cuenta:</label>
-                    <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="1" value="<%= items[i].precio%>">
+                    <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="0" value="0">
                 </div>
             </div>
 
