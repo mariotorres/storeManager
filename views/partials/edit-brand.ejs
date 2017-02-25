@@ -9,21 +9,10 @@
     </p>
 
     <p>
-        <label>Proveedor</label>
-        <select name="id_proveedor" class="form-control">
-            <%
-            if (proveedores.length > 0 ){
-            for (var i =0; i < proveedores.length; i++){
-            %>
-            <option value="<%= proveedores[i].id %>"> <%= proveedores[i].nombre %> </option>
-            <%
-            }
-            }else {
-            %>
-            <option value="">Ninguno</option>
-            <% }%>
-        </select>
+        <label>Descripción</label>
+        <input type="text" class="form-control" value="<%= marca.descripcion %>" name="descripcion" placeholder="Descripción...">
     </p>
+
     <p>
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </p>
