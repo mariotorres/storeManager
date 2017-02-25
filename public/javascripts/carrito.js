@@ -21,6 +21,19 @@ $('body').find('form').submit(function (e) {
     e.preventDefault();
 });
 
+$('input[name=monto_pagado]').change(function(){
+    var monto = $(this).val();
+    var id    = $(this).data('item_id');
+    $.post('/carrito/monto',{
+        item_id: id,
+        monto: monto
+    }).done(function (data) {
+        if (data.status == 'Ok') {
+            // Obtener HTML del carrito
+            location.reload();
+        }
+    })
+})
 
 $('.fa').click(function(){
     var button = $(this);

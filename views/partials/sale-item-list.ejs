@@ -68,7 +68,7 @@ if (items.length > 0){%>
                         <option value="pendiente">Pendiente</option>
                     </select>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-6" style="visibility: hidden">
                     <label>Monto que se deja a cuenta:</label>
                     <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="0" value="0">
                 </div>

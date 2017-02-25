@@ -263,6 +263,26 @@ router.post('/notas/imprimir/remover', function (req, res) {
 
 });
 
+router.post('/carrito/monto', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db.one('update carrito set monto_pagado = $1 where carrito.id_articulo = $2 and ' +
+        'carrito.id_usuario = $3 returning id_articulo',[
+            req.body.monto,
+            req.body.item_id,
+            req.user.id
+    ]).then(function(data){
+        res.json({
+            status: 'Ok',
+            message: 'Se ha actualizado el monto del articulo: ' + data.id_articulo
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status:'Error',
+            message: 'Ha ocurrido un error'
+        })
+    })
+})
 
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
