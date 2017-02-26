@@ -227,7 +227,7 @@ create table venta_articulos(
 drop table if exists carrito_notas;
 create table carrito_notas(
 id_venta integer references ventas (id ),
-id_usuario integer references usuarios(id),
+id_usuario integer references usuarios(id)
 );
 
 /* Devolución de artículos */

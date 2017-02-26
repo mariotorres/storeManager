@@ -43,7 +43,7 @@ $("select[name=estatus]").change(function(){
         item_id: id,
         status: status
     }).done(function(data){
-        if(data.status == 'Ok'){
+        if(data.status == 'Ok'){    
         }
     })
 })
