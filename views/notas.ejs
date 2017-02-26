@@ -49,7 +49,7 @@
 
             <%}%>
 
-            <button data-user_id="<%=user.id%>" class="btn btn-primary">Imprimir notas </button>
+            <button data-user_id="<%=user.id%>" class="btn btn-primary" name="print-notes">Imprimir notas </button>
             <%}else{%>
             <div class="alert alert-info" role="alert">No se han agregado notas</div>
             <%}%>
@@ -67,6 +67,6 @@
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="/javascripts/modal.js"></script>
-<script src="/javascripts/carrito.js"></script>
+<script src="/javascripts/imprimir_notas.js"></script>
 </body>
 </html>
