@@ -5,6 +5,7 @@ for ( var i =0; i < sales.length ; i ++ ){ %>
         <p>Venta realizada el <%= sales[i].fecha_venta.toLocaleDateString() %> a las <%= sales[i].hora_venta %></p>
 
         <form>
+            <input type="text" name="id_venta" value="<%= sales[i].id %>" hidden>
             <div class="row">
                 <div class="col-sm-4">
                     <p class="list-group-item-text"> <h3><strong>Nota:</strong></h3></p>

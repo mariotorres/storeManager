@@ -207,7 +207,12 @@ router.get('/carrito', isAuthenticated, function (req, res) {
 // Impresión de notas
 router.get('/notas/imprimir', isAuthenticated, function (req, res) {
 
-    db.manyOrNone('select * from carrito_notas where id_usuario=$1', req.user.id).then(function (data) {
+    //¿como generamos la numeración? ¿debe ser consecutiva?
+
+    db.manyOrNone("select id, precio_venta, hora_venta, fecha_venta, " +
+        "(select string_agg(concat(articulo, '(', unidades_vendidas,')'), ',') from venta_articulos, articulos " +
+        "where venta_articulos.id_articulo=articulos.id and venta_articulos.id = carrito_notas.id_venta ) " +
+        "from ventas, carrito_notas where ventas.id= carrito_notas.id_venta and carrito_notas.id_usuario=$1", req.user.id).then(function (data) {
         res.render('notas',{
             title : "Impresión en proceso",
             user: req.user,
@@ -223,8 +228,9 @@ router.get('/notas/imprimir', isAuthenticated, function (req, res) {
 
 router.post('/notas/imprimir/agregar', function (req, res) {
 
-    db.one('insert into carrito notas (id_venta, id_usuario ) values ($1, $2) returning id_venta',[
-        req.body.id, //id de la venta
+    //falta evitar agregar la misma nota
+    db.one('insert into carrito_notas (id_venta, id_usuario) values ($1, $2) returning id_venta',[
+        req.body.id_venta,
         req.user.id
     ]).then(function (data) {
 

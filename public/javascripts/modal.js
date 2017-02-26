@@ -476,12 +476,12 @@ function modalEvents(button, modal, page ) {
 
                 $(this).find('form').submit(function(e){
                     if (confirm("¿Está seguro que quiere agregar la nota a la lista de impresión?")){
-                        /*$.post('/notas/imprimir/agregar', {id: $(this).data('sales_id')}).done(function (data) {
+                        $.post('/notas/imprimir/agregar',  $(this).serializeArray()).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');
                             }
-                        });*/
+                        });
                     }
                     e.preventDefault();
                 });
