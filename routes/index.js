@@ -210,7 +210,7 @@ router.get('/notas/imprimir', isAuthenticated, function (req, res) {
     //¿como generamos la numeración? ¿debe ser consecutiva?
 
     db.manyOrNone("select id, precio_venta, hora_venta, fecha_venta, " +
-        "(select string_agg(concat(articulo, '(', unidades_vendidas,')'), ',') from venta_articulos, articulos " +
+        "(select string_agg(concat(articulo, ' (', unidades_vendidas,')'), ',') as articulos from venta_articulos, articulos " +
         "where venta_articulos.id_articulo=articulos.id and venta_articulos.id = carrito_notas.id_venta ) " +
         "from ventas, carrito_notas where ventas.id= carrito_notas.id_venta and carrito_notas.id_usuario=$1", req.user.id).then(function (data) {
         res.render('notas',{
