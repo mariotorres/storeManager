@@ -228,17 +228,34 @@ router.get('/notas/imprimir', isAuthenticated, function (req, res) {
 
 router.post('/notas/imprimir/agregar', function (req, res) {
 
-    //falta evitar agregar la misma nota
-    db.one('insert into carrito_notas (id_venta, id_usuario) values ($1, $2) returning id_venta',[
+    db.one('select count(*) as count from carrito_notas where id_venta=$1 and id_usuario= $2',[
         req.body.id_venta,
         req.user.id
     ]).then(function (data) {
 
-        console.log('Nota añadida al carrito: ', data.id );
-        res.json({
-            status: 'Ok',
-            message: 'Nota añadida correctamente'
-        });
+        if( data.count == 0 ) {
+            return db.one('insert into carrito_notas (id_venta, id_usuario) values ($1, $2) returning id_venta', [
+                req.body.id_venta,
+                req.user.id
+            ]);
+        }
+
+        return null;
+
+    }).then(function (data) {
+
+        var response = {
+            status:'Ok',
+            message: 'Nota añadida al carrito'
+        };
+
+        if (data == null ){
+          response.status = 'Error';
+          response.message = 'La nota ya se agregó previamente al carrito';
+        }
+
+        console.log( response );
+        res.json(response);
         
     }).catch(function (error) {
         console.log(error);
