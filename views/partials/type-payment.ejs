@@ -63,6 +63,8 @@
         if(Number(document.getElementById("efec_tot").value) - Number(document.getElementById("monto_efec").value) < 0){
             alert("No se puede dejar más de lo específicado en la venta.");
             document.getElementById("monto_efec").value = efec;
+            document.getElementById("monto_tarj").value = Number(document.getElementById("efec_tot").value) -
+                Number(document.getElementById("monto_efec").value);
         }else{
             document.getElementById("monto_tarj").value = Number(document.getElementById("efec_tot").value) -
                 Number(document.getElementById("monto_efec").value);
@@ -94,4 +96,5 @@
                 Number(document.getElementById("monto_efec").value);
         }
     })
+
 </script>
