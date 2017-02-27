@@ -2413,10 +2413,12 @@ router.post('/search/employees/results', isAuthenticated, function (req, res) {
 });
 
 router.post('/search/notes/results', isAuthenticated, function (req, res) {
-    db.manyOrNone("select * from ventas where (fecha_venta >= $2 and fecha_venta <= $3)", [
+    console.log(req.body);
+    db.manyOrNone("select * from ventas where (fecha_venta >= $2 and fecha_venta <= $3) or id = $4", [
         numericCol(req.body.id_nota),
         req.body.fecha_inicial,
-        req.body.fecha_final
+        req.body.fecha_final,
+        req.body.id_note
     ]).then(function (data) {
         res.render('partials/search-notes-results',{
             sales: data
