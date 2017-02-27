@@ -30,6 +30,7 @@ $('input[name=monto_pagado]').change(function(){
         monto: monto
     }).done(function (data) {
         if (data.status == 'Ok') {
+            location.reload();
             // Obtener HTML del carrito
         }
     })

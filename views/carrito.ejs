@@ -83,10 +83,24 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Estatus:</label>
-                                    <select id="estatus" data-item_id="<%=items[i].id_articulo %>" name="estatus" class="form-control">
-                                        <option value="entregada">Entregada</option>
+                                    <select name = "estatus" data-item_id="<%=items[i].id_articulo%>" name="estatus" class="form-control" required>
+                                        <%
+                                        if (items[i].estatus == "entregada"){
+                                        %>
+                                        <option value="entregada" selected>Entregada</option>
                                         <option value="modificacion">Modificación</option>
                                         <option value="pendiente">Pendiente</option>
+                                        <%
+                                        }else if(items[i].estatus == "modificacion") {
+                                        %>
+                                        <option value="entregada">Entregada</option>
+                                        <option value="modificacion" selected>Modificación</option>
+                                        <option value="pendiente">Pendiente</option>
+                                        <% }else{%>
+                                        <option value="entregada">Entregada</option>
+                                        <option value="modificacion">Modificación</option>
+                                        <option value="pendiente" selected>Pendiente</option>
+                                        <%}%>
                                     </select>
                                 </div>
 
@@ -115,7 +129,7 @@
                         <button class="btn btn-primary" data-action="make_sale" data-user_id="<%=user.id%>" type="submit">Realizar venta</button>
                     </div>
                     <div class="col-sm-5 col-md-offset-1">
-                <h2 style="float: right;"><strong>Total a cuenta: </strong> <%= monto[0].sum%></h2>
+                <h2 id="monto_total" style="float: right;"><strong>Total a cuenta: </strong> <%= monto[0].sum%></h2>
                     </div>
                     <div class="col-sm-5 col-md-offset-0">
                 <h2 style="float: right;"><strong>Total venta:    </strong> <%= total[0].sum%></h2>

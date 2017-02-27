@@ -316,9 +316,14 @@ router.post('/carrito/monto', isAuthenticated, function(req, res){
             req.body.item_id,
             req.user.id
     ]).then(function(data){
+        db.one('select sum(monto_pagado) as monto_pagado from carrito where carrito.id_usuario = $1',[
+            req.user.id
+        ])
+    }).then(function(data){
         res.json({
+            monto: data,
             status: 'Ok',
-            message: 'Se ha actualizado el monto del articulo: ' + data.id_articulo
+            message: 'Se ha actualizado el monto del articulo'
         })
     }).catch(function(error){
         console.log(error);
