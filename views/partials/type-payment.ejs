@@ -85,6 +85,13 @@
             $('input[type="radio"]').prop('disabled', false);
         }else{
             $('input[type="radio"]').prop('disabled', true);
-        };
+        }
+        if(Number(document.getElementById("monto_rec").value) - Number(document.getElementById("monto_efec").value) < 0){
+            alert("La cantidad recibida debe ser mayor o igual al monto que se deja a cuenta en efectivo.");
+            document.getElementById("monto_rec").value = efec;
+        }else{
+            document.getElementById("monto_camb").value = Number(document.getElementById("monto_rec").value) -
+                Number(document.getElementById("monto_efec").value);
+        }
     })
 </script>
