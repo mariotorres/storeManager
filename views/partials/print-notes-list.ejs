@@ -36,7 +36,7 @@ for ( var i =0; i < sales.length ; i ++ ){ %>
                         <button class="btn btn-primary" type="button" name="print-note" data-note_id="<%= sales[i].id %>"> <i class="fa fa-print"></i> Imprimir nota</button>
                     </p></div>
                 <div class="col-sm-4">
-                    <button class="btn btn-primary" type="button"><i class="fa fa-trash"></i> Cancelar</button>
+                    <button class="btn btn-primary" type="button" name="cancel-note" data-id_venta="<%= sales[i].id%>"><i class="fa fa-trash"></i> Cancelar nota</button>
                 </div>
             </div>
 

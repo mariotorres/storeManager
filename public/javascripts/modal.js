@@ -452,23 +452,6 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
-            /*
-        case "cancel_notes":
-            modal.find('.modal-title').text('Seleccionar notas');
-            modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/notes/list/',{ page: page},function(){
-                $(this).find('.list-group-item').click(function(){
-                    if (confirm("¿Está seguro que quiere eliminar la nota: " +  $(this).data('sales_id'))){
-                        $.post('/cancel/note', {note_id: $(this).data('sales_id')}).done(function (data) {
-                            alert(data.message);
-                            if(data.status=='Ok'){
-                                modal.modal('hide');
-                            }
-                        });
-                    }
-                });
-            });
-            break;*/
         case "print_notes":
             modal.find('.modal-title').text('Seleccionar notas');
             modal.find('#modal_content').html("");
@@ -515,6 +498,18 @@ function modalEvents(button, modal, page ) {
                         doc.save('ticket.pdf');
                     });
 
+                });
+
+                //cancelar la nota
+                $(this).find("button[name='cancel-note']").click(function () {
+                    if (confirm("¿Está seguro que quiere eliminar la nota: " +  $(this).data('id_venta'))){
+                        $.post('/cancel/note', {note_id: $(this).data('id_venta')}).done(function (data) {
+                            alert(data.message);
+                            if(data.status=='Ok'){
+                                modal.modal('hide');
+                            }
+                        });
+                    }
                 });
 
 

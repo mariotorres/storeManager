@@ -274,7 +274,7 @@ router.post('/notas/imprimir/remover', function (req, res) {
         console.log('Nota removida del carrito', data.id_venta);
         res.json({
             status: 'Ok',
-            message: 'La nota se removó correctamente'
+            message: 'La nota se removió correctamente'
         })
     }).catch(function (error) {
        console.log(error);
