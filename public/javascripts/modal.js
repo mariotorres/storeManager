@@ -256,7 +256,7 @@ function modalEvents(button, modal, page ) {
                     modal.find('#search_results').load('/search/items/results_inv', $(this).serializeArray()/*params*/, function () {
                         $('#search_results').find('form').submit(function (e) {
                             $('#search_results').find('.list-group-item').click(function () {
-                                modal.find('#modal_content').load('/item/edit-item', { id: $(this).data('item_id') });
+                                modal.find('#modal_content').load('/item/edit-item', {id:'1'});
                             });
                             e.preventDefault();
                         });
