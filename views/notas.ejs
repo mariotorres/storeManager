@@ -40,18 +40,14 @@
 
             <div class="panel panel-default">
                 <div class="panel-body">
-                        <!-- -->
-                        <p> Venta realizada el <%= notas[i].fecha_venta.toLocaleDateString() %> a las <%= notas[i].hora_venta%></p>
+                    <!-- -->
+                    <p> Venta realizada el <strong><%= notas[i].fecha_venta.toLocaleDateString() %></strong> a las <strong><%= notas[i].hora_venta%></strong></p>
 
-                        <p><label>Artículos</label></p>
+                    <p>Artículos: <strong> <%= notas[i].articulos%></strong></p>
 
-                        <%= notas[i].articulos%>
+                    <p>Total:  <strong><%= notas[i].precio_venta%></strong></p>
 
-                        <p>Total:</p>
-
-                        <%= notas[i].total%>
-
-                        <p><button type="button" data-id_venta="<%= notas[i].id %>" class="btn btn-primary" name="remove-note"><i class="fa fa-trash"></i> </button> </p>
+                    <p><button type="button" data-id_venta="<%= notas[i].id %>" class="btn btn-primary" name="remove-note"><i class="fa fa-trash"></i> </button> </p>
 
                 </div>
             </div>
@@ -65,8 +61,6 @@
 
         </div>
     </div>
-
-
 </div>
 
 <% include partials/modal.ejs %>
