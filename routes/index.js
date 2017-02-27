@@ -268,9 +268,10 @@ router.post('/notas/imprimir/agregar', function (req, res) {
 });
 
 router.post('/notas/imprimir/remover', function (req, res) {
+    console.log(req.body);
 
-    db.one('delete from carrito_notas where id_venta=$1 and id_usuario=$2', [ req.body.id, req.user.id ]).then(function (data) {
-        console.log('Nota removida del carrito', data.id);
+    db.one('delete from carrito_notas where id_venta=$1 and id_usuario=$2 returning id_venta', [ req.body.id_venta, req.user.id ]).then(function (data) {
+        console.log('Nota removida del carrito', data.id_venta);
         res.json({
             status: 'Ok',
             message: 'La nota se removó correctamente'

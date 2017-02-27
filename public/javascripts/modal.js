@@ -486,8 +486,7 @@ function modalEvents(button, modal, page ) {
                     e.preventDefault();
                 });
 
-                // Nota en PDF
-
+                // Descargar pdf de la nota
                 $(this).find("button[name='print-note']").click(function () {
 
                     $.get('/notes/getbyid/'+ $(this).data('note_id'),
