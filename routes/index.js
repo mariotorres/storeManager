@@ -396,7 +396,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
     db.tx(function (t) {
         return this.manyOrNone(
             'select * from carrito, articulos where carrito.id_articulo = articulos.id and ' +
-            ' carrito.id_usuario = $1 and carrito.unidades_carrito > 0 order by articulo', [
+            ' carrito.id_usuario = $1 order by articulo', [
                 numericCol(req.user.id) //numericCol(req.body.user_id)
             ]).then(function(data){
             return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros.
@@ -420,6 +420,9 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
         }).then(function(data){
             var queries= [];
             for(var i = 0; i < data[0].length; i++){
+                var monto_por_pagar = numericCol(( numericCol(data[0][i].unidades_carrito)* numericCol(data[0][i].precio)*
+                    (1- numericCol(data[0][i].discount)/100)) -  numericCol(data[0][i].monto_pagado)) === null? 0:numericCol(( numericCol(data[0][i].unidades_carrito)* numericCol(data[0][i].precio)*
+                    (1- numericCol(data[0][i].discount)/100)) -  numericCol(data[0][i].monto_pagado));
                 queries.push(
                     t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, ' +
                         'monto_pagado, monto_por_pagar, estatus) values($1, $2, $3, $4, $5, $6, $7) returning id_articulo', [
@@ -428,8 +431,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                         numericCol(data[0][i].unidades_carrito),
                         numericCol(data[0][i].discount),
                         numericCol(data[0][i].monto_pagado),
-                        numericCol(( numericCol(data[0][i].unidades_carrito)* numericCol(data[0][i].precio)*
-                            (1- numericCol(data[0][i].discount)/100)) -  numericCol(data[0][i].monto_pagado)),
+                        monto_por_pagar,
                         data[0][i].estatus
                     ])
                 );
@@ -446,14 +448,13 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                 ]));
 
                 // Update saldo con proveedores solo de aquellas prendas que se entregaron y que están completamente pagadas.
-                if( data[0][i].estatus == "entregada" && data[0][i].monto_por_pagar == 0) {
+                if( monto_por_pagar == 0 ) {
                     queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id', [
                         numericCol(data[0][i].id_proveedor),
                         numericCol(data[0][i].costo * data[0][i].unidades_carrito)
                     ]));
                 }
             }
-
             return t.batch(queries);
 
         });
