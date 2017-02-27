@@ -251,16 +251,10 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/item/find-items-view-inv',{}, function () {
                 modal.find('form').submit(function (e) {
                     // Mostrar resultados
-                    // var params = $(this).serializeArray();
-                    //params[params.length] = {name:'page', value:page};
                     modal.find('#search_results').load('/search/items/results_inv', $(this).serializeArray()/*params*/, function () {
-                        $('#search_results').find('form').submit(function (e) {
-                            $('#search_results').find('.list-group-item').click(function () {
-                                modal.find('#modal_content').load('/item/edit-item', {id:'1'});
+                            $('#search_results').find('button[name=go_search]').click(function () {
+                                modal.find('#modal_content').load('/item/edit-item', {id:$(this).data('item_id')});
                             });
-                            e.preventDefault();
-                        });
-
                     });
                     e.preventDefault();
                 });

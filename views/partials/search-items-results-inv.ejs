@@ -32,7 +32,7 @@ for (var i=0; i< items.length; i++){%>
             <p><%= items[i].n_existencias %></p>
 
             <br>
-            <button type="submit" class="btn btn-default"> <i class="fa fa-cart-plus"></i></button>
+            <button name="go_search" type="button" class="btn btn-primary"  data-item_id="<%= items[i].id %>" class="btn btn-default">Editar</button>
         </form>
     </div>
 </div>
