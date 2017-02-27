@@ -1,4 +1,5 @@
-<form id="typeForm">
+<form>
+<p id="typeForm">
     <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
     <input type="text" name="efec_tot" id="efec_tot" value="<%=total[0].sum%>" hidden>
     <input type="text" name="precio_tot" id="precio_tot" value="<%=precio[0].sum%>" hidden>
@@ -7,24 +8,29 @@
         <label>Monto que se deja a cuenta en efectivo: </label>
         <input id="monto_efec" name="monto_efec" class="form-control" required value="<%=total[0].sum%>">
     </p>
-
-    <p>
-        <label>Cantidad recibida: </label>
-        <input id="monto_rec" name="monto_rec" class="form-control" required value="<%=total[0].sum%>">
-    </p>
-
-    <p>
-        <label>Cambio: </label>
-        <input id="monto_camb" name="monto_camb" class="form-control" required disabled value="0">
-    </p>
-
     <p>
         <label>Monto que se deja a cuenta con tarjeta: </label>
         <input id="monto_tarj" name="monto_tarj" class="form-control" required disabled value="0">
     </p>
 
 
-    <p>
+    <div class="row">
+        <div class="col-sm-5">
+            <p>
+                <label>Cantidad recibida: </label>
+                <input id="monto_rec" name="monto_rec" class="form-control" required value="<%=total[0].sum%>">
+            </p>
+        </div>
+        <div class="col-sm-5 col-sm-offset-2">
+            <p>
+                <label>Cambio: </label>
+                <input id="monto_camb" name="monto_camb" class="form-control" required disabled value="0">
+            </p>
+
+        </div>
+    </div>
+
+    <p id="pay_tarj" style="visibility: hidden">
         <label>Terminal: </label>
         <select name="terminal" class="form-control" required>
             <%
@@ -41,14 +47,16 @@
         </select>
     </p>
     <br>
+    <p id="pay_tarj_op" style="visibility: hidden">
     <label>Tipo tarjeta:</label>
     <label class="radio-inline"><input type="radio" name="optradio" value="cred" disabled>crédito</label>
     <label class="radio-inline"><input type="radio" name="optradio" value="deb" disabled>débito</label>
+    </p>
     <br>
     <br>
 
     <p>
-        <button type="submit" class="btn btn-primary">Crear</button>
+        <button type="submit" class="btn btn-primary">Crear venta</button>
     </p>
 </form>
 
@@ -69,20 +77,13 @@
             document.getElementById("monto_tarj").value = Number(document.getElementById("efec_tot").value) -
                 Number(document.getElementById("monto_efec").value);
         }
-    })
-
-    $("#monto_rec").change(function(){
-        if(Number(document.getElementById("monto_rec").value) - Number(document.getElementById("monto_efec").value) < 0){
-            alert("La cantidad recibida debe ser mayor o igual al monto que se deja a cuenta en efectivo.");
-            document.getElementById("monto_rec").value = efec;
+        if(Number(document.getElementById("efec_tot").value) - Number(document.getElementById("monto_efec").value) != 0){
+            document.getElementById("pay_tarj").style.visibility = 'visible';
+            document.getElementById("pay_tarj_op").style.visibility = 'visible';
         }else{
-            document.getElementById("monto_camb").value = Number(document.getElementById("monto_rec").value) -
-                Number(document.getElementById("monto_efec").value);
+            document.getElementById("pay_tarj").style.visibility = 'hidden';
+            document.getElementById("pay_tarj_op").style.visibility = 'hidden';
         }
-    })
-
-
-    $("#monto_efec").on('keyup', function(){
         if(Number(document.getElementById("efec_tot").value) - Number(document.getElementById("monto_efec").value) > 0){
             $('input[type="radio"]').prop('disabled', false);
         }else{
@@ -97,4 +98,13 @@
         }
     })
 
+    $("#monto_rec").change(function(){
+        if(Number(document.getElementById("monto_rec").value) - Number(document.getElementById("monto_efec").value) < 0){
+            alert("La cantidad recibida debe ser mayor o igual al monto que se deja a cuenta en efectivo.");
+            document.getElementById("monto_rec").value = efec;
+        }else{
+            document.getElementById("monto_camb").value = Number(document.getElementById("monto_rec").value) -
+                Number(document.getElementById("monto_efec").value);
+        }
+    })
 </script>
