@@ -2111,7 +2111,52 @@ router.post('/item/find-items-view', isAuthenticated, function (req, res) {
 
 });
 
+router.post('/item/find-items-view-inv', isAuthenticated, function (req, res) {
 
+    db.task(function (t) {
+        return this.batch([
+            this.manyOrNone('select id, nombre from proveedores'),
+            this.manyOrNone('select * from marcas')
+        ]);
+    }).then(function (data) {
+        res.render('partials/find-items-inv',{
+            proveedores: data[0],
+            marcas: data[1]
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+
+});
+
+router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
+    console.log(req.body);
+    //var pageSize = 10;
+    //var offset = req.body.page * pageSize;
+    db.task(function (t) {
+        return this.batch([
+            t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
+                req.body.id_proveedor,
+                req.body.id_marca,
+                req.body.articulo,
+                req.body.modelo
+            ]),
+            t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
+            t.manyOrNone('select * from terminales')
+        ])
+    }).then(function (data) {
+        res.render('partials/search-items-results-inv',{
+            items: data[0],
+            user: data[1],
+            terminales: data[2]
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+
+});
 
 router.post('/search/items/results', isAuthenticated, function (req, res) {
     console.log(req.body);
