@@ -4,7 +4,9 @@ if (sales.length > 0){%>
 <div class="list-group">
     <% for ( var i =0; i < sales.length ; i++ ){ %>
     <a href="#" class="list-group-item" data-user_id="<%= sales[i].id_usuario%>" data-sales_id="<%= sales[i].id %>">
-        <h4 class="list-group-item-heading"> Venta realizada el <%= sales[i].fecha_venta.toLocaleDateString() %> a las <%= sales[i].hora_venta %></h4>
+        <h4 class="list-group-item-heading"><strong>ID: <span style="color:#E91E63"><%=sales[i].id%></span></strong></h4>
+        <h4> Venta realizada el <%= sales[i].fecha_venta.toLocaleDateString() %> a las <%= sales[i].hora_venta %></h4>
+
         <p class="list-group-item-text"> <strong>Precio:</strong> <%= sales[i].precio_venta %></p>
         <p class="list-group-item-text"> <strong>Saldo Pendiente:</strong> <%= sales[i].saldo_pendiente %></p>
     </a>
