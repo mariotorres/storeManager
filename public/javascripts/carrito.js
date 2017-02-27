@@ -49,6 +49,7 @@ $("select[name=estatus]").change(function(){
     })
 })
 
+
 $('.fa').click(function(){
     var button = $(this);
    switch(button.data('action')){

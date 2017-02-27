@@ -2320,14 +2320,24 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
 
 router.post('/notes/payment', isAuthenticated, function(req, res){
     console.log(req.body);
-    db.manyOrNone('select * from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
-        'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
-        ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
-        req.body.id_sale
-    ]).then(function(data){
+    db.task(function(t){
+        return t.batch([
+            db.manyOrNone('select * from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
+                'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
+                ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
+                req.body.id_sale
+            ]),
+            db.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
+                'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
+                ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
+                req.body.id_sale
+            ])
+        ])
+    }).then(function(data){
         console.log(data);
         res.render('partials/note-payment',{
-            sales: data
+            sales: data[0],
+            items_ids:data[1]
         })
     }).catch(function(error){
         console.log(error);

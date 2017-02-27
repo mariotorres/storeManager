@@ -49,7 +49,7 @@
             <th>Artículo</th>
             <th>Unidades vendidas</th>
             <th>Monto pagado</th>
-            <th>Monto por pagar</th>
+            <th>Monto a pagar</th>
             <th>Estatus</th>
             <th>Abono</th>
             <th></th>
@@ -64,10 +64,10 @@
             <td style="text-align: center !important"><%= sales[i].articulo%></td>
             <td style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
             <td style="text-align: center !important"><%= sales[i].monto_pagado%></td>
-            <td style="text-align: center !important"><%= sales[i].monto_por_pagar%></td>
+            <td style="text-align: center !important"><p id="monto_pagar" value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
             <td style="text-align: center !important"><%= sales[i].estatus%></td>
-            <td style="text-align: center !important"><input type="number" value="<%= sales[i].monto_por_pagar%>" max="<%=sales[i].monto_por_pagar%>" min="0"></td>
-            <td><button type="button" class="btn btn-primary" style="height:50px !important; text-align: center !important">Pagar</button></td>
+            <td style="text-align: center !important"><input name="abono" type="number" value="<%= sales[i].monto_por_pagar%>" max="<%=sales[i].monto_por_pagar%>"></td>
+            <td><button name="abonar" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important">Abonar</button></td>
         </tr>
         <%
         }
@@ -92,3 +92,5 @@
         <button type="submit" class="btn btn-primary">Liquidar</button>
     </p>
 </form>
+
+<script src="/javascripts/notes.js"></script>
