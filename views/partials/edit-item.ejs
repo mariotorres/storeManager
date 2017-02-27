@@ -12,10 +12,7 @@
         <!--<i class="fa fa-picture-o fa-5x" aria-hidden="true"></i>-->
     </a>
 
-    <p>
-        <button id="deleteitem" type="button" class="btn btn-primary" data-id="<%= item.id %>">Eliminar</button>
-    </p>
-    
+
     <p>
         <label>Descripcion</label>
         <input type="text" value="<%=item.descripcion%>" name="descripcion" class="form-control" required>
@@ -116,9 +113,20 @@
     </p>
     -->
 
-    <p>
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-    </p>
+    <div class="row">
+        <div class="col-md-2">
+            <p>
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+            </p>
+        </div>
+       <div class="col-md-3">
+           <p>
+               <button id="deleteitem" type="button" class="btn btn-primary" data-id="<%= item.id %>">Eliminar</button>
+           </p>
+       </div>
+
+    </div>
+
 
 </form>
 

@@ -2537,7 +2537,7 @@ router.post('/item/delete', isAuthenticated, function (req, res ) {
     db.tx(function (t) {
         return this.one("select id, costo, n_existencias, id_proveedor from articulos where id = $1 ", [ req.body.id ]).then(function (data) {
             return t.batch([
-                t.one("delete from artículo cascade where id = $1 returning id, costo, n_existencias, id_proveedor, nombre_imagen ", [ data.id ]),
+                t.one("delete from articulos cascade where id = $1 returning id, costo, n_existencias, id_proveedor, nombre_imagen ", [ data.id ]),
                 t.oneOrNone('update from proveedores set a_cuenta= a_cuenta - $2 where id = $1 returning id, nombre',[
                     data.id_proveedor,
                     data.costo * data.n_existencias

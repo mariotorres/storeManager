@@ -253,7 +253,47 @@ function modalEvents(button, modal, page ) {
                     // Mostrar resultados
                     modal.find('#search_results').load('/search/items/results_inv', $(this).serializeArray()/*params*/, function () {
                             $('#search_results').find('button[name=go_search]').click(function () {
-                                modal.find('#modal_content').load('/item/edit-item', {id:$(this).data('item_id')});
+                                modal.find('#modal_content').load('/item/edit-item', {id:$(this).data('item_id')}, function(){
+                                    $('#deleteitem').click(function () {
+                                        if (confirm('¿Está seguro de eliminar el artículo?')){
+                                            $.post('/item/delete', { id : $(this).data('id')}).done(function (data) {
+                                                alert(data.message);
+                                                if (data.status =='Ok'){
+                                                    modal.modal('hide');
+                                                }
+                                            });
+                                        }
+                                    });
+
+                                    modal.find('form').submit(function (event) {
+                                        var formData = new FormData();
+                                        var arr = $(this).serializeArray();
+
+                                        for ( var i =0; i < arr.length ; i++){
+                                            formData.append(arr[i].name, arr[i].value);
+                                        }
+
+                                        var img = document.getElementById('imagen');
+                                        formData.append('imagen', img.files[0] );
+                                        $.ajax({
+                                            url: '/item/update',
+                                            data: formData,
+                                            cache: false,
+                                            contentType: false,
+                                            processData: false,
+                                            type: 'POST',
+                                            success: function (data) {
+                                                alert(data.message);
+                                                if (data)
+                                                    if (data.status == 'Ok') {
+                                                        modal.modal('hide');
+                                                    }
+                                            }
+                                        });
+
+                                        event.preventDefault();
+                                    });
+                                });
                             });
                     });
                     e.preventDefault();
