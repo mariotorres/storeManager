@@ -20,11 +20,10 @@ $('button[name=abonar]').click(function(){
             item_id: id_item,
             sale_id: id_venta,
             abono: abono
-         }).done(function (data) {
-         if (data.status == 'Ok') {
-         location.reload();
-         // Obtener HTML del carrito
-         }
-         })
+        }).done(function (data) {
+            alert(data.message);
+            if (data.status == 'Ok') {
+            }
+        })
     }
 });

@@ -2318,6 +2318,31 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
     });
 });
 
+router.post('/notes/abono', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db.task(function(t){
+        return t.batch([
+            db.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1 where id = $2 returning id ',[
+                    req.body.abono,
+                    req.body.item_id
+                ]),
+            db.one('update ventas set saldo_pendiente = saldo_pendiente - $1 where id = $2 returning id', [
+                req.body.abono,
+                req.body.sale_id
+            ])
+        ])
+    }).then(function(data){
+        res.json({
+            status: 'Ok',
+            message: 'La nota ha sido abonada'
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>');
+    })
+
+})
+
 router.post('/notes/payment', isAuthenticated, function(req, res){
     console.log(req.body);
     db.task(function(t){
