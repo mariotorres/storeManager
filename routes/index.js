@@ -2320,17 +2320,34 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
 
 router.post('/notes/abono', isAuthenticated, function(req, res){
     console.log(req.body);
-    db.task(function(t){
+    db.tx(function(t){
         return t.batch([
-            db.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1 where id = $2 returning id ',[
-                    numericCol(req.body.abono),
-                    req.body.item_id
-                ]),
+            db.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1 where id = $2 returning id_articulo, monto_por_pagar ',[
+                numericCol(req.body.abono),
+                req.body.item_id
+            ]),
             db.one('update ventas set saldo_pendiente = saldo_pendiente - $1 where id = $2 returning id', [
                 numericCol(req.body.abono),
                 req.body.sale_id
             ])
-        ])
+        ]).then(function(data){
+            console.log("length data 1 " + data.lenght);
+            return t.batch([
+                data,
+                t.one('select proveedores.id as id_prov, costo from articulos, proveedores where articulos.id_proveedor = proveedores.id and articulos.id = $1 ', [
+                    data[0].id_articulo
+                ])
+            ])
+        }).then(function(data){
+            console.log("length data 2 " + data.lenght);
+            return t.batch([
+                data,
+                t.one('update proveedores set a_cuenta = a_cuenta + $1, por_pagar = por_pagar - $1 where id = $2 returning id', [
+                    data[1][1].costo,
+                    data[1][1].id_prov
+                ])
+            ])
+        })
     }).then(function(data){
         res.json({
             status: 'Ok',
@@ -2340,7 +2357,6 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
         console.log(error);
         res.send('<b>Error</b>');
     })
-
 })
 
 router.post('/notes/payment', isAuthenticated, function(req, res){
