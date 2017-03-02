@@ -14,7 +14,7 @@ $('button[name=abonar]').click(function(){
     var monto_pagar = document.getElementById('monto_pagar').textContent;
     var abono       = $(this).val() === null? 0:$(this).val();
     if(abono <= monto_pagar) {
-        var id_item = $(this).data('item_id');
+        var id_item  = $(this).data('item_id');
         var id_venta = $(this).data('sale_id');
         $.post('/notes/abono',{
             item_id: id_item,

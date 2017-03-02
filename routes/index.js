@@ -2323,11 +2323,11 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
     db.task(function(t){
         return t.batch([
             db.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1 where id = $2 returning id ',[
-                    req.body.abono,
+                    numericCol(req.body.abono),
                     req.body.item_id
                 ]),
             db.one('update ventas set saldo_pendiente = saldo_pendiente - $1 where id = $2 returning id', [
-                req.body.abono,
+                numericCol(req.body.abono),
                 req.body.sale_id
             ])
         ])
