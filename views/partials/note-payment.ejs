@@ -64,10 +64,10 @@
             <td style="text-align: center !important"><%= sales[i].articulo%></td>
             <td style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
             <td style="text-align: center !important"><%= sales[i].monto_pagado%></td>
-            <td style="text-align: center !important"><p id="monto_pagar" value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
+            <td style="text-align: center !important"><p  value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
             <td style="text-align: center !important"><%= sales[i].estatus%></td>
-            <td style="text-align: center !important"><input name="abono" type="number" value="<%= sales[i].monto_por_pagar%>" max="<%=sales[i].monto_por_pagar%>"></td>
-            <td><button name="abonar" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important">Abonar</button></td>
+            <td style="text-align: center !important"><input name="abono" type="number" data-monto_pagar="<%=sales[i].monto_por_pagar%>" value="<%= sales[i].monto_por_pagar%>" max="<%=sales[i].monto_por_pagar%>"></td>
+            <td><button name="abonar" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important">Abonar</button></td>
         </tr>
         <%
         }
