@@ -2322,16 +2322,15 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
     console.log(req.body);
     db.tx(function(t){
         return t.batch([
-            db.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1 where id = $2 returning id_articulo, monto_por_pagar ',[
+            t.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1 where id = $2 returning id_articulo, monto_por_pagar, monto_pagado ',[
                 numericCol(req.body.abono),
                 req.body.item_id
             ]),
-            db.one('update ventas set saldo_pendiente = saldo_pendiente - $1 where id = $2 returning id', [
+            t.one('update ventas set saldo_pendiente = saldo_pendiente - $1 where id = $2 returning id', [
                 numericCol(req.body.abono),
                 req.body.sale_id
             ])
         ]).then(function(data){
-            console.log("length data 1 " + data.lenght);
             return t.batch([
                 data,
                 t.one('select proveedores.id as id_prov, costo from articulos, proveedores where articulos.id_proveedor = proveedores.id and articulos.id = $1 ', [
@@ -2339,14 +2338,17 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
                 ])
             ])
         }).then(function(data){
-            console.log("length data 2 " + data.lenght);
-            return t.batch([
-                data,
-                t.one('update proveedores set a_cuenta = a_cuenta + $1, por_pagar = por_pagar - $1 where id = $2 returning id', [
-                    data[1][1].costo,
-                    data[1][1].id_prov
-                ])
-            ])
+            console.log("Monto Pagado: " + data[0][0].monto_pagado);
+            console.log("Precio: " + data[1].precio);
+            queries = [];
+            queries.push(data);
+            if(data[0][0].monto_pagado == data[1].precio){
+                queries.push( t.one('update proveedores set a_cuenta = a_cuenta + $1, por_pagar = por_pagar - $1 where id = $2 returning id', [
+                    data[1].costo,
+                    data[1].id_prov
+                ]));
+            }
+            return t.batch(queries)
         })
     }).then(function(data){
         res.json({
