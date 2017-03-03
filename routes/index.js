@@ -2320,14 +2320,16 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
 
 router.post('/notes/abono', isAuthenticated, function(req, res){
     console.log(req.body);
+    var abono = req.body.abono == ''? 0 : req.body.abono;
+    console.log("ABONO" + abono);
     db.tx(function(t){
         return t.batch([
             t.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1 where id = $2 returning id_articulo, monto_por_pagar, monto_pagado ',[
-                numericCol(req.body.abono),
+                numericCol(abono),
                 req.body.item_id
             ]),
             t.one('update ventas set saldo_pendiente = saldo_pendiente - $1 where id = $2 returning id', [
-                numericCol(req.body.abono),
+                numericCol(abono),
                 req.body.sale_id
             ])
         ]).then(function(data){
@@ -2344,7 +2346,7 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
             queries.push(data);
             if(data[0][0].monto_pagado == data[1].precio){
                 queries.push( t.one('update proveedores set a_cuenta = a_cuenta + $1, por_pagar = por_pagar - $1 where id = $2 returning id', [
-                    data[1].costo,
+                    numericCol(data[1].costo),
                     data[1].id_prov
                 ]));
             }
@@ -2425,7 +2427,7 @@ router.post('/notes/finitPayment', isAuthenticated, function(req, res){
                     ]),
                     t.one("update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id",[
                         articles[1][i].id_proveedor,
-                        articles[1][i].costo
+                        numericCol(articles[1][i].costo)
                     ])
                 )
             }
