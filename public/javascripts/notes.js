@@ -8,6 +8,13 @@ $('input[name=abono]').change(function(){
     }else {
         $('button[name=abonar]').val($(this).val());
     }
+    if($(this).val() > 0){
+        $('button[name=abonar]').removeAttr('disabled');
+    }else{
+        alert("El monto a abonar debe ser mayor o igual a cero");
+        $('button[name=abonar]').attr('disabled','disabled');
+        $(this).val(monto_pagar);
+    }
 })
 
 // Actualizar montos

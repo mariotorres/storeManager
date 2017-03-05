@@ -2339,7 +2339,7 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
         ]).then(function(data){
             return t.batch([
                 data,
-                t.one('select proveedores.id as id_prov, costo from articulos, proveedores where articulos.id_proveedor = proveedores.id and articulos.id = $1 ', [
+                t.one('select proveedores.id as id_prov, costo, precio from articulos, proveedores where articulos.id_proveedor = proveedores.id and articulos.id = $1 ', [
                     data[0].id_articulo
                 ])
             ])
