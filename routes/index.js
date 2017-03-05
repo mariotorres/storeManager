@@ -2681,4 +2681,42 @@ router.get('/exportar/inventario.csv',isAuthenticated,function (req, res) {
     });
 });
 
+router.get('/exportar/proveedores.csv', isAuthenticated,function(req, res){
+    db.manyOrNone('select id, nombre, razon_social from proveedores').then(function (data) {
+
+        try {
+            var fields = ['id','nombre', 'razon_social'];
+            var result = json2csv({ data: data, fields: fields });
+            //console.log(result);
+
+            //Random file name
+            var csv_path =  path.join(__dirname, '..', 'csv/', req.user.usuario+'_export_suppliers.csv');
+
+            // write csv file
+            fs.writeFile(csv_path, result, function(err) {
+                if (err) throw err;
+                console.log('file saved');
+                res.sendFile( csv_path );
+            });
+
+        } catch (err) {
+            // Errors are thrown for bad options, or if the data is empty and no fields are provided.
+            // Be sure to provide fields if it is possible that your data array will be empty.
+            console.error(err);
+            res.json({
+                status: 'Error',
+                message: 'OCurrió un error al exportar el inventario'
+            });
+        }
+
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al exportar el inventario'
+        });
+    });
+
+});
+
 module.exports = router;
