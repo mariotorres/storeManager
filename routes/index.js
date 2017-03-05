@@ -2636,7 +2636,7 @@ router.post('/item/delete', isAuthenticated, function (req, res ) {
 
 /* exportar inventario */
 
-router.get('/exportar/inventario.csv',function (req, res) {
+router.get('/exportar/inventario.csv',isAuthenticated,function (req, res) {
     db.manyOrNone('select id, articulo from articulos').then(function (data) {
 
         try {
@@ -2645,7 +2645,7 @@ router.get('/exportar/inventario.csv',function (req, res) {
             //console.log(result);
 
             //Random file name
-            var csv_path =  path.join(__dirname, '..', 'csv/', 'export_items.csv');
+            var csv_path =  path.join(__dirname, '..', 'csv/', req.user.usuario+'_export_items.csv');
 
             // write csv file
             fs.writeFile(csv_path, result, function(err) {
