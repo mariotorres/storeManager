@@ -2325,7 +2325,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
 router.post('/notes/abono', isAuthenticated, function(req, res){
     console.log(req.body);
     var abono = req.body.abono == ''? 0 : req.body.abono;
-    console.log("ABONO" + abono);
+    console.log("Abono " + abono);
     db.tx(function(t){
         return t.batch([
             t.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1 where id = $2 returning id_articulo, monto_por_pagar, monto_pagado ',[

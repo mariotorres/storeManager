@@ -17,8 +17,17 @@ $('input[name=abono]').change(function(){
     }
 })
 
+$('input[name=optradio]').change(function(){
+    $('button[name=abonar]').data('forma_pago', $(this).val());
+})
+
+$('select[name=estatus]').change(function(){
+    $('button[name=abonar]').data('estatus', $(this).val())
+})
+
 // Actualizar montos
 $('button[name=abonar]').click(function(){
+
     var monto_pagar = $(this).data('monto_pagar');
     var abono       = $(this).val() === null? 0: $(this).val();
     if(abono <= monto_pagar && abono > 0) {
@@ -27,6 +36,8 @@ $('button[name=abonar]').click(function(){
         $.post('/notes/abono',{
             item_id: id_item,
             sale_id: id_venta,
+            forma_pago: $(this).data('forma_pago'),
+            estatus: $(this).data('estatus'),
             abono: abono
         }).done(function (data) {
             alert(data.message);
