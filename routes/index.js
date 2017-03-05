@@ -728,7 +728,8 @@ router.post('/lending/list/', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.one('select count(*) from prestamos as count'),
-            this.manyOrNone('select * from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by nombres limit $1 offset $2', [pageSize, offset])
+            this.manyOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.descripcion as descripcion, prestamos.fecha_liquidacion as fecha_liquidacion' +
+                ' from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by nombres limit $1 offset $2', [pageSize, offset])
         ]);
     }).then(function (data) {
         console.log('Prestamos: ', data.length);
@@ -944,7 +945,9 @@ router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
     var id = req.body.id;
     db.task(function(t){
         return this.batch([
-            this.one('select * from prestamos, usuarios where prestamos.id = $1 and prestamos.id_usuario = usuarios.id ', [
+            this.oneOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.pago_semanal as pago_semanal, ' +
+                'prestamos.descripcion as descripcion, prestamos.fecha_prestamo as fecha_prestamo, prestamos.fecha_liquidacion as fecha_liquidacion,' +
+                ' prestamos.id_usuario as id_usuario from prestamos, usuarios where prestamos.id_usuario = usuarios.id and prestamos.id = $1 ', [
                 id
             ]),
             this.manyOrNone('select * from usuarios')
@@ -2296,14 +2299,15 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         var ventas             = (data[0][6].length > 0? data[0][6]: []);
         var tienda             = (data[0][9].length > 0? data[0][9]: []);
         var ventaTiendas       = (data[0][10].length > 0? data[0][10]: []);
-        console.log(bono.length);
+        console.log("n prestamos" +  data[0][4].length);
+        console.log("monto prestamos" +  data[0][5].pago);
         res.render('partials/employee-detail',{
             usuario: data[0][0],
             entradasTarde: entradasTarde,
             salidasTemprano: salidasTemprano,
             asistencias: asistencias,
             prestamos:prestamos,
-            montoPrestamos:montoPrestamos,
+            montoPrestamos:data[0][5],
             ventas: ventas,
             montoVentas: montoVentas,
             totalComision: totalComsion,
@@ -2336,7 +2340,7 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
         ]).then(function(data){
             return t.batch([
                 data,
-                t.one('select proveedores.id as id_prov, costo from articulos, proveedores where articulos.id_proveedor = proveedores.id and articulos.id = $1 ', [
+                t.one('select proveedores.id as id_prov, costo, precio from articulos, proveedores where articulos.id_proveedor = proveedores.id and articulos.id = $1 ', [
                     data[0].id_articulo
                 ])
             ])
