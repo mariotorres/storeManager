@@ -2645,10 +2645,16 @@ router.post('/item/delete', isAuthenticated, function (req, res ) {
 /* exportar inventario */
 
 router.get('/exportar/inventario.csv',isAuthenticated,function (req, res) {
-    db.manyOrNone('select id, articulo from articulos').then(function (data) {
+
+    //articulo, marca, proveedor, tienda
+    db.manyOrNone("select articulos.id,  articulos.articulo, articulos.descripcion, marcas.nombre as marca, articulos.modelo, " +
+        "(select nombre as proveedor from proveedores where id= articulos.id_proveedor)," +
+        "tiendas.nombre as tienda, articulos.talla, articulos.notas, articulos.precio, articulos.costo, articulos.n_existencias as existencias " +
+        "from articulos, marcas, tiendas " +
+        "where articulos.id_marca = marcas.id and articulos.id_tienda = tiendas.id ").then(function (data) {
 
         try {
-            var fields = ['id','articulo'];
+            var fields = ['id','articulo','descripcion','marca','modelo','proveedor','tienda','talla','notas','precio','costo','existencias'];
             var result = json2csv({ data: data, fields: fields });
             //console.log(result);
 
@@ -2666,26 +2672,22 @@ router.get('/exportar/inventario.csv',isAuthenticated,function (req, res) {
             // Errors are thrown for bad options, or if the data is empty and no fields are provided.
             // Be sure to provide fields if it is possible that your data array will be empty.
             console.error(err);
-            res.json({
-                status: 'Error',
-                message: 'OCurrió un error al exportar el inventario'
-            });
+            res.send("<p>Ocurrió un error al exportar el inventario</p>" +
+                "<p><a href='/inventario/'>Regresar</a></p>");
         }
 
     }).catch(function (error) {
         console.log(error);
-        res.json({
-            status: 'Error',
-            message: 'Ocurrió un error al exportar el inventario'
-        });
+        res.send("<p>Ocurrió un error al exportar el inventario</p>" +
+            "<p><a href='/inventario/'>Regresar</a></p>");
     });
 });
 
 router.get('/exportar/proveedores.csv', isAuthenticated,function(req, res){
-    db.manyOrNone('select id, nombre, razon_social from proveedores').then(function (data) {
+    db.manyOrNone('select id, nombre, razon_social, rfc, a_cuenta, por_pagar from proveedores').then(function (data) {
 
         try {
-            var fields = ['id','nombre', 'razon_social'];
+            var fields = ['id','nombre', 'razon_social', 'rfc','a_cuenta','por_pagar'];
             var result = json2csv({ data: data, fields: fields });
             //console.log(result);
 
