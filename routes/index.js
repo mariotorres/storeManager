@@ -2306,7 +2306,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             salidasTemprano: salidasTemprano,
             asistencias: asistencias,
             prestamos:prestamos,
-            montoPrestamos:montoPrestamos,
+            montoPrestamos:data[0][5],
             ventas: ventas,
             montoVentas: montoVentas,
             totalComision: totalComsion,
