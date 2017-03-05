@@ -2327,13 +2327,21 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
     console.log(req.body);
     var abono = req.body.abono == ''? 0 : req.body.abono;
     console.log("Abono " + abono);
+    var query_venta = 'update ventas set saldo_pendiente = saldo_pendiente - $1, monto_pagado_efectivo = monto_pagado_efectivo + $1 where id = $2 returning id';
+    if(req.body.forma_pago == 'cred'){
+        query_venta = 'update ventas set saldo_pendiente = saldo_pendiente - $1, monto_pagado_tarjeta = monto_pagado_tarjeta + $1, tarjeta_credito = TRUE where id = $2 returning id';
+    }else if(req.body.forma_pago == 'deb'){
+        query_venta = 'update ventas set saldo_pendiente = saldo_pendiente - $1, monto_pagado_tarjeta = monto_pagado_tarjeta + $1, tarjeta_credito = FALSE where id = $2 returning id';
+    }
     db.tx(function(t){
         return t.batch([
-            t.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1 where id = $2 returning id_articulo, monto_por_pagar, monto_pagado ',[
+            t.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1, estatus = $4 where id = $2 returning id_articulo, monto_por_pagar, monto_pagado ',[
                 numericCol(abono),
-                req.body.item_id
+                req.body.item_id,
+                numericCol(abono),
+                req.body.estatus
             ]),
-            t.one('update ventas set saldo_pendiente = saldo_pendiente - $1 where id = $2 returning id', [
+            t.one(query_venta, [
                 numericCol(abono),
                 req.body.sale_id
             ])
