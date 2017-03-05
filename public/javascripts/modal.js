@@ -738,7 +738,6 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/lending/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
-                    alert($(this).data('lendings_id'));
                     $("#modal_content").load('/lending/edit-lending/', {id: $(this).data('lendings_id')}, function () {
                         modal.find('form').submit(function (event) {
                             $.post('/lendings/update', $(this).serialize()).done(function (data) {

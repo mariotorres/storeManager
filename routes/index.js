@@ -944,7 +944,9 @@ router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
     var id = req.body.id;
     db.task(function(t){
         return this.batch([
-            this.oneOrNone('select * from prestamos, usuarios where prestamos.id_usuario = usuarios.id and prestamos.id = $1 ', [
+            this.oneOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.pago_semanal as pago_semanal, ' +
+                'prestamos.descripcion as descripcion, prestamos.fecha_prestamo as fecha_prestamo, prestamos.fecha_liquidacion as fecha_liquidacion' +
+                ' from prestamos, usuarios where prestamos.id_usuario = usuarios.id and prestamos.id = $1 ', [
                 id
             ]),
             this.manyOrNone('select * from usuarios')
