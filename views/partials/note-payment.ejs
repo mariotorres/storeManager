@@ -50,6 +50,7 @@
             <th>Unidades vendidas</th>
             <th>Monto pagado</th>
             <th>Monto a pagar</th>
+            <th>Forma pago</th>
             <th>Estatus</th>
             <th>Abono</th>
             <th></th>
@@ -65,9 +66,49 @@
             <td style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
             <td style="text-align: center !important"><%= sales[i].monto_pagado%></td>
             <td style="text-align: center !important"><p  value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
-            <td style="text-align: center !important"><%= sales[i].estatus%></td>
-            <td style="text-align: center !important"><input name="abono" type="number" data-monto_pagar="<%=sales[i].monto_por_pagar%>" value=0 max="<%=sales[i].monto_por_pagar%>"></td>
-            <td><button name="abonar" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
+
+
+            <!-- Forma de pago -->
+            <td style="text-align: center !important">
+                <label class="radio-inline"><input type="radio" name="optradio" value="tar">tarjeta</label>
+                <label class="radio-inline"><input type="radio" name="optradio" value="efe" checked>efectivo</label>
+            </td>
+
+            <!-- Estatus -->
+            <td style="text-align: center !important">
+                <select name = "estatus" class="form-control" required>
+                    <%
+                    if (sales[i].estatus == "entregada"){
+                    %>
+                    <option value="entregada" selected>Entregada</option>
+                    <option value="modificacion">Modificación</option>
+                    <option value="pendiente">Pendiente</option>
+                    <%
+                    }else if(sales[i].estatus == "modificacion") {
+                    %>
+                    <option value="entregada">Entregada</option>
+                    <option value="modificacion" selected>Modificación</option>
+                    <option value="pendiente">Pendiente</option>
+                    <% }else{%>
+                    <option value="entregada">Entregada</option>
+                    <option value="modificacion">Modificación</option>
+                    <option value="pendiente" selected>Pendiente</option>
+                    <%}%>
+                </select>
+            </td>
+
+            <td style="text-align: center !important"><input name="abono" type="number" data-monto_pagar="<%=sales[i].monto_por_pagar%>" value=0  max="<%=sales[i].monto_por_pagar%>"></td>
+            <%
+            if (sales[i].estatus == "entregada"){
+            %>
+            <td><button name="abonar" data-estatus="entregada" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
+            <%
+            }else if(sales[i].estatus == "modificacion") {
+            %>
+            <td><button name="abonar" data-estatus="modificacion" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
+            <% }else{%>
+            <td><button name="abonar" data-estatus="pendiente" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
+            <%}%>
         </tr>
         <%
         }
