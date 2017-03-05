@@ -727,7 +727,8 @@ router.post('/lending/list/', isAuthenticated, function (req, res) {
     db.task(function (t) {
         return this.batch([
             this.one('select count(*) from prestamos as count'),
-            this.manyOrNone('select * from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by nombres limit $1 offset $2', [pageSize, offset])
+            this.manyOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.descripcion as descripcion, prestamos.fecha_liquidacion as fecha_liquidacion' +
+                ' from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by nombres limit $1 offset $2', [pageSize, offset])
         ]);
     }).then(function (data) {
         console.log('Prestamos: ', data.length);
@@ -943,7 +944,7 @@ router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
     var id = req.body.id;
     db.task(function(t){
         return this.batch([
-            this.one('select * from prestamos, usuarios where prestamos.id = $1 and prestamos.id_usuario = usuarios.id ', [
+            this.oneOrNone('select * from prestamos, usuarios where prestamos.id_usuario = usuarios.id and prestamos.id = $1 ', [
                 id
             ]),
             this.manyOrNone('select * from usuarios')
