@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var path = require('path');
-var fs = require('fs');
+var json2csv = require('json2csv'); //export -> csv
+var fs = require('fs'); //read/write files
 var pgp = require("pg-promise")();
 var db;
 
@@ -2625,6 +2626,45 @@ router.post('/item/delete', isAuthenticated, function (req, res ) {
         res.json({
             status: 'Error',
             message: 'Ocurrió un error al eliminar el artículo'
+        });
+    });
+});
+
+/* exportar inventario */
+
+router.get('/exportar/inventario.csv',function (req, res) {
+    db.manyOrNone('select id, articulo from articulos').then(function (data) {
+
+        try {
+            var fields = ['id','articulo'];
+            var result = json2csv({ data: data, fields: fields });
+            //console.log(result);
+
+            //Random file name
+            var csv_path =  path.join(__dirname, '..', 'csv/', 'export_items.csv');
+
+            // write csv file
+            fs.writeFile(csv_path, result, function(err) {
+                if (err) throw err;
+                console.log('file saved');
+                res.sendFile( csv_path );
+            });
+
+        } catch (err) {
+            // Errors are thrown for bad options, or if the data is empty and no fields are provided.
+            // Be sure to provide fields if it is possible that your data array will be empty.
+            console.error(err);
+            res.json({
+                status: 'Error',
+                message: 'OCurrió un error al exportar el inventario'
+            });
+        }
+
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al exportar el inventario'
         });
     });
 });
