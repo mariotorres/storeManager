@@ -346,7 +346,7 @@ function modalEvents(button, modal, page ) {
                     modal.find('#search_results').load('/search/notes/results', $(this).serializeArray(), function () {
                         //poder código para hacer algo con la nota seleccionada
                         $('#search_results').find('.list-group-item').click(function () {
-                            modal.find('#modal_content').load('/notes/payment', { id: $(this).data('user_id'), id_sale:$(this).data('sales_id') },
+                            modal.find('#modal_content').load('/notes/dev', { id: $(this).data('user_id'), id_sale:$(this).data('sales_id') },
                                 function(){
                                     modal.find('form').submit(function(e){
                                         $.post('/notes/finitPayment', $(this).serialize()).done(function(data){

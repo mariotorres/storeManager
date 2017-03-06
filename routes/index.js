@@ -2262,7 +2262,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             this.manyOrNone("select * from ventas where ventas.id_usuario = $1", id),
             this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1", id),
             this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id),
-            this.manyOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id),
+            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id),
             /* Ventas Tienda */
             this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and " +
@@ -2301,6 +2301,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         var ventaTiendas       = (data[0][10].length > 0? data[0][10]: []);
         console.log("n prestamos" +  data[0][4].length);
         console.log("monto prestamos" +  data[0][5].pago);
+        console.log("Tienda " +  data[0][9]);
         res.render('partials/employee-detail',{
             usuario: data[0][0],
             entradasTarde: entradasTarde,
@@ -2311,7 +2312,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             ventas: ventas,
             montoVentas: montoVentas,
             totalComision: totalComsion,
-            tienda: tienda,
+            tienda: data[0][9],
             ventaTiendas: ventaTiendas,
             montoVentasTiendas: montoVentasTiendas,
             penalizacion: penalizacion,
@@ -2394,6 +2395,33 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
     }).then(function(data){
         console.log(data);
         res.render('partials/note-payment',{
+            sales: data[0],
+            items_ids:data[1]
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>');
+    })
+});
+
+router.post('/notes/dev', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db.task(function(t){
+        return t.batch([
+            db.manyOrNone('select * from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
+                'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
+                ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
+                req.body.id_sale
+            ]),
+            db.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
+                'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
+                ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
+                req.body.id_sale
+            ])
+        ])
+    }).then(function(data){
+        console.log(data);
+        res.render('partials/notes-dev',{
             sales: data[0],
             items_ids:data[1]
         })

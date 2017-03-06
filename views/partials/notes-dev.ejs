@@ -1,0 +1,95 @@
+<form id="noteForm">
+    <input type="text" value="<%=sales[0].id_venta%>" name="id" hidden>
+    <h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Tienda</label>
+            <h5 style="color: #9E9E9E;"><%=sales[0].nombre%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Vendedor</label>
+            <h5 style="color: #9E9E9E;"><%=sales[0].nombres%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Fecha de venta</label>
+            <h5 style="color: #9E9E9E;"><%=sales[0].fecha_venta.toLocaleDateString()%></h5>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Artiulos vendidos</label>
+            <h5 style="color: #9E9E9E;"><%=sales.length%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Monto venta</label>
+            <h5 style="color: #9E9E9E;"><%=sales[0].precio_venta%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Saldo pendiente</label>
+            <h5 style="color: #E91E63;"><strong><%=sales[0].saldo_pendiente%></strong></h5>
+            </p>
+        </div>
+    </div>
+    <hr>
+    <h3 style="color:#9E9E9E"><strong>Detalle</strong></h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Artículo</th>
+            <th>Unidades vendidas</th>
+            <th>Monto pagado</th>
+            <th>Monto a pagar</th>
+            <th>Estatus</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <%
+        if (sales.length > 0 ){
+        for (var i =0; i < sales.length; i++){
+        %>
+        <tr style="text-align: center !important">
+            <td style="text-align: center !important"><%= sales[i].articulo%></td>
+            <td style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
+            <td style="text-align: center !important"><%= sales[i].monto_pagado%></td>
+            <td style="text-align: center !important"><p  value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
+            <td style="text-align: center !important"><p  value="<%=sales[i].estatus%>"><%= sales[i].estatus%></p></td>
+            <!-- Estatus -->
+            <td><button name="devolver" data-estatus="pendiente" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important">Devolver</button></td>
+        </tr>
+        <%
+        }
+        }else {
+        %>
+        <option value="">Ninguna</option>
+        <% }%>
+        </tbody>
+    </table>
+    <hr>
+    <h3 style="color:#9E9E9E"><strong>Pago</strong></h3>
+    <div class="row">
+        <div class="col-md-5">
+            <label>Tipo pago:</label>
+            <label class="radio-inline"><input type="radio" name="optradio" value="tar">tarjeta</label>
+            <label class="radio-inline"><input type="radio" name="optradio" value="efe" checked>efectivo</label>
+        </div>
+    </div>
+
+    <br>
+    <p>
+        <button type="submit" class="btn btn-primary">Liquidar todo</button>
+    </p>
+</form>
+
+<script src="/javascripts/notes.js"></script>
