@@ -2705,18 +2705,51 @@ router.get('/exportar/proveedores.csv', isAuthenticated,function(req, res){
             // Errors are thrown for bad options, or if the data is empty and no fields are provided.
             // Be sure to provide fields if it is possible that your data array will be empty.
             console.error(err);
-            res.json({
-                status: 'Error',
-                message: 'OCurrió un error al exportar el inventario'
-            });
+            res.send("<p>Ocurrió un error al exportar los proveedores</p>" +
+                "<p><a href='/inventario/'>Regresar</a></p>");
         }
 
     }).catch(function (error) {
         console.log(error);
-        res.json({
-            status: 'Error',
-            message: 'Ocurrió un error al exportar el inventario'
-        });
+        res.send("<p>Ocurrió un error al exportar los proveedores</p>" +
+            "<p><a href='/inventario/'>Regresar</a></p>");
+    });
+
+});
+
+router.get('/exportar/ventas.csv', isAuthenticated,function(req, res){
+    db.manyOrNone('select ventas.id as id_venta, usuarios.usuario as vendedor, ventas.precio_venta as total, ventas.fecha_venta as fecha, ' +
+        'ventas.hora_venta as hora, ventas.monto_pagado_efectivo, ventas.monto_pagado_tarjeta, ventas.tarjeta_credito, ventas.saldo_pendiente, ventas.estatus,' +
+        '(select nombre_facturador as terminal from terminales where id = ventas.id_terminal)' +
+        'from ventas, usuarios where ventas.id_usuario = usuarios.id').then(function (data) {
+
+        try {
+            var fields = ['id_venta','vendedor', 'total', 'fecha','hora','monto_pagado_efectivo', 'monto_pagado_tarjeta', 'tarjeta_credito', 'saldo_pendiente', 'estatus', 'terminal'];
+            var result = json2csv({ data: data, fields: fields });
+            //console.log(result);
+
+            //Random file name
+            var csv_path =  path.join(__dirname, '..', 'csv/', req.user.usuario+'_export_sales.csv');
+
+            // write csv file
+            fs.writeFile(csv_path, result, function(err) {
+                if (err) throw err;
+                console.log('file saved');
+                res.sendFile( csv_path );
+            });
+
+        } catch (err) {
+            // Errors are thrown for bad options, or if the data is empty and no fields are provided.
+            // Be sure to provide fields if it is possible that your data array will be empty.
+            console.error(err);
+            res.send("<p>Ocurrió un error al exportar las ventas</p>" +
+                "<p><a href='/inventario/'>Regresar</a></p>");
+        }
+
+    }).catch(function (error) {
+        console.log(error);
+        res.send("<p>Ocurrió un error al exportar las ventas</p>" +
+            "<p><a href='/inventario/'>Regresar</a></p>");
     });
 
 });
