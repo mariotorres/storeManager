@@ -255,6 +255,8 @@
             <%=Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto))%>
             <%}else if(penalizacion.length > 0){%>
             <%=Number(usuario.salario) + Number(totalComision.comision) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto))%>
+            <%}else if(bono.length > 0){%>
+            <%=Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto)  - (Number(montoPrestamos.pago))%>
             <%}else{%>
             <%=Number(usuario.salario) + Number(totalComision.comision) - (Number(montoPrestamos.pago))%>
             <%}%>
