@@ -1,24 +1,26 @@
 <%
-if (items.length > 0){%>
-<% for ( var i =0; i < items.length ; i ++ ){ %>
+if (itemProv.length > 0){%>
+<% for ( var i =0; i < itemProv.length ; i ++ ){ %>
 <div class="panel panel-default">
 
     <div class="panel-body">
 
         <form>
-            <h3>Artículo: <%= items[i].articulo %></h3>
+            <h3>Artículo: <%= itemProv[i].articulo %></h3>
+            <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= itemProv[i].modelo %> | <strong>Marca: </strong><%= itemProv[i].nombre_prov %></p>
+            <hr>
             <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
-            <input type="text" name="item_id" value="<%= items[i].id %>" hidden>
+            <input type="text" name="item_id" value="<%= itemProv[i].id %>" hidden>
 
-            <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio %></strong></span></h3>
+            <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= itemProv[i].precio %></strong></span></h3>
 
             <a href="#" class="thumbnail" style="min-height: 200px; text-align:center; min-width: 200px;">
-                <img src="<%= '/item/' + items[i].nombre_imagen +'/image.jpg'%>">
+                <img src="<%= '/item/' + itemProv[i].nombre_imagen +'/image.jpg'%>">
 
             </a>
 
             <label>Descripción:</label><p>
-                <%= items[i].descripcion %></p>
+                <%= itemProv[i].descripcion %></p>
 
             <label>Descuento:</label>
             <div class="row">
@@ -48,13 +50,13 @@ if (items.length > 0){%>
                 <div class="col-sm-6">
                     <p>
                         <label>Existencias:</label>
-                        <input type="text" class="form-control" value="<%= items[i].n_existencias %>" disabled>
+                        <input type="text" class="form-control" value="<%= itemProv[i].n_existencias %>" disabled>
                     </p>
                 </div>
                 <div class="col-sm-6">
                     <p>
                         <label>Unidades:</label>
-                        <input type="number" id="existencias" name="existencias" class="form-control" max="<%= items[i].n_existencias %>" min="1" value="1">
+                        <input type="number" id="existencias" name="existencias" class="form-control" max="<%= itemProv[i].n_existencias %>" min="1" value="1">
                     </p>
                 </div>
             </div>
@@ -70,7 +72,7 @@ if (items.length > 0){%>
                 </div>
                 <div class="col-sm-6">
                     <label>Monto que se deja a cuenta:</label>
-                    <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="0" value="0">
+                    <input type="number" name="monto_pagado" class="form-control" max="<%= itemProv[i].precio * itemProv[i].n_existencias%>" min="0" value="0">
                 </div>
             </div>
 

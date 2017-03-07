@@ -557,16 +557,21 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
         return this.batch([
             this.one('select count(*) from articulos as count '),
             this.manyOrNone('select * from articulos order by articulo limit $1 offset $2',[ pageSize, offset ]),
-            this.manyOrNone('select * from terminales')
+            this.manyOrNone('select * from terminales'),
+            this.manyOrNone('select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, descripcion ' +
+                ' from articulos, proveedores where id_proveedor = proveedores.id order by articulo limit $1 offset $2', [pageSize, offset])
         ]);
 
     }).then(function (data) {
+        console.log("NEW DATA");
+        console.log(data[3]);
         res.render('partials/sale-item-list',{
             items: data[1],
             user: req.user,
             terminales:data[2],
             pageNumber : req.body.page,
-            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize ),
+            itemProv: data[3]
         });
     }).catch(function (error) {
         console.log(error);
