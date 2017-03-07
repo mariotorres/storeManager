@@ -2140,7 +2140,7 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
     //var offset = req.body.page * pageSize;
     db.task(function (t) {
         return this.batch([
-            t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
+            t.manyOrNone("select * from articulos where id_proveedor = $1  and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,
@@ -2168,7 +2168,7 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
     //var offset = req.body.page * pageSize;
     db.task(function (t) {
         return this.batch([
-            t.manyOrNone("select * from articulos where id_proveedor = $1 and id_marca = $2 and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
+            t.manyOrNone("select * from articulos where id_proveedor = $1 and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,
