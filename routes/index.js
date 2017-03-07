@@ -2434,7 +2434,7 @@ router.post('/notes/dev', isAuthenticated, function(req, res){
 router.post('/notes/finitdev', isAuthenticated, function(req, res){
     console.log(req.body);
     // Actualizar existencias, saldos proveedores y ¿montos venta?.
-    db.one("update venta_articulos set estatus = 'devolucion' where id = $1 returning id_articulo, unidades_vendidas ",[
+    db.one("update venta_articulos set estatus = 'devolucion' where id = $1 returning id_articulo, unidades_vendidas, id_venta, monto_por_pagar ",[
         req.body.item_id
     ]).then(function(data){
         db.tx(function(t){
@@ -2454,6 +2454,10 @@ router.post('/notes/finitdev', isAuthenticated, function(req, res){
                         t.one('update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1 returning id',[
                             data[1].id_prov,
                             numericCol(data[1].costo_item * data[0].unidades_vendidas)
+                        ]),
+                        t.one('update ventas set saldo_pendiente = saldo_pendiente - $2 where id = $1',[
+                            data[0].id_venta,
+                            data[0].monto_por_pagar
                         ])
                     ])
                 })
