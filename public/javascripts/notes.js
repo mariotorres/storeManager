@@ -31,6 +31,7 @@ $('button[name=abonar]').click(function(){
 
     var monto_pagar = $(this).data('monto_pagar');
     var abono       = $(this).val() === null? 0: $(this).val();
+    if($(this).data('estatus') != 'devolucion'){
     if(abono <= monto_pagar && abono > 0) {
         var id_item  = $(this).data('item_id');
         var id_venta = $(this).data('sale_id');
@@ -50,6 +51,9 @@ $('button[name=abonar]').click(function(){
         alert("El monto a abonar debe ser mayor a cero.");
     }else{
         alert("El monto a abonar no puede ser mayor al monto por pagar.");
+    }
+    }else{
+        alert("Este articulo ya ha sido devuelto.");
     }
 });
 

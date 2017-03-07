@@ -2415,7 +2415,7 @@ router.post('/notes/dev', isAuthenticated, function(req, res){
             ]),
             db.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
                 'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
-                ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
+                ' and tiendas.id = articulos.id_tienda and ventas.id = $1 ',[
                 req.body.id_sale
             ])
         ])
@@ -2434,7 +2434,7 @@ router.post('/notes/dev', isAuthenticated, function(req, res){
 router.post('/notes/finitdev', isAuthenticated, function(req, res){
     console.log(req.body);
     // Actualizar existencias, saldos proveedores y ¿montos venta?.
-    db.one("update venta_articulos set estatus = 'devolucion' where id = $1 returning id_articulo, unidades_vendidas, id_venta, monto_por_pagar ",[
+    db.one("update venta_articulos set estatus = 'devolucion' where id = $1 returning id_articulo, unidades_vendidas, id_venta, monto_por_pagar, monto_pagado",[
         req.body.item_id
     ]).then(function(data){
         db.tx(function(t){
@@ -2455,9 +2455,10 @@ router.post('/notes/finitdev', isAuthenticated, function(req, res){
                             data[1].id_prov,
                             numericCol(data[1].costo_item * data[0].unidades_vendidas)
                         ]),
-                        t.one('update ventas set saldo_pendiente = saldo_pendiente - $2 where id = $1',[
+                        t.one('update ventas set saldo_pendiente = saldo_pendiente - $2, precio_venta = precio_venta - $3 where id = $1',[
                             data[0].id_venta,
-                            data[0].monto_por_pagar
+                            data[0].monto_por_pagar,
+                            numericCol(data[0].monto_por_pagar + data[0].monto_pagado)
                         ])
                     ])
                 })
