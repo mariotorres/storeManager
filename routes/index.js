@@ -2554,11 +2554,12 @@ router.post('/search/employees/results', isAuthenticated, function (req, res) {
 
 router.post('/search/notes/results', isAuthenticated, function (req, res) {
     console.log(req.body);
-    db.manyOrNone("select * from ventas where (fecha_venta >= $2 and fecha_venta <= $3) or id = $4", [
+    db.manyOrNone("select * from ventas where ((fecha_venta >= $2 and fecha_venta <= $3) or id = $4) and id_usuario = $5", [
         numericCol(req.body.id_nota),
         req.body.fecha_inicial,
         req.body.fecha_final,
-        req.body.id_note
+        req.body.id_note,
+        req.user.id
     ]).then(function (data) {
         res.render('partials/search-notes-results',{
             sales: data
