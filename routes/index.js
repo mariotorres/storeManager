@@ -558,7 +558,7 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
             this.one('select count(*) from articulos as count '),
             this.manyOrNone('select * from articulos order by articulo limit $1 offset $2',[ pageSize, offset ]),
             this.manyOrNone('select * from terminales'),
-            this.manyOrNone('select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, descripcion ' +
+            this.manyOrNone('select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id ' +
                 ' from articulos, proveedores where id_proveedor = proveedores.id order by articulo limit $1 offset $2', [pageSize, offset])
         ]);
 
@@ -2145,7 +2145,8 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
     //var offset = req.body.page * pageSize;
     db.task(function (t) {
         return this.batch([
-            t.manyOrNone("select * from articulos where id_proveedor = $1  and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
+            t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id " +
+                " from articulos, proveedores where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,
@@ -2173,7 +2174,8 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
     //var offset = req.body.page * pageSize;
     db.task(function (t) {
         return this.batch([
-            t.manyOrNone("select * from articulos where id_proveedor = $1 and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
+            t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id" +
+                " from articulos, proveedores where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,

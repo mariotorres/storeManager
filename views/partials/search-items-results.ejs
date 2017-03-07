@@ -9,6 +9,8 @@ for (var i=0; i< items.length; i++){%>
 
         <form>
             <h3>Artículo: </h3>
+            <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Marca: </strong><%= items[i].nombre_prov %></p>
+            <hr>
             <input class="form-control" type="text" value="<%= items[i].articulo %>" name="articulo" disabled>
             <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
             <input type="text" name="item_id" value="<%= items[i].id %>" hidden>
