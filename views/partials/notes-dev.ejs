@@ -66,7 +66,7 @@
             <td style="text-align: center !important"><p  value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
             <td style="text-align: center !important"><p  value="<%=sales[i].estatus%>"><%= sales[i].estatus%></p></td>
             <!-- Estatus -->
-            <td><button name="devolver" data-estatus="pendiente" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important">Devolver</button></td>
+            <td><button name="devolver" data-estatus="<%= sales[i].estatus%>" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important">Devolver</button></td>
         </tr>
         <%
         }

@@ -2431,6 +2431,45 @@ router.post('/notes/dev', isAuthenticated, function(req, res){
     })
 });
 
+router.post('/notes/finitdev', isAuthenticated, function(req, res){
+    console.log(req.body);
+    // Actualizar existencias, saldos proveedores y ¿montos venta?.
+    db.one("update venta_articulos set estatus = 'devolucion' where id = $1 returning id_articulo, unidades_vendidas ",[
+        req.body.item_id
+    ]).then(function(data){
+        db.tx(function(t){
+            return t.batch([
+                data,
+                t.one('select proveedores.id as id_prov, articulos.id as item_id, articulos.precio as precio_item, articulos.costo as costo_item ' +
+                    'from proveedores, articulos where articulos.id_proveedor = proveedores.id and articulos.id = $1',[
+                    data.id_articulo
+                ])
+            ]).then(function(data){
+                db.tx(function(t){
+                    return t.batch([
+                        t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id',[
+                            data[0].unidades_vendidas,
+                            data[1].item_id
+                        ]),
+                        t.one('update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1 returning id',[
+                            data[1].id_prov,
+                            numericCol(data[1].costo_item * data[0].unidades_vendidas)
+                        ])
+                    ])
+                })
+            })
+        })
+    }).then(function(data){
+        res.json({
+            status: 'Ok',
+            message: 'Se ha registrado la devolución.'
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>');
+    })
+})
+
 
 router.post('/notes/finitPayment', isAuthenticated, function(req, res){
     console.log(req.body.id);

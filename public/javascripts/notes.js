@@ -25,6 +25,7 @@ $('select[name=estatus]').change(function(){
     $('button[name=abonar]').data('estatus', $(this).val())
 })
 
+
 // Actualizar montos
 $('button[name=abonar]').click(function(){
 
@@ -51,3 +52,21 @@ $('button[name=abonar]').click(function(){
         alert("El monto a abonar no puede ser mayor al monto por pagar.");
     }
 });
+
+$('button[name=devolver]').click(function(){
+    var id_item  = $(this).data('item_id');
+    var id_venta = $(this).data('sale_id');
+    if($(this).data('estatus') != 'devolucion'){
+    $.post('/notes/finitdev', {
+        item_id: id_item,
+        sale_id: id_venta
+    }).done(function(data){
+        alert(data.message);
+        if(data.status == 'Ok'){
+            location.reload();
+        }
+    })
+    }else{
+        alert("Este articulo ya ha sido devuelto.");
+    }
+})
