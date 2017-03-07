@@ -46,12 +46,12 @@
     <table class="table">
         <thead>
         <tr>
-            <th>Artículo</th>
-            <th>Unidades vendidas</th>
-            <th>Monto pagado</th>
-            <th>Monto a pagar</th>
-            <th>Estatus</th>
-            <th></th>
+            <th  class="field-label col-xs-2 active" >Artículo</th>
+            <th  class="field-label col-xs-2 active" >Unidades vendidas</th>
+            <th  class="field-label col-xs-2 active" >Monto pagado</th>
+            <th  class="field-label col-xs-2 active" >Monto a pagar</th>
+            <th class="field-label col-xs-2 active" >Estatus</th>
+            <th class="field-label col-xs-2 active" ></th>
         </tr>
         </thead>
         <tbody>
@@ -60,13 +60,13 @@
         for (var i =0; i < sales.length; i++){
         %>
         <tr style="text-align: center !important">
-            <td style="text-align: center !important"><%= sales[i].articulo%></td>
-            <td style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
-            <td style="text-align: center !important"><%= sales[i].monto_pagado%></td>
-            <td style="text-align: center !important"><p  value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
-            <td style="text-align: center !important"><p  value="<%=sales[i].estatus%>"><%= sales[i].estatus%></p></td>
+            <td class="field-label col-xs-2 active" style="text-align: center !important"><%= sales[i].articulo%></td>
+            <td class="field-label col-xs-2 active" style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
+            <td class="field-label col-xs-2 active" style="text-align: center !important"><%= sales[i].monto_pagado%></td>
+            <td class="field-label col-xs-2 active" style="text-align: center !important"><p  value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
+            <td class="field-label col-xs-2 active" style="text-align: center !important"><p  value="<%=sales[i].estatus%>"><%= sales[i].estatus%></p></td>
             <!-- Estatus -->
-            <td><button name="devolver" data-estatus="<%= sales[i].estatus%>" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important">Devolver</button></td>
+            <td class="field-label col-xs-2 active"><button name="devolver" data-estatus="<%= sales[i].estatus%>" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important">Devolver</button></td>
         </tr>
         <%
         }

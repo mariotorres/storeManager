@@ -46,14 +46,14 @@
     <table class="table">
         <thead>
         <tr>
-            <th>Artículo</th>
-            <th>Unidades vendidas</th>
-            <th>Monto pagado</th>
-            <th>Monto a pagar</th>
-            <th>Forma pago</th>
-            <th>Estatus</th>
-            <th>Abono</th>
-            <th></th>
+            <th class="field-label col-xs-1 active">Artículo</th>
+            <th class="field-label col-xs-1 active">Unidades vendidas</th>
+            <th class="field-label col-xs-1 active">Monto pagado</th>
+            <th class="field-label col-xs-1 active">Monto a pagar</th>
+            <th class="field-label col-xs-2 active">Forma pago</th>
+            <th class="field-label col-xs-2 active">Estatus</th>
+            <th class="field-label col-xs-2 active">Abono</th>
+            <th class="field-label col-xs-2 active"></th>
         </tr>
         </thead>
         <tbody>
@@ -62,14 +62,14 @@
         for (var i =0; i < sales.length; i++){
         %>
         <tr style="text-align: center !important">
-            <td style="text-align: center !important"><%= sales[i].articulo%></td>
-            <td style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
-            <td style="text-align: center !important"><%= sales[i].monto_pagado%></td>
-            <td style="text-align: center !important"><p  value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
+            <td class="field-label col-xs-1 active" style="text-align: center !important"><%= sales[i].articulo%></td>
+            <td class="field-label col-xs-1 active" style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
+            <td class="field-label col-xs-1 active" style="text-align: center !important"><%= sales[i].monto_pagado%></td>
+            <td class="field-label col-xs-1 active" style="text-align: center !important"><p  value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
 
 
             <!-- Forma de pago -->
-            <td>
+            <td class="field-label col-xs-2 active">
                 <label class="radio-inline"><input type="radio" name="optradio" value="cred" style="display:inline-block;">crédito</label>
                 <br>
                 <label class="radio-inline"><input type="radio" name="optradio" value="deb" style="display:inline-block;">débito  </label>
@@ -78,7 +78,7 @@
             </td>
 
             <!-- Estatus -->
-            <td style="text-align: center !important">
+            <td class="field-label col-xs-2 active" style="text-align: center !important">
                 <select name = "estatus" class="form-control" required>
                     <%
                     if (sales[i].estatus == "entregada"){
@@ -110,17 +110,17 @@
                 </select>
             </td>
 
-            <td style="text-align: center !important"><input name="abono" type="number" data-monto_pagar="<%=sales[i].monto_por_pagar%>" value=0  max="<%=sales[i].monto_por_pagar%>"></td>
+            <td class="field-label col-xs-2 active" style="text-align: center !important"><input name="abono" type="number" data-monto_pagar="<%=sales[i].monto_por_pagar%>" value=0  max="<%=sales[i].monto_por_pagar%>"></td>
             <%
             if (sales[i].estatus == "entregada"){
             %>
-            <td><button name="abonar" data-estatus="entregada" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
+            <td class="field-label col-xs-2 active" ><button name="abonar" data-estatus="entregada" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
             <%
             }else if(sales[i].estatus == "modificacion") {
             %>
-            <td><button name="abonar" data-estatus="modificacion" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
+            <td class="field-label col-xs-2 active"><button name="abonar" data-estatus="modificacion" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
             <% }else{%>
-            <td><button name="abonar" data-estatus="pendiente" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
+            <td class="field-label col-xs-2 active"><button name="abonar" data-estatus="pendiente" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
             <%}%>
         </tr>
         <%
