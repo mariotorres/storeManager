@@ -2265,11 +2265,11 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id),
             /* Ventas Tienda */
             this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
-                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and " +
-                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')"),
+                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
+                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1 ", id),
             this.oneOrNone("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
-                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and " +
-                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')")
+                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
+                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id)
         ]).then(function(data){
             return t.batch([
                 data,
@@ -2299,8 +2299,8 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         var ventas             = (data[0][6].length > 0? data[0][6]: []);
         var tienda             = (data[0][9].length > 0? data[0][9]: []);
         var ventaTiendas       = (data[0][10].length > 0? data[0][10]: []);
-        console.log("n prestamos" +  data[0][4].length);
-        console.log("monto prestamos" +  data[0][5].pago);
+        console.log("monto tienda" +  data[0][11]);
+        console.log("monto individual" +  data[0][5]);
         console.log("Tienda " +  data[0][9]);
         res.render('partials/employee-detail',{
             usuario: data[0][0],
@@ -2310,11 +2310,11 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             prestamos:prestamos,
             montoPrestamos:data[0][5],
             ventas: ventas,
-            montoVentas: montoVentas,
-            totalComision: totalComsion,
+            montoVentas: data[0][7],//montoVentas,
+            totalComision: data[0][8],//totalComsion,
             tienda: data[0][9],
             ventaTiendas: ventaTiendas,
-            montoVentasTiendas: montoVentasTiendas,
+            montoVentasTiendas: data[0][11],//montoVentasTiendas,
             penalizacion: penalizacion,
             bono: bono
         });
@@ -2358,7 +2358,7 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
             console.log("Precio: " + data[1].precio);
             queries = [];
             queries.push(data);
-            if(data[0][0].monto_pagado == data[1].precio){
+            if(data[0][0].monto_pagado >= data[1].precio){
                 queries.push( t.one('update proveedores set a_cuenta = a_cuenta + $1, por_pagar = por_pagar - $1 where id = $2 returning id', [
                     numericCol(data[1].costo),
                     data[1].id_prov
