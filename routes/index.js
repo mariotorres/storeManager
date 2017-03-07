@@ -2554,7 +2554,13 @@ router.post('/search/employees/results', isAuthenticated, function (req, res) {
 
 router.post('/search/notes/results', isAuthenticated, function (req, res) {
     console.log(req.body);
-    db.manyOrNone("select * from ventas where ((fecha_venta >= $2 and fecha_venta <= $3) or id = $4) and id_usuario = $5", [
+    query = "select * from ventas where ((fecha_venta >= $2 and fecha_venta <= $3) or id = $4) and id_usuario = $5"
+    if(req.user.permiso_administrador == true){
+        query = "select * from ventas  where ((fecha_venta >= $2 and fecha_venta <= $3) or id = $4)"
+    }
+    console.log("PERM ADMIN" + req.user.permiso_administrador);
+
+    db.manyOrNone(query, [
         numericCol(req.body.id_nota),
         req.body.fecha_inicial,
         req.body.fecha_final,
