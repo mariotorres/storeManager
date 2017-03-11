@@ -2101,6 +2101,26 @@ router.post('/reports/', isAuthenticated, function (req, res) {
     res.render('partials/reports');
 });
 
+
+router.get('/reporte/:tipo/', function (req, res) {
+
+    var data = {
+        type : 'Ventas',
+        names : ['Nombre','Apellido'],
+        rows : [{
+            nombre : 'Mario',
+            apellido : 'Torres'
+        }, {
+            nombre: 'Juan',
+            apellido: 'Perez'
+        }]
+    };
+    res.render('partials/report',{data : data });
+
+});
+
+
+
 router.post('/item/find-items-view', isAuthenticated, function (req, res) {
 
     db.task(function (t) {

@@ -1,6 +1,6 @@
 <!-- Reports -->
 
-<h2>Reporte de <%= data.tipo%></h2>
+<h2>Reporte de <%= data.type%></h2>
 
 
 <table class="table table-striped">
@@ -15,14 +15,18 @@
     </tr>
     </thead>
     <tbody>
+
+
+    <% for (var i=0; i< data.rows.length; i ++){%>
     <tr>
 
-        <% for (var i=0; i< data.rows.length; i ++){
-        for ( var x in data.rows[i]){
+        <%
+        for ( var prop in data.rows[i]){
         %>
-        <td> <%= x %> </td>
-        <%}} %>
+        <td> <%= data.rows[i][prop] %> </td>
+        <%} %>
 
     </tr>
+    <%}%>
     </tbody>
 </table>
