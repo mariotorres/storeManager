@@ -1,15 +1,18 @@
 <!-- Reports -->
 
-<h2>Reporte de <%= data.type%></h2>
+<h2> <%= data.metadata.title%></h2>
+
+<label>Periodo</label>
+<p> <%= data.metadata.period.enddate %> - <%= data.metadata.period.startdate %></p>
 
 
 <table class="table table-striped">
     <thead>
     <tr>
 
-        <% for (var i=0; i< data.names.length; i++){%>
+        <% for (var i=0; i< data.metadata.column_names.length; i++){%>
 
-        <th><%= data.names[i] %></th>
+        <th><%= data.metadata.column_names[i] %></th>
 
         <%}%>
     </tr>

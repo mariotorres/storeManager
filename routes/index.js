@@ -2104,9 +2104,67 @@ router.post('/reports/', isAuthenticated, function (req, res) {
 
 router.get('/reporte/:tipo/', function (req, res) {
 
+    /*
+    var title = '';
+
+    db.task(function (t) {
+        // return appropiate queries
+        switch (tipo){
+            case 'ventas':
+                title = 'Reporte de ventas';
+                return this.batch([
+                    //queries
+                    ]);
+                break;
+            case 'proveedores':
+                title = 'Reporte de proveedores';
+                return this.batch([
+                    //queries
+                    ]);
+                break;
+            case 'nomina':
+                title = 'Reporte de nómina';
+                return this.batch([
+                    //queries
+                    ]);
+                break;
+        }
+
+    }).then(function (data) {
+
+        console.log('Report generated succesfully');
+
+        res.render('partials/report', {
+            metadata: {
+                title: title,
+                period: {
+                    startdate: '',
+                    enddate: '',
+                }
+            },
+            column_names: [ // column names
+    ],
+            rows : data
+        });
+
+    }).catch(function (error) {
+        // send error
+        console.log(error);
+    });
+    */
+
+
     var data = {
-        type : 'Ventas',
-        names : ['Nombre','Apellido'],
+
+        metadata:{
+            title: 'Reporte de ventas',
+            period : {
+                startdate: '2017/01/01',
+                enddate: '2017/02/01'
+
+            },
+            column_names: ['Nombre', 'Apellido']
+        },
         rows : [{
             nombre : 'Mario',
             apellido : 'Torres'
