@@ -2104,76 +2104,84 @@ router.post('/reports/', isAuthenticated, function (req, res) {
 
 router.get('/reporte/:tipo/', function (req, res) {
 
-    /*
+
     var title = '';
 
     db.task(function (t) {
         // return appropiate queries
-        switch (tipo){
+        switch (req.params.tipo){
             case 'ventas':
                 title = 'Reporte de ventas';
                 return this.batch([
-                    //queries
+                    this.manyOrNone('select * from ventas')
                     ]);
                 break;
             case 'proveedores':
                 title = 'Reporte de proveedores';
-                return this.batch([
+                return null;
+                /*return this.batch([
                     //queries
-                    ]);
+                    ]);*/
                 break;
             case 'nomina':
                 title = 'Reporte de nómina';
-                return this.batch([
+                return null;
+                /*return this.batch([
                     //queries
-                    ]);
+                    ]);*/
                 break;
+            default:
+                return null;
         }
 
-    }).then(function (data) {
+    }).then(function (rows ) {
 
-        console.log('Report generated succesfully');
+        if (rows == null){
+            //send unsupported report type
+        } else {
 
-        res.render('partials/report', {
-            metadata: {
-                title: title,
-                period: {
-                    startdate: '',
-                    enddate: '',
-                }
-            },
-            column_names: [ // column names
-    ],
-            rows : data
-        });
+
+            console.log('Report generated succesfully');
+
+            /*
+            switch ( req.params.tipo ){
+
+            }*/
+
+
+
+            var cnames = [];
+
+            for (var n in rows[0][0]){
+                cnames.push(  n );
+            }
+
+            var data = {
+
+                metadata: {
+                    title: title,
+                    period: {
+                        startdate: '2017/01/01',
+                        enddate: '2017/02/01'
+
+                    },
+                    column_names: cnames,//['Nombre', 'Apellido']
+                },
+                rows: rows[0]
+            };
+
+
+            res.render('partials/report', {data: data});
+        }
 
     }).catch(function (error) {
         // send error
         console.log(error);
     });
-    */
 
 
-    var data = {
 
-        metadata:{
-            title: 'Reporte de ventas',
-            period : {
-                startdate: '2017/01/01',
-                enddate: '2017/02/01'
 
-            },
-            column_names: ['Nombre', 'Apellido']
-        },
-        rows : [{
-            nombre : 'Mario',
-            apellido : 'Torres'
-        }, {
-            nombre: 'Juan',
-            apellido: 'Perez'
-        }]
-    };
-    res.render('partials/report',{data : data });
 
 });
 
