@@ -2107,6 +2107,9 @@ router.get('/reporte/:tipo/', function (req, res) {
 
     var title = '';
 
+
+    console.log('query -> ', req.query);
+
     db.task(function (t) {
         // return appropiate queries
         switch (req.params.tipo){
