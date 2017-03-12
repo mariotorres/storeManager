@@ -2138,45 +2138,51 @@ router.get('/reporte/:tipo/', function (req, res) {
 
         if (rows == null){
             //send unsupported report type
+            res.send("<p> Reporte no soportado </p>" );
         } else {
 
 
-            console.log('Report generated succesfully');
-
-            /*
             switch ( req.params.tipo ){
+                case 'ventas':
+                    console.log('Report generated succesfully');
+                    var cnames = [];
 
-            }*/
+                    for (var n in rows[0][0]){
+                        cnames.push(  n );
+                    }
 
+                    var data = {
+                        metadata: {
+                            title: title,
+                            period: {
+                                startdate: '2017/01/01',
+                                enddate: '2017/02/01'
 
+                            },
+                            column_names: cnames,//['Nombre', 'Apellido']
+                        },
+                        rows: rows[0]
+                    };
 
-            var cnames = [];
+                    res.render('partials/report', {data: data});
+                    break;
+                case 'proveedores':
+                    break;
+                case 'nomina':
+                    break;
+                case 'devoluciones':
+                    break;
+                default:
+                    res.send("<p>Reporte no soportado</p>");
 
-            for (var n in rows[0][0]){
-                cnames.push(  n );
             }
-
-            var data = {
-
-                metadata: {
-                    title: title,
-                    period: {
-                        startdate: '2017/01/01',
-                        enddate: '2017/02/01'
-
-                    },
-                    column_names: cnames,//['Nombre', 'Apellido']
-                },
-                rows: rows[0]
-            };
-
-
-            res.render('partials/report', {data: data});
         }
 
     }).catch(function (error) {
         // send error
         console.log(error);
+        res.send("<p>Ocurrió un error al generar el reporte</p>");
+
     });
 
 
