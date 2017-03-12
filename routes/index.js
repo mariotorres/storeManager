@@ -2114,7 +2114,7 @@ router.get('/reporte/:tipo/', function (req, res) {
                 title = 'Reporte de ventas';
                 return this.batch([
                     this.manyOrNone('select * from ventas')
-                    ]);
+                ]);
                 break;
             case 'proveedores':
                 title = 'Reporte de proveedores';
@@ -2123,12 +2123,17 @@ router.get('/reporte/:tipo/', function (req, res) {
                     //queries
                     ]);*/
                 break;
-            case 'nomina':
-                title = 'Reporte de nómina';
+            case 'devoluciones':
+                title = 'Reporte de devoluciones';
                 return null;
                 /*return this.batch([
                     //queries
                     ]);*/
+                break;
+            case 'asistencia':
+                title = 'Reporte de asistencia de personal';
+                //return queries ...
+                return null;
                 break;
             default:
                 return null;
@@ -2137,10 +2142,11 @@ router.get('/reporte/:tipo/', function (req, res) {
     }).then(function (rows ) {
 
         if (rows == null){
+
             //send unsupported report type
             res.send("<p> Reporte no soportado </p>" );
-        } else {
 
+        } else {
 
             switch ( req.params.tipo ){
                 case 'ventas':
@@ -2168,7 +2174,7 @@ router.get('/reporte/:tipo/', function (req, res) {
                     break;
                 case 'proveedores':
                     break;
-                case 'nomina':
+                case 'asistencia':
                     break;
                 case 'devoluciones':
                     break;
@@ -2184,10 +2190,6 @@ router.get('/reporte/:tipo/', function (req, res) {
         res.send("<p>Ocurrió un error al generar el reporte</p>");
 
     });
-
-
-
-
 
 });
 
