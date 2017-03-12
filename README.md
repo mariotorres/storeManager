@@ -14,7 +14,7 @@ Instructions for installing Store Manager
 
 ### Web app
 1. `cd storeManager/`
-2. `npm install && npm run build`
+2. `npm install`
 3. `cd public/ && bower install`
 
 ## Running the app

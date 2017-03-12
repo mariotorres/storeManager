@@ -2115,6 +2115,7 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
         switch (req.params.tipo){
             case 'ventas':
                 title = 'Reporte de ventas';
+                //filtrar terminal y tienda
                 return this.batch([
                     this.manyOrNone('select * from ventas')
                 ]);
