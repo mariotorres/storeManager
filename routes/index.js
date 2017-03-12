@@ -2102,7 +2102,7 @@ router.post('/reports/', isAuthenticated, function (req, res) {
 });
 
 
-router.get('/reporte/:tipo/', function (req, res) {
+router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
 
 
     var title = '';
