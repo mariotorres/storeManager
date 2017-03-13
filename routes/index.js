@@ -2104,61 +2104,67 @@ router.post('/reports/', isAuthenticated, function (req, res) {
 
 router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
 
-
     var title = '';
+    var query = null;
 
+    console.log(req.query)
+    // return appropiate queries
+    switch (req.params.tipo){
+        case 'ventas':
+            //query -> startdate, enddate, store
+            title = 'Reporte de ventas';
+            query = db.manyOrNone('select * from ventas, terminales where ventas.id_terminal = terminales.id and ' +
+                'fecha_venta >= $1 and fecha_venta <= $2',[ req.query.startdate, req.query.enddate ]);
+            break;
+        case 'proveedores':
+            title = 'Reporte de proveedores';
+            //query -> {}
+            query = db.manyOrNone('select * from proveedores');
+            break;
+        case 'devoluciones':
+            title = 'Reporte de devoluciones';
+            query = null;
+            break;
+        case 'asistencia':
+            title = 'Reporte de asistencia de personal';
+            //return queries ...
+            query = null;
+            break;
+    }
 
-    console.log('query -> ', req.query);
+    if (query!= null) {
 
-    db.task(function (t) {
-        // return appropiate queries
-        switch (req.params.tipo){
-            case 'ventas':
-                title = 'Reporte de ventas';
-                //filtrar terminal y tienda
-                return this.batch([
-                    this.manyOrNone('select * from ventas')
-                ]);
-                break;
-            case 'proveedores':
-                title = 'Reporte de proveedores';
-                return null;
-                /*return this.batch([
-                    //queries
-                    ]);*/
-                break;
-            case 'devoluciones':
-                title = 'Reporte de devoluciones';
-                return null;
-                /*return this.batch([
-                    //queries
-                    ]);*/
-                break;
-            case 'asistencia':
-                title = 'Reporte de asistencia de personal';
-                //return queries ...
-                return null;
-                break;
-            default:
-                return null;
-        }
-
-    }).then(function (rows ) {
-
-        if (rows == null){
-
-            //send unsupported report type
-            res.send("<p> Reporte no soportado </p>" );
-
-        } else {
-
-            switch ( req.params.tipo ){
+        query.then(function (rows) {
+            switch (req.params.tipo) {
                 case 'ventas':
                     console.log('Report generated succesfully');
                     var cnames = [];
 
-                    for (var n in rows[0][0]){
-                        cnames.push(  n );
+                    for (var n in rows[0]) {
+                        cnames.push(n);
+                    }
+
+                    var data = {
+                        metadata: {
+                            title: title,
+                            period: {
+                                startdate: req.query.startdate,
+                                enddate: req.query.enddate
+
+                            },
+                            column_names: cnames,//['Nombre', 'Apellido']
+                        },
+                        rows: rows
+                    };
+
+                    res.render('partials/report', {data: data});
+                    break;
+                case 'proveedores':
+                    console.log('Report generated succesfully');
+                    var cnames = [];
+
+                    for (var n in rows[0]) {
+                        cnames.push(n);
                     }
 
                     var data = {
@@ -2171,12 +2177,10 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
                             },
                             column_names: cnames,//['Nombre', 'Apellido']
                         },
-                        rows: rows[0]
+                        rows: rows
                     };
 
                     res.render('partials/report', {data: data});
-                    break;
-                case 'proveedores':
                     break;
                 case 'asistencia':
                     break;
@@ -2186,14 +2190,20 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
                     res.send("<p>Reporte no soportado</p>");
 
             }
-        }
 
-    }).catch(function (error) {
-        // send error
-        console.log(error);
-        res.send("<p>Ocurrió un error al generar el reporte</p>");
 
-    });
+        }).catch(function (error) {
+            // send error
+            console.log(error);
+            res.send("<p>Ocurrió un error al generar el reporte</p>");
+
+        });
+    } else {
+
+        //send unsupported report type
+        res.send("<p> Reporte no soportado </p>" );
+
+    }
 
 });
 
