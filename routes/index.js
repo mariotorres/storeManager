@@ -3,29 +3,7 @@ var router = express.Router();
 var path = require('path');
 var json2csv = require('json2csv'); //export -> csv
 var fs = require('fs'); //read/write files
-var pgp = require("pg-promise")();
-var db;
-
-// Linked postgresql docker container
-if ( typeof process.env.POSTGRES_PORT_5432_TCP_ADDR != "undefined" ) {
-    process.env.DB = 'postgres://';
-    process.env.DB += process.env.POSTGRES_USER || 'postgres';
-    process.env.DB += ':';
-    process.env.DB += process.env.POSTGRES_ENV_POSTGRES_PASSWORD || '';
-    process.env.DB += '@';
-    process.env.DB += process.env.POSTGRES_PORT_5432_TCP_ADDR;
-    process.env.DB += '/';
-    process.env.DB += process.env.POSTGRES_DB || 'postgres';
-}
-
-if ( typeof process.env.DB != "undefined" ){
-    console.log("DB: ", process.env.DB);
-    db = pgp( process.env.DB );
-} else {
-    console.log("Warning: BM_DB env variable is not set\n " +
-        " defaulting to -> postgres://tester:test@localhost/business");
-    db = pgp("postgres://smuser:test@localhost/business");
-}
+var db_conf = require('../db_conf');
 
 // Configuring Passport
 var passport = require('passport');
@@ -49,7 +27,7 @@ passport.use('login', new LocalStrategy({
     },
     function(req, username, password, done) {
         // check in postgres if a user with username exists or not
-        db.oneOrNone('select * from usuarios where usuario = $1', [ username ]).then(function (user) {
+        db_conf.db.oneOrNone('select * from usuarios where usuario = $1', [ username ]).then(function (user) {
             // session
 
             if (!user){
@@ -82,7 +60,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-    db.one(' select * from usuarios where id = $1',[ id ]).then(function (user) {
+    db_conf.db.one(' select * from usuarios where id = $1',[ id ]).then(function (user) {
         //console.log('deserializing user:',user);
         done (null, user);
     }).catch(function (error) {
@@ -177,7 +155,7 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 });
 
 router.get('/carrito', isAuthenticated, function (req, res) {
-    db.task(function (t) { // El descuento se aplica al total de la venta, no a cada artículo!!!!
+    db_conf.db.task(function (t) { // El descuento se aplica al total de la venta, no a cada artículo!!!!
         return this.batch([
             this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo, estatus',[ req.user.id ]),
@@ -210,7 +188,7 @@ router.get('/notas/imprimir', isAuthenticated, function (req, res) {
 
     //¿como generamos la numeración? ¿debe ser consecutiva?
 
-    db.manyOrNone("select id, precio_venta, hora_venta, fecha_venta, " +
+    db_conf.db.manyOrNone("select id, precio_venta, hora_venta, fecha_venta, " +
         "(select string_agg(concat(articulo, ' (', unidades_vendidas,')'), ',') as articulos from venta_articulos, articulos " +
         "where venta_articulos.id_articulo=articulos.id and venta_articulos.id = carrito_notas.id_venta ) " +
         "from ventas, carrito_notas where ventas.id= carrito_notas.id_venta and carrito_notas.id_usuario=$1", req.user.id).then(function (data) {
@@ -229,13 +207,13 @@ router.get('/notas/imprimir', isAuthenticated, function (req, res) {
 
 router.post('/notas/imprimir/agregar', function (req, res) {
 
-    db.one('select count(*) as count from carrito_notas where id_venta=$1 and id_usuario= $2',[
+    db_conf.db.one('select count(*) as count from carrito_notas where id_venta=$1 and id_usuario= $2',[
         req.body.id_venta,
         req.user.id
     ]).then(function (data) {
 
         if( data.count == 0 ) {
-            return db.one('insert into carrito_notas (id_venta, id_usuario) values ($1, $2) returning id_venta', [
+            return db_conf.db.one('insert into carrito_notas (id_venta, id_usuario) values ($1, $2) returning id_venta', [
                 req.body.id_venta,
                 req.user.id
             ]);
@@ -271,7 +249,7 @@ router.post('/notas/imprimir/agregar', function (req, res) {
 router.post('/notas/imprimir/remover', function (req, res) {
     console.log(req.body);
 
-    db.one('delete from carrito_notas where id_venta=$1 and id_usuario=$2 returning id_venta', [ req.body.id_venta, req.user.id ]).then(function (data) {
+    db_conf.db.one('delete from carrito_notas where id_venta=$1 and id_usuario=$2 returning id_venta', [ req.body.id_venta, req.user.id ]).then(function (data) {
         console.log('Nota removida del carrito', data.id_venta);
         res.json({
             status: 'Ok',
@@ -290,7 +268,7 @@ router.post('/notas/imprimir/remover', function (req, res) {
 
 router.post('/carrito/status', isAuthenticated, function(req, res){
     console.log(req.body);
-    db.one('update carrito set estatus = $1 where carrito.id_articulo = $2 and ' +
+    db_conf.db.one('update carrito set estatus = $1 where carrito.id_articulo = $2 and ' +
         'carrito.id_usuario = $3 returning id_articulo',[
             req.body.status,
             req.body.item_id,
@@ -311,13 +289,13 @@ router.post('/carrito/status', isAuthenticated, function(req, res){
 
 router.post('/carrito/monto', isAuthenticated, function(req, res){
     console.log(req.body);
-    db.one('update carrito set monto_pagado = $1 where carrito.id_articulo = $2 and ' +
+    db_conf.db.one('update carrito set monto_pagado = $1 where carrito.id_articulo = $2 and ' +
         'carrito.id_usuario = $3 returning id_articulo',[
             req.body.monto,
             req.body.item_id,
             req.user.id
     ]).then(function(data){
-        db.one('select sum(monto_pagado) as monto_pagado from carrito where carrito.id_usuario = $1',[
+        db_conf.db.one('select sum(monto_pagado) as monto_pagado from carrito where carrito.id_usuario = $1',[
             req.user.id
         ])
     }).then(function(data){
@@ -338,7 +316,7 @@ router.post('/carrito/monto', isAuthenticated, function(req, res){
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
     console.log(req.body);
-    db.one('update carrito set unidades_carrito = unidades_carrito + 1 ' +
+    db_conf.db.one('update carrito set unidades_carrito = unidades_carrito + 1 ' +
         'where carrito.id_articulo = $1 and carrito.id_usuario = $2 and carrito.estatus = $3 returning id_articulo', [
         numericCol(req.body.item_id),
         numericCol(req.user.id), //numericCol(req.body.user_id)
@@ -359,7 +337,7 @@ router.post('/carrito/inc', isAuthenticated, function (req, res) {
 
 router.post('/carrito/dec', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
-    db.oneOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 '+//from usuarios, articulos ' +
+    db_conf.db.oneOrNone(' update carrito set unidades_carrito = unidades_carrito - 1 '+//from usuarios, articulos ' +
         'where id_articulo=$1 and id_usuario=$2 and carrito.unidades_carrito > 1 and carrito.estatus = $3 returning id_articulo', [
         numericCol(req.body.item_id),
         numericCol(req.user.id), //numericCol(req.body.user_id)
@@ -379,7 +357,7 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/rem', isAuthenticated, function (req, res) {
-    db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 returning id_articulo', [
+    db_conf.db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 returning id_articulo', [
         req.user.id, //req.body.user_id,
         req.body.item_id
     ]).then(function (data) {
@@ -399,7 +377,7 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 // Carrito Sell
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
     console.log(req.body);
-    db.tx(function (t) {
+    db_conf.db.tx(function (t) {
         return this.manyOrNone(
             'select * from carrito, articulos where carrito.id_articulo = articulos.id and ' +
             ' carrito.id_usuario = $1 order by articulo', [
@@ -484,7 +462,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
     console.log(req.body);
     // Agregar a carrito
 
-    db.one('select count(*) as unidades_carrito from carrito where id_articulo = $1 and id_usuario = $2', [
+    db_conf.db.one('select count(*) as unidades_carrito from carrito where id_articulo = $1 and id_usuario = $2', [
         numericCol(req.body.item_id),
         numericCol(req.user.id),//numericCol(req.body.user_id)
         req.body.id_estatus // Debe ser posible agregar el mismo artículo al carrito si el estatus de uno es distinto del otro.
@@ -498,7 +476,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
 
         } else {
 
-            db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
+            db_conf.db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
                 'unidades_carrito, estatus, monto_pagado) ' +
                 ' values($1, $2, $3, $4, $5, $6, $7) returning id_articulo',[
                 new Date(),
@@ -535,7 +513,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
 
 // New item
 router.post('/item/new', isAuthenticated,function(req,res ){
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.manyOrNone('select * from tiendas'),
             this.manyOrNone('select * from proveedores'),
@@ -553,7 +531,7 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from articulos as count '),
             this.manyOrNone('select * from articulos order by articulo limit $1 offset $2',[ pageSize, offset ]),
@@ -583,7 +561,7 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
 router.post('/notes/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from ventas as count where ' +
                 'id_usuario = $1', [req.user.id]), // Sólo se imprimen las notas de las ventas completas o las que tienen pagos con tarjeta:::id_usuario = $1 and
@@ -609,7 +587,7 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
 router.post('/print/notes/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from ventas as count where  ' +
                 'id_usuario = $1', [req.user.id]), // Sólo se imprimen las notas de las ventas completas o las que tienen pagos con tarjeta
@@ -635,7 +613,7 @@ router.post('/item/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from articulos as count '),
             this.manyOrNone('select * from articulos order by articulo limit $1 offset $2',[ pageSize, offset ])
@@ -660,7 +638,7 @@ router.post('/store/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from tiendas as count'),
             this.manyOrNone('select * from tiendas order by nombre limit $1 offset $2',[ pageSize, offset ])
@@ -684,7 +662,7 @@ router.post('/terminal/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from terminales as count'),
             this.manyOrNone('select * from terminales order by nombre_facturador limit $1 offset $2',[ pageSize, offset ])
@@ -708,7 +686,7 @@ router.post('/bonus/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from bonos as count'),
             this.manyOrNone('select * from bonos order by nombre limit $1 offset $2',[ pageSize, offset ])
@@ -730,7 +708,7 @@ router.post('/bonus/list/', isAuthenticated, function (req, res) {
 router.post('/lending/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from prestamos as count'),
             this.manyOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.descripcion as descripcion, prestamos.fecha_liquidacion as fecha_liquidacion' +
@@ -755,7 +733,7 @@ router.post('/penalization/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from penalizaciones as count'),
             this.manyOrNone('select * from penalizaciones order by nombre limit $1 offset $2',[ pageSize, offset ])
@@ -778,7 +756,7 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
     var offset = req.body.page * pageSize;
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from marcas as count'),
             this.manyOrNone('select * from marcas order by nombre limit $1 offset $2',[ pageSize, offset ])
@@ -799,7 +777,7 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
 router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
     var id = req.params.id;
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
 
         return this.batch([
             this.one('select * from ventas, terminales where ventas.id = $1 and ventas.id_terminal = terminales.id', [ id ]),
@@ -839,7 +817,7 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
     console.log('user_id: ',user_id);
     console.log( 'sale_id: ',id );
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
 
         return this.batch([
             this.oneOrNone(
@@ -898,7 +876,7 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
 // Load store data into  modal.
 router.post('/store/edit-store/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    db.one('select * from tiendas where id = $1', [id]).then(function(data){
+    db_conf.db.one('select * from tiendas where id = $1', [id]).then(function(data){
         console.log('Editar tienda: ', data.nombre );
         res.render('partials/edit-store', {
             status:'Ok',
@@ -914,7 +892,7 @@ router.post('/store/edit-store/', isAuthenticated, function(req, res){
 router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
     var id = req.body.id;
     console.log(id);
-    db.task(function(t){
+    db_conf.db.task(function(t){
         return this.batch([
             this.one('select * from terminales where id = $1', [id]),
             this.manyOrNone('select * from tiendas')
@@ -934,7 +912,7 @@ router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
 // Load bonus data into  modal.
 router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    db.one('select * from bonos where id = $1', [
+    db_conf.db.one('select * from bonos where id = $1', [
         id
     ]).then(function(data){
         console.log('Editar bono: ',data.id );
@@ -948,7 +926,7 @@ router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
 // Load bonus data into  modal.
 router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    db.task(function(t){
+    db_conf.db.task(function(t){
         return this.batch([
             this.oneOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.pago_semanal as pago_semanal, ' +
                 'prestamos.descripcion as descripcion, prestamos.fecha_prestamo as fecha_prestamo, prestamos.fecha_liquidacion as fecha_liquidacion,' +
@@ -972,7 +950,7 @@ router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
 // Load penalization data into  modal.
 router.post('/penalization/edit-penalization/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    db.one('select * from penalizaciones where id = $1', [
+    db_conf.db.one('select * from penalizaciones where id = $1', [
         id
     ]).then(function(data){
         res.render('partials/edit-penalization', {
@@ -988,7 +966,7 @@ router.post('/penalization/edit-penalization/', isAuthenticated, function(req, r
 // Load brand data into  modal.
 router.post('/brand/edit-brand/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    db.one('select * from marcas where id = $1', [id]).then(function(data){
+    db_conf.db.one('select * from marcas where id = $1', [id]).then(function(data){
         res.render('partials/edit-brand', { marca: data });
     }).catch(function(error){
         console.log(error);
@@ -999,7 +977,7 @@ router.post('/brand/edit-brand/', isAuthenticated, function(req, res){
 // Load supplier data into modal
 router.post('/supplier/edit-supplier/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    db.one('select * from proveedores where id = $1', [id]).then(function(data){
+    db_conf.db.one('select * from proveedores where id = $1', [id]).then(function(data){
         res.render('partials/edit-supplier', {
             status: 'Ok',
             supplier:data
@@ -1013,10 +991,10 @@ router.post('/supplier/edit-supplier/', isAuthenticated, function(req, res){
 // Load user data into modal
 router.post('/user/edit-user/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    db.task(function(t){
+    db_conf.db.task(function(t){
         return t.batch([
-            db.one('select * from usuarios where id = $1', [id]),
-            db.manyOrNone('select * from tiendas')
+            db_conf.db.one('select * from usuarios where id = $1', [id]),
+            db_conf.db.manyOrNone('select * from tiendas')
         ])
     }).then(function(data){
         res.render('partials/edit-user', {
@@ -1034,7 +1012,7 @@ router.post('/user/edit-user/', isAuthenticated, function(req, res){
 router.post('/item/edit-item/', isAuthenticated, function(req, res){
     var id = req.body.id;
     console.log(id);
-    db.task(function (t){
+    db_conf.db.task(function (t){
         return this.batch([
             this.one('select * from articulos where id = $1', [id]),
             this.manyOrNone('select * from tiendas'),
@@ -1059,7 +1037,7 @@ router.post('/item/edit-item/', isAuthenticated, function(req, res){
 router.post('/item/return-item/', isAuthenticated, function(req, res){
     var id = req.body.id;
     console.log(id);
-    db.task(function (t){
+    db_conf.db.task(function (t){
         return this.batch([
             this.one('select * from articulos where id = $1', [id]),
             this.manyOrNone('select * from tiendas'),
@@ -1086,7 +1064,7 @@ router.post('/supplier/new', isAuthenticated,function(req, res ){
 
 router.post('/type/payment',function(req, res ){
 
-    db.task(function(t){
+    db_conf.db.task(function(t){
         return this.batch([
             this.manyOrNone('select * from terminales order by nombre_facturador '),
             this.manyOrNone('select sum(monto_pagado) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
@@ -1114,7 +1092,7 @@ router.post('/supplier/list/', isAuthenticated,function(req, res ){
     var page = req.body.page;
     var pageSize = 10;
     var offset = page * pageSize;
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from proveedores as count'),
             this.manyOrNone('select * from proveedores order by nombre limit $1 offset $2',[ pageSize, offset ])
@@ -1137,7 +1115,7 @@ router.post('/user/list/', isAuthenticated, function(req, res){
     var page = req.body.page;
     var pageSize = 10;
     var offset = page * pageSize;
-    db.task(function(t){
+    db_conf.db.task(function(t){
         return this.batch([
             this.one('select count(*) from usuarios as count'),
             this.manyOrNone('select * from usuarios order by usuario limit $1 offset $2', [pageSize, offset])
@@ -1161,7 +1139,7 @@ router.post('/store/new', isAuthenticated,function (req, res) {
 
 
 router.post('/terminal/new', isAuthenticated,function (req, res) {
-    db.task(function(t){
+    db_conf.db.task(function(t){
         return this.manyOrNone('select * from tiendas')
     }).then(function(data){
         res.render('partials/new-terminal', {tiendas: data});
@@ -1172,7 +1150,7 @@ router.post('/terminal/new', isAuthenticated,function (req, res) {
 });
 
 router.post('/employees/penalization/new', function (req, res) {
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
     }).then(function (data) {
         res.render('partials/new-penalization', {});
     }).catch(function(error){
@@ -1182,7 +1160,7 @@ router.post('/employees/penalization/new', function (req, res) {
 });
 
 router.post('/employees/bonus/new', function (req, res) {
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
     }).then(function (data) {
         res.render('partials/new-bonus', {});
     }).catch(function(error){
@@ -1192,7 +1170,7 @@ router.post('/employees/bonus/new', function (req, res) {
 });
 
 router.post('/employees/lending/new', function (req, res) {
-    db.manyOrNone('select * from usuarios').then(function (data) {
+    db_conf.db.manyOrNone('select * from usuarios').then(function (data) {
         res.render('partials/new-lending', {usuarios: data});
     }).catch(function(error){
         console.log(error);
@@ -1205,7 +1183,7 @@ router.post('/brand/new',isAuthenticated, function (req, res) {
 });
 
 router.post('/user/new',isAuthenticated,function (req, res) {
-    db.manyOrNone('select * from tiendas').then(function(data){
+    db_conf.db.manyOrNone('select * from tiendas').then(function(data){
         res.render('partials/new-user', {tiendas: data});
     }).catch(function (error) {
         console.log(error);
@@ -1215,7 +1193,7 @@ router.post('/user/new',isAuthenticated,function (req, res) {
 
 router.post('/user/profile', isAuthenticated, function(req,res){
     var user_id = req.body.user_id;
-    db.one('select * from usuarios where id = $1', user_id).then(function (user) {
+    db_conf.db.one('select * from usuarios where id = $1', user_id).then(function (user) {
         res.render('partials/user-profile', { user: user });
     }).catch(function (error) {
         console.log(error);
@@ -1245,7 +1223,7 @@ var upload = multer({
 router.post('/item/register', upload.single('imagen'),function(req, res){
     //console.log(req.body);
     //console.log(req.file );
-    db.task(function(t) {
+    db_conf.db.task(function(t) {
 
         return this.oneOrNone('select count(*) as count from articulos where id_proveedor = $1 and id_tienda = $2 and articulo = $3 and' +
             ' modelo = $4 and id_marca = $5',[
@@ -1317,7 +1295,7 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
  * Registro de tiendas
  */
 router.post('/store/register', isAuthenticated,function(req, res){
-    db.one('insert into tiendas(nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id, nombre ', [
+    db_conf.db.one('insert into tiendas(nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id, nombre ', [
         req.body.nombre,
         req.body.direccion_calle,
         req.body.direccion_numero_int,
@@ -1347,7 +1325,7 @@ router.post('/store/register', isAuthenticated,function(req, res){
  */
 
 router.post('/user/signup', isAuthenticated, function(req, res){
-    db.one('select count(*) as count from usuarios where usuario =$1',[ req.body.usuario ]).then(function (data) {
+    db_conf.db.one('select count(*) as count from usuarios where usuario =$1',[ req.body.usuario ]).then(function (data) {
 
         // 8 char pass
         // no special char in username
@@ -1360,7 +1338,7 @@ router.post('/user/signup', isAuthenticated, function(req, res){
             return { id: -1 };
         }
 
-        return db.one('insert into usuarios ( usuario, contrasena, email, nombres, apellido_paterno, apellido_materno, rfc, direccion_calle, direccion_numero_int, ' +
+        return db_conf.db.one('insert into usuarios ( usuario, contrasena, email, nombres, apellido_paterno, apellido_materno, rfc, direccion_calle, direccion_numero_int, ' +
             'direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais,' +
             'empleado, salario, permiso_tablero, permiso_administrador, permiso_empleados, permiso_inventario, id_tienda) values' +
             '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) returning id, usuario ', [
@@ -1424,7 +1402,7 @@ router.post('/user/signup', isAuthenticated, function(req, res){
  * Registro de terminal
  */
 router.post('/terminal/register', isAuthenticated, function(req, res){
-    db.one('insert into terminales(nombre_facturador, rfc, id_tienda) values($1, $2, $3) returning id, nombre_facturador ', [
+    db_conf.db.one('insert into terminales(nombre_facturador, rfc, id_tienda) values($1, $2, $3) returning id, nombre_facturador ', [
         req.body.nombre,
         req.body.rfc,
         req.body.id_tienda
@@ -1447,7 +1425,7 @@ router.post('/terminal/register', isAuthenticated, function(req, res){
  */
 router.post('/employees/lending/register', function(req, res){
     console.log(req.body);
-    db.tx(function(t){
+    db_conf.db.tx(function(t){
         return this.batch([
             this.one('insert into prestamos(id_usuario, monto, descripcion, fecha_prestamo, fecha_liquidacion, pago_semanal) ' +
                 ' values($1, $2, $3, $4, $5, $6) returning id, monto', [
@@ -1479,7 +1457,7 @@ router.post('/employees/lending/register', function(req, res){
  */
 router.post('/employees/bonus/register', function(req, res){
     console.log(req.body);
-    db.one('insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad) ' +
+    db_conf.db.one('insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad) ' +
         ' values($1, $2, $3, $4, $5, $6) returning id, nombre', [
         req.body.nombre,
         numericCol(req.body.monto),
@@ -1506,7 +1484,7 @@ router.post('/employees/bonus/register', function(req, res){
  */
 router.post('/employees/penalization/register', function(req, res){
     console.log(req.body);
-    db.one('insert into penalizaciones(nombre, monto, descripcion, dias_retraso, dias_ausencia) ' +
+    db_conf.db.one('insert into penalizaciones(nombre, monto, descripcion, dias_retraso, dias_ausencia) ' +
         ' values($1, $2, $3, $4, $5) returning id, nombre', [
         req.body.nombre,
         numericCol(req.body.monto),
@@ -1531,7 +1509,7 @@ router.post('/employees/penalization/register', function(req, res){
  * Registro de marca
  */
 router.post('/brand/register', isAuthenticated, function(req, res){
-    db.one('insert into marcas(nombre, descripcion) values($1, $2) returning id, nombre', [
+    db_conf.db.one('insert into marcas(nombre, descripcion) values($1, $2) returning id, nombre', [
         req.body.nombre,
         req.body.descripcion
     ]).then(function(data){
@@ -1553,7 +1531,7 @@ router.post('/brand/register', isAuthenticated, function(req, res){
  * Registro de proveedores
  */
 router.post('/supplier/register', isAuthenticated,function(req, res){
-    db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
+    db_conf.db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
         'direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, a_cuenta, por_pagar) ' +
         'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, nombre ', [
         req.body.nombre,
@@ -1586,7 +1564,7 @@ router.post('/supplier/register', isAuthenticated,function(req, res){
  * Actualizacion de proveedores
  */
 router.post('/supplier/update', isAuthenticated,function(req, res){
-    db.one('update proveedores set nombre=$2, razon_social=$3, rfc=$4, direccion_calle=$5,'+
+    db_conf.db.one('update proveedores set nombre=$2, razon_social=$3, rfc=$4, direccion_calle=$5,'+
         'direccion_numero_int=$6, direccion_numero_ext=$7, direccion_colonia=$8, direccion_localidad=$9,' +
         'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12, a_cuenta=$13, por_pagar=$14 where id=$1 returning id, nombre ', [
         req.body.id,
@@ -1621,7 +1599,7 @@ router.post('/supplier/update', isAuthenticated,function(req, res){
  * Actualización de tiendas
  */
 router.post('/store/update', isAuthenticated, function(req, res){
-    db.one('update tiendas set nombre=$2, direccion_calle=$3, direccion_numero_int=$4, direccion_numero_ext=$5, direccion_colonia=$6, direccion_localidad=$7, ' +
+    db_conf.db.one('update tiendas set nombre=$2, direccion_calle=$3, direccion_numero_int=$4, direccion_numero_ext=$5, direccion_colonia=$6, direccion_localidad=$7, ' +
         'direccion_municipio=$8, direccion_ciudad=$9, direccion_pais=$10 ' +
         'where id=$1 returning id, nombre ',[
         req.body.id,
@@ -1652,7 +1630,7 @@ router.post('/store/update', isAuthenticated, function(req, res){
  * Actualización de terminales
  */
 router.post('/terminal/update', isAuthenticated,function(req, res){
-    db.one('update terminales set nombre_facturador=$2, id_tienda=$3, rfc=$4 where id=$1 returning id, nombre_facturador ',[
+    db_conf.db.one('update terminales set nombre_facturador=$2, id_tienda=$3, rfc=$4 where id=$1 returning id, nombre_facturador ',[
         req.body.id,
         req.body.nombre,
         req.body.id_tienda,
@@ -1675,7 +1653,7 @@ router.post('/terminal/update', isAuthenticated,function(req, res){
  * Actualización de marcas
  */
 router.post('/brand/update', isAuthenticated, function(req, res){
-    db.one('update marcas set nombre=$2, descripcion=$3 where id=$1 returning id, nombre ',[
+    db_conf.db.one('update marcas set nombre=$2, descripcion=$3 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.marca,
         req.body.descripcion
@@ -1698,7 +1676,7 @@ router.post('/brand/update', isAuthenticated, function(req, res){
  */
 router.post('/lendings/update', isAuthenticated, function(req, res){
     console.log(req.body);
-    db.one('update prestamos set id_usuario=$2, monto=$3, descripcion=$4, fecha_prestamo=$5, fecha_liquidacion=$6, pago_semanal=$7 where id=$1 returning id, monto ',[
+    db_conf.db.one('update prestamos set id_usuario=$2, monto=$3, descripcion=$4, fecha_prestamo=$5, fecha_liquidacion=$6, pago_semanal=$7 where id=$1 returning id, monto ',[
         req.body.id,
         req.body.id_usuario,
         numericCol(req.body.monto),
@@ -1725,7 +1703,7 @@ router.post('/lendings/update', isAuthenticated, function(req, res){
  */
 router.post('/bonus/update', isAuthenticated, function(req, res){
     console.log(req.body);
-    db.one('update bonos set nombre=$2, monto=$3, descripcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7 where id=$1 returning id, nombre ',[
+    db_conf.db.one('update bonos set nombre=$2, monto=$3, descripcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.nombre,
         numericCol(req.body.monto),
@@ -1751,7 +1729,7 @@ router.post('/bonus/update', isAuthenticated, function(req, res){
  * Actualización de penalizaciones
  */
 router.post('/penalization/update', isAuthenticated, function(req, res){
-    db.one('update penalizaciones set nombre=$2, monto=$3, descripcion=$4, dias_retraso=$5, dias_ausencia=$6 where id=$1 returning id, nombre ',[
+    db_conf.db.one('update penalizaciones set nombre=$2, monto=$3, descripcion=$4, dias_retraso=$5, dias_ausencia=$6 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.nombre,
         numericCol(req.body.monto),
@@ -1776,7 +1754,7 @@ router.post('/penalization/update', isAuthenticated, function(req, res){
  * Actualización de items
  */
 router.post('/item/update', upload.single('imagen'), function(req, res){
-    db.tx(function (t) {
+    db_conf.db.tx(function (t) {
         return this.batch([
             t.one('select nombre_imagen from articulos where id = $1',[req.body.id ]),
             t.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
@@ -1820,7 +1798,7 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
  * Devolución de items (Revisar)
  */
 router.post('/item/return', isAuthenticated, function(req, res){
-    db.tx(function(t){
+    db_conf.db.tx(function(t){
         return t.batch([
             t.one('update articulos set n_existencias = $2, fecha_ultima_modificacion = $3 where id=$1 returning id, articulo', [
                 req.body.id,
@@ -1881,13 +1859,13 @@ router.post('/item/return', isAuthenticated, function(req, res){
 * Ingreso empleados
 */
 router.post('/employee/check-in', function(req,res ){
-    db.one("select count(*) from asistencia where fecha = date_trunc('day', now()) and tipo = 'entrada' and id_usuario = $1",[
+    db_conf.db.one("select count(*) from asistencia where fecha = date_trunc('day', now()) and tipo = 'entrada' and id_usuario = $1",[
         numericCol(req.user.id)
     ]).then(function(data){
         if(data.count > 0) {
             return null
         }
-        return db.one('insert into asistencia ("id_usuario", "fecha", "hora", "tipo" ) ' +
+        return db_conf.db.one('insert into asistencia ("id_usuario", "fecha", "hora", "tipo" ) ' +
             'values($1, $2, $3, $4) returning id', [
             numericCol(req.user.id),
             new Date(),
@@ -1917,12 +1895,12 @@ router.post('/employee/check-in', function(req,res ){
  * Salida empleados
  */
 router.post('/employee/check-out', function(req,res ){
-    db.one("select count(*) from asistencia where fecha = date_trunc('day', now()) and tipo = 'salida' and id_usuario = $1",[
+    db_conf.db.one("select count(*) from asistencia where fecha = date_trunc('day', now()) and tipo = 'salida' and id_usuario = $1",[
         numericCol(req.user.id)
     ]).then(function(data){
         if(data.count > 0)
             return null;
-        return db.one('insert into asistencia ("id_usuario", "fecha", "hora", "tipo" ) ' +
+        return db_conf.db.one('insert into asistencia ("id_usuario", "fecha", "hora", "tipo" ) ' +
             'values($1, $2, $3, $4) returning id', [
             numericCol(req.user.id),
             new Date(),
@@ -1951,7 +1929,7 @@ router.post('/employee/check-out', function(req,res ){
 * Cancelar nota
  */
 router.post('/cancel/note', isAuthenticated,function(req, res){
-    db.tx(function(t){
+    db_conf.db.tx(function(t){
         return t.batch([
             t.manyOrNone('select * from venta_articulos where id_venta = $1 ',[
                 numericCol(req.body.note_id)
@@ -2001,7 +1979,7 @@ router.post('/cancel/note', isAuthenticated,function(req, res){
  * Actualización de usuario
  */
 router.post('/user/update', isAuthenticated, function(req, res){
-    db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
+    db_conf.db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
         'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_estado= $13,' +
         'direccion_pais=$14, email=$15, id_tienda=$16, salario=$17, empleado=$18, permiso_tablero=$19, permiso_administrador=$20, permiso_empleados=$21, permiso_inventario=$22 ' +
         'where id = $1 returning id, usuario ',[
@@ -2055,7 +2033,7 @@ router.post('/user/update-password',isAuthenticated,function (req, res ) {
     var new_pass = req.body.new_pass;
     var confirm_pass = req.body.confirm_pass;
 
-    db.one('select id, contrasena from usuarios where id=$1 ',[user_id]).then(function (user) {
+    db_conf.db.one('select id, contrasena from usuarios where id=$1 ',[user_id]).then(function (user) {
 
         if ( !isValidPassword(user, old_pass)){
             res.json({
@@ -2064,7 +2042,7 @@ router.post('/user/update-password',isAuthenticated,function (req, res ) {
             })
         } else if ( isValidPassword(user, old_pass) && new_pass == confirm_pass ){
 
-            db.one('update usuarios set contrasena = $1 where id =$2 returning id, usuario',[
+            db_conf.db.one('update usuarios set contrasena = $1 where id =$2 returning id, usuario',[
                 bCrypt.hashSync( new_pass, bCrypt.genSaltSync(10), null),
                 user.id
             ]).then(function (data) {
@@ -2113,13 +2091,13 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
         case 'ventas':
             //query -> startdate, enddate, store
             title = 'Reporte de ventas';
-            query = db.manyOrNone('select * from ventas, terminales where ventas.id_terminal = terminales.id and ' +
+            query = db_conf.db.manyOrNone('select * from ventas, terminales where ventas.id_terminal = terminales.id and ' +
                 'fecha_venta >= $1 and fecha_venta <= $2',[ req.query.startdate, req.query.enddate ]);
             break;
         case 'proveedores':
             title = 'Reporte de proveedores';
             //query -> {}
-            query = db.manyOrNone('select * from proveedores');
+            query = db_conf.db.manyOrNone('select * from proveedores');
             break;
         case 'devoluciones':
             title = 'Reporte de devoluciones';
@@ -2211,7 +2189,7 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
 
 router.post('/item/find-items-view', isAuthenticated, function (req, res) {
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.manyOrNone('select id, nombre from proveedores'),
             this.manyOrNone('select * from marcas')
@@ -2230,7 +2208,7 @@ router.post('/item/find-items-view', isAuthenticated, function (req, res) {
 
 router.post('/item/find-items-view-inv', isAuthenticated, function (req, res) {
 
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.manyOrNone('select id, nombre from proveedores'),
             this.manyOrNone('select * from marcas')
@@ -2251,7 +2229,7 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
     //var offset = req.body.page * pageSize;
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id " +
                 " from articulos, proveedores where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
@@ -2280,7 +2258,7 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
     //var offset = req.body.page * pageSize;
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id" +
                 " from articulos, proveedores where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
@@ -2309,7 +2287,7 @@ router.post('/search/items/devs', isAuthenticated, function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
     //var offset = req.body.page * pageSize;
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.manyOrNone("select * from ventas, venta_articulos, articulos where ventas.id = venta_articulos.id_venta and venta_articulos.id_articulo = articulos.id and ( ventas.id = $1 or " +
                 " (fecha_venta > $2 and fecha_venta < $3)) ", [
@@ -2337,7 +2315,7 @@ router.post('/employees/find-employees-view', isAuthenticated, function (req, re
 });
 
 router.post('/notes/find-notes-view', function (req, res) {
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.manyOrNone('select id, nombre from proveedores'),
             this.manyOrNone('select * from marcas')
@@ -2357,7 +2335,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
     // Comisión total 3%.
     console.log(req.body);
     var id = req.body.id;
-    db.task(function (t) {
+    db_conf.db.task(function (t) {
         return this.batch([
             this.one('select * from usuarios where id = $1', id),
             /* Asistencia */
@@ -2449,7 +2427,7 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
     }else if(req.body.forma_pago == 'deb'){
         query_venta = 'update ventas set saldo_pendiente = saldo_pendiente - $1, monto_pagado_tarjeta = monto_pagado_tarjeta + $1, tarjeta_credito = FALSE where id = $2 returning id';
     }
-    db.tx(function(t){
+    db_conf.db.tx(function(t){
         return t.batch([
             t.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1, estatus = $4 where id = $2 returning id_articulo, monto_por_pagar, monto_pagado ',[
                 numericCol(abono),
@@ -2494,14 +2472,14 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
 
 router.post('/notes/payment', isAuthenticated, function(req, res){
     console.log(req.body);
-    db.task(function(t){
+    db_conf.db.task(function(t){
         return t.batch([
-            db.manyOrNone('select * from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
+            db_conf.db.manyOrNone('select * from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
                 'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
                 ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
                 req.body.id_sale
             ]),
-            db.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
+            db_conf.db.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
                 'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
                 ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
                 req.body.id_sale
@@ -2521,14 +2499,14 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
 
 router.post('/notes/dev', isAuthenticated, function(req, res){
     console.log(req.body);
-    db.task(function(t){
+    db_conf.db.task(function(t){
         return t.batch([
-            db.manyOrNone('select * from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
+            db_conf.db.manyOrNone('select * from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
                 'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
                 ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
                 req.body.id_sale
             ]),
-            db.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
+            db_conf.db.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
                 'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
                 ' and tiendas.id = articulos.id_tienda and ventas.id = $1 ',[
                 req.body.id_sale
@@ -2549,10 +2527,10 @@ router.post('/notes/dev', isAuthenticated, function(req, res){
 router.post('/notes/finitdev', isAuthenticated, function(req, res){
     console.log(req.body);
     // Actualizar existencias, saldos proveedores y ¿montos venta?.
-    db.one("update venta_articulos set estatus = 'devolucion' where id = $1 returning id_articulo, unidades_vendidas, id_venta, monto_por_pagar, monto_pagado",[
+    db_conf.db.one("update venta_articulos set estatus = 'devolucion' where id = $1 returning id_articulo, unidades_vendidas, id_venta, monto_por_pagar, monto_pagado",[
         req.body.item_id
     ]).then(function(data){
-        db.tx(function(t){
+        db_conf.db.tx(function(t){
             return t.batch([
                 data,
                 t.one('select proveedores.id as id_prov, articulos.id as item_id, articulos.precio as precio_item, articulos.costo as costo_item ' +
@@ -2560,7 +2538,7 @@ router.post('/notes/finitdev', isAuthenticated, function(req, res){
                     data.id_articulo
                 ])
             ]).then(function(data){
-                db.tx(function(t){
+                db_conf.db.tx(function(t){
                     return t.batch([
                         t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id',[
                             data[0].unidades_vendidas,
@@ -2593,7 +2571,7 @@ router.post('/notes/finitdev', isAuthenticated, function(req, res){
 
 router.post('/notes/finitPayment', isAuthenticated, function(req, res){
     console.log(req.body.id);
-    db.tx(function(t){
+    db_conf.db.tx(function(t){
         var query = '';
         if(req.body.optradio == 'tar') {
             query = "update ventas set monto_pagado_tarjeta = monto_pagado_tarjeta + saldo_pendiente, " +
@@ -2650,7 +2628,7 @@ router.post('/notes/finitPayment', isAuthenticated, function(req, res){
 
 router.post('/search/employees/results', isAuthenticated, function (req, res) {
     console.log(req.body);
-    db.manyOrNone("select * from usuarios where nombres ilike '%$1#%' and (apellido_paterno ilike '%$2#%' or apellido_materno ilike '%$3#%')", [
+    db_conf.db.manyOrNone("select * from usuarios where nombres ilike '%$1#%' and (apellido_paterno ilike '%$2#%' or apellido_materno ilike '%$3#%')", [
         req.body.nombres,
         req.body.apellido_paterno,
         req.body.apellido_materno
@@ -2675,7 +2653,7 @@ router.post('/search/notes/results', isAuthenticated, function (req, res) {
     }
     console.log("PERM ADMIN" + req.user.permiso_administrador);
 
-    db.manyOrNone(query, [
+    db_conf.db.manyOrNone(query, [
         numericCol(req.body.id_nota),
         req.body.fecha_inicial,
         req.body.fecha_final,
@@ -2702,7 +2680,7 @@ router.get('/item/:filename/image.jpg', isAuthenticated, function (req, res) {
 
 //eventos del calendario
 router.post('/calendar/sales/', isAuthenticated, function (req, res ){
-    db.manyOrNone("select concat ( 'Ventas: ', count(*) ) as title, to_char(fecha_venta, 'YYYY-MM-DD') as start from ventas group by fecha_venta").then(function (data) {
+    db_conf.db.manyOrNone("select concat ( 'Ventas: ', count(*) ) as title, to_char(fecha_venta, 'YYYY-MM-DD') as start from ventas group by fecha_venta").then(function (data) {
         res.json( data );
     }).catch(function (error) {
         console.log(error);
@@ -2712,7 +2690,7 @@ router.post('/calendar/sales/', isAuthenticated, function (req, res ){
 
 /* Borrado */
 router.post('/user/delete', isAuthenticated, function (req, res ) {
-    db.one('delete from usuarios cascade where id = $1 returning id ', [ req.body.id ]).then(function (data) {
+    db_conf.db.one('delete from usuarios cascade where id = $1 returning id ', [ req.body.id ]).then(function (data) {
         console.log('Usuario eliminado: ', data.id );
         res.json({
             status: 'Ok',
@@ -2729,7 +2707,7 @@ router.post('/user/delete', isAuthenticated, function (req, res ) {
 
 
 router.post('/store/delete', isAuthenticated, function(req, res){
-    db.one('delete from tiendas cascade where id = $1 returning id',[ req.body.id ]).then(function(data){
+    db_conf.db.one('delete from tiendas cascade where id = $1 returning id',[ req.body.id ]).then(function(data){
         console.log('Tienda eliminada: ', data.id );
         res.json({
             status : 'Ok',
@@ -2746,7 +2724,7 @@ router.post('/store/delete', isAuthenticated, function(req, res){
 
 
 router.post('/terminal/delete', isAuthenticated, function (req, res) {
-    db.one('delete from terminales cascade where id = $1 returning id ', [ req.body.id  ]).then(function (data) {
+    db_conf.db.one('delete from terminales cascade where id = $1 returning id ', [ req.body.id  ]).then(function (data) {
         console.log('Terminal eliminada: ', data.id );
         res.json({
             status : 'Ok',
@@ -2763,7 +2741,7 @@ router.post('/terminal/delete', isAuthenticated, function (req, res) {
 
 
 router.post('/supplier/delete', isAuthenticated, function (req, res) {
-    db.one('delete from proveedores cascade where id = $1 returning id', [ req.body.id ]).then(function (data) {
+    db_conf.db.one('delete from proveedores cascade where id = $1 returning id', [ req.body.id ]).then(function (data) {
         console.log('Proveedor eliminado: ', data.id );
         res.json({
             status : 'Ok',
@@ -2780,7 +2758,7 @@ router.post('/supplier/delete', isAuthenticated, function (req, res) {
 
 //borrar marca
 router.post('/brand/delete', isAuthenticated, function (req, res) {
-    db.one('delete from marcas where id = $1 returning id ', [ req.body.id ]).then(function (data) {
+    db_conf.db.one('delete from marcas where id = $1 returning id ', [ req.body.id ]).then(function (data) {
         console.log('Marca eliminada: ', data.id );
         res.json({
             status: 'Ok',
@@ -2798,7 +2776,7 @@ router.post('/brand/delete', isAuthenticated, function (req, res) {
 //borrar artículo
 router.post('/item/delete', isAuthenticated, function (req, res ) {
     // Eliminar articulo
-    db.tx(function (t) {
+    db_conf.db.tx(function (t) {
         return this.one("select id, costo, n_existencias, id_proveedor from articulos where id = $1 ", [ req.body.id ]).then(function (data) {
             return t.batch([
                 t.one("delete from articulos cascade where id = $1 returning id, costo, n_existencias, id_proveedor, nombre_imagen", [ data.id ]),
@@ -2841,7 +2819,7 @@ router.post('/item/delete', isAuthenticated, function (req, res ) {
 router.get('/exportar/inventario.csv',isAuthenticated,function (req, res) {
 
     //articulo, marca, proveedor, tienda
-    db.manyOrNone("select articulos.id,  articulos.articulo, articulos.descripcion, marcas.nombre as marca, articulos.modelo, " +
+    db_conf.db.manyOrNone("select articulos.id,  articulos.articulo, articulos.descripcion, marcas.nombre as marca, articulos.modelo, " +
         "(select nombre as proveedor from proveedores where id= articulos.id_proveedor)," +
         "tiendas.nombre as tienda, articulos.talla, articulos.notas, articulos.precio, articulos.costo, articulos.n_existencias as existencias " +
         "from articulos, marcas, tiendas " +
@@ -2878,7 +2856,7 @@ router.get('/exportar/inventario.csv',isAuthenticated,function (req, res) {
 });
 
 router.get('/exportar/proveedores.csv', isAuthenticated,function(req, res){
-    db.manyOrNone('select id, nombre, razon_social, rfc, a_cuenta, por_pagar from proveedores').then(function (data) {
+    db_conf.db.manyOrNone('select id, nombre, razon_social, rfc, a_cuenta, por_pagar from proveedores').then(function (data) {
 
         try {
             var fields = ['id','nombre', 'razon_social', 'rfc','a_cuenta','por_pagar'];
@@ -2912,7 +2890,7 @@ router.get('/exportar/proveedores.csv', isAuthenticated,function(req, res){
 });
 
 router.get('/exportar/ventas.csv', isAuthenticated,function(req, res){
-    db.manyOrNone('select ventas.id as id_venta, usuarios.usuario as vendedor, ventas.precio_venta as total_venta, ventas.fecha_venta as fecha, ' +
+    db_conf.db.manyOrNone('select ventas.id as id_venta, usuarios.usuario as vendedor, ventas.precio_venta as total_venta, ventas.fecha_venta as fecha, ' +
         ' ventas.hora_venta as hora, ventas.monto_pagado_efectivo as monto_pagado_efectivo_venta, ventas.monto_pagado_tarjeta as monto_pagado_tarjeta_venta, ventas.tarjeta_credito, ventas.saldo_pendiente ' +
         ' as saldo_pendiente_venta, ventas.estatus as estatus_venta,' +
         ' (select nombre_facturador as terminal from terminales where id = ventas.id_terminal), articulos.articulo as nombre_articulo, venta_articulos.unidades_vendidas, ' +
