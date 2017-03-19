@@ -2457,6 +2457,7 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
             return t.batch(queries)
         })
     }).then(function(data){
+        console.log('Nota abonada: ', data);
         res.json({
             status: 'Ok',
             message: 'La nota ha sido abonada'
