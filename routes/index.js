@@ -4,23 +4,20 @@ var path = require('path');
 var json2csv = require('json2csv'); //export -> csv
 var fs = require('fs'); //read/write files
 var db_conf = require('../db_conf');
-
-// Configuring Passport
-var passport = require('passport');
-var expressSession = require('express-session');
-
-router.use(expressSession({secret: 'mySecretKey', resave : false , saveUninitialized: false}));
-router.use(passport.initialize());
-router.use(passport.session());
-
 // Using the flash middleware provided by connect-flash to store messages in session
 // and displaying in templates
 var flash = require('connect-flash');
 router.use(flash());
 
+// Configuring Passport
+var passport = require('passport');
+var expressSession = require('express-session');
 var bCrypt = require('bcrypt-nodejs');
-var LocalStrategy = require('passport-local').Strategy;
 
+router.use(expressSession({secret: 'mySecretKey', resave : false , saveUninitialized: false}));
+router.use(passport.initialize());
+router.use(passport.session());
+var LocalStrategy = require('passport-local').Strategy;
 
 passport.use('login', new LocalStrategy({
         passReqToCallback : true
@@ -285,7 +282,7 @@ router.post('/carrito/status', isAuthenticated, function(req, res){
             message: 'Ha ocurrido un error al actualizar el estatus'
         })
     })
-})
+});
 
 router.post('/carrito/monto', isAuthenticated, function(req, res){
     console.log(req.body);
@@ -311,7 +308,7 @@ router.post('/carrito/monto', isAuthenticated, function(req, res){
             message: 'Ha ocurrido un error'
         })
     })
-})
+});
 
 router.post('/carrito/inc', isAuthenticated, function (req, res) {
     //console.log("id ITEM: " + req.body.item_id);
@@ -2084,8 +2081,10 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
 
     var title = '';
     var query = null;
+    var cnames = [];
+    var data = { };
 
-    console.log(req.query)
+    console.log(req.query);
     // return appropiate queries
     switch (req.params.tipo){
         case 'ventas':
@@ -2116,13 +2115,12 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
             switch (req.params.tipo) {
                 case 'ventas':
                     console.log('Report generated succesfully');
-                    var cnames = [];
 
-                    for (var n in rows[0]) {
+                    for (let n in rows[0]) {
                         cnames.push(n);
                     }
 
-                    var data = {
+                    data = {
                         metadata: {
                             title: title,
                             period: {
@@ -2139,13 +2137,12 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
                     break;
                 case 'proveedores':
                     console.log('Report generated succesfully');
-                    var cnames = [];
 
-                    for (var n in rows[0]) {
+                    for (let n in rows[0]) {
                         cnames.push(n);
                     }
 
-                    var data = {
+                    data = {
                         metadata: {
                             title: title,
                             period: {
@@ -2468,7 +2465,7 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
         console.log(error);
         res.send('<b>Error</b>');
     })
-})
+});
 
 router.post('/notes/payment', isAuthenticated, function(req, res){
     console.log(req.body);
@@ -2524,12 +2521,14 @@ router.post('/notes/dev', isAuthenticated, function(req, res){
     })
 });
 
+// Revisar este bloque
 router.post('/notes/finitdev', isAuthenticated, function(req, res){
     console.log(req.body);
     // Actualizar existencias, saldos proveedores y ¿montos venta?.
     db_conf.db.one("update venta_articulos set estatus = 'devolucion' where id = $1 returning id_articulo, unidades_vendidas, id_venta, monto_por_pagar, monto_pagado",[
         req.body.item_id
     ]).then(function(data){
+
         db_conf.db.tx(function(t){
             return t.batch([
                 data,
@@ -2537,27 +2536,30 @@ router.post('/notes/finitdev', isAuthenticated, function(req, res){
                     'from proveedores, articulos where articulos.id_proveedor = proveedores.id and articulos.id = $1',[
                     data.id_articulo
                 ])
+                //este then va en el bloque superior
             ]).then(function(data){
-                db_conf.db.tx(function(t){
-                    return t.batch([
-                        t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id',[
-                            data[0].unidades_vendidas,
-                            data[1].item_id
-                        ]),
-                        t.one('update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1 returning id',[
-                            data[1].id_prov,
-                            numericCol(data[1].costo_item * data[0].unidades_vendidas)
-                        ]),
-                        t.one('update ventas set saldo_pendiente = saldo_pendiente - $2, precio_venta = precio_venta - $3 where id = $1',[
-                            data[0].id_venta,
-                            data[0].monto_por_pagar,
-                            numericCol(data[0].monto_por_pagar + data[0].monto_pagado)
-                        ])
+                //db_conf.db.tx(function(t){
+                return t.batch([
+                    t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id',[
+                        data[0].unidades_vendidas,
+                        data[1].item_id
+                    ]),
+                    t.one('update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1 returning id',[
+                        data[1].id_prov,
+                        numericCol(data[1].costo_item * data[0].unidades_vendidas)
+                    ]),
+                    t.one('update ventas set saldo_pendiente = saldo_pendiente - $2, precio_venta = precio_venta - $3 where id = $1',[
+                        data[0].id_venta,
+                        data[0].monto_por_pagar,
+                        numericCol(data[0].monto_por_pagar + data[0].monto_pagado)
                     ])
-                })
+                ])
+                //})//
             })
-        })
+        })//.then(function(data){}).catch(function(error){});
+
     }).then(function(data){
+        console.log('Se ha registrado la devolución ', data);
         res.json({
             status: 'Ok',
             message: 'Se ha registrado la devolución.'
@@ -2566,8 +2568,7 @@ router.post('/notes/finitdev', isAuthenticated, function(req, res){
         console.log(error);
         res.send('<b>Error</b>');
     })
-})
-
+});
 
 router.post('/notes/finitPayment', isAuthenticated, function(req, res){
     console.log(req.body.id);
@@ -2592,6 +2593,7 @@ router.post('/notes/finitPayment', isAuthenticated, function(req, res){
                 " proveedores.id = articulos.id_proveedor and id_venta = $1 and (monto_por_pagar > 0 or estatus = 'modificacion')", [
                 req.body.id
             ])
+            //este then(...) va en el bloque superior
         ]).then(function(articles){
             console.log("Articles: " + articles[1]);
             queries = [];
@@ -2814,8 +2816,7 @@ router.post('/item/delete', isAuthenticated, function (req, res ) {
     });
 });
 
-/* exportar inventario */
-
+// exportar inventario
 router.get('/exportar/inventario.csv',isAuthenticated,function (req, res) {
 
     //articulo, marca, proveedor, tienda
