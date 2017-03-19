@@ -2,6 +2,10 @@
  * Created by mtorres on 18/11/16.
  */
 
+lineChart();
+barChart();
+pieChart();
+
 function lineChart() {
 
     var svg = d3.select("#linechart"),
@@ -169,6 +173,3 @@ function barChart() {
 
 }
 
-lineChart();
-barChart();
-pieChart();

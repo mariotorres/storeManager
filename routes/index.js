@@ -1248,7 +1248,7 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                 return t.batch([
                     {count : data.count},
                     t.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
-                        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias', [
+                        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias, modelo', [
                         numericCol(req.body.id_proveedor),
                         numericCol(req.body.id_tienda),
                         req.body.articulo,
@@ -2549,7 +2549,7 @@ router.post('/notes/finitdev', isAuthenticated, function(req, res){
                         data[1].id_prov,
                         numericCol(data[1].costo_item * data[0].unidades_vendidas)
                     ]),
-                    t.one('update ventas set saldo_pendiente = saldo_pendiente - $2, precio_venta = precio_venta - $3 where id = $1',[
+                    t.one('update ventas set saldo_pendiente = saldo_pendiente - $2, precio_venta = precio_venta - $3 where id = $1 returning id',[
                         data[0].id_venta,
                         data[0].monto_por_pagar,
                         numericCol(data[0].monto_por_pagar + data[0].monto_pagado)
