@@ -1754,11 +1754,12 @@ router.post('/penalization/update', isAuthenticated, function(req, res){
  * Actualización de items
  */
 router.post('/item/update', upload.single('imagen'), function(req, res){
+    console.log(req.body);
     db_conf.db.tx(function (t) {
         return this.batch([
             t.one('select nombre_imagen from articulos where id = $1',[req.body.id ]),
             t.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-                'precio=$8, costo=$9, codigo_barras=$10, nombre_imagen=$11, n_existencias= $12, fecha_ultima_modificacion = Now() ' +
+                'precio=$8, costo=$9, codigo_barras=$10, nombre_imagen=$11, n_existencias= $12, id_proveedor=$13, fecha_ultima_modificacion = Now() ' +
                 'where id=$1 returning id, articulo ',[
                 req.body.id,
                 req.body.articulo,
@@ -1771,7 +1772,13 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
                 numericCol(req.body.costo),
                 numericCol(req.body.codigo_barras),
                 typeof req.file != 'undefined'?req.file.filename:null,
-                numericCol(req.body.n_existencias)
+                numericCol(req.body.n_existencias),
+                req.body.id_proveedor
+            ]),
+            t.one('update proveedores set a_cuenta = ((a_cuenta - $3) + $2) where id = $1 returning id', [
+                req.body.id_proveedor,
+                numericCol(req.body.costo_anterior)* numericCol(req.body.existencias_anterior),
+                numericCol(req.body.costo)* numericCol(req.body.n_existencias)
             ])
         ]);
     }).then(function (data) {
@@ -2119,7 +2126,7 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
                 case 'ventas':
                     console.log('Report generated succesfully');
 
-                    for (let n in rows[0]) {
+                    for (n in rows[0]) {
                         cnames.push(n);
                     }
 
@@ -2141,7 +2148,7 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
                 case 'proveedores':
                     console.log('Report generated succesfully');
 
-                    for (let n in rows[0]) {
+                    for (n in rows[0]) {
                         cnames.push(n);
                     }
 

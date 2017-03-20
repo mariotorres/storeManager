@@ -87,6 +87,9 @@
                 <label>Costo unitario</label>
                 <input type="number" id="costo" name="costo" step="any" value="<%= item.costo %>" class="form-control">
             </p>
+            <p hidden>
+                <input type="number" id="costo_anterior" name="costo_anterior" step="any" value="<%= item.costo %>" class="form-control" hidden>
+            </p>
         </div>
     <div class="col-sm-4">
         <p>
@@ -98,6 +101,9 @@
         <p>
             <label>Número de existencias</label>
             <input type="number" min="0" class="form-control" value="<%= item.n_existencias%>" name="n_existencias">
+        </p>
+        <p hidden>
+            <input type="number" id="existencias_anterior" name="existencias_anterior" step="any" value="<%= item.n_existencias %>" class="form-control" hidden>
         </p>
     </div>
     </div>
