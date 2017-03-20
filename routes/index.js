@@ -1835,10 +1835,10 @@ router.post('/item/return', isAuthenticated, function(req, res){
                 numericCol(req.body.costo)*numericCol(req.body.n_devoluciones),
                 0
             ])*/
-        ]).then(function(data){
+        ])/*.then(function(data){
 
             //Está mal, no estás retornando nada!!!
-            /*t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", ' +
+            t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", ' +
                 '"monto_pagado", "estatus") ' +
                 ' values($1, $2, $3, $4, $5)', [
                 numericCol(req.body.id),
@@ -1846,10 +1846,11 @@ router.post('/item/return', isAuthenticated, function(req, res){
                 numericCol(req.body.n_devoluciones),
                 numericCol(req.body.costo),
                 "dev_proveedor"
-            ]);*/
+            ]);
             return data;
-        });
+        });*/
     }).then(function (data) {
+        console.log('Devolución: ', data);
         res.json({
             status :'Ok',
             message : 'Se ha registrado la devolución del artículo: "'+ data[0].articulo +'" del proveedor: "' + data[1].nombre + '"'
