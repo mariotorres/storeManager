@@ -2438,7 +2438,8 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
     }
     db_conf.db.tx(function(t){
         return t.batch([
-            t.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1, estatus = $4 where id = $2 returning id_articulo, monto_por_pagar, monto_pagado ',[
+            t.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1, estatus = $4 where id = $2 returning id_articulo, monto_por_pagar, monto_pagado, ' +
+                'unidades_vendidas',[
                 numericCol(abono),
                 req.body.item_id,
                 numericCol(abono),
@@ -2458,11 +2459,12 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
         }).then(function(data){
             console.log("Monto Pagado: " + data[0][0].monto_pagado);
             console.log("Precio: " + data[1].precio);
+            console.log("Unidades Vendidas: " + data[0][0].unidades_vendidas);
             queries = [];
             queries.push(data);
             if(numericCol(data[0][0].monto_pagado) >= numericCol(data[1].precio)){
                 queries.push( t.one('update proveedores set a_cuenta = a_cuenta + $1, por_pagar = por_pagar - $1 where id = $2 returning id', [
-                    numericCol(data[1].costo),
+                    numericCol(data[1].costo)*numericCol(data[0][0].unidades_vendidas),
                     data[1].id_prov
                 ]));
             }
