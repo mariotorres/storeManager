@@ -310,7 +310,9 @@ function modalEvents(button, modal, page ) {
                     //params[params.length] = {name:'page', value:page};
                     modal.find('#search_results').load('/search/items/results', $(this).serializeArray()/*params*/, function () {
                         $('#search_results').find('form').submit(function (e) {
-                            if (confirm("¿Desea agregar el artículo " +  $('#search_results').find('input[name=articulo]').val() + " al carrito?")){
+                            if (confirm("¿Desea agregar el artículo " +  $('#search_results').find('input[name=articulo]').val() +
+                                        ", con modelo: " +  $('#search_results').find('input[name=modelo]').val() +
+                                " al carrito?")){
                                 // Selected discount
                                 $.post('/carrito/new', $(this).serialize()).done(function (data) {
                                     alert(data.message);
