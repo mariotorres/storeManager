@@ -511,7 +511,8 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/list/sale',{ page: page},function(){
                 $(this).find('form').submit(function( event ){
-                    if (confirm("¿Desea agregar el artículo " +  $(this).find('input[name=item_id]').val() + " al carrito?")){
+                    if (confirm("¿Desea agregar el artículo " +  $(this).find('input[name=articulo]').val() +
+                            ", con modelo: " +  $(this).find('input[name=modelo]').val() + " al carrito?")){
                         // Selected discount
                         $.post('/carrito/new', $(this).serialize()).done(function (data) {
                             alert(data.message);

@@ -9,6 +9,13 @@ if (itemProv.length > 0){%>
             <h3>Artículo: <%= itemProv[i].articulo %></h3>
             <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= itemProv[i].modelo %> | <strong>Marca: </strong><%= itemProv[i].nombre_prov %></p>
             <hr>
+            <p hidden>
+                <input class="form-control" type="text" value="<%= itemProv[i].articulo %>" name="articulo" hidden>
+            </p>
+            <p hidden>
+                <input class="form-control" type="text" value="<%= itemProv[i].modelo %>" name="modelo" hidden>
+            </p>
+
             <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
             <input type="text" name="item_id" value="<%= itemProv[i].id %>" hidden>
 

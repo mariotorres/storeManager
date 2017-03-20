@@ -8,10 +8,12 @@ for (var i=0; i< items.length; i++){%>
     <div class="panel-body">
 
         <form>
-            <h3>Artículo: </h3>
+            <h3>Artículo: <%= items[i].articulo %></h3>
             <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Marca: </strong><%= items[i].nombre_prov %></p>
             <hr>
-            <input class="form-control" type="text" value="<%= items[i].articulo %>" name="articulo" disabled>
+            <p hidden>
+            <input class="form-control" type="text" value="<%= items[i].articulo %>" name="articulo" hidden>
+            </p>
             <p hidden>
             <input class="form-control" type="text" value="<%= items[i].modelo %>" name="modelo" hidden>
             </p>
