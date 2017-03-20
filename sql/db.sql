@@ -14,7 +14,7 @@ drop table if exists penalizaciones cascade;
 create table penalizaciones (
     id serial primary key,
     nombre text,
-    monto numeric,
+    monto numeric(1000,2),
     descripcion text,
     dias_retraso integer,  /* Debe reiniciar cada semana.*/
     dias_ausencia integer /* Debe reiniciar cada semana.*/
@@ -24,9 +24,9 @@ create table penalizaciones (
 create table bonos (
     id serial primary key,
     nombre text,
-    monto numeric,
+    monto numeric(1000,2),
     descripcion text,
-    monto_alcanzar numeric,
+    monto_alcanzar numeric(1000,2),
     criterio text,
     temporalidad text
     );
@@ -47,11 +47,15 @@ create table tiendas (
     direccion_pais text
 );
 
+insert into tiendas (nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia,
+direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais) values
+('Tienda 1','-','-','-','-','-','-','-','-','México');
 
 /* Usuarios */
 drop table if exists usuarios cascade;
 create table usuarios(
     id serial primary key,
+    id_tienda integer references tiendas(id),
     usuario text,
     contrasena text,
     email text,
@@ -69,26 +73,25 @@ create table usuarios(
     direccion_estado text,
     direccion_pais text,
     empleado boolean,
-    salario numeric,
+    salario numeric(1000,2),
     permiso_tablero boolean,
     permiso_administrador boolean,
     permiso_empleados boolean,
     permiso_inventario boolean,
-    id_tienda integer references tiendas(id),
     hora_llegada time,
     hora_salida time
 );
 
-insert into usuarios ("usuario","contrasena","nombres","apellido_paterno","apellido_materno","permiso_tablero","permiso_administrador","permiso_empleados", "permiso_inventario") values
-('admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador','','', true, true, true, true);
+insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno","apellido_materno","permiso_tablero","permiso_administrador","permiso_empleados", "permiso_inventario") values
+(1,'admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador','','', true, true, true, true);
 
 /* prestamos */
 drop table if exists prestamos cascade;
 create table prestamos (
     id serial primary key,
     id_usuario integer references usuarios(id),
-    monto numeric,
-    pago_semanal numeric,
+    monto numeric(1000,2),
+    pago_semanal numeric(1000,2),
     descripcion text,
     fecha_prestamo date,
     fecha_liquidacion date
@@ -122,8 +125,8 @@ create table proveedores (
     direccion_ciudad text,
     direccion_estado text,
     direccion_pais text,
-    a_cuenta  numeric, /* Esta cantidad se registra en el momento en el que se registra una prenda del proveedor*/
-    por_pagar numeric  /* Esta cantidad se registra en el momento en el que se vende una prenda del proveedor */
+    a_cuenta  numeric(1000,2), /* Esta cantidad se registra en el momento en el que se registra una prenda del proveedor*/
+    por_pagar numeric(1000,2)  /* Esta cantidad se registra en el momento en el que se vende una prenda del proveedor */
 );
 
 drop table if exists marcas cascade;
@@ -145,11 +148,11 @@ create table articulos (
     modelo text,
     talla text,
     notas text,
-    precio numeric,
-    costo numeric,
-    codigo_barras numeric,
+    precio numeric(1000,2),
+    costo numeric(1000,2),
+    codigo_barras numeric(1000,2),
     nombre_imagen text,
-    n_existencias numeric,
+    n_existencias integer,
     fecha_registro timestamp,
     fecha_ultima_modificacion timestamp
 );
@@ -175,9 +178,9 @@ create table carrito (
         fecha date,
         id_articulo integer references articulos(id),
         id_usuario integer references usuarios(id),
-        discount    numeric,
-        monto_pagado numeric,
-        unidades_carrito numeric,
+        discount    numeric(1000,2),
+        monto_pagado numeric(1000,2),
+        unidades_carrito integer,
         estatus text
 );
 
@@ -196,17 +199,19 @@ insert into estatus_ventas ("estatus","descripcion") values
 /* Ventas */
 drop table if exists ventas cascade;
 create table ventas (
-    id serial primary key,
+    id bigserial primary key,
+    id_nota integer not null,
+    id_tienda integer not null references tiendas(id) on delete set null,
+    id_terminal integer references terminales(id) on delete set null,
     id_usuario integer references usuarios(id) on delete set null,
-    precio_venta numeric,
+    precio_venta numeric(1000,2),
     fecha_venta date,
     hora_venta time,
-    monto_pagado_efectivo numeric,
-    monto_cambio numeric,
-    monto_pagado_tarjeta  numeric,
+    monto_pagado_efectivo numeric(1000,2),
+    monto_cambio numeric(1000,2),
+    monto_pagado_tarjeta  numeric(1000,2),
     tarjeta_credito  boolean,
-    saldo_pendiente numeric,
-    id_terminal integer references terminales(id) on delete set null,
+    saldo_pendiente numeric(1000,2),
     estatus text
 );
 
@@ -216,10 +221,10 @@ create table venta_articulos(
     id_articulo integer references articulos(id),
     id_venta integer references ventas(id),
     /*id_estatus_venta integer references estatus_ventas(id),*/
-    unidades_vendidas numeric,
-    discount    numeric,
-    monto_pagado numeric,
-    monto_por_pagar numeric,
+    unidades_vendidas integer,
+    discount    numeric(1000,2),
+    monto_pagado numeric(1000,2),
+    monto_por_pagar numeric(1000,2),
     estatus  text
 );
 
@@ -236,9 +241,9 @@ create table devolucion_prov_articulos(
     id serial primary key,
     id_articulo integer references articulos(id),
     id_proveedor integer references proveedores(id),
-    unidades_regresadas numeric,
+    unidades_regresadas integer,
     fecha date,
-    costo_unitario numeric
+    costo_unitario numeric(1000,2)
 );
 
 
@@ -256,7 +261,7 @@ drop table if exists transacciones;
     id_proveedor integer references proveedores(id),
     id_tipo_transaccion integer,
     notas text,
-    monto numeric
+    monto numeric(1000,2)
     /* ... */
 );
 
@@ -276,7 +281,7 @@ create table nomina (
     id serial primary key,
     id_usuario integer references usuarios(id),
     id_operacion integer references operaciones_nomina(id),
-    monto numeric,
+    monto numeric(1000,2),
     fecha date,
     hora time
 );
