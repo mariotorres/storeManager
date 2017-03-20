@@ -2460,7 +2460,7 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
             console.log("Precio: " + data[1].precio);
             queries = [];
             queries.push(data);
-            if(data[0][0].monto_pagado >= data[1].precio){
+            if(numericCol(data[0][0].monto_pagado) >= numericCol(data[1].precio)){
                 queries.push( t.one('update proveedores set a_cuenta = a_cuenta + $1, por_pagar = por_pagar - $1 where id = $2 returning id', [
                     numericCol(data[1].costo),
                     data[1].id_prov
