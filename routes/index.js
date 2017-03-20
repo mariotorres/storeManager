@@ -1805,6 +1805,7 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
  * Devolución de items (Revisar)
  */
 router.post('/item/return', isAuthenticated, function(req, res){
+    console.log(req.body);
     db_conf.db.tx(function(t){
         return t.batch([
             t.one('update articulos set n_existencias = $2, fecha_ultima_modificacion = $3 where id=$1 returning id, articulo', [
@@ -1822,10 +1823,10 @@ router.post('/item/return', isAuthenticated, function(req, res){
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.n_devoluciones),
                 numericCol(req.body.costo)
-            ]),
+            ])/*,
             t.one('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
-                '  "estatus", "monto_pagado_efectivo", "saldo_pendiente") ' +
-                'values($1, $2, $3, $4, $5, $6, $7) returning id', [
+                '  "estatus", "monto_pagado_efectivo", "saldo_pendiente", "id_nota") ' +
+                'values($1, $2, $3, $4, $5, $6, $7, 0) returning id', [
                 numericCol(req.user.id),
                 numericCol(req.body.costo)*numericCol(req.body.n_devoluciones),
                 new Date(),
@@ -1833,7 +1834,7 @@ router.post('/item/return', isAuthenticated, function(req, res){
                 "activa",
                 numericCol(req.body.costo)*numericCol(req.body.n_devoluciones),
                 0
-            ])
+            ])*/
         ]).then(function(data){
 
             //Está mal, no estás retornando nada!!!
