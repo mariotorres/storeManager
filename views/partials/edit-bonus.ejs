@@ -58,7 +58,7 @@
                 </select>
             </p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4" id="id_tienda" >
         <p>
             <label>Tienda</label>
             <select name = "id_tienda" class="selectpicker" required>
@@ -82,3 +82,19 @@
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </p>
 </form>
+
+<script>
+    $(document).ready(function(){
+        if($("#criterio").val() != 'Tienda') {
+            document.getElementById("id_tienda").style.visibility = 'hidden';
+        }
+    })
+
+    $("#criterio").change(function(){
+        if($(this).val() == 'Tienda'){
+            document.getElementById("id_tienda").style.visibility = 'visible';
+        }else{
+            document.getElementById("id_tienda").style.visibility = 'hidden';
+        }
+    })
+</script>
