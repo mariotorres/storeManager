@@ -1461,14 +1461,15 @@ router.post('/employees/lending/register', function(req, res){
  */
 router.post('/employees/bonus/register', function(req, res){
     console.log(req.body);
-    db_conf.db.one('insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad) ' +
-        ' values($1, $2, $3, $4, $5, $6) returning id, nombre', [
+    db_conf.db.one('insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad, id_tienda) ' +
+        ' values($1, $2, $3, $4, $5, $6, $7) returning id, nombre', [
         req.body.nombre,
         numericCol(req.body.monto),
         req.body.desc,
         numericCol(req.body.monto_alcanzar),
         req.body.criterio,
-        req.body.temporalidad
+        req.body.temporalidad,
+        req.body.id_tienda
     ]).then(function(data){
         res.json({
             status:'Ok',
