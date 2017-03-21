@@ -2462,7 +2462,7 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
             console.log("Unidades Vendidas: " + data[0][0].unidades_vendidas);
             queries = [];
             queries.push(data);
-            if(numericCol(data[0][0].monto_pagado) >= numericCol(data[1].precio)){
+            if(numericCol(data[0][0].monto_por_pagar) == 0){
                 queries.push( t.one('update proveedores set a_cuenta = a_cuenta + $1, por_pagar = por_pagar - $1 where id = $2 returning id', [
                     numericCol(data[1].costo)*numericCol(data[0][0].unidades_vendidas),
                     data[1].id_prov
