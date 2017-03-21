@@ -1823,32 +1823,8 @@ router.post('/item/return', isAuthenticated, function(req, res){
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.n_devoluciones),
                 numericCol(req.body.costo)
-            ])/*,
-            t.one('insert into ventas ("id_usuario", "precio_venta", "fecha_venta", "hora_venta", ' +
-                '  "estatus", "monto_pagado_efectivo", "saldo_pendiente", "id_nota") ' +
-                'values($1, $2, $3, $4, $5, $6, $7, 0) returning id', [
-                numericCol(req.user.id),
-                numericCol(req.body.costo)*numericCol(req.body.n_devoluciones),
-                new Date(),
-                new Date().toLocaleTimeString(),
-                "activa",
-                numericCol(req.body.costo)*numericCol(req.body.n_devoluciones),
-                0
-            ])*/
-        ])/*.then(function(data){
-
-            //Está mal, no estás retornando nada!!!
-            t.oneOrNone('insert into venta_articulos ("id_articulo", "id_venta", "unidades_vendidas", ' +
-                '"monto_pagado", "estatus") ' +
-                ' values($1, $2, $3, $4, $5)', [
-                numericCol(req.body.id),
-                numericCol(data[3].id),
-                numericCol(req.body.n_devoluciones),
-                numericCol(req.body.costo),
-                "dev_proveedor"
-            ]);
-            return data;
-        });*/
+            ])
+        ])
     }).then(function (data) {
         console.log('Devolución: ', data);
         res.json({
@@ -2539,7 +2515,7 @@ router.post('/notes/dev', isAuthenticated, function(req, res){
 // Revisar este bloque
 router.post('/notes/finitdev', isAuthenticated, function(req, res){
     console.log(req.body);
-    // Actualizar existencias, saldos proveedores y ¿montos venta?.
+    // Si hay muchos asumimos que se quiere devolver sólo uno.
     db_conf.db.tx(function(t){
         return this.one("update venta_articulos set estatus = 'devolucion' where id = $1 returning id_articulo, unidades_vendidas, id_venta, monto_por_pagar, monto_pagado",[
             req.body.item_id
@@ -2553,13 +2529,17 @@ router.post('/notes/finitdev', isAuthenticated, function(req, res){
                 ])
 
             ]).then(function(data){
-
+                queryProvs = 'update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1 returning id';
+                if (data[0].monto_por_pagar > 0){
+                    // Solo cambiar saldos de proveedores en devolución cuando ya se acabó de pagar la prenda.
+                    queryProvs = 'update proveedores set a_cuenta = a_cuenta, por_pagar = por_pagar where id = $1 returning id';
+                }
                 return t.batch([
                     t.one('update articulos set n_existencias = n_existencias + $2 where id = $1 returning id',[
                         data[0].unidades_vendidas,
                         data[1].item_id
                     ]),
-                    t.one('update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1 returning id',[
+                    t.one(queryProvs,[
                         data[1].id_prov,
                         numericCol(data[1].costo_item * data[0].unidades_vendidas)
                     ]),
@@ -2569,7 +2549,6 @@ router.post('/notes/finitdev', isAuthenticated, function(req, res){
                         numericCol(data[0].monto_por_pagar + data[0].monto_pagado)
                     ])
                 ]);
-
             });
         });
 
