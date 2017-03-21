@@ -8,7 +8,11 @@ if (sales.length > 0){%>
         <h4> Venta realizada el <%= sales[i].fecha_venta.toLocaleDateString() %> a las <%= sales[i].hora_venta %></h4>
 
         <p class="list-group-item-text"> <strong>Precio:</strong> <%= sales[i].precio_venta %></p>
+        <%if (sales[i].saldo_pendiente > 0 ){%>
+        <p class="list-group-item-text"> <strong>Saldo Pendiente:</strong><span style="color:#E91E63"> <strong><%= sales[i].saldo_pendiente %></strong></span></p>
+        <%}else{%>
         <p class="list-group-item-text"> <strong>Saldo Pendiente:</strong> <%= sales[i].saldo_pendiente %></p>
+        <%}%>
     </a>
     <%}%>
 </div>
