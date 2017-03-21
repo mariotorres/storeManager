@@ -18,16 +18,16 @@
     </p>
     <br>
     <row>
-        <div class="col-md-5">
+        <div class="col-md-4">
             <p>
                 <label>Criterio</label>
-                <select name="criterio" class="selectpicker">
+                <select id="criterio" name="criterio" class="selectpicker">
                     <option>Tienda</option>
-                    <option>Individual</option>
+                    <option selected>Individual</option>
                 </select>
             </p>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
             <p>
                 <label>Temporalidad</label>
                 <select name="temporalidad" class="selectpicker">
@@ -37,9 +37,36 @@
                 </select>
             </p>
         </div>
+        <div class="col-md-4" style="visibility: hidden" id="id_tienda" >
+            <p>
+                <label>Tienda</label>
+                <select name = "id_tienda" class="selectpicker" required>
+                    <%
+                    if (tiendas.length > 0 ){
+                    for (var i =0; i < tiendas.length; i++){
+                    %>
+                    <option value="<%= tiendas[i].id %>"> <%= tiendas[i].nombre %> </option>
+                    <%
+                    }
+                    }else {
+                    %>
+                    <option value="">Ninguna</option>
+                    <% }%>
+                </select>
+            </p>
+        </div>
     </row>
     <br>
     <p>
         <button type="submit" class="btn btn-primary">Crear</button>
     </p>
 </form>
+<script>
+    $("#criterio").change(function(){
+        if($(this).val() == 'Tienda'){
+            document.getElementById("id_tienda").style.visibility = 'visible';
+        }else{
+            document.getElementById("id_tienda").style.visibility = 'hidden';
+        }
+    })
+</script>

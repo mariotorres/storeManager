@@ -1160,9 +1160,8 @@ router.post('/employees/penalization/new', function (req, res) {
 });
 
 router.post('/employees/bonus/new', function (req, res) {
-    db_conf.db.task(function (t) {
-    }).then(function (data) {
-        res.render('partials/new-bonus', {});
+    db_conf.db.manyOrNone('select * from tiendas').then(function (data) {
+        res.render('partials/new-bonus', {tiendas: data});
     }).catch(function(error){
         console.log(error);
         res.send('<b>Error</b>');
