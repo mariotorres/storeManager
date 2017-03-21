@@ -20,16 +20,6 @@ create table penalizaciones (
     dias_ausencia integer /* Debe reiniciar cada semana.*/
     );
 
-/* Bonos */
-create table bonos (
-    id serial primary key,
-    nombre text,
-    monto numeric(1000,2),
-    descripcion text,
-    monto_alcanzar numeric(1000,2),
-    criterio text,
-    temporalidad text
-    );
 
 /* Tiendas */
 drop table if exists tiendas cascade;
@@ -46,6 +36,19 @@ create table tiendas (
     direccion_estado text,
     direccion_pais text
 );
+
+
+/* Bonos */
+create table bonos (
+    id serial primary key,
+    nombre text,
+    monto numeric(1000,2),
+    descripcion text,
+    monto_alcanzar numeric(1000,2),
+    criterio text,
+    temporalidad text,
+    id_tienda integer references tiendas(id)
+    );
 
 insert into tiendas (nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia,
 direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais) values

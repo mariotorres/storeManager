@@ -19,10 +19,10 @@
     </p>
     <br>
     <row>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <p>
                 <label>Criterio</label>
-                <select name="criterio" class="selectpicker">
+                <select id="criterio" name="criterio" class="selectpicker">
                     <% if (bonus.criterio == "Tienda"){%>
                     <option selected>Tienda</option>
                     <%}else{%>
@@ -36,7 +36,7 @@
                 </select>
             </p>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <p>
                 <label>Temporalidad</label>
                 <select name="temporalidad" class="selectpicker">
@@ -57,6 +57,24 @@
                     <%}%>
                 </select>
             </p>
+        </div>
+        <div class="col-md-4">
+        <p>
+            <label>Tienda</label>
+            <select name = "id_tienda" class="selectpicker" required>
+                <%
+                if (tiendas.length > 0 ){
+                for (var i =0; i < tiendas.length; i++){
+                %>
+                <option value="<%= tiendas[i].id %>" <%= tiendas[i].id == bonus.id_tienda ? 'selected': null %> > <%= tiendas[i].nombre %> </option>
+                <%
+                }
+                }else {
+                %>
+                <option value="">Ninguna</option>
+                <% }%>
+            </select>
+        </p>
         </div>
     </row>
     <br>

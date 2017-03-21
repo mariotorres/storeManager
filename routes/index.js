@@ -912,11 +912,16 @@ router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
 // Load bonus data into  modal.
 router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
     var id = req.body.id;
-    db_conf.db.one('select * from bonos where id = $1', [
-        id
-    ]).then(function(data){
+    db_conf.db.task(function(t){
+        return this.batch([
+            this.one('select * from bonos where id = $1', [
+                id
+            ]),
+            this.manyOrNone('select * from tiendas')
+        ])
+    }).then(function(data){
         console.log('Editar bono: ',data.id );
-        res.render('partials/edit-bonus', { bonus: data });
+        res.render('partials/edit-bonus', { bonus: data[0], tiendas: data[1] });
     }).catch(function(error){
         console.log(error);
         res.send('<b>Error</b>');
