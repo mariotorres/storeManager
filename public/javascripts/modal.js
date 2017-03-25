@@ -645,6 +645,8 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/reports',{},function(){
 
+
+
                 $('#reports_datepicker1').datetimepicker({
                     format: 'YYYY-MM-DD',
                     defaultDate: new Date().setDate(new Date().getDate( ) - 1)

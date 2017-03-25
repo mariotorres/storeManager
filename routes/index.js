@@ -2090,7 +2090,7 @@ router.get('/reporte/', isAuthenticated, function (req, res) {
             //query -> startdate, enddate, store
             title = 'Reporte de ventas';
             query = db_conf.db.manyOrNone('select * from ventas, terminales, tiendas where ventas.id_tienda = tiendas.id and ventas.id_terminal = terminales.id and ' +
-                ' tiendas.id = $1 and fecha_venta >= $2 and fecha_venta <= $3',[ req.query.storeid, req.query.startdate, req.query.enddate ]);
+                ' tiendas.id = $1 and fecha_venta >= $2 and fecha_venta <= $3',[ req.query.id_tienda, req.query.startdate, req.query.enddate ]);
             break;
         case 'proveedores':
             title = 'Reporte de proveedores';
