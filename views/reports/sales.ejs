@@ -32,39 +32,50 @@
 
 <div class="container">
 
-<h2> <%= data.metadata.title%></h2>
+    <h2> Reporte de ventas</h2>
 
-<label>Periodo</label>
-<p> <%= data.metadata.period.startdate %> - <%= data.metadata.period.enddate %></p>
+    <p>Periodo: <strong> <%= startdate %> - <%= enddate %></strong></p>
+    <p>
+        Tienda: <strong> <%= tienda.nombre %></strong>
+    </p>
+
+    <p>
+        Ingreso total del periodo: <strong>$<%= monto_total.total %></strong>
+    </p>
+
+    <p>
+        Monto pagado con tarjeta de debito o crédito: <strong>$<%= monto_tarjetas.total %></strong>
+    </p>
+
+    <label>Lista de ventas</label>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+
+            <th>ID Nota </th>
+            <th>Monto </th>
+            <th>Artículos</th>
+            <th>Fecha </th>
+            <th>Hora </th>
+
+        </tr>
+        </thead>
+        <tbody>
 
 
-<table class="table table-striped">
-    <thead>
-    <tr>
+        <% for (var i=0; i< ventas.length; i ++){%>
+        <tr>
 
-        <% for (var i=0; i< data.metadata.column_names.length; i++){%>
+            <td> <%= ventas[i].id_nota %> </td>
+            <td> $<%= ventas[i].precio_venta %> </td>
+            <td> <%= ventas[i].num_articulos %> </td>
+            <td> <%= ventas[i].fecha_venta.toLocaleDateString('es-MX',{timeZone:'America/Mexico_City'}) %> </td>
+            <td> <%= ventas[i].hora_venta %> </td>
 
-        <th><%= data.metadata.column_names[i] %></th>
-
+        </tr>
         <%}%>
-    </tr>
-    </thead>
-    <tbody>
-
-
-    <% for (var i=0; i< data.rows.length; i ++){%>
-    <tr>
-
-        <%
-        for ( var prop in data.rows[i]){
-        %>
-        <td> <%= data.rows[i][prop] %> </td>
-        <%} %>
-
-    </tr>
-    <%}%>
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

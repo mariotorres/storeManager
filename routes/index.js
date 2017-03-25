@@ -2077,100 +2077,65 @@ router.post('/reports/', isAuthenticated, function (req, res) {
 
 router.get('/reporte/', isAuthenticated, function (req, res) {
 
-    var title = '';
-    var query = null;
-    var cnames = [];
-    var data = { };
-
+    const report_type = req.query.tipo;
+    const id_tienda = req.query.id_tienda;
+    const startdate = req.query.startdate;
+    const enddate = req.query.enddate;
 
     db_conf.db.task(function (t) {
 
         // return appropiate queries
-        switch (req.query.tipo){
+        switch ( report_type ){
             case 'ventas':
-                //query -> startdate, enddate, store
-                title = 'Reporte de ventas';
-                return this.manyOrNone('select * from ventas, terminales, tiendas where ventas.id_tienda = tiendas.id and ventas.id_terminal = terminales.id and ' +
-                    ' tiendas.id = $1 and fecha_venta >= $2 and fecha_venta <= $3',[ req.query.id_tienda, req.query.startdate, req.query.enddate ]);
+                return this.batch([
+                    this.one('select * from tiendas where id = $1',[id_tienda]),
+                    this.manyOrNone('select ventas.id_nota, ventas.precio_venta, ventas.fecha_venta, ventas.hora_venta, ' +
+                        '(select count(*) from venta_articulos where id_venta = ventas.id) as num_articulos from ventas, terminales where ventas.id_terminal = terminales.id and ' +
+                        ' ventas.id_tienda = $1 and fecha_venta >= $2 and fecha_venta <= $3',[ id_tienda, startdate, enddate ]),
+                    this.one('select sum(precio_venta) total from ventas where fecha_venta >= $1 and fecha_venta <= $2', [startdate, enddate]),
+                    this.one('select sum(precio_venta) total from ventas where fecha_venta >= $1 and fecha_venta <= $2 and id_terminal is not null', [startdate, enddate])
+                ]);
                 break;
             case 'proveedores':
-                title = 'Reporte de proveedores';
-                //query -> {}
                 return this.manyOrNone('select * from proveedores');
                 break;
             case 'devoluciones':
-                title = 'Reporte de devoluciones';
                 return null;
                 break;
             case 'asistencia':
-                title = 'Reporte de asistencia de personal';
-                //return queries ...
                 return null;
                 break;
         }
 
-
     }).then(function (rows) {
 
-        if (rows === null) {
-            //send unsupported report type
-            res.send("<p> Reporte no soportado </p>" );
-        } else {
-
-            switch (req.query.tipo) {
-                case 'ventas':
-                    console.log('Report generated succesfully');
-
-                    for (n in rows[0]) {
-                        cnames.push(n);
-                    }
-
-                    data = {
-                        metadata: {
-                            title: title,
-                            period: {
-                                startdate: req.query.startdate,
-                                enddate: req.query.enddate
-
-                            },
-                            column_names: cnames,//['Nombre', 'Apellido']
-                        },
-                        rows: rows
-                    };
-
-                    res.render('partials/report', {data: data});
-                    break;
-                case 'proveedores':
-                    console.log('Report generated succesfully');
-
-                    for (n in rows[0]) {
-                        cnames.push(n);
-                    }
-
-                    data = {
-                        metadata: {
-                            title: title,
-                            period: {
-                                startdate: '2017/01/01',
-                                enddate: '2017/02/01'
-
-                            },
-                            column_names: cnames,//['Nombre', 'Apellido']
-                        },
-                        rows: rows
-                    };
-
-                    res.render('partials/report', {data: data});
-                    break;
-                case 'asistencia':
-                    break;
-                case 'devoluciones':
-                    break;
-                default:
-                    res.send("<p>Reporte no soportado</p>");
-
-            }
-
+        switch ( report_type ) {
+            case 'ventas':
+                console.log('Report generated succesfully');
+                res.render('reports/sales',{
+                    startdate: startdate,
+                    enddate: enddate,
+                    tienda : rows[0],
+                    ventas : rows[1],
+                    monto_total : rows[2],
+                    monto_tarjetas : rows[3]
+                });
+                break;
+            case 'proveedores':
+                console.log('Report generated succesfully');
+                res.render('reports/suppliers', {
+                    fecha: (new Date()).toLocaleString('es-MX',{timeZone: 'America/Mexico_City'}),
+                    proveedores: rows
+                });
+                break;
+            case 'asistencia':
+                res.send("<p>En construcción...</p>");
+                break;
+            case 'devoluciones':
+                res.send("<p>En construcción...</p>");
+                break;
+            default:
+                res.send("<p>Reporte no soportado</p>");
         }
 
     }).catch(function (error) {
