@@ -2274,16 +2274,8 @@ router.post('/employees/find-employees-view', isAuthenticated, function (req, re
 });
 
 router.post('/notes/find-notes-view', function (req, res) {
-    db_conf.db.task(function (t) {
-        return this.batch([
-            this.manyOrNone('select id, nombre from proveedores'),
-            this.manyOrNone('select * from marcas')
-        ]);
-    }).then(function (data) {
-        res.render('partials/find-notes',{
-            proveedores: data[0],
-            marcas: data[1]
-        });
+    db_conf.db.manyOrNone('select * from tiendas').then(function (data) {
+        res.render('partials/find-notes',{ tiendas: data });
     }).catch(function (error) {
         console.log(error);
         res.send('<b>Error</b>');
@@ -2616,19 +2608,30 @@ router.post('/search/employees/results', isAuthenticated, function (req, res) {
 });
 
 router.post('/search/notes/results', isAuthenticated, function (req, res) {
-    console.log(req.body);
-    query = "select * from ventas where ((fecha_venta >= $2 and fecha_venta <= $3) or id = $4) and id_usuario = $5"
-    if(req.user.permiso_administrador == true){
-        query = "select * from ventas  where ((fecha_venta >= $2 and fecha_venta <= $3) or id = $4)"
+    //console.log(req.body);
+    let query = "";
+
+    // ¿se debe buscar por id de venta o por id_nota?
+    switch ( req.user.permiso_administrador ){
+        case true:
+            query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre " +
+                "from ventas, tiendas  " +
+                "where ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) or ventas.id = $3) and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";
+            break;
+        default:
+            query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre " +
+                "from ventas, tiendas " +
+                "where ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) or ventas.id = $3) and ventas.id_usuario = $4 and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";
     }
-    console.log("PERM ADMIN" + req.user.permiso_administrador);
+
+    console.log("Administrador: " + req.user.permiso_administrador);
 
     db_conf.db.manyOrNone(query, [
-        numericCol(req.body.id_nota),
         req.body.fecha_inicial,
         req.body.fecha_final,
-        req.body.id_note,
-        req.user.id
+        req.body.id_note, //¿id de venta? checar
+        req.user.id,
+        req.body.id_tienda
     ]).then(function (data) {
         res.render('partials/search-notes-results',{
             sales: data
@@ -2643,7 +2646,7 @@ router.post('/search/notes/results', isAuthenticated, function (req, res) {
 });
 
 router.get('/item/:filename/image.jpg', isAuthenticated, function (req, res) {
-    var img_path =  path.join(__dirname, '..', 'uploads/',req.params.filename);
+    let img_path =  path.join(__dirname, '..', 'uploads/',req.params.filename);
     //console.log( img_path );
     res.sendFile( img_path );
 });

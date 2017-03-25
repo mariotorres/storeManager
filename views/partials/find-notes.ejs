@@ -1,8 +1,27 @@
 <form id="find">
-    <label>Número de nota</label>
-    <p>
-        <input type="number" class="form-control" name="id_note" value="1">
-    </p>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <label>Número de nota</label>
+            <p>
+                <input type="number" class="form-control" name="id_note" value="1">
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <label>Tienda</label>
+            <select class="form-control" name = "id_tienda">
+                <%for (let i=0; i< tiendas.length; i ++){%>
+                <option value="<%= tiendas[i].id %>"><%=tiendas[i].nombre%></option>
+                <%}%>
+
+            </select>
+        </div>
+
+    </div>
+
+
+
+
     <div class="row">
         <div class="col-sm-6">
             <label>Fecha inicial</label>
