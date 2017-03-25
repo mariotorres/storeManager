@@ -2066,11 +2066,17 @@ router.post('/user/update-password',isAuthenticated,function (req, res ) {
 });
 
 router.post('/reports/', isAuthenticated, function (req, res) {
-    res.render('partials/reports');
+    db_conf.db.manyOrNone('select * from tiendas').then(function (tiendas) {
+        res.render('partials/reports', {tiendas: tiendas });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>')
+    });
+
 });
 
 
-router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
+router.get('/reporte/', isAuthenticated, function (req, res) {
 
     var title = '';
     var query = null;
@@ -2079,12 +2085,12 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
 
     console.log(req.query);
     // return appropiate queries
-    switch (req.params.tipo){
+    switch (req.query.tipo){
         case 'ventas':
             //query -> startdate, enddate, store
             title = 'Reporte de ventas';
-            query = db_conf.db.manyOrNone('select * from ventas, terminales where ventas.id_terminal = terminales.id and ' +
-                'fecha_venta >= $1 and fecha_venta <= $2',[ req.query.startdate, req.query.enddate, req.query.storeid ]);
+            query = db_conf.db.manyOrNone('select * from ventas, terminales, tiendas where ventas.id_tienda = tiendas.id and ventas.id_terminal = terminales.id and ' +
+                ' tiendas.id = $1 and fecha_venta >= $2 and fecha_venta <= $3',[ req.query.storeid, req.query.startdate, req.query.enddate ]);
             break;
         case 'proveedores':
             title = 'Reporte de proveedores';
@@ -2105,7 +2111,7 @@ router.get('/reporte/:tipo/', isAuthenticated, function (req, res) {
     if (query!= null) {
 
         query.then(function (rows) {
-            switch (req.params.tipo) {
+            switch (req.query.tipo) {
                 case 'ventas':
                     console.log('Report generated succesfully');
 

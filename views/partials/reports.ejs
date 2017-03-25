@@ -1,15 +1,36 @@
 <form>
 
 
-    <p>
-        <label>Seleccione el tipo de reporte</label>
-        <select class="form-control">
-        <option>Ventas</option>
-        <option>Asistencia de personal</option>
-        <option>Devoluciones</option>
-        <option>Saldos con proveedores</option>
-    </select>
-    </p>
+
+    <div class="row">
+
+        <div class="col-sm-6">
+            <p>
+                <label>Seleccione el tipo de reporte</label>
+                <select class="form-control" name="tipo">
+                    <option value="ventas">Ventas</option>
+                    <option value="proveedores">Saldos con proveedores</option>
+                    <option value="asistencia">Asistencia de personal</option>
+                    <option value="devoluciones">Devoluciones</option>
+                </select>
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label> Tienda
+                </label>
+                <select class="form-control" name="id_tienda">
+                    <% for (var i =0; i< tiendas.length; i++){%>
+                    <option value="<%= tiendas[i].id %>"> <%= tiendas[i].nombre %> </option>
+                    <%}%>
+                </select>
+            </p>
+
+
+        </div>
+    </div>
+
+
 
     <label>Seleccione el periodo del reporte</label>
     <div class="row">
@@ -18,7 +39,7 @@
 
             <div class="form-group">
                 <div class='input-group'>
-                    <input type="text" id="reports_datepicker1" class="form-control">
+                    <input type="text" id="reports_datepicker1" class="form-control" name="startdate">
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -30,7 +51,7 @@
 
             <div class="form-group">
                 <div class='input-group'>
-                    <input type="text" id="reports_datepicker2" class="form-control">
+                    <input type="text" id="reports_datepicker2" class="form-control" name="enddate">
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>

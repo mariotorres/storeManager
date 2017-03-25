@@ -654,6 +654,11 @@ function modalEvents(button, modal, page ) {
                     defaultDate: new Date()
                 });
 
+                modal.find('form').submit(function (e) {
+                    window.open('/reporte?'+ $(this).serialize());
+                    e.preventDefault();
+                });
+
             });
             break;
         // Lending
