@@ -645,7 +645,7 @@ router.post('/store/list/', isAuthenticated, function (req, res) {
         ]);
 
     }).then(function (data) {
-        res.render('partials/store-list',{
+        res.render('partials/stores/store-list',{
             status : 'Ok',
             stores: data[1],
             pageNumber : req.body.page,
@@ -878,7 +878,7 @@ router.post('/store/edit-store/', isAuthenticated, function(req, res){
     var id = req.body.id;
     db_conf.db.one('select * from tiendas where id = $1', [id]).then(function(data){
         console.log('Editar tienda: ', data.nombre );
-        res.render('partials/edit-store', {
+        res.render('partials/stores/edit-store', {
             status:'Ok',
             store: data
         });
@@ -1139,7 +1139,7 @@ router.post('/user/list/', isAuthenticated, function(req, res){
 });
 
 router.post('/store/new', isAuthenticated,function (req, res) {
-    res.render('partials/store');
+    res.render('partials/stores/store');
 });
 
 
