@@ -983,7 +983,7 @@ router.post('/brand/edit-brand/', isAuthenticated, function(req, res){
 router.post('/supplier/edit-supplier/', isAuthenticated, function(req, res){
     var id = req.body.id;
     db_conf.db.one('select * from proveedores where id = $1', [id]).then(function(data){
-        res.render('partials/edit-supplier', {
+        res.render('partials/suppliers/edit-supplier', {
             status: 'Ok',
             supplier:data
         });
@@ -1064,7 +1064,7 @@ router.post('/item/return-item/', isAuthenticated, function(req, res){
 });
 
 router.post('/supplier/new', isAuthenticated,function(req, res ){
-    res.render('partials/new-supplier');
+    res.render('partials/suppliers/new-supplier');
 });
 
 router.post('/type/payment',function(req, res ){
@@ -1103,7 +1103,7 @@ router.post('/supplier/list/', isAuthenticated,function(req, res ){
             this.manyOrNone('select * from proveedores order by nombre limit $1 offset $2',[ pageSize, offset ])
         ]);
     }).then(function( data ){
-        res.render('partials/supplier-list', {
+        res.render('partials/suppliers/supplier-list', {
             status : "Ok",
             suppliers: data[1],
             pageNumber : page,
