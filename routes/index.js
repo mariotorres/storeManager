@@ -1002,7 +1002,7 @@ router.post('/user/edit-user/', isAuthenticated, function(req, res){
             db_conf.db.manyOrNone('select * from tiendas')
         ])
     }).then(function(data){
-        res.render('partials/edit-user', {
+        res.render('partials/users/edit-user', {
             status: 'Ok',
             user: data[0],
             tiendas: data[1]
@@ -1050,7 +1050,7 @@ router.post('/item/return-item/', isAuthenticated, function(req, res){
             this.manyOrNone('select * from marcas')
         ]);
     }).then(function(data){
-        res.render('partials/return-item', {
+        res.render('partials/items/return-item', {
             status:'Ok',
             item: data[0],
             tiendas: data[1],
@@ -1126,7 +1126,7 @@ router.post('/user/list/', isAuthenticated, function(req, res){
             this.manyOrNone('select * from usuarios order by usuario limit $1 offset $2', [pageSize, offset])
         ]);
     }).then(function( data ){
-        res.render('partials/user-list', {
+        res.render('partials/users/user-list', {
             status: "Ok",
             users: data[1],
             pageNumber: page,
@@ -1188,7 +1188,7 @@ router.post('/brand/new',isAuthenticated, function (req, res) {
 
 router.post('/user/new',isAuthenticated,function (req, res) {
     db_conf.db.manyOrNone('select * from tiendas').then(function(data){
-        res.render('partials/new-user', {tiendas: data});
+        res.render('partials/users/new-user', {tiendas: data});
     }).catch(function (error) {
         console.log(error);
         res.send('<b>Error</b>');
@@ -1198,7 +1198,7 @@ router.post('/user/new',isAuthenticated,function (req, res) {
 router.post('/user/profile', isAuthenticated, function(req,res){
     var user_id = req.body.user_id;
     db_conf.db.one('select * from usuarios where id = $1', user_id).then(function (user) {
-        res.render('partials/user-profile', { user: user });
+        res.render('partials/users/user-profile', { user: user });
     }).catch(function (error) {
         console.log(error);
         res.send('<b>Error</b>');
@@ -2012,7 +2012,7 @@ router.post('/user/update', isAuthenticated, function(req, res){
 });
 
 router.post('/user/change-password',isAuthenticated,function(req, res){
-    res.render('partials/change-password', {user: { id : req.body.user_id } });
+    res.render('partials/users/change-password', {user: { id : req.body.user_id } });
 });
 
 
