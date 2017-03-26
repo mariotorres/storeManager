@@ -775,21 +775,22 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
 });
 
 router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
-    var id = req.params.id;
+    const id = req.params.id;
 
     db_conf.db.task(function (t) {
 
         return this.batch([
-            this.one('select * from ventas, terminales where ventas.id = $1 and ventas.id_terminal = terminales.id', [ id ]),
+            this.one('select * from ventas where ventas.id = $1 ', [ id ]),
             this.manyOrNone('select * from venta_articulos, articulos where venta_articulos.id_venta = $1 and ' +
                 'venta_articulos.id_articulo = articulos.id', [ id ])
         ]).then(function (data) {
 
             return t.batch([
                 data[0],
-                t.one('select * from terminales, tiendas where terminales.id = $1 and tiendas.id = terminales.id_tienda', data[0].id_terminal),
+                t.one('select * from tiendas where id = $1 ', data[0].id_tienda),
                 t.one('select * from usuarios where id = $1', data[0].id_usuario),
-                data[1]
+                data[1],
+                t.oneOrNone('select * from terminales where id = $1', data[0].id_terminal)
             ]);
 
         });
@@ -800,7 +801,8 @@ router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
             venta: data[0],
             tienda: data[1],
             usuario: data[2],
-            articulos: data[3]
+            articulos: data[3],
+            terminal: data[4]
         });
     }).catch(function (error) {
         console.log(error);
