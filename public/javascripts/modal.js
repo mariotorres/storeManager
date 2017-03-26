@@ -118,7 +118,6 @@ function modalEvents(button, modal, page ) {
                     // alert("Funciona, item: "+ $(this).data('item_id'));
                     $("#modal_content").load('/item/edit-item/',{ id: $(this).data('item_id') }, function () {
 
-
                         $('#deleteitem').click(function () {
                            if (confirm('¿Está seguro de eliminar el artículo?')){
                                $.post('/item/delete', { id : $(this).data('id')}).done(function (data) {
@@ -131,6 +130,7 @@ function modalEvents(button, modal, page ) {
                         });
 
                         modal.find('form').submit(function (event) {
+
                             var formData = new FormData();
                             var arr = $(this).serializeArray();
 
