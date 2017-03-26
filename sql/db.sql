@@ -26,6 +26,7 @@ drop table if exists tiendas cascade;
 create table tiendas (
     id serial primary key,
     nombre text,
+    RFC text,
     direccion_calle text,
     direccion_numero_int text,
     direccion_numero_ext text,
@@ -213,7 +214,8 @@ create table ventas (
     monto_pagado_efectivo numeric(1000,2),
     monto_cambio numeric(1000,2),
     monto_pagado_tarjeta  numeric(1000,2),
-    tarjeta_credito  boolean,
+    forma_pago text, /* Efectivo, TDD, TDC*/
+    tarjeta_credito  boolean, /* Esto no jala; quitar*/
     saldo_pendiente numeric(1000,2),
     estatus text
 );
@@ -226,6 +228,7 @@ create table venta_articulos(
     /*id_estatus_venta integer references estatus_ventas(id),*/
     unidades_vendidas integer,
     discount    numeric(1000,2),
+    precio numeric(1000,2),/* Falta incluir el precio que tenia el artículo en el momento de la venta */
     monto_pagado numeric(1000,2),
     monto_por_pagar numeric(1000,2),
     estatus  text
