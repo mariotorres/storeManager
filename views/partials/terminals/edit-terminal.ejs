@@ -2,6 +2,10 @@
 
     <input type="text" value="<%=terminal.id%>" name="id" hidden>
     <p>
+        <label>Banco</label>
+        <input name="banco" type="text" value="<%= terminal.banco %>" class="form-control" required>
+    </p>
+    <p>
         <label>Nombre del facturador</label>
         <input name="nombre" value="<%=terminal.nombre_facturador%>" class="form-control" required>
     </p>

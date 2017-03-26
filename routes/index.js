@@ -669,7 +669,7 @@ router.post('/terminal/list/', isAuthenticated, function (req, res) {
         ]);
 
     }).then(function (data) {
-        res.render('partials/terminals-list',{
+        res.render('partials/terminals/terminals-list',{
             status : 'Ok',
             terminals: data[1],
             pageNumber : req.body.page,
@@ -900,7 +900,7 @@ router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
             this.manyOrNone('select * from tiendas')
         ])
     }).then(function(data){
-        res.render('partials/edit-terminal', {
+        res.render('partials/terminals/edit-terminal', {
             status:'Ok',
             terminal: data[0],
             tiendas:data[1]
@@ -1149,7 +1149,7 @@ router.post('/terminal/new', isAuthenticated,function (req, res) {
     db_conf.db.task(function(t){
         return this.manyOrNone('select * from tiendas')
     }).then(function(data){
-        res.render('partials/new-terminal', {tiendas: data});
+        res.render('partials/terminals/new-terminal', {tiendas: data});
     }).catch(function(error){
         console.log(error);
         res.send('<b>Error</b>');
@@ -1411,7 +1411,8 @@ router.post('/user/signup', isAuthenticated, function(req, res){
  * Registro de terminal
  */
 router.post('/terminal/register', isAuthenticated, function(req, res){
-    db_conf.db.one('insert into terminales(nombre_facturador, rfc, id_tienda) values($1, $2, $3) returning id, nombre_facturador ', [
+    db_conf.db.one('insert into terminales(banco, nombre_facturador, rfc, id_tienda) values($1, $2, $3, $4) returning id, nombre_facturador ', [
+        req.body.banco,
         req.body.nombre,
         req.body.rfc,
         req.body.id_tienda
@@ -1641,8 +1642,9 @@ router.post('/store/update', isAuthenticated, function(req, res){
  * Actualización de terminales
  */
 router.post('/terminal/update', isAuthenticated,function(req, res){
-    db_conf.db.one('update terminales set nombre_facturador=$2, id_tienda=$3, rfc=$4 where id=$1 returning id, nombre_facturador ',[
+    db_conf.db.one('update terminales set banco=$2, nombre_facturador=$3, id_tienda=$4, rfc=$5 where id=$1 returning id, nombre_facturador ',[
         req.body.id,
+        req.body.banco,
         req.body.nombre,
         req.body.id_tienda,
         req.body.rfc
