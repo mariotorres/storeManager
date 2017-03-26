@@ -52,7 +52,7 @@
     </p>
 
     <p class="centrado">
-        <% if ( terminal.rfc != '' && terminal.rfc != null ){%>
+        <% if ( typeof terminal !== null ){%>
         <b>RFC: <%= terminal.rfc %> </b>
         <%}%>
     </p>
