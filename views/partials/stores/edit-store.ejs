@@ -3,13 +3,18 @@
     <input type="text" value="<%=store.id%>" name="id" hidden>
 
 
-            <p>
-                <label>Nombre de la tienda</label>
-                <input name="nombre" value="<%=store.nombre%>" class="form-control" required>
-            </p>
+    <p>
+        <label>Nombre de la tienda</label>
+        <input name="nombre" value="<%=store.nombre%>" class="form-control" required>
+    </p>
 
-            <p>
-                <button type="button" class="btn btn-primary" id = "deletestore" data-id ="<%= store.id %>"> Eliminar</button>
+    <p>
+        <label>RFC</label>
+        <input name="rfc" class="form-control" value="<%= store.rfc %>" required>
+    </p>
+
+    <p>
+        <button type="button" class="btn btn-primary" id = "deletestore" data-id ="<%= store.id %>"> Eliminar</button>
             </p>
 
 

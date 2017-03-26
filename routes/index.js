@@ -1301,8 +1301,11 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
  * Registro de tiendas
  */
 router.post('/store/register', isAuthenticated,function(req, res){
-    db_conf.db.one('insert into tiendas(nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id, nombre ', [
+    db_conf.db.one('insert into tiendas(nombre, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
+        'direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) ' +
+        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id, nombre ', [
         req.body.nombre,
+        req.body.rfc,
         req.body.direccion_calle,
         req.body.direccion_numero_int,
         req.body.direccion_numero_ext,
@@ -1336,7 +1339,7 @@ router.post('/user/signup', isAuthenticated, function(req, res){
         // 8 char pass
         // no special char in username
 
-        if ( req.body.contrasena != req.body.confirmar_contrasena){
+        if ( req.body.contrasena !== req.body.confirmar_contrasena){
             return { id: -2 };
         }
 
@@ -1606,11 +1609,12 @@ router.post('/supplier/update', isAuthenticated,function(req, res){
  * Actualización de tiendas
  */
 router.post('/store/update', isAuthenticated, function(req, res){
-    db_conf.db.one('update tiendas set nombre=$2, direccion_calle=$3, direccion_numero_int=$4, direccion_numero_ext=$5, direccion_colonia=$6, direccion_localidad=$7, ' +
-        'direccion_municipio=$8, direccion_ciudad=$9, direccion_pais=$10 ' +
+    db_conf.db.one('update tiendas set nombre=$2, rfc=$3, direccion_calle=$4, direccion_numero_int=$5, direccion_numero_ext=$6, direccion_colonia=$7, direccion_localidad=$8, ' +
+        'direccion_municipio=$9, direccion_ciudad=$10, direccion_pais=$11 ' +
         'where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.nombre,
+        req.body.rfc,
         req.body.direccion_calle,
         req.body.direccion_numero_int,
         req.body.direccion_numero_ext,
