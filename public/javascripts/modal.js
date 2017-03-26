@@ -545,31 +545,35 @@ function modalEvents(button, modal, page ) {
                 // Descargar pdf de la nota
                 $(this).find("button[name='print-note']").click(function () {
 
+                    /*
+
                     $.get('/notes/getbyid/'+ $(this).data('note_id'),
-                   // { id : $(this).data('note_id') },
-                function ( ticket) {
-                        var doc = new jsPDF('mm', 'pt', 'A7');
+                        // { id : $(this).data('note_id') },
+                        function ( ticket) {
+                            var doc = new jsPDF('mm', 'pt', 'A7');
 
-                        // We'll make our own renderer to skip this editor
-                        var specialElementHandlers = {
-                            '#editor': function (element, renderer) {
-                                return true;
-                            }
-                        };
+                            // We'll make our own renderer to skip this editor
+                            var specialElementHandlers = {
+                                '#editor': function (element, renderer) {
+                                    return true;
+                                }
+                            };
 
-                        // All units are in the set measurement for the document
-                        // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
+                            // All units are in the set measurement for the document
+                            // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
 
-                        doc.fromHTML(ticket ,
-                            ///*modal.find('.modal-body').get(0),
-                            10, 10, {
-                            'width': 200,
-                        //'heigth': 60,
-                            'elementHandlers': specialElementHandlers
-                        });
+                            doc.fromHTML(ticket ,
+                                ///*modal.find('.modal-body').get(0),
+                                10, 10, {
+                                    'width': 200,
+                                    //'heigth': 60,
+                                    'elementHandlers': specialElementHandlers
+                                });
 
-                        doc.save('ticket.pdf');
-                    });
+                            doc.save('ticket.pdf');
+                        });*/
+
+                    window.open('/notes/getbyid/'+ $(this).data('id_venta'));
 
                 });
 

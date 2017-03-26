@@ -8,7 +8,7 @@ for ( var i =0; i < sales.length ; i ++ ){ %>
             <input type="text" name="id_venta" value="<%= sales[i].id %>" hidden>
             <div class="row">
                 <div class="col-sm-4">
-                    <p class="list-group-item-text"> <h3><strong>Nota:</strong></h3></p>
+                    <p class="list-group-item-text"> <h3><strong>ID de venta:</strong></h3></p>
                 </div>
                 <div class="col-sm-1">
                     <p class="list-group-item-text"> <h3><%= sales[i].id %></h3></p>
@@ -33,10 +33,10 @@ for ( var i =0; i < sales.length ; i ++ ){ %>
                     <button class="btn btn-primary" type="submit"><i class="fa fa-plus-square"></i> Agregar a lista</button>
                 </div>
                 <div class="col-sm-4">  <p>
-                        <button class="btn btn-primary" type="button" name="print-note" data-note_id="<%= sales[i].id %>"> <i class="fa fa-print"></i> Imprimir nota</button>
+                        <button class="btn btn-primary" type="button" name="print-note" data-id_venta="<%= sales[i].id %>"> <i class="fa fa-print"></i> Imprimir nota</button>
                     </p></div>
                 <div class="col-sm-4">
-                    <button class="btn btn-primary" type="button" name="cancel-note" data-id_venta="<%= sales[i].id%>"><i class="fa fa-trash"></i> Cancelar nota</button>
+                    <button class="btn btn-primary" type="button" name="cancel-note" data-id_venta="<%= sales[i].id %>"><i class="fa fa-trash"></i> Cancelar nota</button>
                 </div>
             </div>
 
@@ -46,7 +46,7 @@ for ( var i =0; i < sales.length ; i ++ ){ %>
 <%}%>
 
 
-<% include pagination.ejs %>
+<% include ../pagination.ejs %>
 
 <%}else {%>
 <div class="alert alert-info" role="alert">No hay ventas registradas</div>

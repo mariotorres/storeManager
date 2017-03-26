@@ -1,0 +1,110 @@
+<!-- Reports -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Nota de venta</title>
+
+    <!-- Bootstrap -->
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/stylesheets/style.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- font awesome -->
+    <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+
+</head>
+<body>
+
+<div class="container">
+    <%
+    function getStr( str) {
+        return str!= null && str !=''?str:''
+    }
+    %>
+
+    <p>
+        <b>Nota de venta No. <%= venta.id %></b>
+    </p>
+    <p>
+        <b>Tienda: <%= tienda.nombre %> </b>
+        <!-- Dirección-->
+    </p>
+    <p>
+        <% if ( tienda.rfc != '' && tienda.rfc != null ){%>
+        <b>RFC: <%= tienda.rfc %> </b>
+        <%}%>
+    </p>
+
+    <p>
+        Fecha: <%= venta.fecha_venta.toLocaleDateString('es-MX',{timeZone: 'America/Mexico_City'}) %>
+        <br>
+        Hora: <%= venta.hora_venta.toString()%>
+    </p>
+    <b>Vendedor: <%= getStr(usuario.nombres) +" "+ getStr(usuario.apellido_paterno) + " "+ getStr(usuario.apellido_materno)  %></b>
+
+    <p>Artículos</p>
+    <% for ( var i=0; i< articulos.length; i++){%>
+
+    <p><%= articulos[i].articulo %></p>
+    <%}%>
+
+    <p>Forma de pago:</p>
+
+    <p><b>TOTAL:</b><br>
+        <%= venta.precio_venta%>
+    </p>
+
+    <p>Saldo pendiente:<br>
+
+        <b>
+            <%= venta.saldo_pendiente %></b>
+
+    </p>
+
+    <p>Por higiene y seguridad, NO SE ACEPTAN DEVOLUCIONES</p>
+
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+
+<script src="/bower_components/jspdf/dist/jspdf.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+
+
+<script>
+    /*
+    var doc = new jsPDF();
+
+    // We'll make our own renderer to skip this editor
+    var specialElementHandlers = {
+        '#editor': function(element, renderer){
+            return true;
+        }
+    };
+
+    // All units are in the set measurement for the document
+    // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
+    doc.fromHTML($('body').get(0), 15, 15, {
+        'width': 170,
+        'elementHandlers': specialElementHandlers
+    });
+
+    doc.output("dataurlnewwindow");
+    */
+</script>
+</body>
+</html>

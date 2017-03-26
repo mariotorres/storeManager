@@ -520,7 +520,7 @@ router.post('/item/new', isAuthenticated,function(req,res ){
             this.manyOrNone('select * from marcas')
         ]);
     }).then(function (data) {
-        res.render('partials/new-item', {tiendas: data[0], marcas: data[2], proveedores: data[1]});
+        res.render('partials/items/new-item', {tiendas: data[0], marcas: data[2], proveedores: data[1]});
     }).catch(function(error){
         console.log(error);
     });
@@ -543,7 +543,7 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
     }).then(function (data) {
         console.log("NEW DATA");
         console.log(data[3]);
-        res.render('partials/sale-item-list',{
+        res.render('partials/items/sale-item-list',{
             items: data[1],
             user: req.user,
             terminales:data[2],
@@ -569,7 +569,7 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
                 ' order by id desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
         ]);
     }).then(function(data){
-        res.render('partials/notes-list',{
+        res.render('partials/notes/notes-list',{
             status : 'Ok',
             count: data[0],
             sales: data[1],
@@ -595,7 +595,7 @@ router.post('/print/notes/list/', isAuthenticated, function (req, res) {
                 ' order by id desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
         ]);
     }).then(function(data){
-        res.render('partials/print-notes-list',{
+        res.render('partials/notes/print-notes-list',{
             status : 'Ok',
             count: data[0],
             sales: data[1],
@@ -620,7 +620,7 @@ router.post('/item/list/', isAuthenticated, function (req, res) {
         ]);
 
     }).then(function (data) {
-        res.render('partials/item-list',{
+        res.render('partials/items/item-list',{
             status : 'Ok',
             items: data[1],
             pageNumber : req.body.page,
@@ -796,7 +796,7 @@ router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
 
     }).then(function (data) {
 
-        res.render('partials/ticket',{
+        res.render('partials/notes/ticket',{
             venta: data[0],
             tienda: data[1],
             usuario: data[2],
@@ -858,7 +858,7 @@ router.post('/notes/edit-note/', isAuthenticated, function(req, res){
 
     }).then(function(data){
         //console.log("Length data: " + JSON.stringify(data[1][0]));
-        res.render('partials/edit-note', {
+        res.render('partials/notes/edit-note', {
             status:'Ok',
             sale: data[0].venta,
             n_items_sale: data[1].total_unidades,
@@ -1025,7 +1025,7 @@ router.post('/item/edit-item/', isAuthenticated, function(req, res){
             this.manyOrNone('select * from marcas')
         ]);
     }).then(function(data){
-        res.render('partials/edit-item', {
+        res.render('partials/items/edit-item', {
             status:'Ok',
             item: data[0],
             tiendas: data[1],
@@ -2154,7 +2154,7 @@ router.post('/item/find-items-view', isAuthenticated, function (req, res) {
             this.manyOrNone('select * from marcas')
         ]);
     }).then(function (data) {
-        res.render('partials/find-items',{
+        res.render('partials/items/find-items',{
             proveedores: data[0],
             marcas: data[1]
         });
@@ -2173,7 +2173,7 @@ router.post('/item/find-items-view-inv', isAuthenticated, function (req, res) {
             this.manyOrNone('select * from marcas')
         ]);
     }).then(function (data) {
-        res.render('partials/find-items-inv',{
+        res.render('partials/items/find-items-inv',{
             proveedores: data[0],
             marcas: data[1]
         });
@@ -2201,7 +2201,7 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
             t.manyOrNone('select * from terminales')
         ])
     }).then(function (data) {
-        res.render('partials/search-items-results-inv',{
+        res.render('partials/items/search-items-results-inv',{
             items: data[0],
             user: data[1],
             terminales: data[2]
@@ -2230,7 +2230,7 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
             t.manyOrNone('select * from terminales')
         ])
     }).then(function (data) {
-        res.render('partials/search-items-results',{
+        res.render('partials/items/search-items-results',{
             items: data[0],
             user: data[1],
             terminales: data[2]
@@ -2257,7 +2257,7 @@ router.post('/search/items/devs', isAuthenticated, function (req, res) {
             this.manyOrNone("select from terminales")
         ]);
     }).then(function (data) {
-        res.render('partials/find-item-dev',{
+        res.render('partials/items/find-item-dev',{
             items: data[0],
             terminales: data[2],
             user:  req.user
@@ -2275,7 +2275,7 @@ router.post('/employees/find-employees-view', isAuthenticated, function (req, re
 
 router.post('/notes/find-notes-view', function (req, res) {
     db_conf.db.manyOrNone('select * from tiendas').then(function (data) {
-        res.render('partials/find-notes',{ tiendas: data });
+        res.render('partials/notes/find-notes',{ tiendas: data });
     }).catch(function (error) {
         console.log(error);
         res.send('<b>Error</b>');
@@ -2441,7 +2441,7 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
         ])
     }).then(function(data){
         console.log(data);
-        res.render('partials/note-payment',{
+        res.render('partials/notes/note-payment',{
             sales: data[0],
             items_ids:data[1]
         })
@@ -2468,7 +2468,7 @@ router.post('/notes/dev', isAuthenticated, function(req, res){
         ])
     }).then(function(data){
         console.log(data);
-        res.render('partials/notes-dev',{
+        res.render('partials/notes/notes-dev',{
             sales: data[0],
             items_ids:data[1]
         })
@@ -2633,7 +2633,7 @@ router.post('/search/notes/results', isAuthenticated, function (req, res) {
         req.user.id,
         req.body.id_tienda
     ]).then(function (data) {
-        res.render('partials/search-notes-results',{
+        res.render('partials/notes/search-notes-results',{
             sales: data
         });
     }).catch(function (error) {
