@@ -1716,14 +1716,15 @@ router.post('/lendings/update', isAuthenticated, function(req, res){
  */
 router.post('/bonus/update', isAuthenticated, function(req, res){
     console.log(req.body);
-    db_conf.db.one('update bonos set nombre=$2, monto=$3, descripcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7 where id=$1 returning id, nombre ',[
+    db_conf.db.one('update bonos set nombre=$2, monto=$3, descripcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7, id_tienda=$8 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.nombre,
         numericCol(req.body.monto),
         req.body.desc,
         numericCol(req.body.monto_alcanzar),
         req.body.criterio,
-        req.body.temporalidad
+        req.body.temporalidad,
+        req.body.id_tienda
     ]).then(function (data) {
         res.json({
             status :'Ok',
