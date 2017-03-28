@@ -1184,6 +1184,15 @@ router.post('/employees/lending/new', function (req, res) {
     });
 });
 
+router.post('/employees/extra_pay/new', function (req, res) {
+    db_conf.db.manyOrNone('select * from usuarios').then(function (data) {
+        res.render('partials/new-extra-pay', {usuarios: data});
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+});
+
 router.post('/brand/new',isAuthenticated, function (req, res) {
     res.render('partials/new-brand');
 });
@@ -1426,6 +1435,36 @@ router.post('/terminal/register', isAuthenticated, function(req, res){
         res.json({
             status: 'Error',
             message: 'Ocurrió un error al registrar la terminal'
+        });
+    });
+});
+
+/*
+ * Registro de pago extra
+ */
+router.post('/employees/extra_pay/register', function(req, res){
+    console.log(req.body);
+    db_conf.db.tx(function(t){
+        return this.batch([
+            this.one('insert into pagos_extra(id_usuario, monto, descripcion, fecha_pago_extra) ' +
+                ' values($1, $2, $3, $4) returning id, monto', [
+                req.body.id_usuario,
+                numericCol(req.body.monto),
+                req.body.desc,
+                req.body.fecha_pago_extra
+            ]),
+            this.one('select * from usuarios where id = $1', req.body.id_usuario)
+        ])
+    }).then(function(data){
+        res.json({
+            status:'Ok',
+            message: '¡El pago extra de "' + data[0].monto + '" pesos para el usuario "' + data[1].nombres + '" ha sido registrado!'
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar el pago extra.'
         });
     });
 });
@@ -2284,6 +2323,7 @@ router.post('/employees/find-employees-view', isAuthenticated, function (req, re
 
 router.post('/notes/find-notes-view', function (req, res) {
     db_conf.db.manyOrNone('select * from tiendas').then(function (data) {
+        console.log(data.length);
         res.render('partials/notes/find-notes',{ tiendas: data });
     }).catch(function (error) {
         console.log(error);

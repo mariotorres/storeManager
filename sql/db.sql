@@ -101,7 +101,17 @@ create table prestamos (
     fecha_liquidacion date
 );
 
-/* prestamos */
+/* pagos extra */
+drop table if exists pagos_extra cascade;
+create table pagos_extra (
+    id serial primary key,
+    id_usuario integer references usuarios(id),
+    monto numeric(1000,2),
+    descripcion text,
+    fecha_pago_extra date
+);
+
+/* asistencia */
 drop table if exists asistencia cascade;
 create table asistencia (
     id serial primary key,
@@ -110,8 +120,6 @@ create table asistencia (
     hora_llegada time,
     hora_salida time
 );
-
-
 
 /* Proveedores */
 drop table if exists proveedores cascade;

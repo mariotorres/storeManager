@@ -667,6 +667,28 @@ function modalEvents(button, modal, page ) {
 
             });
             break;
+        // Extra pay
+        case "new_extra_pay":
+            modal.find('.modal-title').text('Registrar pago extra');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employees/extra_pay/new', {}, function(){
+                var today = new Date();
+                $('#extra_datepicker1').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: today
+                    //defaultDate: (new Date().getDate() - 1)
+                });
+                modal.find('form').submit(function(event){
+                    $.post('/employees/extra_pay/register', $(this).serialize()).done(function (data){
+                        alert(data.message);
+                        if(data.status == 'Ok'){
+                            modal.modal('hide');
+                        }
+                    });
+                    event.preventDefault();
+                });
+            });
+            break;
         // Lending
         case "new_lending":
             modal.find('.modal-title').text('Registrar préstamo');
