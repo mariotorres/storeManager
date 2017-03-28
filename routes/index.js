@@ -2609,7 +2609,7 @@ router.post('/search/employees/results', isAuthenticated, function (req, res) {
 
 router.post('/search/notes/results', isAuthenticated, function (req, res) {
     //console.log(req.body);
-    let query = "";
+    query = "";
 
     // ¿se debe buscar por id de venta o por id_nota?
     switch ( req.user.permiso_administrador ){
@@ -2646,7 +2646,7 @@ router.post('/search/notes/results', isAuthenticated, function (req, res) {
 });
 
 router.get('/item/:filename/image.jpg', isAuthenticated, function (req, res) {
-    let img_path =  path.join(__dirname, '..', 'uploads/',req.params.filename);
+    img_path =  path.join(__dirname, '..', 'uploads/',req.params.filename);
     //console.log( img_path );
     res.sendFile( img_path );
 });
