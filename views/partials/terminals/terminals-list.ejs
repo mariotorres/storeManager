@@ -5,12 +5,12 @@ if (terminals.length > 0){%>
     for ( var i =0; i < terminals.length ; i ++ ){ %>
     <a href="#" class="list-group-item" data-terminal_id="<%= terminals[i].id %>">
         <h4 class="list-group-item-heading"> <i class="fa fa-credit-card"></i> <%= terminals[i].nombre_facturador %></h4>
-        <p class="list-group-item-text"><%= "RFC: "+ terminals[i].rfc %></p>
+        <p class="list-group-item-text"><%= "RFC: "+ terminals[i].rfc %> <br> Banco <%= terminals[i].banco %></p>
     </a>
     <%}%>
 </div>
 
-<% include pagination.ejs %>
+<% include ../pagination.ejs %>
 
 <%}else {%>
 <div class="alert alert-info" role="alert">No hay terminales registradas</div>

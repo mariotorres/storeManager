@@ -669,7 +669,7 @@ router.post('/terminal/list/', isAuthenticated, function (req, res) {
         ]);
 
     }).then(function (data) {
-        res.render('partials/terminals-list',{
+        res.render('partials/terminals/terminals-list',{
             status : 'Ok',
             terminals: data[1],
             pageNumber : req.body.page,
@@ -775,21 +775,22 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
 });
 
 router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
-    var id = req.params.id;
+    const id = req.params.id;
 
     db_conf.db.task(function (t) {
 
         return this.batch([
-            this.one('select * from ventas, terminales where ventas.id = $1 and ventas.id_terminal = terminales.id', [ id ]),
+            this.one('select * from ventas where ventas.id = $1 ', [ id ]),
             this.manyOrNone('select * from venta_articulos, articulos where venta_articulos.id_venta = $1 and ' +
                 'venta_articulos.id_articulo = articulos.id', [ id ])
         ]).then(function (data) {
 
             return t.batch([
                 data[0],
-                t.one('select * from terminales, tiendas where terminales.id = $1 and tiendas.id = terminales.id_tienda', data[0].id_terminal),
+                t.one('select * from tiendas where id = $1 ', data[0].id_tienda),
                 t.one('select * from usuarios where id = $1', data[0].id_usuario),
-                data[1]
+                data[1],
+                t.oneOrNone('select * from terminales where id = $1', data[0].id_terminal)
             ]);
 
         });
@@ -800,7 +801,8 @@ router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
             venta: data[0],
             tienda: data[1],
             usuario: data[2],
-            articulos: data[3]
+            articulos: data[3],
+            terminal: data[4]
         });
     }).catch(function (error) {
         console.log(error);
@@ -898,7 +900,7 @@ router.post('/terminal/edit-terminal/', isAuthenticated, function(req, res){
             this.manyOrNone('select * from tiendas')
         ])
     }).then(function(data){
-        res.render('partials/edit-terminal', {
+        res.render('partials/terminals/edit-terminal', {
             status:'Ok',
             terminal: data[0],
             tiendas:data[1]
@@ -1147,7 +1149,7 @@ router.post('/terminal/new', isAuthenticated,function (req, res) {
     db_conf.db.task(function(t){
         return this.manyOrNone('select * from tiendas')
     }).then(function(data){
-        res.render('partials/new-terminal', {tiendas: data});
+        res.render('partials/terminals/new-terminal', {tiendas: data});
     }).catch(function(error){
         console.log(error);
         res.send('<b>Error</b>');
@@ -1299,8 +1301,11 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
  * Registro de tiendas
  */
 router.post('/store/register', isAuthenticated,function(req, res){
-    db_conf.db.one('insert into tiendas(nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id, nombre ', [
+    db_conf.db.one('insert into tiendas(nombre, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
+        'direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) ' +
+        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id, nombre ', [
         req.body.nombre,
+        req.body.rfc,
         req.body.direccion_calle,
         req.body.direccion_numero_int,
         req.body.direccion_numero_ext,
@@ -1334,7 +1339,7 @@ router.post('/user/signup', isAuthenticated, function(req, res){
         // 8 char pass
         // no special char in username
 
-        if ( req.body.contrasena != req.body.confirmar_contrasena){
+        if ( req.body.contrasena !== req.body.confirmar_contrasena){
             return { id: -2 };
         }
 
@@ -1406,7 +1411,8 @@ router.post('/user/signup', isAuthenticated, function(req, res){
  * Registro de terminal
  */
 router.post('/terminal/register', isAuthenticated, function(req, res){
-    db_conf.db.one('insert into terminales(nombre_facturador, rfc, id_tienda) values($1, $2, $3) returning id, nombre_facturador ', [
+    db_conf.db.one('insert into terminales(banco, nombre_facturador, rfc, id_tienda) values($1, $2, $3, $4) returning id, nombre_facturador ', [
+        req.body.banco,
         req.body.nombre,
         req.body.rfc,
         req.body.id_tienda
@@ -1604,11 +1610,12 @@ router.post('/supplier/update', isAuthenticated,function(req, res){
  * Actualización de tiendas
  */
 router.post('/store/update', isAuthenticated, function(req, res){
-    db_conf.db.one('update tiendas set nombre=$2, direccion_calle=$3, direccion_numero_int=$4, direccion_numero_ext=$5, direccion_colonia=$6, direccion_localidad=$7, ' +
-        'direccion_municipio=$8, direccion_ciudad=$9, direccion_pais=$10 ' +
+    db_conf.db.one('update tiendas set nombre=$2, rfc=$3, direccion_calle=$4, direccion_numero_int=$5, direccion_numero_ext=$6, direccion_colonia=$7, direccion_localidad=$8, ' +
+        'direccion_municipio=$9, direccion_ciudad=$10, direccion_pais=$11 ' +
         'where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.nombre,
+        req.body.rfc,
         req.body.direccion_calle,
         req.body.direccion_numero_int,
         req.body.direccion_numero_ext,
@@ -1635,8 +1642,9 @@ router.post('/store/update', isAuthenticated, function(req, res){
  * Actualización de terminales
  */
 router.post('/terminal/update', isAuthenticated,function(req, res){
-    db_conf.db.one('update terminales set nombre_facturador=$2, id_tienda=$3, rfc=$4 where id=$1 returning id, nombre_facturador ',[
+    db_conf.db.one('update terminales set banco=$2, nombre_facturador=$3, id_tienda=$4, rfc=$5 where id=$1 returning id, nombre_facturador ',[
         req.body.id,
+        req.body.banco,
         req.body.nombre,
         req.body.id_tienda,
         req.body.rfc
