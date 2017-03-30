@@ -2372,9 +2372,10 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                     7 - data[3].length
                 ]),
                 /* Bonos: el bono más alto aplicable es la que se asigna */
-                t.manyOrNone("select * from bonos where (monto_alcanzar <= $1 and criterio = 'Tienda') or (monto_alcanzar <=  $2 and criterio ='Individual') order by monto desc", [
+                t.manyOrNone("select * from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or (monto_alcanzar <=  $2 and criterio ='Individual') order by monto desc", [
                     data[11].montotienda,
-                    data[7].montoventas
+                    data[7].montoventas,
+                    req.body.id
                 ])
             ])
         });
