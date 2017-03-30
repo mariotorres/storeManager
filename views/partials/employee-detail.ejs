@@ -247,18 +247,52 @@
         </div>
     </div>
     <hr>
+
+    <h3 style="color:#9E9E9E"><strong>Pagos extra</strong></h3>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Tiene pago extra:</label>
+            <h5 style="color: #9E9E9E;">
+                <%if (pagos_extra.monto == 0){%>
+                <%="No"%>
+                <%}else{%>
+                <%="Si"%>
+                <%}%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Descripción</label>
+            <h5 style="color: #9E9E9E;">
+                <%=pagos_extra.descripcion%>
+            </h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Total de pago extra esta semana</label>
+            <h5 style="color: #9E9E9E;">
+                <%=pagos_extra.monto%>
+            </h5>
+            </p>
+        </div>
+    </div>
+    <hr>
+
     <div class="col-sm-3 col-md-offset-9">
         <p>
             <label>Sueldo Neto</label>
         <h2 style="color: #E91E63;">
             <%if (bono.length > 0 && penalizacion.length > 0){%>
-            <%=Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto))%>
+            <%=Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto))%>
             <%}else if(penalizacion.length > 0){%>
-            <%=Number(usuario.salario) + Number(totalComision.comision) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto))%>
+            <%=Number(usuario.salario) + Number(totalComision.comision) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto))%>
             <%}else if(bono.length > 0){%>
-            <%=Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto)  - (Number(montoPrestamos.pago))%>
+            <%=Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto) + Number(pagos_extra.monto)  - (Number(montoPrestamos.pago))%>
             <%}else{%>
-            <%=Number(usuario.salario) + Number(totalComision.comision) - (Number(montoPrestamos.pago))%>
+            <%=Number(usuario.salario) + Number(totalComision.comision) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago))%>
             <%}%>
         </h2>
         </p>

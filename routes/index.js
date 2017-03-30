@@ -2439,7 +2439,9 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1 ", id),
             this.oneOrNone("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
-                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id)
+                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id),
+            /* Pagos extras */
+            this.oneOrNone("select * from pagos_extra, usuarios where pagos_extra.id_usuario = usuarios.id and usuarios.id = $1", id)
         ]).then(function(data){
             return t.batch([
                 data,
@@ -2457,10 +2459,11 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             ])
         });
     }).then(function (data) {
-        var totalComsion       = (data[0][8] === null? data[0][8]:{'comision':0});
-        var montoPrestamos     = (data[0][5] === null? data[0][5]:{'pago':0});
-        var montoVentas        = (data[0][7] === null? data[0][7]:{'montoventas':0});
-        var montoVentasTiendas = (data[0][11] === null? data[0][11]:{'montotienda':0});
+        var totalComsion       = (data[0][8] === null? {'comision':0}:data[0][8]);
+        var pagoExtra          = (data[0][12] === null? {'monto':0, 'descripcion': ''}:data[0][12]);
+        var montoPrestamos     = (data[0][5] === null? {'pago':0}:data[0][5]);
+        var montoVentas        = (data[0][7] === null? {'montoventas':0}:data[0][7]);
+        var montoVentasTiendas = (data[0][11] === null? {'montotienda':0}:data[0][11]);
         var bono               = (data[2].length > 0 ? data[2] : []);
         var penalizacion       = (data[1].length > 0 ? data[1] : []);
         var prestamos          = (data[0][4].length > 0 ? data[0][4] : []);
@@ -2487,7 +2490,8 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             ventaTiendas: ventaTiendas,
             montoVentasTiendas: data[0][11],//montoVentasTiendas,
             penalizacion: penalizacion,
-            bono: bono
+            bono: bono,
+            pagos_extra: pagoExtra
         });
     }).catch(function (error) {
         console.log(error);
