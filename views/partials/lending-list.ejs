@@ -5,7 +5,7 @@ if (lendings.length > 0){%>
     for ( var i =0; i < lendings.length ; i ++ ){ %>
     <a href="#" class="list-group-item" data-lendings_id="<%= lendings[i].id %>">
         <h4 class="list-group-item-heading"><i class="fa fa-money"></i>  <%= lendings[i].nombres %></h4>
-        <p class="list-group-item-text"><strong>Monto:</strong>  <%=lendings[i].monto%>  <strong>Descripción:</strong> <%=lendings[i].descripcion%> <strong>Fecha liquidación:</strong> <%=lendings[i].fecha_liquidacion%></p>
+        <p class="list-group-item-text"><strong>Monto:</strong>  <%=lendings[i].monto%> | <strong>Descripción:</strong> <%=lendings[i].descripcion%> | <strong>Fecha liquidación:</strong> <%=lendings[i].fecha_liquidacion%></p>
     </a>
     <%}%>
 </div>

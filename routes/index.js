@@ -711,14 +711,38 @@ router.post('/lending/list/', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from prestamos as count'),
-            this.manyOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.descripcion as descripcion, prestamos.fecha_liquidacion as fecha_liquidacion' +
-                ' from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by nombres limit $1 offset $2', [pageSize, offset])
+            this.manyOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.descripcion as descripcion, prestamos.fecha_liquidacion as fecha_liquidacion, prestamos.fecha_prestamo as fecha_prestamo ' +
+                ' from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by fecha_prestamo limit $1 offset $2', [pageSize, offset])
         ]);
     }).then(function (data) {
         console.log('Prestamos: ', data.length);
         res.render('partials/lending-list',{
             status : 'Ok',
             lendings: data[1],
+            pageNumber : req.body.page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+});
+
+// Display de pagos extra
+router.post('/extra-pay/list/', isAuthenticated, function (req, res) {
+    var pageSize = 10;
+    var offset = req.body.page * pageSize;
+    db_conf.db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from pagos_extra as count'),
+            this.manyOrNone('select pagos_extra.id as id, pagos_extra.monto as monto, pagos_extra.descripcion as descripcion, pagos_extra.fecha_pago_extra as fecha_pago_extra, ' +
+                'nombres from pagos_extra, usuarios where usuarios.id = pagos_extra.id_usuario order by fecha_pago_extra, nombres limit $1 offset $2', [pageSize, offset])
+        ]);
+    }).then(function (data) {
+        console.log('Pagos extra: ', data.length);
+        res.render('partials/extra-pay-list',{
+            status : 'Ok',
+            extra_pays: data[1],
             pageNumber : req.body.page,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });

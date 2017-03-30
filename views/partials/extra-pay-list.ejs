@@ -1,0 +1,17 @@
+<%
+if (extra_pays.length > 0){%>
+<div class="list-group">
+    <%
+    for ( var i =0; i < extra_pays.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-extra_pay_id="<%= extra_pays[i].id %>">
+        <h4 class="list-group-item-heading"><i class="fa fa-money"></i>  <%= extra_pays[i].nombres %></h4>
+        <p class="list-group-item-text"><strong>Monto:</strong>  <%=extra_pays[i].monto%> | <strong>Descripción:</strong> <%=extra_pays[i].descripcion%> | <strong>Fecha pago extra:</strong> <%=extra_pays[i].fecha_pago_extra%></p>
+    </a>
+    <%}%>
+</div>
+
+<% include pagination.ejs %>
+
+<%}else {%>
+<div class="alert alert-info" role="alert">No hay pagos extra registrados</div>
+<%}%>

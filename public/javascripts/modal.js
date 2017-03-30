@@ -791,6 +791,28 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "edit_extra_pay":
+            modal.find('.modal-title').text('Editar pago extra');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/extra-pay/list/',{ page: page }, function(){
+                $(this).find('.list-group-item').click(function(){
+                    $("#modal_content").load('/extra_pay/edit-extra_pay/', {id: $(this).data('extra_pay_id')}, function () {
+                        modal.find('form').submit(function (event) {
+                            $.post('/extra_pay/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
+                    });
+                });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
+                });
+            });
+            break;
         case "edit_penalization":
             modal.find('.modal-title').text('Editar penalización');
             modal.find('#modal_content').html("");
