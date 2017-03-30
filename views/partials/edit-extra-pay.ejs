@@ -1,0 +1,39 @@
+<form id="extraForm">
+    <p>
+        <label>Nombre del empleado</label>
+        <select name="id_usuario" class="form-control">
+            <%
+            if (usuarios.length > 0 ){
+            for (var i =0; i < usuarios.length; i++){
+            %>
+            <option value="<%= usuarios[i].id %>" <%= usuarios[i].id == extra_pays.id_usuario ? 'selected': null %> > <%= usuarios[i].nombres %> </option>
+            <%
+            }
+            }else {
+            %>
+            <option value="">Ninguno</option>
+            <% }%>
+        </select>
+    </p>
+
+    <p>
+        <label>Monto del pago extra</label>
+        <input id="monto" value="<%=extra_pays.monto%>" name="monto" class = "form-control">
+    </p>
+
+    <p>
+        <label>Descripción</label>
+        <textarea value="<%=extra_pays.descripcion%>" placeholder="<%=extra_pays.descripcion%>" name="desc" class = "form-control"><%=extra_pays.descripcion%></textarea>
+    </p>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Fecha pago extra</label>
+                <input value="<%=extra_pays.fecha_pago_extra%>" type="text" name="fecha_pago_extra" id="extra_datepicker1" class="form-control" required>
+            </p>
+        </div>
+    </div>
+    <p>
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </p>
+</form>

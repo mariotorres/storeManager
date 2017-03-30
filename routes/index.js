@@ -978,6 +978,33 @@ router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
     });
 });
 
+
+// Load bonus data into  modal.
+router.post('/extra-pay/edit-extra-pay/', isAuthenticated, function(req, res){
+    var id = req.body.id;
+    db_conf.db.task(function(t){
+        return this.batch([
+            this.oneOrNone('select pagos_extra.id as id, pagos_extra.monto as monto,  ' +
+                'pagos_extra.descripcion as descripcion, pagos_extra.fecha_pago_extra as fecha_pago_extra,' +
+                ' pagos_extra.id_usuario as id_usuario from pagos_extra, usuarios where pagos_extra.id_usuario = usuarios.id and pagos_extra.id = $1 ', [
+                id
+            ]),
+            this.manyOrNone('select * from usuarios')
+        ])
+    }).then(function(data){
+        console.log(data);
+        res.render('partials/edit-extra-pay', {
+            status:'Ok',
+            extra_pays: data[0],
+            usuarios: data[1]
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+});
+
+
 // Load penalization data into  modal.
 router.post('/penalization/edit-penalization/', isAuthenticated, function(req, res){
     var id = req.body.id;

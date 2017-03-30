@@ -796,7 +796,7 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/extra-pay/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
-                    $("#modal_content").load('/extra_pay/edit-extra_pay/', {id: $(this).data('extra_pay_id')}, function () {
+                    $("#modal_content").load('/extra-pay/edit-extra-pay/', {id: $(this).data('extra_pay_id')}, function () {
                         modal.find('form').submit(function (event) {
                             $.post('/extra_pay/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
