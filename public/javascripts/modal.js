@@ -798,7 +798,7 @@ function modalEvents(button, modal, page ) {
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/extra-pay/edit-extra-pay/', {id: $(this).data('extra_pay_id')}, function () {
                         modal.find('form').submit(function (event) {
-                            $.post('/extra_pay/update', $(this).serialize()).done(function (data) {
+                            $.post('/extra-pay/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
                                 if(data.status=='Ok'){
                                     modal.modal('hide');

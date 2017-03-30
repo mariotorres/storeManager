@@ -1790,16 +1790,42 @@ router.post('/lendings/update', isAuthenticated, function(req, res){
     ]).then(function (data) {
         res.json({
             status :'Ok',
-            message : 'Los datos del prestamo "'+ data.id +'" han sido actualizados'
+            message : 'Los datos del préstamo "'+ data.id +'" han sido actualizados'
         });
     }).catch(function (error) {
         console.log(error);
         res.json({
             status : 'Error',
-            message: 'Ocurrió un error al actualizar los datos del bono'
+            message: 'Ocurrió un error al actualizar los datos del préstamo'
         });
     });
 });
+
+/*
+ * Actualización de pagos extras
+ */
+router.post('/extra-pay/update', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.one('update pagos_extra set id_usuario=$2, monto=$3, descripcion=$4, fecha_pago_extra=$5 where id=$1 returning id, monto ',[
+        req.body.id,
+        req.body.id_usuario,
+        numericCol(req.body.monto),
+        req.body.desc,
+        new Date(req.body.fecha_pago_extra)
+    ]).then(function (data) {
+        res.json({
+            status :'Ok',
+            message : 'Los datos del pago extra "'+ data.id +'" han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al actualizar los datos del pago extra'
+        });
+    });
+});
+
 
 /*
  * Actualización de bonos
