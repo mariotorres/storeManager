@@ -2441,7 +2441,8 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id),
             /* Pagos extras */
-            this.oneOrNone("select * from pagos_extra, usuarios where pagos_extra.id_usuario = usuarios.id and usuarios.id = $1", id)
+            this.oneOrNone("select * from pagos_extra, usuarios where pagos_extra.id_usuario = usuarios.id and usuarios.id = $1 and " +
+                " pagos_extra.fecha_pago_extra <= date_trunc('day', now()) and pagos_extra.fecha_pago_extra > date_trunc('day', now() - interval '1 week')", id)
         ]).then(function(data){
             return t.batch([
                 data,
