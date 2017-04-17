@@ -425,12 +425,14 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     numericCol(data[0][i].id_articulo)
                 ]));
 
-                queries.push(t.one('update articulos set n_existencias = n_existencias - $2, fecha_ultima_modificacion = $3 where id =$1 returning id', [
-                    numericCol(data[0][i].id_articulo),
-                    numericCol(data[0][i].unidades_carrito),
-                    new Date()
-                ]));
-
+                // Si la prenda no está en inventarios, no hay necesidad de decrementar las existencias.
+                if(data[0][i].estatus != "solicitada") {
+                    queries.push(t.one('update articulos set n_existencias = n_existencias - $2, fecha_ultima_modificacion = $3 where id =$1 returning id', [
+                        numericCol(data[0][i].id_articulo),
+                        numericCol(data[0][i].unidades_carrito),
+                        new Date()
+                    ]));
+                }
                 // Update saldo con proveedores solo de aquellas prendas que se entregaron y que están completamente pagadas.
                 if( monto_por_pagar == 0 ) {
                     queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id', [

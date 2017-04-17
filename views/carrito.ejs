@@ -90,16 +90,24 @@
                                         <option value="entregada" selected>Entregada</option>
                                         <option value="modificacion">Modificación</option>
                                         <option value="pendiente">Pendiente</option>
+                                        <option value="solicitada">Solicitada</option>
                                         <%
                                         }else if(items[i].estatus == "modificacion") {
                                         %>
                                         <option value="entregada">Entregada</option>
                                         <option value="modificacion" selected>Modificación</option>
                                         <option value="pendiente">Pendiente</option>
-                                        <% }else{%>
+                                        <option value="solicitada">Solicitada</option>
+                                        <% }else if(items[i].estatus == "pendiente"){%>
                                         <option value="entregada">Entregada</option>
                                         <option value="modificacion">Modificación</option>
                                         <option value="pendiente" selected>Pendiente</option>
+                                        <option value="solicitada">Solicitada</option>
+                                        <%}else{%>
+                                        <option value="entregada">Entregada</option>
+                                        <option value="modificacion">Modificación</option>
+                                        <option value="pendiente">Pendiente</option>
+                                        <option value="solicitada" selected>Solicitada</option>
                                         <%}%>
                                     </select>
                                 </div>

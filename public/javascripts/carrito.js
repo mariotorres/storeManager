@@ -39,7 +39,7 @@ $('input[name=monto_pagado]').change(function(){
 // Actualizar status
 $("select[name=estatus]").change(function(){
     var status = $(this).find('option:selected').val();
-    var id = $(this).data('item_id')
+    var id     = $(this).data('item_id')
     $.post('/carrito/status',{
         item_id: id,
         status: status
