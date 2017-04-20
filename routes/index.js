@@ -1411,7 +1411,7 @@ router.post('/user/signup', isAuthenticated, function(req, res){
 
         return db_conf.db.one('insert into usuarios ( usuario, contrasena, email, nombres, apellido_paterno, apellido_materno, rfc, direccion_calle, direccion_numero_int, ' +
             'direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais,' +
-            'empleado, salario, permiso_tablero, permiso_administrador, permiso_empleados, permiso_inventario, id_tienda) values' +
+            'empleado, salario, permiso_tablero, permiso_administrador, permiso_empleados, permiso_inventario, id_tienda, hora_llegada, hora_salida) values' +
             '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) returning id, usuario ', [
             req.body.usuario.trim(),
             bCrypt.hashSync( req.body.contrasena, bCrypt.genSaltSync(10), null),
@@ -1435,9 +1435,9 @@ router.post('/user/signup', isAuthenticated, function(req, res){
             stob(req.body.permiso_administrador),
             stob(req.body.permiso_empleados),
             stob(req.body.permiso_inventario),
-            numericCol(req.body.id_tienda)
-            //req.body.llegada,
-            //req.body.salida
+            numericCol(req.body.id_tienda),
+            req.body.llegada,
+            req.body.salida
         ]);
 
 
@@ -2098,7 +2098,8 @@ router.post('/cancel/note', isAuthenticated,function(req, res){
 router.post('/user/update', isAuthenticated, function(req, res){
     db_conf.db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
         'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_estado= $13,' +
-        'direccion_pais=$14, email=$15, id_tienda=$16, salario=$17, empleado=$18, permiso_tablero=$19, permiso_administrador=$20, permiso_empleados=$21, permiso_inventario=$22 ' +
+        'direccion_pais=$14, email=$15, id_tienda=$16, salario=$17, empleado=$18, permiso_tablero=$19, permiso_administrador=$20, permiso_empleados=$21, ' +
+        'permiso_inventario=$22, hora_llegada = $23, hora_salida = $24 ' +
         'where id = $1 returning id, usuario ',[
         req.body.id,
         req.body.nombres,
@@ -2121,9 +2122,9 @@ router.post('/user/update', isAuthenticated, function(req, res){
         stob(req.body.permiso_tablero),
         stob(req.body.permiso_administrador),
         stob(req.body.permiso_empleados),
-        stob(req.body.permiso_inventario)
-        //req.body.llegada,
-        //req.body.salida
+        stob(req.body.permiso_inventario),
+        req.body.llegada,
+        req.body.salida
     ]).then(function (data) {
         res.json({
             status :'Ok',

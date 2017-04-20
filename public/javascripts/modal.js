@@ -7,6 +7,10 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar usuario');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/user/new', { }, function(){
+                $('#timepicker1, #timepicker2').datetimepicker({
+                    format: 'LT'
+                });
+
                 modal.find('form').submit(function (e) {
                     $.post('/user/signup/', $(this).serializeArray()).done(function (data) {
                         alert(data.message);
@@ -356,7 +360,7 @@ function modalEvents(button, modal, page ) {
                                             if(data.status == 'Ok'){
                                                 modal.modal('hide');
                                             }
-                                        })
+                                        });
                                         e.preventDefault();
                                     })
                                 });
@@ -374,8 +378,10 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/user/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
                     $("#modal_content").load('/user/edit-user/',{ id: $(this).data('user_id') }, function () {
-                        $('#timepicker1').timepicker('getTime');
-                        $('#timepicker2').timepicker('getTime');
+
+                        $('#timepicker1, #timepicker2').datetimepicker({
+                            format: 'LT'
+                        });
 
                         $('#deleteuser').click(function () {
                             if ( confirm('¿Está seguro de eliminar el usuario?, se eliminarán todos los datos asociados al mismo.') ){
