@@ -2427,9 +2427,10 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
                 "and hora < hora_salida and tipo = 'salida'", id),
-            this.manyOrNone("select * from asistencia where id_usuario = $1 " +
+            // Domingos
+            this.oneOrNone("select count(*) as domingos from asistencia where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
-                "and tipo = 'entrada'", id),
+                "and EXTRACT(DOW from asistencia.fecha::DATE) = 7 ", id),
             /* Préstamos */
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
@@ -2474,7 +2475,6 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         var bono               = (data[2].length > 0 ? data[2] : []);
         var penalizacion       = (data[1].length > 0 ? data[1] : []);
         var prestamos          = (data[0][4].length > 0 ? data[0][4] : []);
-        var asistencias        = (data[0][3].length > 0? data[0][3]: []);
         var entradasTarde      = (data[0][1].length > 0? data[0][1]: []);
         var salidasTemprano    = (data[0][2].length > 0? data[0][2]: []);
         var ventas             = (data[0][6].length > 0? data[0][6]: []);
@@ -2487,7 +2487,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             usuario: data[0][0],
             entradasTarde: entradasTarde,
             salidasTemprano: salidasTemprano,
-            asistencias: asistencias,
+            domingos: data[0][3],
             prestamos:prestamos,
             montoPrestamos:data[0][5],
             ventas: ventas,
