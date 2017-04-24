@@ -675,7 +675,7 @@ function modalEvents(button, modal, page ) {
             break;
         // Extra pay
         case "new_extra_pay":
-            modal.find('.modal-title').text('Registrar pago extra');
+            modal.find('.modal-title').text('Registrar alteración salario');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/employees/extra_pay/new', {}, function(){
                 var today = new Date();
