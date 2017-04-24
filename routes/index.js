@@ -1412,7 +1412,7 @@ router.post('/user/signup', isAuthenticated, function(req, res){
         return db_conf.db.one('insert into usuarios ( usuario, contrasena, email, nombres, apellido_paterno, apellido_materno, rfc, direccion_calle, direccion_numero_int, ' +
             'direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais,' +
             'empleado, salario, permiso_tablero, permiso_administrador, permiso_empleados, permiso_inventario, id_tienda, hora_llegada, hora_salida) values' +
-            '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) returning id, usuario ', [
+            '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25) returning id, usuario ', [
             req.body.usuario.trim(),
             bCrypt.hashSync( req.body.contrasena, bCrypt.genSaltSync(10), null),
             req.body.email,
@@ -1587,13 +1587,13 @@ router.post('/employees/bonus/register', function(req, res){
  */
 router.post('/employees/penalization/register', function(req, res){
     console.log(req.body);
-    db_conf.db.one('insert into penalizaciones(nombre, monto, descripcion, dias_retraso, dias_ausencia) ' +
+    db_conf.db.one('insert into penalizaciones(nombre, monto, descripcion, dias_retraso, dias_antes) ' +
         ' values($1, $2, $3, $4, $5) returning id, nombre', [
         req.body.nombre,
         numericCol(req.body.monto),
         req.body.desc,
         numericCol(req.body.retraso),
-        numericCol(req.body.ausencia)
+        numericCol(req.body.antest)
     ]).then(function(data){
         res.json({
             status:'Ok',
@@ -1861,13 +1861,13 @@ router.post('/bonus/update', isAuthenticated, function(req, res){
  * Actualización de penalizaciones
  */
 router.post('/penalization/update', isAuthenticated, function(req, res){
-    db_conf.db.one('update penalizaciones set nombre=$2, monto=$3, descripcion=$4, dias_retraso=$5, dias_ausencia=$6 where id=$1 returning id, nombre ',[
+    db_conf.db.one('update penalizaciones set nombre=$2, monto=$3, descripcion=$4, dias_retraso=$5, dias_antes=$6 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.nombre,
         numericCol(req.body.monto),
         req.body.desc,
         numericCol(req.body.retraso),
-        numericCol(req.body.ausencia)
+        numericCol(req.body.antest)
     ]).then(function (data) {
         res.json({
             status :'Ok',

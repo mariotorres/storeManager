@@ -17,7 +17,7 @@ create table penalizaciones (
     monto numeric(1000,2),
     descripcion text,
     dias_retraso integer,  /* Debe reiniciar cada semana.*/
-    dias_ausencia integer /* Debe reiniciar cada semana.*/
+    dias_antes integer /* Debe reiniciar cada semana.*/
     );
 
 
