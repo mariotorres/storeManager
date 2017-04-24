@@ -7,7 +7,7 @@ if (itemProv.length > 0){%>
 
         <form>
             <h3>Artículo: <%= itemProv[i].articulo %></h3>
-            <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= itemProv[i].modelo %> | <strong>Marca: </strong><%= itemProv[i].nombre_prov %></p>
+            <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= itemProv[i].modelo %> | <strong>Marca: </strong><%= itemProv[i].nombre_prov %> | <strong>Tienda: </strong><%= itemProv[i].nombre_tienda %></p>
             <hr>
             <p hidden>
                 <input class="form-control" type="text" value="<%= itemProv[i].articulo %>" name="articulo" hidden>

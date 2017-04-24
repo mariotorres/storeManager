@@ -538,8 +538,8 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
             this.one('select count(*) from articulos as count '),
             this.manyOrNone('select * from articulos order by articulo limit $1 offset $2',[ pageSize, offset ]),
             this.manyOrNone('select * from terminales'),
-            this.manyOrNone('select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id ' +
-                ' from articulos, proveedores where id_proveedor = proveedores.id order by articulo limit $1 offset $2', [pageSize, offset])
+            this.manyOrNone('select articulo, proveedores.nombre as nombre_prov, n_existencias, tiendas.nombre as nombre_tienda, precio, modelo, nombre_imagen, descripcion, articulos.id as id ' +
+                ' from articulos, proveedores, tiendas where id_proveedor = proveedores.id and id_tienda = tiendas.id order by articulo limit $1 offset $2', [pageSize, offset])
         ]);
 
     }).then(function (data) {
