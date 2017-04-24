@@ -2279,12 +2279,12 @@ router.post('/item/find-items-view', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             this.manyOrNone('select id, nombre from proveedores'),
-            this.manyOrNone('select * from marcas')
+            this.manyOrNone('select * from tiendas')
         ]);
     }).then(function (data) {
         res.render('partials/items/find-items',{
             proveedores: data[0],
-            marcas: data[1]
+            tiendas: data[1]
         });
     }).catch(function (error) {
         console.log(error);
@@ -2347,12 +2347,14 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
     //var offset = req.body.page * pageSize;
     db_conf.db.task(function (t) {
         return this.batch([
-            t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id" +
-                " from articulos, proveedores where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and articulo ilike '%$3#%' and modelo ilike '%$4#%' ", [
+            t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as nombre_tienda, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id" +
+                " from articulos, proveedores, tiendas where articulos.id_proveedor = proveedores.id and id_tienda = tiendas.id and " +
+                "id_tienda = $5 and (id_proveedor = $1 or articulo ilike '%$3#%' or modelo ilike '%$4#%') ", [
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,
-                req.body.modelo
+                req.body.modelo,
+                req.body.id_tienda
             ]),
             t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
             t.manyOrNone('select * from terminales')
