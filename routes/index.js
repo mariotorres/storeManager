@@ -2419,12 +2419,14 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         return this.batch([
             this.one('select * from usuarios where id = $1', id),
             /* Asistencia */
-            this.manyOrNone("select * from asistencia where id_usuario = $1 " +
+            // Retrasos
+            this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
-                "and hora >= time '11:00' and tipo = 'entrada'", id),
-            this.manyOrNone("select * from asistencia where id_usuario = $1 " +
+                "and hora > hora_llegada and tipo = 'entrada'", id),
+            // Salidas prematuras
+            this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
-                "and hora < time '18:00' and tipo = 'salida'", id),
+                "and hora < hora_salida and tipo = 'salida'", id),
             this.manyOrNone("select * from asistencia where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
                 "and tipo = 'entrada'", id),
@@ -2450,8 +2452,9 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             return t.batch([
                 data,
                 /* Penalizaciones: la penalización más grave aplicable es la que se asigna */
-                t.manyOrNone("select * from penalizaciones where dias_retraso <= $1  order by monto desc", [
+                t.manyOrNone("select * from penalizaciones where (dias_retraso > 0 and dias_retraso <= $1) or (dias_antes > 0 and dias_antes <= $2) order by monto desc", [
                     data[1].length,
+                    data[2].length,
                     7 - data[3].length
                 ]),
                 /* Bonos: el bono más alto aplicable es la que se asigna */
