@@ -46,15 +46,27 @@ for ( var i =0; i < sales.length ; i ++ ){ %>
             </div>
             <br>
             <h3><strong>Items vendidos:</strong></h3>
+            <br>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="col-sm-1"><p ><strong>Artículo</strong></p></div>
+                    <div class="col-sm-2"><p ><strong>Proveedor</strong></p></div>
+                    <div class="col-sm-1"><p ><strong>Modelo</strong></p></div>
+                    <div class="col-sm-1"><p ><strong>Unidades</strong></p></div>
+                    <div class="col-sm-2"><p ><strong>Monto pagado</strong></p></div>
+                    <div class="col-sm-2"><p ><strong>Monto por pagar</strong></p></div>
+                    <div class="col-sm-1"><p ><strong>Estatus</strong></p></div>
+                </div>
+            </div>
             <%for(var j = 0; j < sales.length; j++){%>
             <%if(sales[j].id_venta == sales[i].ventaid){%>
             <div class="col-sm-12">
                 <hr>
                 <div class="row">
-                    <div class="col-sm-2"><p style="color: #616161"><strong><%= sales[j].nombreart%></strong></p></div>
+                    <div class="col-sm-1"><p style="color: #616161"><strong><%= sales[j].nombreart%></strong></p></div>
                     <div class="col-sm-2"><p style="color: #616161"><strong><%= sales[j].nombreprov%></strong></p></div>
                     <div class="col-sm-1"><p style="color: #616161"><strong><%= sales[j].modelo%></strong></p></div>
-                    <div class="col-sm-2"><p style="color: #616161"><strong><%= sales[j].unidades_vendidas%></strong></p></div>
+                    <div class="col-sm-1"><p style="color: #616161"><strong><%= sales[j].unidades_vendidas%></strong></p></div>
                     <div class="col-sm-2"><p style="color: #616161"><strong><%= sales[j].monto_pagado%></strong></p></div>
                     <%if(sales[j].monto_por_pagar > 0){%>
                     <div class="col-sm-2"><p style="color: #e91e63"><strong><%= sales[j].monto_por_pagar%></strong></p></div>
