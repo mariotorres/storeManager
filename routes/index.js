@@ -591,10 +591,16 @@ router.post('/print/notes/list/', isAuthenticated, function (req, res) {
     var offset = req.body.page * pageSize;
     db_conf.db.task(function (t) {
         return this.batch([
-            this.one('select count(*) from ventas as count where  ' +
-                'id_usuario = $1', [req.user.id]), // Sólo se imprimen las notas de las ventas completas o las que tienen pagos con tarjeta
-            this.manyOrNone('select * from ventas where id_usuario = $1 and estatus = $4 ' +
-                ' order by id desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
+            this.one('select count(*) from ventas as count'),
+            // Lista ventas y tiendas físicas
+            this.manyOrNone('select ventas.id as ventaId, monto_pagado_tarjeta, precio_venta, fecha_venta, ' +
+                ' hora_venta, tiendas.nombre as nombreTienda, saldo_pendiente, unidades_vendidas, discount, monto_pagado_tarjeta,' +
+                ' monto_pagado, monto_por_pagar, id_venta, venta_articulos.estatus as estatusPrenda, articulos.articulo as nombreArt, ' +
+                ' modelo, proveedores.nombre as nombreProv ' +
+                ' from ventas, tiendas, venta_articulos, articulos, proveedores where ventas.estatus = $4 and ventas.id = venta_articulos.id_venta ' +
+                ' and ventas.id_tienda = tiendas.id and articulos.id = venta_articulos.id_articulo and articulos.id_proveedor = ' +
+                ' proveedores.id' +
+                ' order by ventaId desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
         ]);
     }).then(function(data){
         res.render('partials/notes/print-notes-list',{

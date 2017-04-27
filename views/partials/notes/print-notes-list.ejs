@@ -2,31 +2,74 @@
 for ( var i =0; i < sales.length ; i ++ ){ %>
 <div class="panel panel-default">
     <div class="panel-body">
-        <p>Venta realizada el <%= sales[i].fecha_venta.toLocaleDateString() %> a las <%= sales[i].hora_venta %></p>
+        <p style="color:#616161">Venta realizada el <strong><%= sales[i].fecha_venta.toLocaleDateString() %></strong> a las <strong><%= sales[i].hora_venta %></strong></p>
 
         <form>
-            <input type="text" name="id_venta" value="<%= sales[i].id %>" hidden>
+            <input type="text" name="id_venta" value="<%= sales[i].ventaid %>" hidden>
+            <h3><strong>Tienda:</strong> <span style="color: #616161"><%=sales[i].nombretienda%></span></h3>
+            <br>
             <div class="row">
-                <div class="col-sm-4">
-                    <p class="list-group-item-text"> <h3><strong>ID de venta:</strong></h3></p>
+                <div class="col-sm-3">
+                    <p class="list-group-item-text"> <p><strong>ID de venta:</strong></p></p>
                 </div>
                 <div class="col-sm-1">
-                    <p class="list-group-item-text"> <h3><%= sales[i].id %></h3></p>
+                    <p class="list-group-item-text"> <p style="color: #616161"><%= sales[i].ventaid %></p></p>
+                </div>
+                <div class="col-sm-3 col-sm-offset-2">
+                    <p class="list-group-item-text"> <p><strong>Pago con tarjeta:</strong></p></p>
+                </div>
+                <div class="col-sm-1">
+                    <%if(sales[i].monto_pagado_tarjeta > 0){%>
+                    <p class="list-group-item-text"><p style="color: #E91E63"><strong>Si</strong></p></p>
+                    <%}else{%>
+                    <p class="list-group-item-text"><p style="color: #616161">No</p></p>
+                    <%}%>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-4">
-                    <p class="list-group-item-text"> <h3><strong>Saldo Pendiente:</strong></h3></p>
+                <div class="col-sm-3">
+                    <p class="list-group-item-text"> <p><strong>Precio de venta:</strong></p></p>
                 </div>
                 <div class="col-sm-1">
-                    <p class="list-group-item-text"><h3><%= sales[i].saldo_pendiente %></h3></p>
+                    <p class="list-group-item-text"> <p style="color: #616161"><%= sales[i].precio_venta%></p></p>
+                </div>
+                <div class="col-sm-3 col-sm-offset-2">
+                    <p class="list-group-item-text"> <p><strong>Saldo Pendiente:</strong></p></p>
+                </div>
+                <div class="col-sm-1">
+                    <%if(sales[i].saldo_pendiente > 0){%>
+                    <p class="list-group-item-text"><p style="color: #E91E63"><strong><%= sales[i].saldo_pendiente %></strong></p></p>
+                    <%}else{%>
+                    <p class="list-group-item-text"><p style="color: #616161"><%= sales[i].saldo_pendiente %></p></p>
+                    <%}%>
                 </div>
             </div>
-            <!--
-                Si hay saldo con tarjeta, se debe imprimir por default.
-                -->
+            <br>
+            <h3><strong>Items vendidos:</strong></h3>
+            <%for(var j = 0; j < sales.length; j++){%>
+            <%if(sales[j].id_venta == sales[i].ventaid){%>
+            <div class="col-sm-12">
+                <hr>
+                <div class="row">
+                    <div class="col-sm-2"><p style="color: #616161"><strong><%= sales[j].nombreart%></strong></p></div>
+                    <div class="col-sm-2"><p style="color: #616161"><strong><%= sales[j].nombreprov%></strong></p></div>
+                    <div class="col-sm-1"><p style="color: #616161"><strong><%= sales[j].modelo%></strong></p></div>
+                    <div class="col-sm-2"><p style="color: #616161"><strong><%= sales[j].unidades_vendidas%></strong></p></div>
+                    <div class="col-sm-2"><p style="color: #616161"><strong><%= sales[j].monto_pagado%></strong></p></div>
+                    <%if(sales[j].monto_por_pagar > 0){%>
+                    <div class="col-sm-2"><p style="color: #e91e63"><strong><%= sales[j].monto_por_pagar%></strong></p></div>
+                    <%}else{%>
+                    <div class="col-sm-2"><p style="color: #616161"><strong><%= sales[j].monto_por_pagar%></strong></p></div>
+                    <%}%>
+                    <div class="col-sm-1"><p style="color: #616161"><strong><%= sales[j].estatusprenda%></strong></p></div>
+                </div>
+                <hr>
+            </div>
+            <%}}%>
+            <div class="row">
 
 
+            </div>
             <div class="row">
 
                 <div class="col-sm-4">
