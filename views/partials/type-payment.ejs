@@ -32,9 +32,9 @@
 
     <p id="pay_tarj" style="visibility: hidden">
         <label>Terminal: </label>
+        <%if (terminales.length > 0 ){%>
         <select name="terminal" class="form-control" required>
             <%
-            if (terminales.length > 0 ){
             for (var i =0; i < terminales.length; i++){
             %>
             <option value="<%= terminales[i].id %>"> <%= terminales[i].nombre_facturador %> </option>
