@@ -6,7 +6,7 @@ $(document).ready(function() {
     $('#calendar').fullCalendar({
         // put your options and callbacks here
         events: {
-            url: '/calendar/sales/',
+            url: '/calendar/sales/data.json',
             type: 'POST'
         }
     });

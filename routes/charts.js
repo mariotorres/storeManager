@@ -4,9 +4,6 @@
 
 var express = require('express');
 var router = express.Router();
-var path = require('path');
-
-var fs = require('fs'); //read/write files
 var db_conf = require('../db_conf');
 
 var isAuthenticated = function (req, res, next) {

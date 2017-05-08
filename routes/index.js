@@ -2797,15 +2797,6 @@ router.get('/item/:filename/image.jpg', isAuthenticated, function (req, res) {
     res.sendFile( img_path );
 });
 
-//eventos del calendario
-router.post('/calendar/sales/', isAuthenticated, function (req, res ){
-    db_conf.db.manyOrNone("select concat ( 'Ventas: ', count(*) ) as title, to_char(fecha_venta, 'YYYY-MM-DD') as start from ventas group by fecha_venta").then(function (data) {
-        res.json( data );
-    }).catch(function (error) {
-        console.log(error);
-    });
-});
-
 
 /* Borrado */
 router.post('/user/delete', isAuthenticated, function (req, res ) {
