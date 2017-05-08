@@ -9,9 +9,16 @@ var path = require('path');
 var fs = require('fs'); //read/write files
 var db_conf = require('../db_conf');
 
+var isAuthenticated = function (req, res, next) {
+    if (req.isAuthenticated()){
+        return next();
+    }
+
+    res.redirect('/');
+};
 
 /* Dashboard data */
-router.get('/sales/data.json', function (req, res) {
+router.get('/sales/data.json', isAuthenticated, function (req, res) {
 
     const period = {
         start_date : '',//req.query.start_date,
