@@ -173,3 +173,9 @@ function barChart() {
 
 }
 
+// Refresh every 15 min
+/*
+setInterval(function () {
+    location.reload();
+}, (1000 * 60) * 15 );
+*/
