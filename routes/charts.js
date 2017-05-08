@@ -25,7 +25,7 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
         end_date : '' //req.query.end_date
     };
 
-    db_conf.db.manyOrNone('select forma_pago, count(*) as conteo, sum(precio_venta) as total from ventas group by id_tienda, forma_pago',[
+    db_conf.db.manyOrNone('select fecha_venta, forma_pago, count(*) as conteo, sum(precio_venta) as total from ventas group by id_tienda, forma_pago, fecha_venta',[
         period.start_date, period.end_date
     ]).then(function (data) {
 
