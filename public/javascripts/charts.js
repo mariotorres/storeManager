@@ -137,10 +137,10 @@ function barChart() {
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.tsv("data_barchart.tsv", function(d) {
+    d3.json("/charts/barchart/data.json", /*function(d) {
         d.frequency = +d.frequency;
         return d;
-    }, function(error, data) {
+    },*/ function(error, data) {
         if (error) throw error;
 
         x.domain(data.map(function(d) { return d.letter; }));
