@@ -2427,7 +2427,11 @@ router.post('/employees/find-employees-view', isAuthenticated, function (req, re
 });
 
 router.post('/notes/find-notes-view', function (req, res) {
-    db_conf.db.manyOrNone('select * from tiendas').then(function (data) {
+    var query = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda
+    if(req.user.permiso_administrador){
+        query = 'select * from tiendas'
+    }
+    db_conf.db.manyOrNone(query).then(function (data) {
         console.log(data.length);
         res.render('partials/notes/find-notes',{ tiendas: data });
     }).catch(function (error) {
