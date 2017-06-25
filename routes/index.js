@@ -1320,7 +1320,6 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                         numericCol(req.body.costo)*numericCol(req.body.n_arts)
                     ]);
                 }
-
                 // retorna los queries
                 return t.batch([
                     {count : data.count},
