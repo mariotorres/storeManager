@@ -1,6 +1,6 @@
 <%
 if (itemProv.length > 0){%>
-<% for ( var i =0; i < itemProv.length ; i ++ ){ %>
+<% for ( var i =0; i < itemProv.length ; i ++ ){ if(itemProv[i].id_tienda == user.id_tienda || user.permiso_administrador){%>
 <div class="panel panel-default">
 
     <div class="panel-body">
@@ -89,7 +89,7 @@ if (itemProv.length > 0){%>
 
     </div>
 </div>
-<%}%>
+<%}}%>
 
 <% include ../pagination.ejs %>
 
