@@ -632,6 +632,7 @@ router.post('/item/list/', isAuthenticated, function (req, res) {
             status : 'Ok',
             items: data[1],
             pageNumber : req.body.page,
+            user: req.user,
             numberOfPages: parseInt( (+data[0].count + pageSize - 1 )/ pageSize )
         });
     }).catch(function (error) {
