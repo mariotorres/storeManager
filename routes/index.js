@@ -2282,10 +2282,15 @@ router.get('/reporte/', isAuthenticated, function (req, res) {
 
 router.post('/item/find-items-view', isAuthenticated, function (req, res) {
 
+    var query = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda;
+    if(req.user.permiso_administrador){
+        query = 'select * from tiendas'
+    }
+
     db_conf.db.task(function (t) {
         return this.batch([
             this.manyOrNone('select id, nombre from proveedores'),
-            this.manyOrNone('select * from tiendas')
+            this.manyOrNone(query)
         ]);
     }).then(function (data) {
         res.render('partials/items/find-items',{
