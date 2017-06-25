@@ -2430,15 +2430,15 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             // Retrasos
             this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
-                "and hora > hora_llegada and tipo = 'entrada'", id),
+                "and hora > hora_llegada and tipo = 'entrada' and usuarios.id = asistencia.id_usuario ", id),
             // Salidas prematuras
             this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
-                "and hora < hora_salida and tipo = 'salida'", id),
+                "and hora < hora_salida and tipo = 'salida' and usuarios.id = asistencia.id_usuario ", id),
             // Domingos
             this.oneOrNone("select count(*) as domingos from asistencia where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
-                "and EXTRACT(DOW from asistencia.fecha::DATE) = 7 ", id),
+                "and EXTRACT(DOW from asistencia.fecha::DATE) = 7 and usuarios.id = asistencia.id_usuario ", id),
             /* Préstamos */
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
