@@ -1,5 +1,5 @@
-<% if (sales.length > 0){
-for ( var i =0; i < sales.length ; i ++ ){ %>
+<% if (count.count > 0){
+for ( var i =0; i < count.count ; i ++ ){ %>
 <div class="panel panel-default">
     <div class="panel-body">
         <p style="color:#616161">Venta realizada el <strong><%= sales[i].fecha_venta.toLocaleDateString() %></strong> a las <strong><%= sales[i].hora_venta %></strong></p>
