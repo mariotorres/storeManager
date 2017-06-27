@@ -2,36 +2,31 @@
     <!--id_proveedor
     id_tienda-->
     <input type="text" value="<%=item.id%>" name="id" hidden>
-    <div class="row">
-        <div class="col-sm-8">
-            <p>
-                <label>articulo</label>
-                  <p style="color:#E91E63"><strong><%=item.articulo%></strong></p>
-            </p>
 
-
-            <p>
-                <label>Descripcion</label>
-                <p style="color:#E91E63"><strong><%=item.descripcion%></strong></p>
-            </p>
-
-        </div>
-        <div class="col-sm-4">
-            <a href="#" class="thumbnail" style="height: 80px; text-align:center; width: 100px;">
-                <!--Aquí va la foto
-            <img src="">-->
-                <i class="fa fa-picture-o fa-5x" aria-hidden="true"></i>
-            </a>
-
-        </div>
-    </div>
-        <label>Modelo</label>
-        <p style="color:#E91E63"><strong><%=item.modelo%></strong></p>
+    <p>
+        <label>articulo</label>
+    <p style="color:#E91E63"><strong><%=item.articulo%></strong></p>
     </p>
-        <p>
-            <label><h3 style="color:#BDBDBD"><strong>Número de unidades a devolver</strong></h3></label>
-            <input type="number" min="0" class="form-control" max="<%= item.n_existencias%>" value="<%= item.n_existencias%>" name="n_devoluciones">
-        </p>
+
+
+    <a href="#" class="thumbnail" style="min-height: 200px; text-align:center; min-width: 200px;">
+        <!--Aquí va la foto-->
+        <img src="<%= '/item/' + item.nombre_imagen +'/image.jpg'%>">
+        <!--<i class="fa fa-picture-o fa-5x" aria-hidden="true"></i>-->
+    </a>
+
+    <p>
+        <label>Descripcion</label>
+    <p style="color:#E91E63"><strong><%=item.descripcion%></strong></p>
+    </p>
+
+    <label>Modelo</label>
+    <p style="color:#E91E63"><strong><%=item.modelo%></strong></p>
+    </p>
+    <p>
+        <label><h3 style="color:#BDBDBD"><strong>Número de unidades a devolver</strong></h3></label>
+        <input type="number" min="1" class="form-control" max="<%= item.n_existencias%>" value="<%= item.n_existencias%>" name="n_devoluciones">
+    </p>
     <p hidden>
         <label>Proveedor</label>
         <select name="id_proveedor" class="form-control">
