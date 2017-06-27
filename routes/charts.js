@@ -17,17 +17,19 @@ var isAuthenticated = function (req, res, next) {
 // Ventas por periodo
 router.get('/sales/data.json', isAuthenticated, function (req, res) {
 
-    const period = {
+    //por tienda ...
+    const options = {
         start_date : '',//req.query.start_date,
-        end_date : '' //req.query.end_date
+        end_date : '' , //req.query.end_date
+        aggregation : 'store'
     };
 
     db_conf.db.manyOrNone('select fecha_venta, forma_pago, count(*) as conteo, sum(precio_venta) as total from ventas group by id_tienda, forma_pago, fecha_venta',[
-        period.start_date, period.end_date
+        options.start_date, options.end_date
     ]).then(function (data) {
 
         res.jsonp({
-            metadata : { period : period },
+            metadata : { period : options },
             data : data
         });
 
@@ -41,10 +43,10 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
 // Más vendidos
 router.get('/best-selling/data.json').then(function(req, res){
     /* *
-     * Query striing:
+     * Query string:
      * start_date
      * end_date
-     * group_by: global, store
+     * aggregation: global || store
      */
 
 });
@@ -65,7 +67,9 @@ router.get('/suppliers/data.json', function(req, res){
 router.get('/employees/data.json').then(function (req, res) {
     /* *
     * Query string:
-    * group_by: global, store
+    * start_date
+    * end_date
+    * aggregation: global || store
     * */
 
 });
