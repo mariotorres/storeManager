@@ -3000,15 +3000,16 @@ router.get('/exportar/proveedores.csv', isAuthenticated,function(req, res){
 router.get('/exportar/ventas.csv', isAuthenticated,function(req, res){
     db_conf.db.manyOrNone('select ventas.id as id_venta, usuarios.usuario as vendedor, ventas.precio_venta as total_venta, ventas.fecha_venta as fecha, tiendas.nombre as tienda, ' +
         ' ventas.hora_venta as hora, ventas.monto_pagado_efectivo as monto_pagado_efectivo_venta, ventas.monto_pagado_tarjeta as monto_pagado_tarjeta_venta, ventas.tarjeta_credito, ventas.saldo_pendiente ' +
-        ' as saldo_pendiente_venta, ventas.estatus as estatus_venta, proveedores.nombre as proveedor, ' +
+        ' as saldo_pendiente_venta, ventas.estatus as estatus_venta, proveedores.nombre as proveedor,' +
+        ' (select nombre as tienda_facturacion from tiendas where id = terminales.id_tienda), ' +
         ' (select nombre_facturador as terminal from terminales where id = ventas.id_terminal), articulos.articulo as nombre_articulo, venta_articulos.unidades_vendidas, ' +
         ' venta_articulos.monto_pagado as monto_pagado_articulo, venta_articulos.monto_por_pagar as monto_por_pagar_articulo, venta_articulos.estatus as estatus_articulo ' +
-        ' from ventas, usuarios,  venta_articulos, articulos, tiendas, proveedores where ventas.id_usuario = usuarios.id and ' +
+        ' from ventas, usuarios,  terminales, venta_articulos, articulos, tiendas, proveedores where ventas.id_usuario = usuarios.id and ' +
         ' ventas.id_tienda = tiendas.id and ventas.id = venta_articulos.id_venta and ' +
         ' articulos.id = venta_articulos.id_articulo and articulos.id_proveedor = proveedores.id').then(function (data) {
 
         try {
-            var fields = ['id_venta','vendedor', 'tienda', 'total_venta', 'fecha','hora','monto_pagado_efectivo_venta',
+            var fields = ['id_venta','vendedor', 'tienda', 'tienda_facturacion', 'total_venta', 'fecha','hora','monto_pagado_efectivo_venta',
                 'monto_pagado_tarjeta_venta', 'tarjeta_credito', 'saldo_pendiente_venta', 'estatus_venta', 'terminal',
             'nombre_articulo', 'proveedor', 'unidades_vendidas', 'monto_pagado_articulo', 'monto_por_pagar_articulo', 'estatus_articulo'];
             var result = json2csv({ data: data, fields: fields });
