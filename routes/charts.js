@@ -14,7 +14,7 @@ var isAuthenticated = function (req, res, next) {
     res.redirect('/');
 };
 
-/* Dashboard data */
+// Ventas por periodo
 router.get('/sales/data.json', isAuthenticated, function (req, res) {
 
     const period = {
@@ -35,6 +35,38 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
         console.log(error);
         res.jsonp(error);
     });
+
+});
+
+// Más vendidos
+router.get('/best-selling/data.json').then(function(req, res){
+    /* *
+     * Query striing:
+     * start_date
+     * end_date
+     * group_by: global, store
+     */
+
+});
+
+// Saldos con proveedores
+router.get('/suppliers/data.json', function(req, res){
+
+    db_conf.db.manyOrNone('select * from suppliers').then(function (suppliers) {
+        res.jsonp(suppliers );
+    }).catch(function (error) {
+        console.log(error);
+        res.jsonp(error);
+    })
+
+});
+
+// Top empleados
+router.get('/employees/data.json').then(function (req, res) {
+    /* *
+    * Query string:
+    * group_by: global, store
+    * */
 
 });
 
