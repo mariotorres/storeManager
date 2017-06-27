@@ -1139,7 +1139,8 @@ router.post('/type/payment',function(req, res ){
             this.manyOrNone('select sum(monto_pagado) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
             this.manyOrNone('select sum(precio*unidades_carrito*(1- discount/100)) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
-                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ])
+                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
+            this.manyOrNone('select * from usuarios')
         ]);
     }).then(function(data){
         console.log("PRECIO TOT: " + data[2][0].sum);
@@ -1148,7 +1149,9 @@ router.post('/type/payment',function(req, res ){
             user:req.user,
             terminales : data[0],
             total: data[1],
-            precio: data[2]
+            precio: data[2],
+            permiso: req.user.permiso_administrador,
+            users: data[3]
         });
     }).catch(function (error) {
         console.log(error);
@@ -2459,7 +2462,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
                 "and hora < hora_salida and tipo = 'salida' and usuarios.id = asistencia.id_usuario ", id),
             // Domingos
-            this.oneOrNone("select count(*) as domingos from asistencia where id_usuario = $1 " +
+            this.oneOrNone("select count(*) as domingos from usuarios, asistencia where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
                 "and EXTRACT(DOW from asistencia.fecha::DATE) = 7 and usuarios.id = asistencia.id_usuario ", id),
             /* Préstamos */
@@ -2785,12 +2788,12 @@ router.post('/search/notes/results', isAuthenticated, function (req, res) {
         case true:
             query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre " +
                 "from ventas, tiendas  " +
-                "where ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) or ventas.id = $3) and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";
+                "where ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) or ventas.id_nota = $3) and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";
             break;
         default:
             query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre " +
                 "from ventas, tiendas " +
-                "where ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) or ventas.id = $3) and ventas.id_usuario = $4 and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";
+                "where ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) or ventas.id_nota = $3) and ventas.id_usuario = $4 and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";
     }
 
     console.log("Administrador: " + req.user.permiso_administrador);

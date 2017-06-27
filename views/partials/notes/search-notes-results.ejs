@@ -3,7 +3,7 @@
 <div class="list-group">
     <% for ( var i =0; i < sales.length ; i++ ){ %>
     <a href="#" class="list-group-item" data-user_id="<%= sales[i].id_usuario%>" data-sales_id="<%= sales[i].id %>">
-        <h4 class="list-group-item-heading"><strong>ID de venta: <span style="color:#E91E63"><%=sales[i].id%></span></strong></h4>
+        <h4 class="list-group-item-heading"><strong>ID de nota: <span style="color:#E91E63"><%=sales[i].id_nota%></span></strong></h4>
         <h4>Nota <strong><span style="color:#E91E63"><%=sales[i].id_nota%></span></strong> de tienda <strong><%= sales[i].nombre %></strong>
             el <%= sales[i].fecha_venta.toLocaleDateString('es-MX', {timeZone: 'America/Mexico_City'}) %> a las <%= sales[i].hora_venta %></h4>
 

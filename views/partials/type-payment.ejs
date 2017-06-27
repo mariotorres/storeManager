@@ -5,6 +5,24 @@
     <input type="text" name="precio_tot" id="precio_tot" value="<%=precio[0].sum%>" hidden>
 
     <p>
+        <%if(permiso){%>
+        <label>Usuario que hace la venta: </label>
+        <%if (users.length > 0){%>
+        <select name="user_sale" class="form-control" required>
+            <%
+            for (var i =0; i < users.length; i++){
+            %>
+            <option value="<%= users[i].id %>"> <%= users[i].usuario %> </option>
+            <%
+            }
+            }else {
+            %>
+            <option value="">Ninguno</option>
+            <% }}%>
+        </select>
+    </p>
+
+    <p>
         <label>Monto que se deja a cuenta en efectivo: </label>
         <input id="monto_efec" name="monto_efec" class="form-control" required value="<%=total[0].sum%>">
     </p>
