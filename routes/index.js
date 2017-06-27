@@ -387,7 +387,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     'values( ' +
                     '(select coalesce(max(id_nota),0) from ventas where id_tienda = $1 ) +1 ,' +
                     '$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning id', [
-                    numericCol(req.user.id_tienda), //falta recibir este dato, ahora está limitado a la tienda del usuario
+                    numericCol(req.body.user_sale), // si el usuario es administrador, el id que el adjudique, si no el de la tienda del usuario
                     numericCol(req.user.id), //numericCol(req.body.user_id),
                     numericCol(req.body.precio_tot),
                     new Date(),
