@@ -52,6 +52,25 @@ router.get('/best-selling/data.json', function(req, res){
     let start_date = req.query.start_date;
     let end_date = req.query.end_date;
     let aggregation = (req.query.aggregation || 'store');
+
+    switch(aggregation){
+        case 'store':
+            db_conf.db.manyOrNone('select * from articulos', [ start_date, end_date]).then(function (items) {
+                res.jsonp(items);
+            }).catch(function (error) {
+                res.status(400).jsonp(error);
+            });
+            break;
+        case 'global':
+            db_conf.db.manyOrNone('select * from articulos', [ start_date, end_date]).then(function (items) {
+                res.jsonp(items);
+            }).catch(function (error) {
+                res.status(error).jsonp(error);
+            });
+            break;
+        default:
+            res.status().jsonp({status:'Error', message: 'Unsupported aggregation level'})
+    }
 });
 
 // Saldos con proveedores
@@ -78,8 +97,6 @@ router.get('/employees/data.json', function (req, res) {
     let start_date = ( req.query.start_date ||  new Date());
     let end_date = ( req.query.end_date ||  new Date());
     let aggregation = (req.query.aggregation || 'store');
-
-    console.log(aggregation);
 
     switch ( aggregation ) {
         case 'global':
