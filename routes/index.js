@@ -2749,6 +2749,20 @@ router.post('/notes/finitPayment', isAuthenticated, function(req, res){
     });
 });
 
+router.post('/employe/check-in/form', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.oneOrNone('select * from usuarios where id = $1 ',[
+        req.body.id
+    ]).then(function(data){
+        res.render('partials/checkin-form', {'user':data})
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            'status': 'Error',
+            'message': 'Ocucció un error al cargar los datos del usuario'
+        })
+    })
+})
 
 router.post('/search/employees/checkin', isAuthenticated, function (req, res) {
     console.log(req.body);
@@ -2757,7 +2771,7 @@ router.post('/search/employees/checkin', isAuthenticated, function (req, res) {
         req.body.nombres,
         req.body.apellido
     ]).then(function (data) {
-        res.render('partials/search-employees-results',{
+        res.render('partials/search-employees-results-checkin',{
             employees: data
         });
     }).catch(function (error) {
