@@ -1,21 +1,16 @@
 <form>
-
+    <input type="text"  name="id" value="<%=user.id%>" hidden>
+    <label>Nombre</label>
     <p>
-        <label>Seleccione una tienda</label>
-        <select class="form-control" name="id_tienda">
-            <%for ( var i=0; i < tiendas.length; i++){%>
-            <option value="<%= tiendas[i].id %>"><%= tiendas[i].nombre %></option>
-            <%}%>
-        </select>
-    </p>
-
-    <label>Nombre Empleado</label>
-    <p>
-        <input type="text" class="form-control" name="nombres" placeholder="Nombre...">
+        <input type="text" class="form-control" name="nombres" value="<%=user.nombres%>">
     </p>
     <p>
-        <label>Apellido Empleado</label>
-        <input type="text"  class="form-control" name="apellido" placeholder="Apellido...">
+        <label>Apellido Paterno</label>
+        <input type="text"  class="form-control" name="apellidop" value="<%=user.apellido_paterno%>">
+    </p>
+    <p>
+        <label>Apellido Materno</label>
+        <input type="text"  class="form-control" name="apellidop" value="<%=user.apellido_materno%>">
     </p>
 
     <p>

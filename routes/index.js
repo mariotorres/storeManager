@@ -2749,7 +2749,7 @@ router.post('/notes/finitPayment', isAuthenticated, function(req, res){
     });
 });
 
-router.post('/employe/check-in/form', isAuthenticated, function(req, res){
+router.post('/employee/check-in/form', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.oneOrNone('select * from usuarios where id = $1 ',[
         req.body.id
