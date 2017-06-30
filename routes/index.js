@@ -2750,6 +2750,25 @@ router.post('/notes/finitPayment', isAuthenticated, function(req, res){
 });
 
 
+router.post('/search/employees/checkin', isAuthenticated, function (req, res) {
+    console.log(req.body);
+    db_conf.db.manyOrNone("select * from usuarios where id_tienda = $1 and nombres ilike '%$2#%' and apellido_paterno ilike '%$3#%'", [
+        req.body.id_tienda,
+        req.body.nombres,
+        req.body.apellido
+    ]).then(function (data) {
+        res.render('partials/search-employees-results',{
+            employees: data
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status :'Error',
+            message: 'Ocurrió un error al buscar al empleado'
+        })
+    });
+});
+
 router.post('/search/employees/results', isAuthenticated, function (req, res) {
     console.log(req.body);
     db_conf.db.manyOrNone("select * from usuarios where nombres ilike '%$1#%' and (apellido_paterno ilike '%$2#%' or apellido_materno ilike '%$3#%')", [

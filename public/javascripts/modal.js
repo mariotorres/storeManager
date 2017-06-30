@@ -861,7 +861,12 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Registrar ingreso');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/employee/list/check-in',{page:page},function(){
+                modal.find('form').submit(function (e) {
+                    modal.find('#search_results').load('/search/employees/checkin', $(this).serializeArray(), function () {
 
+                    })
+                    event.preventDefault();
+                })
             })
             break;
         case "edit_brand":
