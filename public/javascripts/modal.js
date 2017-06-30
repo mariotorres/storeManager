@@ -919,14 +919,14 @@ $('#genericModal').on('show.bs.modal', function (event) {
     modalEvents(button, modal, page);
 });
 
-/*
+
 $('#check-in').click(function(){
     $.post('/employee/check-in', {}).done(function (data) {
         alert(data.message);
         if (data.status == 'Ok') {}
     });
 });
-*/
+
 
 $('#check-out').click(function(){
     $.post('/employee/check-out', {}).done(function (data) {
