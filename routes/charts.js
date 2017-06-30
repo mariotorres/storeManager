@@ -14,20 +14,22 @@ var isAuthenticated = function (req, res, next) {
     res.redirect('/');
 };
 
-/* Dashboard data */
+// Ventas por periodo
 router.get('/sales/data.json', isAuthenticated, function (req, res) {
 
-    const period = {
+    //por tienda ...
+    const options = {
         start_date : '',//req.query.start_date,
-        end_date : '' //req.query.end_date
+        end_date : '' , //req.query.end_date
+        aggregation : 'store'
     };
 
     db_conf.db.manyOrNone('select fecha_venta, forma_pago, count(*) as conteo, sum(precio_venta) as total from ventas group by id_tienda, forma_pago, fecha_venta',[
-        period.start_date, period.end_date
+        options.start_date, options.end_date
     ]).then(function (data) {
 
         res.jsonp({
-            metadata : { period : period },
+            metadata : { period : options },
             data : data
         });
 
@@ -35,6 +37,87 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
         console.log(error);
         res.jsonp(error);
     });
+
+});
+
+// Más vendidos
+router.get('/best-selling/data.json', function(req, res){
+    /* *
+     * Query string:
+     * start_date
+     * end_date
+     * aggregation: global || store
+     */
+
+    let start_date = req.query.start_date;
+    let end_date = req.query.end_date;
+    let aggregation = (req.query.aggregation || 'store');
+
+    switch(aggregation){
+        case 'store':
+            db_conf.db.manyOrNone('select * from articulos', [ start_date, end_date]).then(function (items) {
+                res.jsonp(items);
+            }).catch(function (error) {
+                res.status(400).jsonp(error);
+            });
+            break;
+        case 'global':
+            db_conf.db.manyOrNone('select * from articulos', [ start_date, end_date]).then(function (items) {
+                res.jsonp(items);
+            }).catch(function (error) {
+                res.status(error).jsonp(error);
+            });
+            break;
+        default:
+            res.status().jsonp({status:'Error', message: 'Unsupported aggregation level'})
+    }
+});
+
+// Saldos con proveedores
+router.get('/suppliers/data.json', function(req, res){
+
+    db_conf.db.manyOrNone('select * from suppliers').then(function (suppliers) {
+        res.jsonp(suppliers );
+    }).catch(function (error) {
+        console.log(error);
+        res.jsonp(error);
+    })
+
+});
+
+// Top empleados
+router.get('/employees/data.json', function (req, res) {
+    /* *
+    * Query string:
+    * start_date
+    * end_date
+    * aggregation: global || store
+    * */
+
+    let start_date = ( req.query.start_date ||  new Date());
+    let end_date = ( req.query.end_date ||  new Date());
+    let aggregation = (req.query.aggregation || 'store');
+
+    switch ( aggregation ) {
+        case 'global':
+            db_conf.db.manyOrNone('select * from usuarios', [ start_date, end_date ]).then(function (data) {
+                res.jsonp(data);
+            }).catch(function (error) {
+                console.log(error);
+                res.status(400).jsonp(error);
+            });
+            break;
+        case 'store':
+            db_conf.db.manyOrNone('select * from usuarios', [ start_date, end_date ]).then(function (data) {
+                res.jsonp(data);
+            }).catch(function (error) {
+                console.log(error);
+                res.status(400).jsonp(error);
+            });
+            break;
+        default:
+            res.status(400).jsonp({ status : 'Error', message: 'Unsupported aggregation level' });
+    }
 
 });
 
