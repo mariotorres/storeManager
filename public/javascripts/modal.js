@@ -857,6 +857,13 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "check-in":
+            modal.find('.modal-title').text('Registrar ingreso');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employee/list/check-in',{page:page},function(){
+
+            })
+            break;
         case "edit_brand":
             modal.find('.modal-title').text('Editar marca');
             modal.find('#modal_content').html("");
@@ -903,12 +910,14 @@ $('#genericModal').on('show.bs.modal', function (event) {
     modalEvents(button, modal, page);
 });
 
+/*
 $('#check-in').click(function(){
     $.post('/employee/check-in', {}).done(function (data) {
         alert(data.message);
         if (data.status == 'Ok') {}
     });
 });
+*/
 
 $('#check-out').click(function(){
     $.post('/employee/check-out', {}).done(function (data) {

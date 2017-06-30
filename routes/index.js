@@ -1984,6 +1984,23 @@ router.post('/item/return', isAuthenticated, function(req, res){
 });
 
 /*
+* Listado ingreso de empelados
+*/
+router.post('/employee/list/check-in', function(req, res){
+    db_conf.db.manyOrNone(
+        'select * from tiendas'
+    ).then(function(data){
+        res.render('partials/list_check_in', {'tiendas' : data});
+    }).catch(function(error){
+        console.log(error)
+        res.json({
+            message:'Ocurrió un error al listar las tiendas',
+            status: 'Error'
+        });
+    });
+});
+
+/*
 * Ingreso empleados
 */
 router.post('/employee/check-in', function(req,res ){
