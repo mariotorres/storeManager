@@ -2766,10 +2766,23 @@ router.post('/employee/check-in/form', isAuthenticated, function(req, res){
 
 router.post('/employee/register/check-in', isAuthenticated, function(req, res){
    console.log(req.body);
-   /*db_conf.db.oneOrNone('insert into asistencia (id_usuario, fecha, hora, tipo) values($1, $2, $3, $4) returning id',[
+   db_conf.db.oneOrNone('insert into asistencia (id_usuario, fecha, hora, tipo) values($1, $2, $3, $4) returning id',[
        req.body.id,
-       req.body.
-   ])*/
+       req.body.fecha,
+       req.body.llegada,
+       'entrada'
+   ]).then(function(data){
+       res.json({
+           status:'Ok',
+           message: 'Se ha registrado el ingreso de "' + req.body.nombres + '" el día ' + req.body.fecha + ' a las ' + req.body.llegada
+       })
+   }).catch(function(error){
+       console.log(error);
+       res.json({
+           status: 'Error',
+           message: 'Ocurrió un error al ingresar el usuario'
+       })
+   })
 });
 
 router.post('/search/employees/checkin', isAuthenticated, function (req, res) {
