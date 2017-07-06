@@ -1240,6 +1240,15 @@ router.post('/employees/bonus/new', function (req, res) {
     });
 });
 
+router.post('/employees/prize/new', function (req, res) {
+    db_conf.db.manyOrNone('select * from tiendas').then(function (data) {
+        res.render('partials/new-prize', {tiendas: data});
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+});
+
 router.post('/employees/lending/new', function (req, res) {
     db_conf.db.manyOrNone('select * from usuarios').then(function (data) {
         res.render('partials/new-lending', {usuarios: data});

@@ -737,6 +737,17 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        // Prizes
+        case "new_prize":
+            modal.find('.modal-title').text('Registrar premio');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employees/prize/new',{},function(){
+                modal.find('form').submit(function(event){
+
+                    event.preventDefault();
+                })
+            })
+            break;
         // Penalizations
         case "new_penalization":
             modal.find('.modal-title').text('Registrar penalización');
