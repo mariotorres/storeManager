@@ -2548,7 +2548,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select * from usuarios where id = $1', id),
-            /* Asistencia */
+            /* Asistencia: for now we are going to obviate premature exit */
             // Retrasos
             this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
@@ -2583,13 +2583,21 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             return t.batch([
                 data,
                 /* Penalizaciones: la penalización más grave aplicable es la que se asigna */
-                t.manyOrNone("select * from penalizaciones where (dias_retraso > 0 and dias_retraso <= $1) or (dias_antes > 0 and dias_antes <= $2) order by monto desc", [
+                t.manyOrNone("select * from penalizaciones where (dias_retraso > 0 and dias_retraso <= $1) order by monto desc limit 1", [
                     data[1].length,
                     data[2].length,
                     7 - data[3].length
                 ]),
-                /* Bonos: el bono más alto aplicable es la que se asigna */
-                t.manyOrNone("select * from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or (monto_alcanzar <=  $2 and criterio ='Individual') order by monto desc", [
+                /* Se listan todos los bonos */
+                t.manyOrNone("select * from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
+                    "(monto_alcanzar <=  $2 and criterio ='Individual') order by monto desc", [
+                    data[11].montotienda,
+                    data[7].montoventas,
+                    req.body.id
+                ]),
+                /* Monto bonos total */
+                t.oneOrNone("select sum(monto) as monto from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
+                    "(monto_alcanzar <=  $2 and criterio ='Individual')", [
                     data[11].montotienda,
                     data[7].montoventas,
                     req.body.id
@@ -2628,7 +2636,8 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             montoVentasTiendas: data[0][11],//montoVentasTiendas,
             penalizacion: penalizacion,
             bono: bono,
-            pagos_extra: pagoExtra
+            pagos_extra: pagoExtra,
+            montoBono: data[3]
         });
     }).catch(function (error) {
         console.log(error);
