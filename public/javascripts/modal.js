@@ -743,10 +743,15 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/employees/prize/new',{},function(){
                 modal.find('form').submit(function(event){
-
+                    $.post('/employees/prize/register', $(this).serializeArray()).done(function(data){
+                       alert(data.message);
+                       if(data.status == 'Ok'){
+                           modal.modal('hide');
+                       }
+                    });
                     event.preventDefault();
-                })
-            })
+                });
+            });
             break;
         // Penalizations
         case "new_penalization":

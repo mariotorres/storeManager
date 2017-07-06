@@ -1577,7 +1577,7 @@ router.post('/employees/lending/register', function(req, res){
 /*
  * Registro de bono
  */
-router.post('/employees/bonus/register', function(req, res){
+router.post('/employees/bonus/register', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.one('insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad, id_tienda) ' +
         ' values($1, $2, $3, $4, $5, $6, $7) returning id, nombre', [
@@ -1603,9 +1603,38 @@ router.post('/employees/bonus/register', function(req, res){
 });
 
 /*
+* Registro de premio
+*/
+router.post('/employees/prize/register', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.one('insert into premios(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad, id_tienda) ' +
+        ' values($1, $2, $3, $4, $5, $6, $7) returning id, nombre ', [
+        req.body.nombre,
+        numericCol(req.body.monto),
+        req.body.desc,
+        numericCol(req.body.monto_alcanzar),
+        req.body.criterio,
+        req.body.temporalidad,
+        req.body.id_tienda
+    ]).then(function(data){
+        res.json({
+            status: 'Ok',
+            message: '¡El premio: "' + data.nombre + '" ha sido registrado!'
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar el premio'
+        });
+    });
+});
+
+
+/*
  * Registro de penalizacion
  */
-router.post('/employees/penalization/register', function(req, res){
+router.post('/employees/penalization/register', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.one('insert into penalizaciones(nombre, monto, descripcion, dias_retraso, dias_antes) ' +
         ' values($1, $2, $3, $4, $5) returning id, nombre', [
