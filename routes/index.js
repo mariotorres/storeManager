@@ -1947,6 +1947,36 @@ router.post('/bonus/update', isAuthenticated, function(req, res){
 });
 
 /*
+* Actuzlización de premios
+*/
+router.post('/prize/update', isAuthenticated, function(req, res){
+    console.log(req.body);
+    /*
+    db_conf.db.one('update premios set nombre=$2, monto=$3, descriptcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7, ' +
+        ' id_tienda = $8 where id=$1 returning id, nombre', [
+        req.body.id,
+        req.body.nombre,
+        numericCol(req.body.monto),
+        req.body.desc,
+        numericCol(req.body.monto_alcanzar),
+        req.body.criterio,
+        req.body.temporalidad,
+        req.body.id_tienda
+    ]).then(function (data){
+        res.json({
+            status: 'Ok',
+            message: 'Los datos del premio "' + data.nombre + '" han sido actuzliados'
+        })
+    }).catch(function(error){
+        console.log(eror)
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al actualizar los datos del premio'
+        })
+    })*/
+})
+
+/*
  * Actualización de penalizaciones
  */
 router.post('/penalization/update', isAuthenticated, function(req, res){

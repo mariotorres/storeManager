@@ -794,14 +794,26 @@ function modalEvents(button, modal, page ) {
         case "edit_prize":
             modal.find('.modal-title').text('Editar premio');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/prize/list/', {page: page}, function(){
+            modal.find('#modal_content').load('/prize/list/',{ page: page }, function(){
                 $(this).find('.list-group-item').click(function(){
-                    $("#modal_content").load('/prize/edit-prize', {id: $(this).data('premios_id')}, function(){
-
-                    })
-                })
-            })
+                    $("#modal_content").load('/prize/edit-prize/', {id: $(this).data('premios_id')}, function () {
+                        modal.find('form').submit(function (event) {
+                            $.post('/prize/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
+                    });
+                });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
+                });
+            });
             break;
+
         case "edit_lending":
             modal.find('.modal-title').text('Editar préstamo');
             modal.find('#modal_content').html("");
