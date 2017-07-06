@@ -865,10 +865,23 @@ function modalEvents(button, modal, page ) {
                     modal.find('#search_results').load('/search/employees/checkin', $(this).serializeArray(), function () {
                         $(this).find('.list-group-item').click(function() {
                             $("#modal_content").load('/employee/check-in/form/', {id: $(this).data('user_id')}, function () {
+                                var today = new Date();
                                 $('#timepicker1').datetimepicker({
                                     format: 'LT'
                                 });
-
+                                $('#datepicker1').datetimepicker({
+                                    format: 'YYYY-MM-DD',
+                                    defaultDate: today.setDate(today.getDate())
+                                });
+                                modal.find('form').submit(function(event){
+                                    $.post('/employee/register/check-in', $(this).serializeArray()).done(function (data){
+                                        alert(data.message);
+                                        if(data.status == 'Ok'){
+                                            modal.modal('hide');
+                                        }
+                                    });
+                                    event.preventDefault();
+                                });
                             })
                         })
                     })

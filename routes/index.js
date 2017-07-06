@@ -2762,7 +2762,15 @@ router.post('/employee/check-in/form', isAuthenticated, function(req, res){
             'message': 'Ocucció un error al cargar los datos del usuario'
         })
     })
-})
+});
+
+router.post('/employee/register/check-in', isAuthenticated, function(req, res){
+   console.log(req.body);
+   /*db_conf.db.oneOrNone('insert into asistencia (id_usuario, fecha, hora, tipo) values($1, $2, $3, $4) returning id',[
+       req.body.id,
+       req.body.
+   ])*/
+});
 
 router.post('/search/employees/checkin', isAuthenticated, function (req, res) {
     console.log(req.body);
