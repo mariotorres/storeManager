@@ -2590,14 +2590,14 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                 ]),
                 /* Se listan todos los bonos */
                 t.manyOrNone("select * from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
-                    "(monto_alcanzar <=  $2 and criterio ='Individual') order by monto desc", [
+                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3) order by monto desc", [
                     data[11].montotienda,
                     data[7].montoventas,
                     req.body.id
                 ]),
                 /* Monto bonos total */
                 t.oneOrNone("select sum(monto) as monto from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
-                    "(monto_alcanzar <=  $2 and criterio ='Individual')", [
+                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3)", [
                     data[11].montotienda,
                     data[7].montoventas,
                     req.body.id
