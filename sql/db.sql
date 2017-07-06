@@ -38,8 +38,12 @@ create table tiendas (
     direccion_pais text
 );
 
+insert into tiendas (nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia,
+direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais) values
+('Tienda 1','-','-','-','-','-','-','-','-','México');
 
 /* Bonos */
+drop table if exists bonos cascade;
 create table bonos (
     id serial primary key,
     nombre text,
@@ -51,9 +55,19 @@ create table bonos (
     id_tienda integer references tiendas(id)
     );
 
-insert into tiendas (nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia,
-direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais) values
-('Tienda 1','-','-','-','-','-','-','-','-','México');
+/* Premios */
+drop table if exists premios cascade;
+create table premios (
+   id serial primary key,
+   nombre text,
+   monto numeric(1000,2),
+   descripcion text,
+   monto_alcanzar numeric(1000,2),
+   criterio text,
+   temporalidad text,
+   id_tienda integer references tiendas(id)
+   );
+
 
 /* Usuarios */
 drop table if exists usuarios cascade;
