@@ -988,6 +988,23 @@ router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
     });
 });
 
+// Load prize data into modal
+router.post('/prize/edit-prize', isAuthenticated, function(req, res){
+    db_conf.db.task(function(t){
+        return this.batch([
+            this.oneOrNone('select * from premios where id = $1', [
+                req.body.id
+            ]),
+            this.manyOrNone('select * from tiendas')
+        ])
+    }).then(function(data){
+        res.render('partials/edit-prize',{prize: data[0], tiendas: data[1]});
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>')
+    });
+});
+
 // Load bonus data into  modal.
 router.post('/lending/edit-lending/', isAuthenticated, function(req, res){
     var id = req.body.id;

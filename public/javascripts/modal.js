@@ -795,7 +795,11 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Editar premio');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/prize/list/', {page: page}, function(){
+                $(this).find('.list-group-item').click(function(){
+                    $("#modal_content").load('/prize/edit-prize', {id: $(this).data('premios_id')}, function(){
 
+                    })
+                })
             })
             break;
         case "edit_lending":

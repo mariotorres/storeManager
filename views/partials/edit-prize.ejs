@@ -1,0 +1,100 @@
+<form id="bonusForm">
+    <input type="text" value="<%=prize.id%>" name="id" hidden>
+    <p>
+        <label>Nombre del bono</label>
+        <input value="<%=prize.nombre%>" name="nombre" class="form-control" required>
+    </p>
+
+    <p>
+        <label>Monto del bono</label>
+        <input value="<%=prize.monto%>" name="monto" class = "form-control">
+    </p>
+    <p>
+        <label>Descripción</label>
+        <textarea value="<%=prize.descripcion%>" placeholder="<%=prize.descripcion%>" rows="5" name="desc" class = "form-control"><%=prize.descripcion%></textarea>
+    </p>
+    <p>
+        <label>Monto en ventas para alcanzar el bono</label>
+        <input value="<%=prize.monto_alcanzar%>" name="monto_alcanzar" class = "form-control">
+    </p>
+    <br>
+    <row>
+        <div class="col-md-4">
+            <p>
+                <label>Criterio</label>
+                <select id="criterio" name="criterio" class="selectpicker">
+                    <% if (prize.criterio == "Tienda"){%>
+                    <option selected>Tienda</option>
+                    <%}else{%>
+                    <option>Tienda</option>
+                    <%}%>
+                    <% if (prize.criterio == "Individual"){%>
+                    <option selected>Individual</option>
+                    <%}else{%>
+                    <option>Individual</option>
+                    <%}%>
+                </select>
+            </p>
+        </div>
+        <div class="col-md-4">
+            <p>
+                <label>Temporalidad</label>
+                <select name="temporalidad" class="selectpicker">
+                    <% if (prize.temporalidad == "Semanal"){%>
+                    <option selected>Semanal</option>
+                    <%}else{%>
+                    <option>Semanal</option>
+                    <%}%>
+                    <% if (prize.temporalidad == "Quincenal"){%>
+                    <option selected>Quincenal</option>
+                    <%}else{%>
+                    <option>Quincenal</option>
+                    <%}%>
+                    <% if (prize.temporalidad == "Mensual"){%>
+                    <option selected>Mensual</option>
+                    <%}else{%>
+                    <option>Mensual</option>
+                    <%}%>
+                </select>
+            </p>
+        </div>
+        <div class="col-md-4" id="id_tienda" >
+            <p>
+                <label>Tienda</label>
+                <select name = "id_tienda" class="selectpicker" required>
+                    <%
+                    if (tiendas.length > 0 ){
+                    for (var i =0; i < tiendas.length; i++){
+                    %>
+                    <option value="<%= tiendas[i].id %>" <%= tiendas[i].id == prize.id_tienda ? 'selected': null %> > <%= tiendas[i].nombre %> </option>
+                    <%
+                    }
+                    }else {
+                    %>
+                    <option value="">Ninguna</option>
+                    <% }%>
+                </select>
+            </p>
+        </div>
+    </row>
+    <br>
+    <p>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </p>
+</form>
+
+<script>
+    $(document).ready(function(){
+        if($("#criterio").val() != 'Tienda') {
+            document.getElementById("id_tienda").style.visibility = 'hidden';
+        }
+    })
+
+    $("#criterio").change(function(){
+        if($(this).val() == 'Tienda'){
+            document.getElementById("id_tienda").style.visibility = 'visible';
+        }else{
+            document.getElementById("id_tienda").style.visibility = 'hidden';
+        }
+    })
+</script>
