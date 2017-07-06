@@ -244,6 +244,41 @@
 
     <hr>
     <h3 style="color:#9E9E9E"><strong>Préstamos</strong></h3>
+    <!-- Desgloce préstamos  -->
+    <%if(prestamos.length > 0){%>
+    <br>
+    <%for(var i = 0; i < prestamos.length; i++){%>
+    <p><strong>Préstamo <span style="color: #E91E63;"><%=i+1%></span></strong></p>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <td><b>Monto</b></td>
+                <td><%= prestamos[i].monto %></td>
+            </tr>
+            <tr>
+                <td><b>Pago semanal</b></td>
+                <td><%= prestamos[i].pago_semanal %></td>
+            </tr>
+            <tr>
+                <td><b>Fecha préstamos</b></td>
+                <td><%= prestamos[i].fecha_prestamo %></td>
+            </tr>
+            <tr>
+                <td><b>Fecha liquidación</b></td>
+                <td><%= prestamos[i].fecha_liquidacion %></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <label>Descripción</label>
+    <br>
+    <textarea style="width:100%;height:100px"><%=prestamos[i].descripcion%></textarea>
+    <br><br>
+    <%}}else{%>
+    <div class="alert alert-info" role="alert">No hay préstamos registrados</div>
+    <%}%>
+    <!-- Deslogce préstamos  -->
     <div class="row">
         <div class="col-sm-6">
             <p>
