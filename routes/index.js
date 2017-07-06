@@ -715,6 +715,29 @@ router.post('/bonus/list/', isAuthenticated, function (req, res) {
     });
 });
 
+// Display de premios
+router.post('/prize/list/', isAuthenticated, function(req, res){
+    var pageSize = 10;
+    var offset   = req.body.page * pageSize;
+
+    db_conf.db.task(function(t){
+        return this.batch([
+            this.one('select count(*) from premios as count'),
+            this.manyOrNone('select * from premios order by nombre limit $1 offset $2 ', [pageSize, offset])
+        ]);
+    }).then(function(data){
+        res.render('partials/prize-list',{
+            status: 'Ok',
+            premios: data[1],
+            pageNumber: req.body.page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1)/pageSize)
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>')
+    })
+})
+
 // Display de préstamos
 router.post('/lending/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;

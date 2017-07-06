@@ -791,6 +791,13 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "edit_prize":
+            modal.find('.modal-title').text('Editar premio');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/prize/list/', {page: page}, function(){
+
+            })
+            break;
         case "edit_lending":
             modal.find('.modal-title').text('Editar préstamo');
             modal.find('#modal_content').html("");
