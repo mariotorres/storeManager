@@ -813,7 +813,6 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
-
         case "edit_lending":
             modal.find('.modal-title').text('Editar préstamo');
             modal.find('#modal_content').html("");

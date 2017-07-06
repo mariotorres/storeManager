@@ -1951,9 +1951,7 @@ router.post('/bonus/update', isAuthenticated, function(req, res){
 */
 router.post('/prize/update', isAuthenticated, function(req, res){
     console.log(req.body);
-    /*
-    db_conf.db.one('update premios set nombre=$2, monto=$3, descriptcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7, ' +
-        ' id_tienda = $8 where id=$1 returning id, nombre', [
+    db_conf.db.one('update premios set nombre=$2, monto=$3, descripcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7, id_tienda=$8 where id=$1 returning id, nombre ',[
         req.body.id,
         req.body.nombre,
         numericCol(req.body.monto),
@@ -1962,18 +1960,18 @@ router.post('/prize/update', isAuthenticated, function(req, res){
         req.body.criterio,
         req.body.temporalidad,
         req.body.id_tienda
-    ]).then(function (data){
+    ]).then(function (data) {
         res.json({
-            status: 'Ok',
-            message: 'Los datos del premio "' + data.nombre + '" han sido actuzliados'
-        })
-    }).catch(function(error){
-        console.log(eror)
+            status :'Ok',
+            message : 'Los datos del premio "'+ data.nombre +'" han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
         res.json({
-            status: 'Error',
+            status : 'Error',
             message: 'Ocurrió un error al actualizar los datos del premio'
-        })
-    })*/
+        });
+    });
 })
 
 /*
