@@ -2655,6 +2655,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         var ventas             = (data[0][6].length > 0? data[0][6]: []);
         var tienda             = (data[0][9].length > 0? data[0][9]: []);
         var ventaTiendas       = (data[0][10].length > 0? data[0][10]: []);
+        var montoPremios       = (data[5] === null? {'monto':0}:data[5]);
         console.log("monto tienda" +  data[0][11]);
         console.log("monto individual" +  data[0][5]);
         console.log("Tienda " +  data[0][9]);
@@ -2676,7 +2677,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             pagos_extra: pagoExtra,
             montoBono: data[3],
             premios: data[4],
-            montoPremios: data[5]
+            montoPremios: montoPremios
         });
     }).catch(function (error) {
         console.log(error);
