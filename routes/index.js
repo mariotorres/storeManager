@@ -2624,7 +2624,21 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                     data[11].montotienda,
                     data[7].montoventas,
                     req.body.id
-                ])
+                ]),
+                /* Se listan todos los premios */
+                t.manyOrNone("select * from premios, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and premios.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
+                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3) order by monto desc", [
+                    data[16].montotienda,
+                    data[14].montoventas,
+                    req.body.id
+                ]),
+                /* Monto premios total*/
+                t.oneOrNone("select sum(monto) as monto from premios, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and premios.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
+                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3)", [
+                    data[16].montotienda,
+                    data[14].montoventas,
+                    req.body.id
+                ]),
             ])
         });
     }).then(function (data) {
@@ -2660,7 +2674,9 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             penalizacion: penalizacion,
             bono: bono,
             pagos_extra: pagoExtra,
-            montoBono: data[3]
+            montoBono: data[3],
+            premios: data[4],
+            montoPremios: data[5]
         });
     }).catch(function (error) {
         console.log(error);
