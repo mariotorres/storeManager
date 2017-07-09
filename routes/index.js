@@ -2574,7 +2574,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
             this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1 and " +
                 " ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
-            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda and ", id),
+            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda ", id),
             /* Ventas Tienda en la semana*/
             this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
@@ -2584,7 +2584,24 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id),
             /* Pagos extras */
             this.oneOrNone("select * from pagos_extra, usuarios where pagos_extra.id_usuario = usuarios.id and usuarios.id = $1 and " +
-                " pagos_extra.fecha_pago_extra <= date_trunc('day', now()) and pagos_extra.fecha_pago_extra > date_trunc('day', now() - interval '1 week')", id)
+                " pagos_extra.fecha_pago_extra <= date_trunc('day', now()) and pagos_extra.fecha_pago_extra > date_trunc('day', now() - interval '1 week')", id),
+            /* Ventas Individuales en la semana premios asumiendo que se hacen los lunes */
+            this.manyOrNone("select * from ventas where ventas.id_usuario = $1 and " +
+                " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
+                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1 and " +
+                " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
+                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            /* Ventas Tienda en la semana*/
+            this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
+                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
+                "ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and " +
+                " usuarios.id = $1 ", id),
+            this.oneOrNone("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
+                " venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
+                " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
+                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id),
+
         ]).then(function(data){
             return t.batch([
                 data,
@@ -2607,7 +2624,21 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                     data[11].montotienda,
                     data[7].montoventas,
                     req.body.id
-                ])
+                ]),
+                /* Se listan todos los premios */
+                t.manyOrNone("select * from premios, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and premios.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
+                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3) order by monto desc", [
+                    data[16].montotienda,
+                    data[14].montoventas,
+                    req.body.id
+                ]),
+                /* Monto premios total*/
+                t.oneOrNone("select sum(monto) as monto from premios, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and premios.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
+                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3)", [
+                    data[16].montotienda,
+                    data[14].montoventas,
+                    req.body.id
+                ]),
             ])
         });
     }).then(function (data) {
@@ -2624,6 +2655,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         var ventas             = (data[0][6].length > 0? data[0][6]: []);
         var tienda             = (data[0][9].length > 0? data[0][9]: []);
         var ventaTiendas       = (data[0][10].length > 0? data[0][10]: []);
+        var montoPremios       = (data[5] === null? {'monto':0}:data[5]);
         console.log("monto tienda" +  data[0][11]);
         console.log("monto individual" +  data[0][5]);
         console.log("Tienda " +  data[0][9]);
@@ -2643,7 +2675,9 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             penalizacion: penalizacion,
             bono: bono,
             pagos_extra: pagoExtra,
-            montoBono: data[3]
+            montoBono: data[3],
+            premios: data[4],
+            montoPremios: montoPremios
         });
     }).catch(function (error) {
         console.log(error);
