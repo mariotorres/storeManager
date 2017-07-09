@@ -2574,7 +2574,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
             this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1 and " +
                 " ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
-            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda and ", id),
+            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda ", id),
             /* Ventas Tienda en la semana*/
             this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
@@ -2584,7 +2584,24 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id),
             /* Pagos extras */
             this.oneOrNone("select * from pagos_extra, usuarios where pagos_extra.id_usuario = usuarios.id and usuarios.id = $1 and " +
-                " pagos_extra.fecha_pago_extra <= date_trunc('day', now()) and pagos_extra.fecha_pago_extra > date_trunc('day', now() - interval '1 week')", id)
+                " pagos_extra.fecha_pago_extra <= date_trunc('day', now()) and pagos_extra.fecha_pago_extra > date_trunc('day', now() - interval '1 week')", id),
+            /* Ventas Individuales en la semana premios asumiendo que se hacen los lunes */
+            this.manyOrNone("select * from ventas where ventas.id_usuario = $1 and " +
+                " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
+                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1 and " +
+                " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
+                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            /* Ventas Tienda en la semana*/
+            this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
+                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
+                "ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and " +
+                " usuarios.id = $1 ", id),
+            this.oneOrNone("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
+                " venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
+                " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
+                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id),
+
         ]).then(function(data){
             return t.batch([
                 data,
