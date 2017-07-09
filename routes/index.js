@@ -715,6 +715,29 @@ router.post('/bonus/list/', isAuthenticated, function (req, res) {
     });
 });
 
+// Display de premios
+router.post('/prize/list/', isAuthenticated, function(req, res){
+    var pageSize = 10;
+    var offset   = req.body.page * pageSize;
+
+    db_conf.db.task(function(t){
+        return this.batch([
+            this.one('select count(*) from premios as count'),
+            this.manyOrNone('select * from premios order by nombre limit $1 offset $2 ', [pageSize, offset])
+        ]);
+    }).then(function(data){
+        res.render('partials/prize-list',{
+            status: 'Ok',
+            premios: data[1],
+            pageNumber: req.body.page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1)/pageSize)
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>')
+    })
+})
+
 // Display de préstamos
 router.post('/lending/list/', isAuthenticated, function (req, res) {
     var pageSize = 10;
@@ -722,7 +745,8 @@ router.post('/lending/list/', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from prestamos as count'),
-            this.manyOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.descripcion as descripcion, prestamos.fecha_liquidacion as fecha_liquidacion, prestamos.fecha_prestamo as fecha_prestamo ' +
+            this.manyOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.descripcion as descripcion, ' +
+                ' prestamos.fecha_liquidacion as fecha_liquidacion, prestamos.fecha_prestamo as fecha_prestamo ' +
                 ' from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by fecha_prestamo limit $1 offset $2', [pageSize, offset])
         ]);
     }).then(function (data) {
@@ -962,6 +986,23 @@ router.post('/bonus/edit-bonus/', isAuthenticated, function(req, res){
     }).catch(function(error){
         console.log(error);
         res.send('<b>Error</b>');
+    });
+});
+
+// Load prize data into modal
+router.post('/prize/edit-prize', isAuthenticated, function(req, res){
+    db_conf.db.task(function(t){
+        return this.batch([
+            this.oneOrNone('select * from premios where id = $1', [
+                req.body.id
+            ]),
+            this.manyOrNone('select * from tiendas')
+        ])
+    }).then(function(data){
+        res.render('partials/edit-prize',{prize: data[0], tiendas: data[1]});
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>')
     });
 });
 
@@ -1240,6 +1281,15 @@ router.post('/employees/bonus/new', function (req, res) {
     });
 });
 
+router.post('/employees/prize/new', function (req, res) {
+    db_conf.db.manyOrNone('select * from tiendas').then(function (data) {
+        res.render('partials/new-prize', {tiendas: data});
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+});
+
 router.post('/employees/lending/new', function (req, res) {
     db_conf.db.manyOrNone('select * from usuarios').then(function (data) {
         res.render('partials/new-lending', {usuarios: data});
@@ -1329,8 +1379,9 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                 // retorna los queries
                 return t.batch([
                     {count : data.count},
-                    t.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
-                        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias, modelo', [
+                    t.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, ' +
+                        ' talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
+                        ' values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias, modelo', [
                         numericCol(req.body.id_proveedor),
                         numericCol(req.body.id_tienda),
                         req.body.articulo,
@@ -1353,7 +1404,8 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
         if ( data[0].count == 0 ){
             res.json({
                 status: 'Ok',
-                message: 'Se ' + (data[1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[1].n_existencias + ' existencia' + (data[1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[1].articulo +
+                message: 'Se ' + (data[1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[1].n_existencias + ' existencia' +
+                (data[1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[1].articulo +
                 '" modelo "' + data[1].modelo + '" ' + (data[2] ? ' del proveedor "' + data[2].nombre + '" ': '')
             });
         }else{
@@ -1568,7 +1620,7 @@ router.post('/employees/lending/register', function(req, res){
 /*
  * Registro de bono
  */
-router.post('/employees/bonus/register', function(req, res){
+router.post('/employees/bonus/register', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.one('insert into bonos(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad, id_tienda) ' +
         ' values($1, $2, $3, $4, $5, $6, $7) returning id, nombre', [
@@ -1594,9 +1646,38 @@ router.post('/employees/bonus/register', function(req, res){
 });
 
 /*
+* Registro de premio
+*/
+router.post('/employees/prize/register', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.one('insert into premios(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad, id_tienda) ' +
+        ' values($1, $2, $3, $4, $5, $6, $7) returning id, nombre ', [
+        req.body.nombre,
+        numericCol(req.body.monto),
+        req.body.desc,
+        numericCol(req.body.monto_alcanzar),
+        req.body.criterio,
+        req.body.temporalidad,
+        req.body.id_tienda
+    ]).then(function(data){
+        res.json({
+            status: 'Ok',
+            message: '¡El premio: "' + data.nombre + '" ha sido registrado!'
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar el premio'
+        });
+    });
+});
+
+
+/*
  * Registro de penalizacion
  */
-router.post('/employees/penalization/register', function(req, res){
+router.post('/employees/penalization/register', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.one('insert into penalizaciones(nombre, monto, descripcion, dias_retraso, dias_antes) ' +
         ' values($1, $2, $3, $4, $5) returning id, nombre', [
@@ -1869,6 +1950,34 @@ router.post('/bonus/update', isAuthenticated, function(req, res){
 });
 
 /*
+* Actuzlización de premios
+*/
+router.post('/prize/update', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.one('update premios set nombre=$2, monto=$3, descripcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7, id_tienda=$8 where id=$1 returning id, nombre ',[
+        req.body.id,
+        req.body.nombre,
+        numericCol(req.body.monto),
+        req.body.desc,
+        numericCol(req.body.monto_alcanzar),
+        req.body.criterio,
+        req.body.temporalidad,
+        req.body.id_tienda
+    ]).then(function (data) {
+        res.json({
+            status :'Ok',
+            message : 'Los datos del premio "'+ data.nombre +'" han sido actualizados'
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status : 'Error',
+            message: 'Ocurrió un error al actualizar los datos del premio'
+        });
+    });
+})
+
+/*
  * Actualización de penalizaciones
  */
 router.post('/penalization/update', isAuthenticated, function(req, res){
@@ -1979,6 +2088,23 @@ router.post('/item/return', isAuthenticated, function(req, res){
         res.json({
             status : 'Error',
             message: 'Ocurrió un error al actualizar los datos del artículo'
+        });
+    });
+});
+
+/*
+* Listado ingreso de empelados
+*/
+router.post('/employee/list/check-in', function(req, res){
+    db_conf.db.manyOrNone(
+        'select * from tiendas'
+    ).then(function(data){
+        res.render('partials/list_check_in', {'tiendas' : data});
+    }).catch(function(error){
+        console.log(error)
+        res.json({
+            message:'Ocurrió un error al listar las tiendas',
+            status: 'Error'
         });
     });
 });
@@ -2425,7 +2551,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select * from usuarios where id = $1', id),
-            /* Asistencia */
+            /* Asistencia: for now we are going to obviate premature exit */
             // Retrasos
             this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
@@ -2441,12 +2567,15 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             /* Préstamos */
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
-            /* Ventas Individuales */
-            this.manyOrNone("select * from ventas where ventas.id_usuario = $1", id),
-            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1", id),
-            this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id),
-            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id),
-            /* Ventas Tienda */
+            /* Ventas Individuales en la semana */
+            this.manyOrNone("select * from ventas where ventas.id_usuario = $1 and " +
+                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1 and " +
+                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1 and " +
+                " ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda and ", id),
+            /* Ventas Tienda en la semana*/
             this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1 ", id),
@@ -2460,13 +2589,21 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             return t.batch([
                 data,
                 /* Penalizaciones: la penalización más grave aplicable es la que se asigna */
-                t.manyOrNone("select * from penalizaciones where (dias_retraso > 0 and dias_retraso <= $1) or (dias_antes > 0 and dias_antes <= $2) order by monto desc", [
+                t.manyOrNone("select * from penalizaciones where (dias_retraso > 0 and dias_retraso <= $1) order by monto desc limit 1", [
                     data[1].length,
                     data[2].length,
                     7 - data[3].length
                 ]),
-                /* Bonos: el bono más alto aplicable es la que se asigna */
-                t.manyOrNone("select * from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or (monto_alcanzar <=  $2 and criterio ='Individual') order by monto desc", [
+                /* Se listan todos los bonos */
+                t.manyOrNone("select * from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
+                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3) order by monto desc", [
+                    data[11].montotienda,
+                    data[7].montoventas,
+                    req.body.id
+                ]),
+                /* Monto bonos total */
+                t.oneOrNone("select sum(monto) as monto from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
+                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3)", [
                     data[11].montotienda,
                     data[7].montoventas,
                     req.body.id
@@ -2505,7 +2642,8 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             montoVentasTiendas: data[0][11],//montoVentasTiendas,
             penalizacion: penalizacion,
             bono: bono,
-            pagos_extra: pagoExtra
+            pagos_extra: pagoExtra,
+            montoBono: data[3]
         });
     }).catch(function (error) {
         console.log(error);
@@ -2831,6 +2969,60 @@ router.post('/notes/finitPayment', isAuthenticated, function(req, res){
     });
 });
 
+router.post('/employee/check-in/form', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.oneOrNone('select * from usuarios where id = $1 ',[
+        req.body.id
+    ]).then(function(data){
+        res.render('partials/checkin-form', {'user':data})
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            'status': 'Error',
+            'message': 'Ocucció un error al cargar los datos del usuario'
+        })
+    })
+});
+
+router.post('/employee/register/check-in', isAuthenticated, function(req, res){
+   console.log(req.body);
+   db_conf.db.oneOrNone('insert into asistencia (id_usuario, fecha, hora, tipo) values($1, $2, $3, $4) returning id',[
+       req.body.id,
+       req.body.fecha,
+       req.body.llegada,
+       'entrada'
+   ]).then(function(data){
+       res.json({
+           status:'Ok',
+           message: 'Se ha registrado el ingreso de "' + req.body.nombres + '" el día ' + req.body.fecha + ' a las ' + req.body.llegada
+       })
+   }).catch(function(error){
+       console.log(error);
+       res.json({
+           status: 'Error',
+           message: 'Ocurrió un error al ingresar el usuario'
+       })
+   })
+});
+
+router.post('/search/employees/checkin', isAuthenticated, function (req, res) {
+    console.log(req.body);
+    db_conf.db.manyOrNone("select * from usuarios where id_tienda = $1 and nombres ilike '%$2#%' and apellido_paterno ilike '%$3#%'", [
+        req.body.id_tienda,
+        req.body.nombres,
+        req.body.apellido
+    ]).then(function (data) {
+        res.render('partials/search-employees-results-checkin',{
+            employees: data
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status :'Error',
+            message: 'Ocurrió un error al buscar al empleado'
+        })
+    });
+});
 
 router.post('/search/employees/results', isAuthenticated, function (req, res) {
     console.log(req.body);

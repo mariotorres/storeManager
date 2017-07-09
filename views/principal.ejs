@@ -65,9 +65,15 @@
                     <hr>
                     <row>
                         <div class="col-md-5">
+                            <%if(user.permiso_administrador){%>
                             <p>
-                        <button class="btn btn-primary" id="check-in" type="submit">Registrar ingreso</button>
+                                <button class="btn btn-primary"  type="button" data-action="check-in" data-toggle="modal" data-target="#genericModal">Registrar ingreso</button>
                             </p>
+                            <%}else{%>
+                            <p>
+                                <button class="btn btn-primary" id="check-in" type="submit">Registrar ingreso</button>
+                            </p>
+                            <%}%>
                         </div>
                         <div class="col-md-5 col-md-offset-1">
                             <p>
@@ -86,8 +92,19 @@
 
 </div>
 
+
 <% include partials/modal.ejs %>
+
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<script src="/bower_components/jspdf/dist/jspdf.min.js"></script>
+<script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script type="text/javascript" src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="/bower_components/timepicker/jquery.timepicker.min.js"></script>
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script src='/bower_components/moment/min/moment.min.js'></script>
 <script src='/bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
@@ -96,6 +113,11 @@
 
 <script src='/bower_components/react/react.min.js'></script>
 <script src='/bower_components/react/react-dom.min.js'></script>
+
+<!-- datepicker -->
+<script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
+<script type="text/javascript" src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="/bower_components/timepicker/jquery.timepicker.min.js"></script>
 
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>

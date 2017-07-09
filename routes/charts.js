@@ -49,9 +49,9 @@ router.get('/best-selling/data.json', function(req, res){
      * aggregation: global || store
      */
 
-    let start_date = req.query.start_date;
-    let end_date = req.query.end_date;
-    let aggregation = (req.query.aggregation || 'store');
+    start_date = req.query.start_date;
+    end_date = req.query.end_date;
+    aggregation = (req.query.aggregation || 'store');
 
     switch(aggregation){
         case 'store':
@@ -94,9 +94,9 @@ router.get('/employees/data.json', function (req, res) {
     * aggregation: global || store
     * */
 
-    let start_date = ( req.query.start_date ||  new Date());
-    let end_date = ( req.query.end_date ||  new Date());
-    let aggregation = (req.query.aggregation || 'store');
+    start_date = ( req.query.start_date ||  new Date());
+    end_date = ( req.query.end_date ||  new Date());
+    aggregation = (req.query.aggregation || 'store');
 
     switch ( aggregation ) {
         case 'global':

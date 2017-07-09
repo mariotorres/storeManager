@@ -101,63 +101,45 @@
             </h5>
             </p>
         </div>
-        <div class="col-sm-4">
-            <p>
-                <label>Bono correspondiente</label>
-            <h5 style="color: #9E9E9E;">
-                <%if (bono.length > 0){%>
-                <%=bono[0].nombre%>
-                <%}else{%>
-                <%="-"%>
-                <%}%>
-            </h5>
-            </p>
-        </div>
     </div>
-    <div class="row">
-        <div class="col-sm-4">
-            <p>
-                <label>Descripción</label>
-            <h5 style="color: #9E9E9E;">
-                <%if (bono.length == 0){%>
-                <%="-"%>
-                <%}else{%>
-                <%=bono[0].descripcion%>
-                <%}%>
-            </h5>
-            </p>
-        </div>
-        <div class="col-sm-4">
-            <p>
-                <label>Criterio</label>
-            <h5 style="color: #9E9E9E;">
-                <%if (bono.length == 0){%>
-                <%="-"%>
-                <%}else{%>
-                <%=bono[0].criterio%>
-                <%}%>
-            </h5>
-            </p>
-        </div>
-        <div class="col-sm-4">
-            <p>
-                <label>Monto</label>
-            <h5 style="color: #9E9E9E;">
-                <%if (bono.length == 0){%>
-                <%=0%>
-                <%}else{%>
-                <%=bono[0].monto%>
-                <%}%>
-            </h5>
-            </p>
-        </div>
+    <!--Desgloce bonos!!!-->
+    <h5 style="color:#9E9E9E"><strong>Bonos correspondientes</strong></h5>
+    <%if(bono.length > 0){%>
+    <br>
+    <%for(var i = 0; i < bono.length; i++){%>
+    <p><strong>Bono <span style="color: #E91E63;"><%=i+1%></span></strong></p>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <td><b>Nombre</b></td>
+                <td><%= bono[i].nombre %></td>
+            </tr>
+            <tr>
+                <td><b>Monto</b></td>
+                <td><%= bono[i].monto %></td>
+            </tr>
+            <tr>
+                <td><b>Criterio</b></td>
+                <td><%= bono[i].criterio %></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
+    <label>Descripción</label>
+    <br>
+    <textarea style="width:100%;height:100px"><%=bono[i].descripcion%></textarea>
+    <br><br>
+    <%}}else{%>
+    <div class="alert alert-info" role="alert">El empleado no ha alcanzado ningún bono</div>
+    <%}%>
+    <!--Desgloce bonos!!!-->
     <hr>
     <h3 style="color:#9E9E9E"><strong>Asistencia</strong></h3>
     <div class="row">
         <div class="col-sm-4">
             <p>
-                <label>Número de ingresos después de las 11:00 a.m</label>
+                <label>Número de ingresos después de las <span style="color: #9E9E9E;"><strong><%=usuario.hora_llegada%></strong></span></label>
             <h5 style="color: #9E9E9E;">
                 <%if (entradasTarde.length > 0){%>
                 <%=entradasTarde.length%>
@@ -169,7 +151,7 @@
         </div>
         <div class="col-sm-4">
             <p>
-                <label>Número de salidas antes  de las 18:00 p.m</label>
+                <label>Número de salidas antes  de las <span style="color: #9E9E9E;"><strong><%=usuario.hora_salida%></strong></span></label>
             <h5 style="color: #9E9E9E;">
                 <%if (salidasTemprano.length > 0){%>
                 <%=salidasTemprano.length%>
@@ -244,6 +226,41 @@
 
     <hr>
     <h3 style="color:#9E9E9E"><strong>Préstamos</strong></h3>
+    <!-- Desgloce préstamos  -->
+    <%if(prestamos.length > 0){%>
+    <br>
+    <%for(var i = 0; i < prestamos.length; i++){%>
+    <p><strong>Préstamo <span style="color: #E91E63;"><%=i+1%></span></strong></p>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <td><b>Monto</b></td>
+                <td><%= prestamos[i].monto %></td>
+            </tr>
+            <tr>
+                <td><b>Pago semanal</b></td>
+                <td><%= prestamos[i].pago_semanal %></td>
+            </tr>
+            <tr>
+                <td><b>Fecha préstamos</b></td>
+                <td><%= prestamos[i].fecha_prestamo %></td>
+            </tr>
+            <tr>
+                <td><b>Fecha liquidación</b></td>
+                <td><%= prestamos[i].fecha_liquidacion %></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <label>Descripción</label>
+    <br>
+    <textarea style="width:100%;height:100px"><%=prestamos[i].descripcion%></textarea>
+    <br><br>
+    <%}}else{%>
+    <div class="alert alert-info" role="alert">No hay préstamos registrados</div>
+    <%}%>
+    <!-- Deslogce préstamos  -->
     <div class="row">
         <div class="col-sm-6">
             <p>
@@ -310,11 +327,11 @@
             <label>Sueldo Neto</label>
         <h2 style="color: #E91E63;">
             <%if (bono.length > 0 && penalizacion.length > 0){%>
-            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto)) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
+            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(montoBono.monto) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto)) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
             <%}else if(penalizacion.length > 0){%>
             <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto)) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
             <%}else if(bono.length > 0){%>
-            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(bono[0].monto) + Number(pagos_extra.monto)  - (Number(montoPrestamos.pago)) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
+            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(montoBono.monto) + Number(pagos_extra.monto)  - (Number(montoPrestamos.pago)) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
             <%}else{%>
             <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago)) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
             <%}%>

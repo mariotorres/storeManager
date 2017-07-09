@@ -737,6 +737,22 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        // Prizes
+        case "new_prize":
+            modal.find('.modal-title').text('Registrar premio');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employees/prize/new',{},function(){
+                modal.find('form').submit(function(event){
+                    $.post('/employees/prize/register', $(this).serializeArray()).done(function(data){
+                       alert(data.message);
+                       if(data.status == 'Ok'){
+                           modal.modal('hide');
+                       }
+                    });
+                    event.preventDefault();
+                });
+            });
+            break;
         // Penalizations
         case "new_penalization":
             modal.find('.modal-title').text('Registrar penalización');
@@ -761,6 +777,28 @@ function modalEvents(button, modal, page ) {
                     $("#modal_content").load('/bonus/edit-bonus/', {id: $(this).data('bonos_id')}, function () {
                         modal.find('form').submit(function (event) {
                             $.post('/bonus/update', $(this).serialize()).done(function (data) {
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                            });
+                            event.preventDefault();
+                        });
+                    });
+                });
+                $('.pagination').find('li').click(function () {
+                    modalEvents(button, modal, $(this).data('pagenumber'));
+                });
+            });
+            break;
+        case "edit_prize":
+            modal.find('.modal-title').text('Editar premio');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/prize/list/',{ page: page }, function(){
+                $(this).find('.list-group-item').click(function(){
+                    $("#modal_content").load('/prize/edit-prize/', {id: $(this).data('premios_id')}, function () {
+                        modal.find('form').submit(function (event) {
+                            $.post('/prize/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
                                 if(data.status=='Ok'){
                                     modal.modal('hide');
@@ -857,6 +895,38 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "check-in":
+            modal.find('.modal-title').text('Registrar ingreso');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employee/list/check-in',{page:page},function(){
+                modal.find('form').submit(function (e) {
+                    modal.find('#search_results').load('/search/employees/checkin', $(this).serializeArray(), function () {
+                        $(this).find('.list-group-item').click(function() {
+                            $("#modal_content").load('/employee/check-in/form/', {id: $(this).data('user_id')}, function () {
+                                var today = new Date();
+                                $('#timepicker1').datetimepicker({
+                                    format: 'LT'
+                                });
+                                $('#datepicker1').datetimepicker({
+                                    format: 'YYYY-MM-DD',
+                                    defaultDate: today.setDate(today.getDate())
+                                });
+                                modal.find('form').submit(function(event){
+                                    $.post('/employee/register/check-in', $(this).serializeArray()).done(function (data){
+                                        alert(data.message);
+                                        if(data.status == 'Ok'){
+                                            modal.modal('hide');
+                                        }
+                                    });
+                                    event.preventDefault();
+                                });
+                            })
+                        })
+                    })
+                    event.preventDefault();
+                })
+            })
+            break;
         case "edit_brand":
             modal.find('.modal-title').text('Editar marca');
             modal.find('#modal_content').html("");
@@ -903,12 +973,14 @@ $('#genericModal').on('show.bs.modal', function (event) {
     modalEvents(button, modal, page);
 });
 
+
 $('#check-in').click(function(){
     $.post('/employee/check-in', {}).done(function (data) {
         alert(data.message);
         if (data.status == 'Ok') {}
     });
 });
+
 
 $('#check-out').click(function(){
     $.post('/employee/check-out', {}).done(function (data) {

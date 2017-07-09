@@ -1,0 +1,17 @@
+<%
+if (premios.length > 0){%>
+<div class="list-group">
+    <%
+    for ( var i =0; i < premios.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-premios_id="<%= premios[i].id %>">
+        <h4 class="list-group-item-heading"><i class="fa fa-usd"></i> <%= premios[i].nombre %></h4>
+        <p class="list-group-item-text"><%= "Monto: " + premios[i].monto + ", Descripción: " +  premios[i].descripcion%></p>
+    </a>
+    <%}%>
+</div>
+
+<% include pagination.ejs %>
+
+<%}else {%>
+<div class="alert alert-info" role="alert">No hay premios registrados</div>
+<%}%>
