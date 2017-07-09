@@ -745,7 +745,8 @@ router.post('/lending/list/', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from prestamos as count'),
-            this.manyOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.descripcion as descripcion, prestamos.fecha_liquidacion as fecha_liquidacion, prestamos.fecha_prestamo as fecha_prestamo ' +
+            this.manyOrNone('select prestamos.id as id, prestamos.monto as monto, prestamos.descripcion as descripcion, ' +
+                ' prestamos.fecha_liquidacion as fecha_liquidacion, prestamos.fecha_prestamo as fecha_prestamo ' +
                 ' from prestamos, usuarios where usuarios.id = prestamos.id_usuario order by fecha_prestamo limit $1 offset $2', [pageSize, offset])
         ]);
     }).then(function (data) {
@@ -1378,8 +1379,9 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                 // retorna los queries
                 return t.batch([
                     {count : data.count},
-                    t.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
-                        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias, modelo', [
+                    t.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, ' +
+                        ' talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
+                        ' values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias, modelo', [
                         numericCol(req.body.id_proveedor),
                         numericCol(req.body.id_tienda),
                         req.body.articulo,
@@ -1402,7 +1404,8 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
         if ( data[0].count == 0 ){
             res.json({
                 status: 'Ok',
-                message: 'Se ' + (data[1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[1].n_existencias + ' existencia' + (data[1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[1].articulo +
+                message: 'Se ' + (data[1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[1].n_existencias + ' existencia' +
+                (data[1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[1].articulo +
                 '" modelo "' + data[1].modelo + '" ' + (data[2] ? ' del proveedor "' + data[2].nombre + '" ': '')
             });
         }else{
@@ -2564,12 +2567,15 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             /* Préstamos */
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
-            /* Ventas Individuales */
-            this.manyOrNone("select * from ventas where ventas.id_usuario = $1", id),
-            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1", id),
-            this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id),
-            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id),
-            /* Ventas Tienda */
+            /* Ventas Individuales en la semana */
+            this.manyOrNone("select * from ventas where ventas.id_usuario = $1 and " +
+                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1 and " +
+                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1 and " +
+                " ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda and ", id),
+            /* Ventas Tienda en la semana*/
             this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1 ", id),
