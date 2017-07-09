@@ -2651,9 +2651,17 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
     });
 });
 
-router.get('/print/employee/details', function (req, res) {
+router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) {
 
+    let user_id = req.query.user_id;
+    db_conf.db.one('select * from usuarios where id = $1', [user_id]).then(function(data){
+        res.json(data);
+    }).catch(function(error){
+        console.log(error);
+        res.send("<h1>Error al buscar el usuario</h1>");
+    });
 
+/*
     
     // Comisión total 3%.
     console.log(req.body);
@@ -2661,7 +2669,7 @@ router.get('/print/employee/details', function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select * from usuarios where id = $1', id),
-            /* Asistencia */
+            // Asistencia
             // Retrasos
             this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
@@ -2674,34 +2682,34 @@ router.get('/print/employee/details', function (req, res) {
             this.oneOrNone("select count(*) as domingos from usuarios, asistencia where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
                 "and EXTRACT(DOW from asistencia.fecha::DATE) = 7 and usuarios.id = asistencia.id_usuario ", id),
-            /* Préstamos */
+            // Préstamos
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
-            /* Ventas Individuales */
+            // Ventas Individuales
             this.manyOrNone("select * from ventas where ventas.id_usuario = $1", id),
             this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1", id),
             this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1", id),
             this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda", id),
-            /* Ventas Tienda */
+            // Ventas Tienda
             this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1 ", id),
             this.oneOrNone("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
                 "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id),
-            /* Pagos extras */
+            // Pagos extras
             this.oneOrNone("select * from pagos_extra, usuarios where pagos_extra.id_usuario = usuarios.id and usuarios.id = $1 and " +
                 " pagos_extra.fecha_pago_extra <= date_trunc('day', now()) and pagos_extra.fecha_pago_extra > date_trunc('day', now() - interval '1 week')", id)
         ]).then(function(data){
             return t.batch([
                 data,
-                /* Penalizaciones: la penalización más grave aplicable es la que se asigna */
+                // Penalizaciones: la penalización más grave aplicable es la que se asigna
                 t.manyOrNone("select * from penalizaciones where (dias_retraso > 0 and dias_retraso <= $1) or (dias_antes > 0 and dias_antes <= $2) order by monto desc", [
                     data[1].length,
                     data[2].length,
                     7 - data[3].length
                 ]),
-                /* Bonos: el bono más alto aplicable es la que se asigna */
+                // Bonos: el bono más alto aplicable es la que se asigna
                 t.manyOrNone("select * from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or (monto_alcanzar <=  $2 and criterio ='Individual') order by monto desc", [
                     data[11].montotienda,
                     data[7].montoventas,
@@ -2726,7 +2734,7 @@ router.get('/print/employee/details', function (req, res) {
         console.log("monto tienda" +  data[0][11]);
         console.log("monto individual" +  data[0][5]);
         console.log("Tienda " +  data[0][9]);
-        res.render('partials/employee-detail',{
+        res.render('reports/employee-details',{
             usuario: data[0][0],
             entradasTarde: entradasTarde,
             salidasTemprano: salidasTemprano,
@@ -2746,7 +2754,7 @@ router.get('/print/employee/details', function (req, res) {
     }).catch(function (error) {
         console.log(error);
         res.send('<b>Error</b>');
-    });
+    });*/
 
 });
 
