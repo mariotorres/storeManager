@@ -1,4 +1,4 @@
-<form id="userDetail">
+<!--<form id="userDetail">-->
     <h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
     <p>
         <label>Nombre(s)</label>
@@ -373,6 +373,7 @@
 
 
     <p>
-        <button class="btn btn-primary" type="submit"> <i class="fa fa-print"></i> Imprimir reporte</button>
+        <%var url = '/print/employee/details?user_id='+ usuario.id %>
+        <button class="btn btn-primary" onclick="<%= "window.open('"+ url +"')"%>"> <i class="fa fa-print"></i> Imprimir reporte</button>
     </p>
-</form>
+<!--</form>-->

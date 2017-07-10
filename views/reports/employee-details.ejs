@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Usuario</title>
+
+    <!-- Bootstrap -->
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/stylesheets/style.css" rel="stylesheet">
+    <style>
+        body{
+            padding-top: 10px !important;
+        }
+    </style>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- font awesome -->
+    <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+
+<h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
+<p>
+    <label>Nombre(s)</label>
+<h5 style="color: #9E9E9E;"><%=usuario.nombres%></h5>
+</p>
+<div class="row">
+    <div class="col-sm-6">
+        <p>
+            <label>Apellido paterno</label>
+        <h5 style="color: #9E9E9E;"><%=usuario.apellido_paterno%></h5>
+        </p>
+    </div>
+    <div class="col-sm-6">
+        <p>
+            <label>Apellido materno</label>
+        <h5 style="color: #9E9E9E;"><%=usuario.apellido_materno%></h5>
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <p>
+            <label>Tienda</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (tienda){%>
+            <%=tienda.nombre%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-6">
+        <p>
+            <label>Salario base</label>
+        <h5 style="color: #9E9E9E;"><%=usuario.salario%></h5>
+        </p>
+    </div>
+</div>
+<hr>
+<h3 style="color:#9E9E9E"><strong>Comisiones y bonos</strong></h3>
+<div class="row">
+    <div class="col-sm-4">
+        <p>
+            <label>Número de ventas individuales</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (ventas === null){%>
+            <%=0%>
+            <%}else{%>
+            <%=ventas.length%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Monto vendido individual</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (montoVentas === null){%>
+            <%=0%>
+            <%}else{%>
+            <%=montoVentas.montoventas%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Comision correspondiente</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (totalComision === null){%>
+            <%=0%>
+            <%}else{%>
+            <%=totalComision.comision%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <p>
+            <label>Número de ventas tienda</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (ventaTiendas === null){%>
+            <%=0%>
+            <%}else{%>
+            <%=ventaTiendas.length%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Monto vendido tienda</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (montoVentasTiendas === null){%>
+            <%=0%>
+            <%}else{%>
+            <%=montoVentasTiendas.montotienda%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+</div>
+<!--Desgloce bonos!!!-->
+<h5 style="color:#9E9E9E"><strong>Bonos correspondientes</strong></h5>
+<%if(bono.length > 0){%>
+<br>
+<%for(var i = 0; i < bono.length; i++){%>
+<p><strong>Bono <span style="color: #E91E63;"><%=i+1%></span></strong></p>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <tbody>
+        <tr>
+            <td><b>Nombre</b></td>
+            <td><%= bono[i].nombre %></td>
+        </tr>
+        <tr>
+            <td><b>Monto</b></td>
+            <td><%= bono[i].monto %></td>
+        </tr>
+        <tr>
+            <td><b>Criterio</b></td>
+            <td><%= bono[i].criterio %></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<label>Descripción</label>
+<br>
+<textarea style="width:100%;height:100px"><%=bono[i].descripcion%></textarea>
+<br><br>
+<%}}else{%>
+<div class="alert alert-info" role="alert">El empleado no ha alcanzado ningún bono</div>
+<%}%>
+<!--Desgloce bonos!!!-->
+<!--Desgloce premios!!!-->
+<h5 style="color:#9E9E9E"><strong>Premios correspondientes</strong></h5>
+<%if(premios.length > 0){%>
+<br>
+<%for(var i = 0; i < premios.length; i++){%>
+<p><strong>Premio <span style="color: #E91E63;"><%=i+1%></span></strong></p>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <tbody>
+        <tr>
+            <td><b>Nombre</b></td>
+            <td><%= premios[i].nombre %></td>
+        </tr>
+        <tr>
+            <td><b>Monto</b></td>
+            <td><%= premios[i].monto %></td>
+        </tr>
+        <tr>
+            <td><b>Criterio</b></td>
+            <td><%= premios[i].criterio %></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<label>Descripción</label>
+<br>
+<textarea style="width:100%;height:100px"><%=premios[i].descripcion%></textarea>
+<br><br>
+<%}}else{%>
+<div class="alert alert-info" role="alert">El empleado no ha alcanzado ningún premio</div>
+<%}%>
+<!--Desgloce premios!!!-->
+<hr>
+<h3 style="color:#9E9E9E"><strong>Asistencia</strong></h3>
+<div class="row">
+    <div class="col-sm-4">
+        <p>
+            <label>Número de ingresos después de las <span style="color: #9E9E9E;"><strong><%=usuario.hora_llegada%></strong></span></label>
+        <h5 style="color: #9E9E9E;">
+            <%if (entradasTarde.length > 0){%>
+            <%=entradasTarde.length%>
+            <%}else{%>
+            <%=0%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Número de salidas antes  de las <span style="color: #9E9E9E;"><strong><%=usuario.hora_salida%></strong></span></label>
+        <h5 style="color: #9E9E9E;">
+            <%if (salidasTemprano.length > 0){%>
+            <%=salidasTemprano.length%>
+            <%}else{%>
+            <%=0%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Penalización correspondiente</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (penalizacion.length > 0){%>
+            <%=penalizacion[0].nombre%>
+            <%}else{%>
+            <%="-"%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-8">
+        <p>
+            <label>Descripción</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (penalizacion.length > 0){%>
+            <%=penalizacion[0].descripcion%>
+            <%}else{%>
+            <%="-"%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Monto</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (penalizacion.length > 0){%>
+            <%=penalizacion[0].monto%>
+            <%}else{%>
+            <%=0%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+</div>
+<!--Domingos-->
+<div class="row">
+    <div class="col-sm-8">
+        <p>
+            <label>Trabajo el Domingo:</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (domingos.domingos > 0){%>
+            Si
+            <%}else{%>
+            No
+            <%}%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Monto extra correspondiente:</label>
+        <h5 style="color: #9E9E9E;">
+            <%=((usuario.salario/7)*domingos.domingos).toFixed(2)%>
+        </h5>
+        </p>
+    </div>
+</div>
+
+<hr>
+<h3 style="color:#9E9E9E"><strong>Préstamos</strong></h3>
+<!-- Desgloce préstamos  -->
+<%if(prestamos.length > 0){%>
+<br>
+<%for(var i = 0; i < prestamos.length; i++){%>
+<p><strong>Préstamo <span style="color: #E91E63;"><%=i+1%></span></strong></p>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <tbody>
+        <tr>
+            <td><b>Monto</b></td>
+            <td><%= prestamos[i].monto %></td>
+        </tr>
+        <tr>
+            <td><b>Pago semanal</b></td>
+            <td><%= prestamos[i].pago_semanal %></td>
+        </tr>
+        <tr>
+            <td><b>Fecha préstamos</b></td>
+            <td><%= prestamos[i].fecha_prestamo.toLocaleDateString({timezone: 'es_MX'}) %></td>
+        </tr>
+        <tr>
+            <td><b>Fecha liquidación</b></td>
+            <td><%= prestamos[i].fecha_liquidacion.toLocaleDateString({timezone: 'es_MX'}) %></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<label>Descripción</label>
+<br>
+<textarea style="width:100%;height:100px"><%=prestamos[i].descripcion%></textarea>
+<br><br>
+<%}}else{%>
+<div class="alert alert-info" role="alert">No hay préstamos registrados</div>
+<%}%>
+<!-- Deslogce préstamos  -->
+<div class="row">
+    <div class="col-sm-6">
+        <p>
+            <label>Número de préstamos activos</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (prestamos.length > 0){%>
+            <%=prestamos.length%>
+            <%}else{%>
+            <%=0%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-6">
+        <p>
+            <label>Total a pagar de préstamos esta semana</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (montoPrestamos){%>
+            <%=montoPrestamos.pago%>
+            <%}else{%>
+            <%=0%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+</div>
+<hr>
+
+<h3 style="color:#9E9E9E"><strong>Pagos extra</strong></h3>
+<div class="row">
+    <div class="col-sm-4">
+        <p>
+            <label>Tiene pago extra:</label>
+        <h5 style="color: #9E9E9E;">
+            <%if (pagos_extra.monto == 0){%>
+            <%="No"%>
+            <%}else{%>
+            <%="Si"%>
+            <%}%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Descripción</label>
+        <h5 style="color: #9E9E9E;">
+            <%=pagos_extra.descripcion%>
+        </h5>
+        </p>
+    </div>
+    <div class="col-sm-4">
+        <p>
+            <label>Total de pago extra esta semana</label>
+        <h5 style="color: #9E9E9E;">
+            <%=pagos_extra.monto%>
+        </h5>
+        </p>
+    </div>
+</div>
+<hr>
+
+<div class="col-sm-3 col-md-offset-9">
+    <p>
+        <label>Sueldo Neto</label>
+    <h2 style="color: #E91E63;">
+        <%if (bono.length > 0 && penalizacion.length > 0){%>
+        <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(montoBono.monto) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
+        <%}else if(penalizacion.length > 0){%>
+        <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
+        <%}else if(bono.length > 0){%>
+        <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(montoBono.monto) + Number(pagos_extra.monto)  - (Number(montoPrestamos.pago)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
+        <%}else{%>
+        <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
+        <%}%>
+    </h2>
+    </p>
+</div>
+
+
+<p>
+    <button class="btn btn-primary" onclick="window.print()"> <i class="fa fa-print"></i> Imprimir reporte</button>
+</p>
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
