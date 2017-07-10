@@ -2765,28 +2765,28 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
                     "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3) order by monto desc", [
                     data[11].montotienda,
                     data[7].montoventas,
-                    req.body.id
+                    id
                 ]),
                 /* Monto bonos total */
                 t.oneOrNone("select sum(monto) as monto from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
                     "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3)", [
                     data[11].montotienda,
                     data[7].montoventas,
-                    req.body.id
+                    id
                 ]),
                 /* Se listan todos los premios */
                 t.manyOrNone("select * from premios, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and premios.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
                     "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3) order by monto desc", [
                     data[16].montotienda,
                     data[14].montoventas,
-                    req.body.id
+                    id
                 ]),
                 /* Monto premios total*/
                 t.oneOrNone("select sum(monto) as monto from premios, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and premios.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
                     "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3)", [
                     data[16].montotienda,
                     data[14].montoventas,
-                    req.body.id
+                    id
                 ]),
             ])
         });
