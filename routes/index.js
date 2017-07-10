@@ -2551,7 +2551,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select * from usuarios where id = $1', id),
-            /* Asistencia: for now we are going to obviate premature exit */
+            /* Asistencia:  */
             // Retrasos
             this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
                 "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
