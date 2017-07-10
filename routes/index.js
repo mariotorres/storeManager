@@ -2600,8 +2600,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             this.oneOrNone("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 " venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
                 " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
-                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id),
-
+                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id)
         ]).then(function(data){
             return t.batch([
                 data,
@@ -2751,8 +2750,7 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
             this.oneOrNone("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
                 " venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
                 " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
-                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id),
-
+                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id)
         ]).then(function(data){
             return t.batch([
                 data,
@@ -2810,6 +2808,7 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
         console.log("monto tienda" +  data[0][11]);
         console.log("monto individual" +  data[0][5]);
         console.log("Tienda " +  data[0][9]);
+        console.log('Bono:' + data[2])
         res.render('reports/employee-details',{
             usuario: data[0][0],
             entradasTarde: entradasTarde,
