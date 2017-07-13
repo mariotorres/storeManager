@@ -117,7 +117,7 @@ function modalEvents(button, modal, page ) {
         case "edit_item":
             modal.find('.modal-title').text('Editar artículos');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/item/list/',{ page: page }, function(){
+            modal.find('#modal_content').load('/item/list/',{ page: page }, function(){ // mod
                 $(this).find('.list-group-item').click(function(){
                     // alert("Funciona, item: "+ $(this).data('item_id'));
                     $("#modal_content").load('/item/edit-item/',{ id: $(this).data('item_id') }, function () {

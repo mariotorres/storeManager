@@ -641,7 +641,10 @@ router.post('/item/list/', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from articulos as count '),
-            this.manyOrNone('select * from articulos order by articulo limit $1 offset $2',[ pageSize, offset ])
+            this.manyOrNone('select articulos.id as id_articulo, articulo, descripcion, modelo, precio, n_existencias,' +
+                ' proveedores.nombre as nombre_proveedor, articulos.id_tienda, tiendas.nombre as nombre_tienda from articulos, proveedores, tiendas  where ' +
+                ' tiendas.id = articulos.id_tienda and articulos.id_proveedor = proveedores.id ' +
+                ' order by articulo limit $1 offset $2',[ pageSize, offset ])
         ]);
 
     }).then(function (data) {

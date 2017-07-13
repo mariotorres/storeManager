@@ -5,7 +5,8 @@ if (items.length > 0){%>
 <% for ( var i =0; i < items.length ; i ++ ){ if(items[i].id_tienda == user.id_tienda || user.permiso_administrador){%>
     <a href="#" class="list-group-item" data-item_id="<%= items[i].id %>">
         <h4 class="list-group-item-heading"><i class="fa fa-female"></i>   <%= items[i].articulo %></h4>
-        <p class="list-group-item-text"><%= "Proveedor: " + items[i].descripcion + ", Modelo: " + items[i].modelo + ", Precio: " +  items[i].precio + ", Existencias: " + items[i].n_existencias%></p>
+        <h5 class="list-group-item-heading" style="color:#e91e63"> <strong><%= items[i].nombre_tienda %></strong></h5>
+        <p class="list-group-item-text"><%= "Proveedor: " + items[i].nombre_proveedor + ", Modelo: " + items[i].modelo + ", Precio: " +  items[i].precio + ", Existencias: " + items[i].n_existencias%></p>
     </a>
 <%}}%>
 </div>
