@@ -7,13 +7,19 @@
     <p>
         <%if(permiso){%>
         <!-- DATE N TIME -->
-        <label>Fecha Que se realiza la venta</label>
+        <label>Fecha en la que se realiza la venta</label>
     <div class="form-group">
         <div class='input-group'>
-            <input type="text" name="fecha_inicial" id="sale_datepicker1" class="form-control" required>
+            <input type="text" name="fecha_venta" id="sale_datepicker1" class="form-control" required>
             <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
+        </div>
+    </div>
+    <label>Hora en la que se realiza la venta</label>
+    <div class="form-group">
+        <div class='input-group'>
+            <input type="text" name="hora_venta" id="sale_timepicker1" class="form-control" required>
         </div>
     </div>
         <!-- DATE N TIME -->
