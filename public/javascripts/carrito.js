@@ -6,6 +6,13 @@ $('body').find('form').submit(function (e) {
     modal.find('.modal-title').text('Seleccionar tipo de pago');
     modal.find('#modal_content').html("");
     modal.find('#modal_content').load('/type/payment', { /*page:1*/ }, function(){
+        $('#sale_datepicker1').datetimepicker({
+            format: 'YYYY-MM-DD',
+            defaultDate: new Date().setDate(new Date().getDate( ))
+        });
+        $('#sale_timepicker1').datetimepicker({
+            format: 'LT'
+        });
         modal.find('form').submit(function(event){
             $.post('/carrito/sell', $(this).serialize()).done(function (data) {
                 alert(data.message);

@@ -6,6 +6,17 @@
 
     <p>
         <%if(permiso){%>
+        <!-- DATE N TIME -->
+        <label>Fecha Que se realiza la venta</label>
+    <div class="form-group">
+        <div class='input-group'>
+            <input type="text" name="fecha_inicial" id="sale_datepicker1" class="form-control" required>
+            <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+        </div>
+    </div>
+        <!-- DATE N TIME -->
         <label>Usuario que hace la venta: </label>
         <%if (users.length > 0){%>
         <select name="user_sale" class="form-control" required>
