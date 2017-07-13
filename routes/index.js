@@ -1366,7 +1366,7 @@ var upload = multer({
 });
 
 router.post('/item/register', upload.single('imagen'),function(req, res){
-    //console.log(req.body);
+    console.log(req.body);
     //console.log(req.file );
     db_conf.db.task(function(t) {
 
@@ -2477,15 +2477,16 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
     //var offset = req.body.page * pageSize;
     var query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
         " descripcion, articulos.id as id " +
-        " from articulos, proveedores, usuarios where id_proveedor = $1 and " +
+        " from articulos, proveedores, tiendas, usuarios where id_proveedor = $1 and " +
         " articulos.id_proveedor = proveedores.id and usuarios.id_tienda = articulos.id_tienda and " +
-        " articulo ilike '%$3#%' and modelo ilike '%$4#%' and usuarios.id =  " + req.user.id
+        " articulo ilike '%$3#%' and modelo ilike '%$4#%' and  articulos.id_tienda = tiendas.id and " +
+        " tiendas.id = $5 and usuarios.id =  " + req.user.id
 
     if(req.user.permiso_administrador){
         query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
-            " descripcion, articulos.id as id " +
-            " from articulos, proveedores where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and " +
-            " articulo ilike '%$3#%' and modelo ilike '%$4#%' "
+            " descripcion, articulos.id as id, tiendas.id as id_tienda " +
+            " from articulos, proveedores, tiendas where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and " +
+            " articulo ilike '%$3#%' and articulos.id_tienda = tiendas.id and tiendas.id = $5 and modelo ilike '%$4#%' "
     }
     db_conf.db.task(function (t) {
         return this.batch([
@@ -2493,7 +2494,8 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,
-                req.body.modelo
+                req.body.modelo,
+                req.body.id_tienda
             ]),
             t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
             t.manyOrNone('select * from terminales')
@@ -2510,6 +2512,36 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
     });
 
 });
+/*
+router.post('/search/items/results_inv', isAuthenticated, function(req, res){
+    console.log(req.body);
+    //var pageSize = 10;
+    //var offset = req.body.page * pageSize;
+    db_conf.db.task(function (t) {
+        return this.batch([
+            t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as nombre_tienda, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id" +
+                " from articulos, proveedores, tiendas where articulos.id_proveedor = proveedores.id and id_tienda = tiendas.id and articulos.id_tienda = tiendas.id and " +
+                "(id_tienda = $5 and id_proveedor = $1) and (articulo ilike '%$3#%' or modelo ilike '%$4#%') ", [
+                req.body.id_proveedor,
+                req.body.id_marca,
+                req.body.articulo,
+                req.body.modelo,
+                req.body.id_tienda
+            ]),
+            t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
+            t.manyOrNone('select * from terminales')
+        ])
+    }).then(function (data) {
+        res.render('partials/items/search-items-results-inv',{
+            items: data[0],
+            user: data[1],
+            terminales: data[2]
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+});*/
 
 router.post('/search/items/results', isAuthenticated, function (req, res) {
     console.log(req.body);

@@ -252,10 +252,10 @@ function modalEvents(button, modal, page ) {
         case "find_item_inv":
             modal.find('.modal-title').text('Buscar artículos');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/item/find-items-view-inv',{}, function () {
+            modal.find('#modal_content').load('/item/find-items-view',{}, function () {//mod
                 modal.find('form').submit(function (e) {
                     // Mostrar resultados
-                    modal.find('#search_results').load('/search/items/results_inv', $(this).serializeArray()/*params*/, function () {
+                    modal.find('#search_results').load('/search/items/results_inv', $(this).serializeArray()/*params*/, function () {//mod
                             $('#search_results').find('button[name=go_search]').click(function () {
                                 modal.find('#modal_content').load('/item/edit-item', {id:$(this).data('item_id')}, function(){
                                     $('#deleteitem').click(function () {
