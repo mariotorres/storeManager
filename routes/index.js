@@ -2518,8 +2518,8 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as nombre_tienda, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id" +
-                " from articulos, proveedores, tiendas where articulos.id_proveedor = proveedores.id and id_tienda = tiendas.id and " +
-                "id_tienda = $5 and (id_proveedor = $1 or articulo ilike '%$3#%' or modelo ilike '%$4#%') ", [
+                " from articulos, proveedores, tiendas where articulos.id_proveedor = proveedores.id and id_tienda = tiendas.id and articulos.id_tienda = tiendas.id and " +
+                "(id_tienda = $5 and id_proveedor = $1) and (articulo ilike '%$3#%' or modelo ilike '%$4#%') ", [
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,
