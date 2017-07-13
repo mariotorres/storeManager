@@ -29,11 +29,11 @@
             <%
             for (var i =0; i < users.length; i++){
             %>
-            <option value="<%= users[i].id_tienda %>"> <%= users[i].usuario %> </option>
+            <option value="<%= users[i].id %>"> <%= users[i].usuario %> </option>
             <% } }else { %>
             <option value="">Ninguno</option>
             <% }}else{%>
-            <input type="text" name="user_sale" value="<%=user.id_tienda%>" data-user_id="<%=user.id_tienda%>" hidden>
+            <input type="text" name="user_sale" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
             <%}%>
         </select>
     </p>

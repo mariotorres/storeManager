@@ -374,24 +374,39 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 // Carrito Sell
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
     console.log(req.body);
+
+    var user_sale_id = req.user.id
+    var sale_date    = req.user.fecha_venta
+    var sale_time    = req.user.hora_venta
+    if(!req.user.permiso_administrador){
+        // Si el usuario es administrador el ID de la venta es el que el asigna.
+        user_sale_id = req.body.user_sale;
+        sale_date    = new Date()
+        sale_time    = new Date().toLocaleTimeString()
+    }
     db_conf.db.tx(function (t) {
-        return this.manyOrNone(
+        return t.batch([
+            t.manyOrNone(
             'select * from carrito, articulos where carrito.id_articulo = articulos.id and ' +
             ' carrito.id_usuario = $1 order by articulo', [
                 numericCol(req.user.id) //numericCol(req.body.user_id)
-            ]).then(function(data){
-            return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros.
-                data,
-                t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, fecha_venta, hora_venta, ' +
+            ]),
+            t.one('select * from usuarios where id = $1', [
+                user_sale_id
+            ])
+        ]).then(function(data){
+            return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros. // ELIMINÉ ID NOTA
+                data[0],
+                t.one('insert into ventas (id_tienda, id_usuario, precio_venta, fecha_venta, hora_venta, ' +
                     'monto_pagado_efectivo, monto_pagado_tarjeta, id_terminal, saldo_pendiente, estatus, tarjeta_credito, monto_cambio) ' +
                     'values( ' +
                     '(select coalesce(max(id_nota),0) from ventas where id_tienda = $1 ) +1 ,' +
                     '$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning id', [
-                    numericCol(req.body.user_sale), // si el usuario es administrador, el id que el adjudique, si no el de la tienda del usuario
-                    numericCol(req.user.id), //numericCol(req.body.user_id),
+                    numericCol(data[1].id), // si el usuario es administrador, el id que el adjudique, si no el de la tienda del usuario
+                    numericCol(user_sale_id), // id de tienda del usuario que realiza la venta.
                     numericCol(req.body.precio_tot),
-                    new Date(),
-                    new Date().toLocaleTimeString(),
+                    sale_date,
+                    sale_time,
                     numericCol(req.body.monto_efec),
                     (numericCol(req.body.efec_tot) - numericCol(req.body.monto_efec)),
                     req.body.terminal,
@@ -2011,8 +2026,8 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
         return this.batch([
             t.one('select nombre_imagen from articulos where id = $1',[req.body.id ]),
             t.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-                'precio=$8, costo=$9, codigo_barras=$10, nombre_imagen=$11, n_existencias= $12, id_proveedor=$13, fecha_ultima_modificacion = Now() ' +
-                'where id=$1 returning id, articulo ',[
+                'precio=$8, costo=$9, codigo_barras=$10, nombre_imagen=$11, n_existencias= $12, id_proveedor=$13, fecha_ultima_modificacion = Now(), ' +
+                ' id_tienda=$14 where id=$1 returning id, articulo ',[
                 req.body.id,
                 req.body.articulo,
                 req.body.descripcion,
@@ -2025,7 +2040,8 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
                 numericCol(req.body.codigo_barras),
                 typeof req.file != 'undefined'?req.file.filename:null,
                 numericCol(req.body.n_existencias),
-                req.body.id_proveedor
+                req.body.id_proveedor,
+                req.body.id_tienda
             ]),
             t.one('update proveedores set a_cuenta = ((a_cuenta - $3) + $2) where id = $1 returning id', [
                 req.body.id_proveedor,
