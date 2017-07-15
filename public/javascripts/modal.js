@@ -94,7 +94,28 @@ function modalEvents(button, modal, page ) {
         case "back_item":
             modal.find('.modal-title').text('Devolución de artículos');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/item/list/',{ page: page }, function(){
+            modal.find('#modal_content').load('/item/find-items-view',{ page: page }, function(){ // change /item/list
+                // ------------------------------------------------------
+                modal.find('form').submit(function (e) {
+                    // Mostrar resultados
+                    modal.find('#search_results').load('/search/items/results_inv', $(this).serializeArray()/*params*/, function () {//mod
+                        $('#search_results').find('button[name=go_search]').click(function () {
+                            modal.find('#modal_content').load('/item/return-item', {id:$(this).data('item_id')}, function() {
+                                modal.find('form').submit(function(event){
+                                  $.post('/item/return', $(this).serializeArray()).done(function(data){
+                                    alert(data.message);
+                                    if(data.status == 'Ok'){
+                                        modal.modal('hide')
+                                    }
+                                  });
+                                  event.preventDefault();
+                                })
+                            })
+                        })
+                    })
+                    e.preventDefault();
+                })
+                                // ------------------------------------------------------
                 $(this).find('.list-group-item').click(function(){
                     // alert("Funciona, item: "+ $(this).data('item_id'));
                     $("#modal_content").load('/item/return-item/',{ id: $(this).data('item_id') }, function () {
