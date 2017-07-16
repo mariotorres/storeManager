@@ -374,15 +374,15 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 // Carrito Sell
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
     console.log(req.body);
-
+    // Si el usuario no es administrador, se asigna su id y la fecha y hora actual.
     var user_sale_id = req.user.id
-    var sale_date    = req.user.fecha_venta
-    var sale_time    = req.user.hora_venta
-    if(!req.user.permiso_administrador){
-        // Si el usuario es administrador el ID de la venta es el que el asigna.
+    var sale_date    = new Date()
+    var sale_time    = new Date().toLocaleTimeString()
+    if(req.user.permiso_administrador){
+        // Si el usuario es administrador el ID de la venta es el que el asigna. Y la fecha y hora igual.
         user_sale_id = req.body.user_sale;
-        sale_date    = new Date()
-        sale_time    = new Date().toLocaleTimeString()
+        sale_date    = req.body.fecha_venta;
+        sale_time    = req.body.hora_venta;
     }
     db_conf.db.tx(function (t) {
         return t.batch([
@@ -397,12 +397,12 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
         ]).then(function(data){
             return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros. // ELIMINÉ ID NOTA
                 data[0],
-                t.one('insert into ventas (id_tienda, id_usuario, precio_venta, fecha_venta, hora_venta, ' +
+                t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, fecha_venta, hora_venta, ' +
                     'monto_pagado_efectivo, monto_pagado_tarjeta, id_terminal, saldo_pendiente, estatus, tarjeta_credito, monto_cambio) ' +
                     'values( ' +
                     '(select coalesce(max(id_nota),0) from ventas where id_tienda = $1 ) +1 ,' +
                     '$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning id', [
-                    numericCol(data[1].id), // si el usuario es administrador, el id que el adjudique, si no el de la tienda del usuario
+                    numericCol(data[1].id_tienda), // si el usuario es administrador, el id que el adjudique, si no el de la tienda del usuario
                     numericCol(user_sale_id), // id de tienda del usuario que realiza la venta.
                     numericCol(req.body.precio_tot),
                     sale_date,
