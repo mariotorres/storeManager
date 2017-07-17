@@ -3,7 +3,33 @@
         <label>Nombre</label>
         <input type="text" class="form-control" name="nombre" required>
     </p>
+    <hr>
+    <div class="row">
+        <div class="col-sm-6">
+            <label>Fecha inicial</label>
+            <div class="form-group">
+                <div class='input-group'>
+                    <input type="text" name="fecha_inicial" id="suppliers_datepicker1" class="form-control" required>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
 
+        </div>
+        <div class="col-sm-6">
+            <label>Fecha final</label>
+            <div class="form-group">
+                <div class='input-group'>
+                    <input type="text" name="fecha_final" id="suppliers_datepicker2" class="form-control" required>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
     <p>
         <button type="submit" class="btn btn-primary"> <i class="fa fa-search"></i> Buscar</button>
     </p>

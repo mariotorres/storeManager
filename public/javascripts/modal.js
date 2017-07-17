@@ -194,6 +194,14 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Buscar proveedor');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/suppliers/find-suppliers-view', {}, function(){
+                $('#suppliers_datepicker1').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date().setDate(new Date().getDate( ) - 1)
+                });
+                $('#suppliers_datepicker2').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date().setDate(new Date().getDate( ))
+                });
                 modal.find('#findSuppliers').submit(function(e){
                     modal.find('#search_results').load('/search/suppliers/results', $(this).serializeArray(), function(){
                         $('#search_results').find('.list-group-item').click(function(){
