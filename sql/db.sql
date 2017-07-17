@@ -228,6 +228,7 @@ drop table if exists ventas cascade;
 create table ventas (
     id bigserial primary key,
     id_nota integer not null,
+    id_papel integer not null,
     id_tienda integer not null references tiendas(id) on delete set null,
     id_terminal integer references terminales(id) on delete set null,
     id_usuario integer references usuarios(id) on delete set null,
