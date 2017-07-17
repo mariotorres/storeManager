@@ -2608,6 +2608,15 @@ router.post('/notes/find-notes-view', function (req, res) {
 
 router.post('/supplier/details', isAuthenticated, function(req, res){
    console.log(req.body);
+   var id = req.body.id;
+   db_conf.db.task(function(t){
+       return this.batch([
+           this.manyOrNone("select proveedores.nombre as nombre_proveedor, articulos.articulo as nombre_articulo, articulos.modelo as modelo, costo, n_existencias, " +
+               " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta, saldo_pendiente, venta_articulos.estatus as estatus_prenda " +
+               " from proveedores, ventas, venta_articulos, articulos, tiendas where venta_articulos.id_venta = ventas.id and venta_articulos.id_articulo = articulos.id and " +
+               " articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id and proveedores.id = 1 and venta_articulos.estatus = 'entregada' and ventas.estatus = 'activa'")
+       ])
+   })
 });
 
 router.post('/employee/details', isAuthenticated, function (req, res) {
