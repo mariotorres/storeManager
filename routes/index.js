@@ -1766,7 +1766,7 @@ router.post('/supplier/register', isAuthenticated,function(req, res){
         req.body.direccion_ciudad,
         req.body.direccion_pais,
         0,
-        req.body.por_pagar
+        - numericCol(req.body.por_pagar)
     ]).then(function(data){
         res.json({
             status: 'Ok',
