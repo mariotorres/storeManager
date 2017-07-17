@@ -205,7 +205,9 @@ function modalEvents(button, modal, page ) {
                 modal.find('#findSuppliers').submit(function(e){
                     modal.find('#search_results').load('/search/suppliers/results', $(this).serializeArray(), function(){
                         $('#search_results').find('.list-group-item').click(function(){
-                            modal.find('#modal_content').load('/supplier/details', {id: $(this).data('supplier_id')});
+                            modal.find('#modal_content').load('/supplier/details', {id: $(this).data('supplier_id'),
+                                fecha_inicial: $(this).data('fecha_inicial'),
+                                fecha_final:$(this).data('fecha_final')});
                         });
                     });
                     e.preventDefault();

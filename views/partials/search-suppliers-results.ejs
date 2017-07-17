@@ -3,7 +3,7 @@ if (suppliers.length > 0){%>
 <label>Resultados</label>
 <div class="list-group">
     <% for ( var i =0; i < suppliers.length ; i ++ ){ %>
-    <a href="#" class="list-group-item" data-supplier_id="<%= suppliers[i].id%>">
+    <a href="#" class="list-group-item" data-supplier_id="<%= suppliers[i].id%>" data-fecha_inicial="<%=fecha_inicial%>" data-fecha_final="<%=fecha_final%>">
         <h4 class="list-group-item-heading"><%= suppliers[i].nombres%></h4>
         <p class="list-group-item-text"> <strong>Id :</strong> <%= suppliers[i].id %></p>
         <p class="list-group-item-text"> <strong>Apellido Paterno:</strong> <%= suppliers[i].apellido_paterno %></p>
