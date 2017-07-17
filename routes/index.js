@@ -3190,7 +3190,8 @@ router.post('/search/notes/results', isAuthenticated, function (req, res) {
         case true:
             query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre " +
                 "from ventas, tiendas  " +
-                "where ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) or ventas.id_nota = $3) and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";
+                "where (((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) or ventas.id_nota = $3) " +
+                " or ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) or ventas.id_papel = $6)) and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";
             break;
         default:
             query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre " +
@@ -3205,7 +3206,8 @@ router.post('/search/notes/results', isAuthenticated, function (req, res) {
         req.body.fecha_final,
         req.body.id_note, //¿id de venta? checar
         req.user.id,
-        req.body.id_tienda
+        req.body.id_tienda,
+        req.body.id_papel
     ]).then(function (data) {
         res.render('partials/notes/search-notes-results',{
             sales: data
