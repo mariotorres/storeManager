@@ -207,7 +207,7 @@ create table carrito (
         id_usuario integer references usuarios(id),
         discount    numeric(1000,2),
         monto_pagado numeric(1000,2),
-        precio numeric(1000,2),
+        carrito_precio numeric(1000,2),
         unidades_carrito integer,
         estatus text
 );

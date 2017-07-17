@@ -425,14 +425,15 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     (1- numericCol(data[0][i].discount)/100)) -  numericCol(data[0][i].monto_pagado));
                 queries.push(
                     t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, ' +
-                        'monto_pagado, monto_por_pagar, estatus) values($1, $2, $3, $4, $5, $6, $7) returning id_articulo', [
+                        'monto_pagado, monto_por_pagar, estatus, precio) values($1, $2, $3, $4, $5, $6, $7, $8) returning id_articulo', [
                         numericCol(data[1].id),
                         numericCol(data[0][i].id_articulo),
                         numericCol(data[0][i].unidades_carrito),
                         numericCol(data[0][i].discount),
                         numericCol(data[0][i].monto_pagado),
                         monto_por_pagar,
-                        data[0][i].estatus
+                        data[0][i].estatus,
+                        data[0][i].carrito_precio
                     ])
                 );
 
@@ -499,7 +500,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
                 console.log('DISCOUNT:'  + discount);
             }
             db_conf.db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
-                'unidades_carrito, estatus, monto_pagado, precio) ' +
+                'unidades_carrito, estatus, monto_pagado, carrito_precio) ' +
                 ' values($1, $2, $3, $4, $5, $6, $7, $8) returning id_articulo',[
                 new Date(),
                 numericCol(req.body.item_id),
