@@ -2606,6 +2606,10 @@ router.post('/notes/find-notes-view', function (req, res) {
     });
 });
 
+router.post('/supplier/details', isAuthenticated, function(req, res){
+   console.log(req.body);
+});
+
 router.post('/employee/details', isAuthenticated, function (req, res) {
     // Comisión total 3%.
     console.log(req.body);

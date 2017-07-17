@@ -196,8 +196,10 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/suppliers/find-suppliers-view', {}, function(){
                 modal.find('#findSuppliers').submit(function(e){
                     modal.find('#search_results').load('/search/suppliers/results', $(this).serializeArray(), function(){
-
-                    })
+                        $('#search_results').find('.list-group-item').click(function(){
+                            modal.find('#modal_content').load('/supplier/details', {id: $(this).data('supplier_id')});
+                        });
+                    });
                     e.preventDefault();
                 });
             });
