@@ -190,8 +190,20 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "find_supplier":
+            modal.find('.modal-title').text('Buscar proveedor');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/suppliers/find-suppliers-view', {}, function(){
+                modal.find('#findSuppliers').submit(function(e){
+                    modal.find('#search_results').load('/search/suppliers/results', $(this).serializeArray(), function(){
+
+                    })
+                    e.preventDefault();
+                });
+            });
+            break;
         case "find_employee":
-            modal.find('.modal-title').text('Buscar empleados');
+            modal.find('.modal-title').text('Buscar empleado');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/employees/find-employees-view',{}, function () {
                 modal.find('#findEmployees').submit(function (e) {

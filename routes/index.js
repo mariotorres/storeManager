@@ -2584,6 +2584,10 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
 
 });
 
+router.post('/suppliers/find-suppliers-view', isAuthenticated, function (req, res) {
+    res.render('partials/find-suppliers');
+});
+
 router.post('/employees/find-employees-view', isAuthenticated, function (req, res) {
     res.render('partials/find-employees');
 });
@@ -3167,6 +3171,11 @@ router.post('/search/employees/checkin', isAuthenticated, function (req, res) {
         })
     });
 });
+
+
+router.post('/search/suppliers/results', isAuthenticated, function(req, res){
+    console.log(req.body);
+})
 
 router.post('/search/employees/results', isAuthenticated, function (req, res) {
     console.log(req.body);
