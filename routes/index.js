@@ -493,14 +493,18 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             });
 
         } else {
-
+            var discount = req.body.optradioDesc;
+            if(discount == 'otro'){
+                discount = numericCol(req.body.desc)/numericCol(req.body.item_precio)*100;
+                console.log('DISCOUNT:'  + discount);
+            }
             db_conf.db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
                 'unidades_carrito, estatus, monto_pagado) ' +
                 ' values($1, $2, $3, $4, $5, $6, $7) returning id_articulo',[
                 new Date(),
                 numericCol(req.body.item_id),
                 numericCol(req.user.id),//numericCol(req.body.user_id),
-                numericCol(req.body.optradioDesc),
+                numericCol(discount),
                 req.body.existencias,
                 req.body.id_estatus,
                 numericCol(req.body.monto_pagado)
