@@ -499,15 +499,16 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
                 console.log('DISCOUNT:'  + discount);
             }
             db_conf.db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
-                'unidades_carrito, estatus, monto_pagado) ' +
-                ' values($1, $2, $3, $4, $5, $6, $7) returning id_articulo',[
+                'unidades_carrito, estatus, monto_pagado, precio) ' +
+                ' values($1, $2, $3, $4, $5, $6, $7, $8) returning id_articulo',[
                 new Date(),
                 numericCol(req.body.item_id),
                 numericCol(req.user.id),//numericCol(req.body.user_id),
                 numericCol(discount),
                 req.body.existencias,
                 req.body.id_estatus,
-                numericCol(req.body.monto_pagado)
+                numericCol(req.body.monto_pagado),
+                numericCol(req.body.item_precio)
             ]).then(function (data) {
                 console.log('Artículo añadido al carrito');
                 res.json({
