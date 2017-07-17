@@ -3175,6 +3175,19 @@ router.post('/search/employees/checkin', isAuthenticated, function (req, res) {
 
 router.post('/search/suppliers/results', isAuthenticated, function(req, res){
     console.log(req.body);
+    db_conf.db.manyOrNone("select * from proveedores where nombre ilike '%$1#%'", [
+        req.body.nombre
+    ]).then(function(data){
+        res.render('partials/search-suppliers-results', {
+            suppliers: data
+        });
+    }).catch(function(error){
+        console.log(error)
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al buscar los proveedores'
+        })
+    })
 })
 
 router.post('/search/employees/results', isAuthenticated, function (req, res) {

@@ -1,0 +1,17 @@
+<%
+if (suppliers.length > 0){%>
+<label>Resultados</label>
+<div class="list-group">
+    <% for ( var i =0; i < suppliers.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-supplier_id="<%= suppliers[i].id%>">
+        <h4 class="list-group-item-heading"><%= suppliers[i].nombres%></h4>
+        <p class="list-group-item-text"> <strong>Id :</strong> <%= suppliers[i].id %></p>
+        <p class="list-group-item-text"> <strong>Apellido Paterno:</strong> <%= suppliers[i].apellido_paterno %></p>
+        <p class="list-group-item-text"> <strong>Apellido Materno:</strong> <%= suppliers[i].apellido_materno %></p>
+    </a>
+    <%}%>
+</div>
+
+<%}else {%>
+<div class="alert alert-info" role="alert">No hay usuarios registrados con ese nombre</div>
+<%}%>
