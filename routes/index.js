@@ -398,10 +398,10 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros. // ELIMINÉ ID NOTA
                 data[0],
                 t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, fecha_venta, hora_venta, ' +
-                    'monto_pagado_efectivo, monto_pagado_tarjeta, id_terminal, saldo_pendiente, estatus, tarjeta_credito, monto_cambio) ' +
+                    'monto_pagado_efectivo, monto_pagado_tarjeta, id_terminal, saldo_pendiente, estatus, tarjeta_credito, monto_cambio, id_papel) ' +
                     'values( ' +
                     '(select coalesce(max(id_nota),0) from ventas where id_tienda = $1 ) +1 ,' +
-                    '$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning id', [
+                    '$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id', [
                     numericCol(data[1].id_tienda), // si el usuario es administrador, el id que el adjudique, si no el de la tienda del usuario
                     numericCol(user_sale_id), // id de tienda del usuario que realiza la venta.
                     numericCol(req.body.precio_tot),
@@ -413,7 +413,8 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     numericCol(req.body.precio_tot) - numericCol(req.body.efec_tot),
                     "activa",
                     req.body.optradio == "cred",
-                    (numericCol(req.body.monto_rec) - numericCol(req.body.monto_efec))
+                    (numericCol(req.body.monto_rec) - numericCol(req.body.monto_efec)),
+                    req.body.id_papel
                 ])
             ]);
         }).then(function(data){
