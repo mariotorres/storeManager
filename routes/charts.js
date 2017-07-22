@@ -63,7 +63,7 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
 
     sales.then(function (data) {
         res.jsonp({
-            metadata : { period : options },
+            metadata : options,
             data : data
         });
     }).catch(function (error) {
@@ -78,31 +78,47 @@ router.get('/best-selling/data.json', function(req, res){
      * Query string:
      * start_date
      * end_date
-     * aggregation: global || store
+     * store_id
      */
 
-    start_date = req.query.start_date;
-    end_date = req.query.end_date;
-    aggregation = (req.query.aggregation || 'store');
+    let options = {
+        start_date : new Date(),//req.query.start_date,
+        end_date : new Date() , //req.query.end_date
+        store_id : null
+    };
 
-    switch(aggregation){
-        case 'store':
-            db_conf.db.manyOrNone('select * from articulos', [ start_date, end_date]).then(function (items) {
-                res.jsonp(items);
-            }).catch(function (error) {
-                res.status(400).jsonp(error);
-            });
-            break;
-        case 'global':
-            db_conf.db.manyOrNone('select * from articulos', [ start_date, end_date]).then(function (items) {
-                res.jsonp(items);
-            }).catch(function (error) {
-                res.status(error).jsonp(error);
-            });
-            break;
-        default:
-            res.status().jsonp({status:'Error', message: 'Unsupported aggregation level'})
+    options.start_date.setDate( options.start_date.getDate() - 15 ); //last 15 days
+
+    if ( typeof req.query.start_date !== 'undefined' && typeof req.query.end_date !== 'undefined'){
+        options.start_date = new Date( req.query.start_date );
+        options.end_date = new Date( req.query.end_date );
+        if (!isNaN(req.query.store_id)) {
+            options.store_id = Number(req.query.store_id);
+        }
     }
+
+    var items = null;
+
+
+    if (options.store_id !== null){
+        items = db_conf.db.manyOrNone('select * from articulos', [
+            options.start_date, options.end_date, options.store_id
+        ]);
+    }else{
+        items = db_conf.db.manyOrNone('select * from articulos', [
+            options.start_date, options.end_date
+        ]);
+    }
+
+    items.then(function (data) {
+        res.jsonp({
+            metadata: options,
+            data:data
+        });
+    }).catch(function (error) {
+        res.status(400).jsonp(error);
+    });
+
 });
 
 // Saldos con proveedores
