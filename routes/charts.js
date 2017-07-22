@@ -17,27 +17,59 @@ var isAuthenticated = function (req, res, next) {
 // Ventas por periodo
 router.get('/sales/data.json', isAuthenticated, function (req, res) {
 
+    /*
+    * /charts/sales/data.json:
+    * If start_date and end_date where specified, it returns the sales of that period, otherwise
+    * it takes current date as end_date and end_date - 15 days as start_date.
+    * Also, if store_id is set, returns sales only for that store */
+
     //por tienda ...
-    const options = {
-        start_date : '',//req.query.start_date,
-        end_date : '' , //req.query.end_date
-        aggregation : 'store'
+    let options = {
+        start_date : new Date(),//req.query.start_date,
+        end_date : new Date() , //req.query.end_date
+        store_id : null
     };
 
-    db_conf.db.manyOrNone('select fecha_venta, forma_pago, count(*) as conteo, sum(precio_venta) as total from ventas group by id_tienda, forma_pago, fecha_venta',[
-        options.start_date, options.end_date
-    ]).then(function (data) {
+    options.start_date.setDate( options.start_date.getDate() - 15 ); //last 15 days
 
+    if ( typeof req.query.start_date !== 'undefined' && typeof req.query.end_date !== 'undefined'){
+        options.start_date = new Date( req.query.start_date );
+        options.end_date = new Date( req.query.end_date );
+        if (!isNaN(req.query.store_id)) {
+            options.store_id = Number(req.query.store_id);
+        }
+    }
+
+    console.log( 'Options -> ', JSON.stringify(options));
+
+    var sales = null;
+
+    // if store id is not null
+    if (options.store_id !== null ){
+        sales = db_conf.db.manyOrNone('select fecha_venta, forma_pago, count(*) as conteo, sum(precio_venta) as total from ventas ' +
+            'where fecha_venta >= $1 and fecha_venta <= $2 and id_tienda = $3 ' +
+            'group by forma_pago, fecha_venta', [
+            options.start_date,
+            options.end_date,
+            options.store_id
+        ]);
+    }else {
+        sales = db_conf.db.manyOrNone('select fecha_venta, forma_pago, count(*) as conteo, sum(precio_venta) as total from ventas ' +
+            'where fecha_venta >= $1 and fecha_venta <= $2 ' +
+            'group by id_tienda, forma_pago, fecha_venta',[
+            options.start_date, options.end_date
+        ]);
+    }
+
+    sales.then(function (data) {
         res.jsonp({
             metadata : { period : options },
             data : data
         });
-
     }).catch(function (error) {
         console.log(error);
-        res.jsonp(error);
+        res.status(400).jsonp(error);
     });
-
 });
 
 // Más vendidos
