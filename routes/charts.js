@@ -74,7 +74,7 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
     });
 });
 
-// Más vendidos (obtiene el articulo más vendido en el día)
+// Más vendidos (obtiene el articulo más vendido por día en un periodo de tiempo)
 router.get('/best-selling/data.json', function(req, res){
     /* *
      * Query string:
@@ -148,7 +148,7 @@ router.get('/suppliers/data.json', function(req, res){
 
 });
 
-// Top empleados (por día)
+// Mejores vendedores (por día)
 router.get('/employees/data.json', function (req, res) {
     /* *
     * Query string:
