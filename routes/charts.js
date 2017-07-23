@@ -25,8 +25,8 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
 
     //por tienda ...
     let options = {
-        start_date : new Date(),//req.query.start_date,
-        end_date : new Date() , //req.query.end_date
+        start_date : new Date(),
+        end_date : new Date(),
         store_id : null
     };
 
@@ -48,7 +48,8 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
     if (options.store_id !== null ){
         sales = db_conf.db.manyOrNone('select fecha_venta, forma_pago, count(*) as conteo, sum(precio_venta) as total from ventas ' +
             'where fecha_venta >= $1 and fecha_venta <= $2 and id_tienda = $3 ' +
-            'group by forma_pago, fecha_venta', [
+            'group by forma_pago, fecha_venta ' +
+            'order by ventas.fecha_venta', [
             options.start_date,
             options.end_date,
             options.store_id
@@ -56,7 +57,8 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
     }else {
         sales = db_conf.db.manyOrNone('select fecha_venta, forma_pago, count(*) as conteo, sum(precio_venta) as total from ventas ' +
             'where fecha_venta >= $1 and fecha_venta <= $2 ' +
-            'group by id_tienda, forma_pago, fecha_venta',[
+            'group by id_tienda, forma_pago, fecha_venta ' +
+            'order by ventas.fecha_venta',[
             options.start_date, options.end_date
         ]);
     }
@@ -82,8 +84,8 @@ router.get('/best-selling/data.json', function(req, res){
      */
 
     let options = {
-        start_date : new Date(),//req.query.start_date,
-        end_date : new Date() , //req.query.end_date
+        start_date : new Date(),
+        end_date : new Date(),
         store_id : null
     };
 
@@ -97,15 +99,27 @@ router.get('/best-selling/data.json', function(req, res){
         }
     }
 
+    console.log("Options -> ", JSON.stringify(options));
+
     var items = null;
 
-
     if (options.store_id !== null){
-        items = db_conf.db.manyOrNone('select * from articulos', [
+        items = db_conf.db.manyOrNone(' select id, articulo, fecha_venta, max(unidades_vendidas) from (' +
+            'select articulos.id, articulos.articulo, ventas.fecha_venta, count(*) as unidades_vendidas ' +
+            'from ventas, venta_articulos, articulos ' +
+            'where ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2 and ventas.id_tienda = $3 ' +
+            'and ventas.id = venta_articulos.id_venta and venta_articulos.id_articulo = articulos.id ' +
+            'group by articulos.id, ventas.fecha_venta ' +
+            'order by ventas.fecha_venta) as vendidos group by id, articulo, fecha_venta', [
             options.start_date, options.end_date, options.store_id
         ]);
     }else{
-        items = db_conf.db.manyOrNone('select * from articulos', [
+        items = db_conf.db.manyOrNone('select id, articulo, id_tienda, fecha_venta, max(unidades_vendidas) from (' +
+            'select articulos.id, articulos.articulo, ventas.fecha_venta, ventas.id_tienda, count(*) as unidades_vendidas ' +
+            'from ventas, venta_articulos, articulos ' +
+            'where ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2 and ventas.id = venta_articulos.id_venta ' +
+            'group by articulos.id, ventas.fecha_venta, ventas.id_tienda ' +
+            'order by ventas.fecha_venta) as vendidos group by id, id_tienda, articulo, fecha_venta', [
             options.start_date, options.end_date
         ]);
     }
@@ -116,6 +130,7 @@ router.get('/best-selling/data.json', function(req, res){
             data:data
         });
     }).catch(function (error) {
+        console.log(error);
         res.status(400).jsonp(error);
     });
 
@@ -124,7 +139,7 @@ router.get('/best-selling/data.json', function(req, res){
 // Saldos con proveedores
 router.get('/suppliers/data.json', function(req, res){
 
-    db_conf.db.manyOrNone('select * from suppliers').then(function (suppliers) {
+    db_conf.db.manyOrNone('select * from suppliers order by nombre').then(function (suppliers) {
         res.jsonp(suppliers );
     }).catch(function (error) {
         console.log(error);
@@ -139,34 +154,42 @@ router.get('/employees/data.json', function (req, res) {
     * Query string:
     * start_date
     * end_date
-    * aggregation: global || store
+    * store_id
     * */
 
-    start_date = ( req.query.start_date ||  new Date());
-    end_date = ( req.query.end_date ||  new Date());
-    aggregation = (req.query.aggregation || 'store');
 
-    switch ( aggregation ) {
-        case 'global':
-            db_conf.db.manyOrNone('select * from usuarios', [ start_date, end_date ]).then(function (data) {
-                res.jsonp(data);
-            }).catch(function (error) {
-                console.log(error);
-                res.status(400).jsonp(error);
-            });
-            break;
-        case 'store':
-            db_conf.db.manyOrNone('select * from usuarios', [ start_date, end_date ]).then(function (data) {
-                res.jsonp(data);
-            }).catch(function (error) {
-                console.log(error);
-                res.status(400).jsonp(error);
-            });
-            break;
-        default:
-            res.status(400).jsonp({ status : 'Error', message: 'Unsupported aggregation level' });
+    let options = {
+        start_date : new Date(),
+        end_date : new Date(),
+        store_id : null
+    };
+
+    options.start_date.setDate( options.start_date.getDate() - 15 ); //last 15 days
+
+    if ( typeof req.query.start_date !== 'undefined' && typeof req.query.end_date !== 'undefined'){
+        options.start_date = new Date( req.query.start_date );
+        options.end_date = new Date( req.query.end_date );
+        if (!isNaN(req.query.store_id)) {
+            options.store_id = Number(req.query.store_id);
+        }
     }
 
+    console.log("Options -> ", JSON.stringify(options));
+
+    var employees = null;
+
+    if (options.store_id !== null){
+        employees = db_conf.db.manyOrNone('select * from usuarios', [ options.start_date, options.end_date, options.store_id ]);
+    } else {
+        employees = db_conf.db.manyOrNone('select * from usuarios', [ options.start_date, options.end_date ]);
+    }
+
+    employees.then(function (data) {
+        res.jsonp(data);
+    }).catch(function (error) {
+        console.log(error);
+        res.status(400).jsonp(error);
+    });
 });
 
 
