@@ -14,7 +14,7 @@ var isAuthenticated = function (req, res, next) {
     res.redirect('/');
 };
 
-// Ventas por periodo
+// Ventas por periodo (de una tienda o de todas las tiendas)
 router.get('/sales/data.json', isAuthenticated, function (req, res) {
 
     /*
@@ -74,7 +74,7 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
     });
 });
 
-// Más vendidos
+// Más vendidos (obtiene el articulo más vendido en el día)
 router.get('/best-selling/data.json', function(req, res){
     /* *
      * Query string:
@@ -110,7 +110,7 @@ router.get('/best-selling/data.json', function(req, res){
             'where ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2 and ventas.id_tienda = $3 ' +
             'and ventas.id = venta_articulos.id_venta and venta_articulos.id_articulo = articulos.id ' +
             'group by articulos.id, ventas.fecha_venta ' +
-            'order by ventas.fecha_venta) as vendidos group by id, articulo, fecha_venta', [
+            ') as vendidos group by id, articulo, fecha_venta order by fecha_venta', [
             options.start_date, options.end_date, options.store_id
         ]);
     }else{
@@ -119,7 +119,7 @@ router.get('/best-selling/data.json', function(req, res){
             'from ventas, venta_articulos, articulos ' +
             'where ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2 and ventas.id = venta_articulos.id_venta ' +
             'group by articulos.id, ventas.fecha_venta, ventas.id_tienda ' +
-            'order by ventas.fecha_venta) as vendidos group by id, id_tienda, articulo, fecha_venta', [
+            ') as vendidos group by id, id_tienda, articulo, fecha_venta order by fecha_venta', [
             options.start_date, options.end_date
         ]);
     }
@@ -148,7 +148,7 @@ router.get('/suppliers/data.json', function(req, res){
 
 });
 
-// Top empleados
+// Top empleados (por día)
 router.get('/employees/data.json', function (req, res) {
     /* *
     * Query string:
@@ -179,13 +179,27 @@ router.get('/employees/data.json', function (req, res) {
     var employees = null;
 
     if (options.store_id !== null){
-        employees = db_conf.db.manyOrNone('select * from usuarios', [ options.start_date, options.end_date, options.store_id ]);
+        employees = db_conf.db.manyOrNone('select id, nombres, apellido_paterno, fecha_venta, max(nventas) from (' +
+            'select usuarios.id,usuarios.nombres, usuarios.apellido_paterno, ' +
+            'ventas.fecha_venta, count(*) as nventas from usuarios, ventas ' +
+            'where ventas.id_usuario = usuarios.id and ventas.id_tienda = $3 and fecha_venta >= $1 and fecha_venta <= $2 ' +
+            'group by usuarios.id, ventas.fecha_venta) as vendidos group by id, nombres, apellido_paterno, fecha_venta order by fecha_venta',
+            [ options.start_date, options.end_date, options.store_id ]);
     } else {
-        employees = db_conf.db.manyOrNone('select * from usuarios', [ options.start_date, options.end_date ]);
+        employees = db_conf.db.manyOrNone('select id, nombres, apellido_paterno, id_tienda, fecha_venta, max(nventas) from (' +
+            'select usuarios.id, usuarios.nombres, usuarios.apellido_paterno, ' +
+            'ventas.id_tienda, ventas.fecha_venta, count(*) as nventas from usuarios, ventas ' +
+            'where ventas.id_usuario = usuarios.id and fecha_venta >= $1 and fecha_venta <= $2 ' +
+            'group by usuarios.id, ventas.fecha_venta, ventas.id_tienda ) as vendidos ' +
+            'group by id, nombres, apellido_paterno, id_tienda, fecha_venta order by fecha_venta',
+            [ options.start_date, options.end_date ]);
     }
 
     employees.then(function (data) {
-        res.jsonp(data);
+        res.jsonp({
+            metadata: options,
+            data: data
+        });
     }).catch(function (error) {
         console.log(error);
         res.status(400).jsonp(error);
