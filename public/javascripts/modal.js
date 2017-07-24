@@ -464,7 +464,7 @@ function modalEvents(button, modal, page ) {
                 modal.find('form').submit(function(event){
                     $.post('/store/register', $(this).serialize()).done(function (data){
                         alert(data.message);
-                        if(data.status == 'Ok'){
+                        if(data.status === 'Ok'){
                             modal.modal('hide');
                         }
                     });

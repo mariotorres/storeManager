@@ -1451,31 +1451,53 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
  * Registro de tiendas
  */
 router.post('/store/register', isAuthenticated,function(req, res){
-    db_conf.db.one('insert into tiendas(nombre, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
-        'direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) ' +
-        'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id, nombre ', [
-        req.body.nombre,
-        req.body.rfc,
-        req.body.direccion_calle,
-        req.body.direccion_numero_int,
-        req.body.direccion_numero_ext,
-        req.body.direccion_colonia,
-        req.body.direccion_localidad,
-        req.body.direccion_municipio,
-        req.body.direccion_ciudad,
-        req.body.direccion_pais
-    ]).then(function(data){
-        res.json({
-            status:'Ok',
-            message: '¡La tienda "' + data.nombre + '" ha sido registrada!'
-        });
-    }).catch(function(error){
+
+    db_conf.db.oneOrNone('select count(*) as conteo from tiendas where nombre ilike $1', [ req.body.nombre ]).then(function(data){
+
+        console.log('data -> ', data);
+
+        if (Number(data.conteo) === 0) {
+            db_conf.db.one('insert into tiendas(nombre, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
+                'direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais) ' +
+                'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id, nombre ', [
+                req.body.nombre,
+                req.body.rfc,
+                req.body.direccion_calle,
+                req.body.direccion_numero_int,
+                req.body.direccion_numero_ext,
+                req.body.direccion_colonia,
+                req.body.direccion_localidad,
+                req.body.direccion_municipio,
+                req.body.direccion_ciudad,
+                req.body.direccion_pais
+            ]).then(function (data) {
+                res.json({
+                    status: 'Ok',
+                    message: '¡La tienda "' + data.nombre + '" ha sido registrada!'
+                });
+            }).catch(function (error) {
+                console.log(error);
+                res.json({
+                    status: 'Error',
+                    message: 'Ocurrió un error al registrar la tienda'
+                });
+            });
+        } else {
+            console.log({status: Error, message: 'Ya existe otra tienda con ese nombre'});
+            res.json({
+                status: 'Error',
+                message: 'Ya existe otra tienda registrada con ese nombre'
+            });
+        }
+
+    }).catch(function (error) {
         console.log(error);
-        res.json({
+        res.status(400).json({
             status: 'Error',
-            message: 'Ocurrió un error al registrar la tienda'
+            message: 'Error de conexión con la base de datos'
         });
-    });
+    })
+
 });
 
 
