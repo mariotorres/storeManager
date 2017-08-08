@@ -23,3 +23,31 @@
         </p>
     </div>
 </div>
+<!--Desgloce bonos!!!-->
+<h5 style="color:#9E9E9E"><strong>Ventas correspondientes</strong></h5>
+<%if(ventas.length > 0){%>
+<br>
+<%for(var i = 0; i < ventas.length; i++){%>
+<p><strong>Venta <span style="color: #E91E63;"><%=i+1%></span></strong></p>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <tbody>
+        <tr>
+            <td><b>ID papel</b></td>
+            <td><%= ventas[i].id_papel %></td>
+        </tr>
+        <tr>
+            <td><b>Fecha venta</b></td>
+            <td><%= ventas[i].fecha_venta %></td>
+        </tr>
+        <tr>
+            <td><b>Tienda</b></td>
+            <td><%= ventas[i].nombre_tienda %></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<br><br>
+<%}}else{%>
+<div class="alert alert-info" role="alert">El proveedor no tiene ventas registradas en el periodo seleccionado</div>
+<%}%>
