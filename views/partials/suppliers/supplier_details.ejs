@@ -44,6 +44,33 @@
             <td><b>Tienda</b></td>
             <td><%= ventas[i].nombre_tienda %></td>
         </tr>
+        <tr>
+            <td><b>Prendas vendidas</b></td>
+            <%for(var j = 0; j < ventas.length; j++){if(ventas[j].id_venta == ventas[i].id_venta){%>
+            <td>
+                <table class="table table-striped">
+                    <tbody>
+                    <tr>
+                        <td><b>Artículo</b></td>
+                        <td><%= ventas[i].nombre_articulo %></td>
+                    </tr>
+                    <tr>
+                        <td><b>Modelo</b></td>
+                        <td><%= ventas[i].modelo %></td>
+                    </tr>
+                    <tr>
+                        <td><b>Existencias</b></td>
+                        <td><%= ventas[i].n_existencias %></td>
+                    </tr>
+                    <tr>
+                        <td><b>Costo</b></td>
+                        <td><span style="color: #E91E63;"><%= ventas[i].costo %></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+            <%}}%>
+        </tr>
         </tbody>
     </table>
 </div>
