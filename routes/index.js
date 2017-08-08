@@ -226,13 +226,13 @@ router.post('/notas/imprimir/agregar', function (req, res) {
         };
 
         if (data == null ){
-          response.status = 'Error';
-          response.message = 'La nota ya se agregó previamente al carrito';
+            response.status = 'Error';
+            response.message = 'La nota ya se agregó previamente al carrito';
         }
 
         console.log( response );
         res.json(response);
-        
+
     }).catch(function (error) {
         console.log(error);
         res.json({
@@ -253,11 +253,11 @@ router.post('/notas/imprimir/remover', function (req, res) {
             message: 'La nota se removió correctamente'
         })
     }).catch(function (error) {
-       console.log(error);
-       res.json({
-          status : 'Ok',
-           message: 'Ocurrió un error al quitar la nota'
-       });
+        console.log(error);
+        res.json({
+            status : 'Ok',
+            message: 'Ocurrió un error al quitar la nota'
+        });
 
     });
 
@@ -267,9 +267,9 @@ router.post('/carrito/status', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.one('update carrito set estatus = $1 where carrito.id_articulo = $2 and ' +
         'carrito.id_usuario = $3 returning id_articulo',[
-            req.body.status,
-            req.body.item_id,
-            req.user.id
+        req.body.status,
+        req.body.item_id,
+        req.user.id
     ]).then(function(data){
         res.json({
             status:'Ok',
@@ -288,9 +288,9 @@ router.post('/carrito/monto', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.one('update carrito set monto_pagado = $1 where carrito.id_articulo = $2 and ' +
         'carrito.id_usuario = $3 returning id_articulo',[
-            req.body.monto,
-            req.body.item_id,
-            req.user.id
+        req.body.monto,
+        req.body.item_id,
+        req.user.id
     ]).then(function(data){
         db_conf.db.one('select sum(monto_pagado) as monto_pagado from carrito where carrito.id_usuario = $1',[
             req.user.id
@@ -387,10 +387,10 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
     db_conf.db.tx(function (t) {
         return t.batch([
             t.manyOrNone(
-            'select * from carrito, articulos where carrito.id_articulo = articulos.id and ' +
-            ' carrito.id_usuario = $1 order by articulo', [
-                numericCol(req.user.id) //numericCol(req.body.user_id)
-            ]),
+                'select * from carrito, articulos where carrito.id_articulo = articulos.id and ' +
+                ' carrito.id_usuario = $1 order by articulo', [
+                    numericCol(req.user.id) //numericCol(req.body.user_id)
+                ]),
             t.one('select * from usuarios where id = $1', [
                 user_sale_id
             ])
@@ -1693,8 +1693,8 @@ router.post('/employees/bonus/register', isAuthenticated, function(req, res){
 });
 
 /*
-* Registro de premio
-*/
+ * Registro de premio
+ */
 router.post('/employees/prize/register', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.one('insert into premios(nombre, monto, descripcion, monto_alcanzar, criterio, temporalidad, id_tienda) ' +
@@ -1997,8 +1997,8 @@ router.post('/bonus/update', isAuthenticated, function(req, res){
 });
 
 /*
-* Actuzlización de premios
-*/
+ * Actuzlización de premios
+ */
 router.post('/prize/update', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.one('update premios set nombre=$2, monto=$3, descripcion=$4, monto_alcanzar=$5, criterio=$6, temporalidad=$7, id_tienda=$8 where id=$1 returning id, nombre ',[
@@ -2141,8 +2141,8 @@ router.post('/item/return', isAuthenticated, function(req, res){
 });
 
 /*
-* Listado ingreso de empelados
-*/
+ * Listado ingreso de empelados
+ */
 router.post('/employee/list/check-in', function(req, res){
     db_conf.db.manyOrNone(
         'select * from tiendas'
@@ -2158,8 +2158,8 @@ router.post('/employee/list/check-in', function(req, res){
 });
 
 /*
-* Ingreso empleados
-*/
+ * Ingreso empleados
+ */
 router.post('/employee/check-in', function(req,res ){
     db_conf.db.one("select count(*) from asistencia where fecha = date_trunc('day', now()) and tipo = 'entrada' and id_usuario = $1",[
         numericCol(req.user.id)
@@ -2228,7 +2228,7 @@ router.post('/employee/check-out', function(req,res ){
 });
 
 /*
-* Cancelar nota
+ * Cancelar nota
  */
 router.post('/cancel/note', isAuthenticated,function(req, res){
     db_conf.db.tx(function(t){
@@ -2545,35 +2545,35 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
 
 });
 /*
-router.post('/search/items/results_inv', isAuthenticated, function(req, res){
-    console.log(req.body);
-    //var pageSize = 10;
-    //var offset = req.body.page * pageSize;
-    db_conf.db.task(function (t) {
-        return this.batch([
-            t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as nombre_tienda, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id" +
-                " from articulos, proveedores, tiendas where articulos.id_proveedor = proveedores.id and id_tienda = tiendas.id and articulos.id_tienda = tiendas.id and " +
-                "(id_tienda = $5 and id_proveedor = $1) and (articulo ilike '%$3#%' or modelo ilike '%$4#%') ", [
-                req.body.id_proveedor,
-                req.body.id_marca,
-                req.body.articulo,
-                req.body.modelo,
-                req.body.id_tienda
-            ]),
-            t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
-            t.manyOrNone('select * from terminales')
-        ])
-    }).then(function (data) {
-        res.render('partials/items/search-items-results-inv',{
-            items: data[0],
-            user: data[1],
-            terminales: data[2]
-        });
-    }).catch(function (error) {
-        console.log(error);
-        res.send('<b>Error</b>');
-    });
-});*/
+ router.post('/search/items/results_inv', isAuthenticated, function(req, res){
+ console.log(req.body);
+ //var pageSize = 10;
+ //var offset = req.body.page * pageSize;
+ db_conf.db.task(function (t) {
+ return this.batch([
+ t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as nombre_tienda, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id" +
+ " from articulos, proveedores, tiendas where articulos.id_proveedor = proveedores.id and id_tienda = tiendas.id and articulos.id_tienda = tiendas.id and " +
+ "(id_tienda = $5 and id_proveedor = $1) and (articulo ilike '%$3#%' or modelo ilike '%$4#%') ", [
+ req.body.id_proveedor,
+ req.body.id_marca,
+ req.body.articulo,
+ req.body.modelo,
+ req.body.id_tienda
+ ]),
+ t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
+ t.manyOrNone('select * from terminales')
+ ])
+ }).then(function (data) {
+ res.render('partials/items/search-items-results-inv',{
+ items: data[0],
+ user: data[1],
+ terminales: data[2]
+ });
+ }).catch(function (error) {
+ console.log(error);
+ res.send('<b>Error</b>');
+ });
+ });*/
 
 router.post('/search/items/results', isAuthenticated, function (req, res) {
     console.log(req.body);
@@ -2629,21 +2629,26 @@ router.post('/notes/find-notes-view', function (req, res) {
 });
 
 router.post('/supplier/details', isAuthenticated, function(req, res){
-   console.log(req.body);
-   var id = req.body.id;
-   db_conf.db.task(function(t){
-       return this.batch([
-           this.manyOrNone("select proveedores.nombre as nombre_proveedor, articulos.articulo as nombre_articulo, articulos.modelo as modelo, costo, n_existencias, " +
-               " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta, saldo_pendiente, venta_articulos.estatus as estatus_prenda " +
-               " from proveedores, ventas, venta_articulos, articulos, tiendas where venta_articulos.id_venta = ventas.id and venta_articulos.id_articulo = articulos.id and " +
-               " articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id and proveedores.id = $1 and venta_articulos.estatus = 'entregada' and ventas.estatus = 'activa' " +
-               " and fecha_venta <= $3 and fecha_venta >= $2", [
-                   req.body.id,
-               req.body.fecha_inicial,
-               req.body.fecha_final
-           ])
-       ])
-   })
+    console.log(req.body);
+    var id = req.body.id;
+    db_conf.db.manyOrNone("select proveedores.nombre as nombre_proveedor, proveedores.rfc as rfc_proveedor, proveedores.razon_social as razon_social_proveedor, " +
+        " articulos.articulo as nombre_articulo, articulos.modelo as modelo, costo, n_existencias, " +
+        " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta, saldo_pendiente, venta_articulos.estatus as estatus_prenda " +
+        " from proveedores, ventas, venta_articulos, articulos, tiendas where venta_articulos.id_venta = ventas.id and venta_articulos.id_articulo = articulos.id and " +
+        " articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id and proveedores.id = $1 and venta_articulos.estatus = 'entregada' and ventas.estatus = 'activa' " +
+        " and fecha_venta <= $3 and fecha_venta >= $2", [
+        req.body.id,
+        req.body.fecha_inicial,
+        req.body.fecha_final
+    ]).then(function(data){
+        res.render('partials/suppliers/supplier_details', {ventas: data})
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al cargar los datos del proveedor'
+        })
+    })
 });
 
 router.post('/employee/details', isAuthenticated, function (req, res) {
@@ -2790,13 +2795,13 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
 
     //let user_id = req.query.user_id;
     /*
-    db_conf.db.one('select * from usuarios where id = $1', [user_id]).then(function(data){
-        res.json(data);
-    }).catch(function(error){
-        console.log(error);
-        res.send("<h1>Error al buscar el usuario</h1>");
-    });*/
-    
+     db_conf.db.one('select * from usuarios where id = $1', [user_id]).then(function(data){
+     res.json(data);
+     }).catch(function(error){
+     console.log(error);
+     res.send("<h1>Error al buscar el usuario</h1>");
+     });*/
+
     // Comisión total 3%.
     //console.log(req.body);
     var id = req.query.user_id;
@@ -3173,24 +3178,24 @@ router.post('/employee/check-in/form', isAuthenticated, function(req, res){
 });
 
 router.post('/employee/register/check-in', isAuthenticated, function(req, res){
-   console.log(req.body);
-   db_conf.db.oneOrNone('insert into asistencia (id_usuario, fecha, hora, tipo) values($1, $2, $3, $4) returning id',[
-       req.body.id,
-       req.body.fecha,
-       req.body.llegada,
-       'entrada'
-   ]).then(function(data){
-       res.json({
-           status:'Ok',
-           message: 'Se ha registrado el ingreso de "' + req.body.nombres + '" el día ' + req.body.fecha + ' a las ' + req.body.llegada
-       })
-   }).catch(function(error){
-       console.log(error);
-       res.json({
-           status: 'Error',
-           message: 'Ocurrió un error al ingresar el usuario'
-       })
-   })
+    console.log(req.body);
+    db_conf.db.oneOrNone('insert into asistencia (id_usuario, fecha, hora, tipo) values($1, $2, $3, $4) returning id',[
+        req.body.id,
+        req.body.fecha,
+        req.body.llegada,
+        'entrada'
+    ]).then(function(data){
+        res.json({
+            status:'Ok',
+            message: 'Se ha registrado el ingreso de "' + req.body.nombres + '" el día ' + req.body.fecha + ' a las ' + req.body.llegada
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al ingresar el usuario'
+        })
+    })
 });
 
 router.post('/search/employees/checkin', isAuthenticated, function (req, res) {
@@ -3512,7 +3517,7 @@ router.get('/exportar/ventas.csv', isAuthenticated,function(req, res){
         try {
             var fields = ['id_venta','vendedor', 'tienda', 'tienda_facturacion', 'total_venta', 'fecha','hora','monto_pagado_efectivo_venta',
                 'monto_pagado_tarjeta_venta', 'tarjeta_credito', 'saldo_pendiente_venta', 'estatus_venta', 'terminal',
-            'nombre_articulo', 'proveedor', 'unidades_vendidas', 'monto_pagado_articulo', 'monto_por_pagar_articulo', 'estatus_articulo'];
+                'nombre_articulo', 'proveedor', 'unidades_vendidas', 'monto_pagado_articulo', 'monto_por_pagar_articulo', 'estatus_articulo'];
             var result = json2csv({ data: data, fields: fields });
             //console.log(result);
 

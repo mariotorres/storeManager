@@ -1,0 +1,25 @@
+<h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
+<p>
+    <label>Nombre(s)</label>
+<%if(ventas.length > 0){%>
+    <h5 style="color: #9E9E9E;"><%=ventas[0].nombre_proveedor%></h5>
+<%}%>
+</p>
+<div class="row">
+    <div class="col-sm-6">
+        <p>
+            <label>Razón Social</label>
+            <%if(ventas.length > 0){%>
+        <h5 style="color: #9E9E9E;"><%=ventas[0].razon_social_proveedor%></h5>
+        <%}%>
+        </p>
+    </div>
+    <div class="col-sm-6">
+        <p>
+            <label>RFC</label>
+            <%if(ventas.length > 0){%>
+        <h5 style="color: #9E9E9E;"><%=ventas[0].rfc_proveedor%></h5>
+        <%}%>
+        </p>
+    </div>
+</div>
