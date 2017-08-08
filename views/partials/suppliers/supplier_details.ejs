@@ -27,7 +27,7 @@
 <h5 style="color:#9E9E9E"><strong>Ventas correspondientes</strong></h5>
 <%if(ventas.length > 0){%>
 <br>
-<%for(var i = 0; i < ventas.length; i++){%>
+<%for(var i = 0; i < ventas.length; i++){ var totalVenta = 0; %>
 <p><strong>Venta <span style="color: #E91E63;"><%=i+1%></span></strong></p>
 <div class="table-responsive">
     <table class="table table-striped">
@@ -41,12 +41,16 @@
             <td><%= ventas[i].fecha_venta %></td>
         </tr>
         <tr>
+            <td><b>Hora venta</b></td>
+            <td><%= ventas[i].hora_venta %></td>
+        </tr>
+        <tr>
             <td><b>Tienda</b></td>
             <td><%= ventas[i].nombre_tienda %></td>
         </tr>
         <tr>
             <td><b>Prendas vendidas</b></td>
-            <%for(var j = 0; j < ventas.length; j++){if(ventas[j].id_venta == ventas[i].id_venta){%>
+            <%for(var j = 0; j < ventas.length; j++){if(ventas[j].id_venta == ventas[i].id_venta){ totalVenta += Number(ventas[i].costo);%>
             <td>
                 <table class="table table-striped">
                     <tbody>
@@ -71,7 +75,12 @@
             </td>
             <%}}%>
         </tr>
+        <tr>
+            <td><b>Total venta</b></td>
+            <td><b style="color: #e91e63"><%= totalVenta %></b></td>
+        </tr>
         </tbody>
+
     </table>
 </div>
 <br><br>
