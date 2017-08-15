@@ -255,8 +255,15 @@ function modalEvents(button, modal, page ) {
                 });
                 modal.find('#find').submit(function (e) {
                     // Mostrar resultados
-                    modal.find('#search_results').load('/search/notes/results', $(this).serializeArray(), function () {
+                    modal.find('#search_results').load('/print/notes/list/', {data: $(this).serializeArray(), page:page}, function () {
                         //poder código para hacer algo con la nota seleccionada
+                        $('#search_results').find('.list-group-item').click(function(){
+                            modal.find('#modal_content').load('/notes/details', {id: $(this).data('sales_id')},function(){
+                                modal.find('form').submit(function(e){
+
+                                })
+                            })
+                        })
                     });
                     e.preventDefault();
                 });
@@ -582,7 +589,7 @@ function modalEvents(button, modal, page ) {
         case "print_notes":
             modal.find('.modal-title').text('Seleccionar notas');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/print/notes/list/',{ page: page}, function(){
+            modal.find('#modal_content').load('/print/notes/list/',{page: page}, function(){
 
                 $(this).find('form').submit(function(e){
                     if (confirm("¿Está seguro que quiere agregar la nota a la lista de impresión?")){

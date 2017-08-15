@@ -611,20 +611,48 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
 
 // Display de notas para imprimir
 router.post('/print/notes/list/', isAuthenticated, function (req, res) {
+    console.log(req.body);
     var pageSize = 10;
     var offset = req.body.page * pageSize;
+    var query  = 'select ventas.id as ventaId, monto_pagado_tarjeta, precio_venta, fecha_venta, ' +
+        ' hora_venta, tiendas.nombre as nombreTienda, saldo_pendiente, unidades_vendidas, discount, monto_pagado_tarjeta,' +
+        ' monto_pagado, monto_por_pagar, id_venta, venta_articulos.estatus as estatusPrenda, articulos.articulo as nombreArt, ' +
+        ' modelo, proveedores.nombre as nombreProv ' +
+        ' from ventas, tiendas, venta_articulos, articulos, proveedores where ventas.estatus = $4 and ventas.id = venta_articulos.id_venta ' +
+        ' and ventas.id_tienda = tiendas.id and articulos.id = venta_articulos.id_articulo and articulos.id_proveedor = ' +
+        ' proveedores.id' +
+        ' order by ventaId desc limit $2 offset $3';
+    if(req.body.data[0]['value']){ ///// FIX
+        switch ( req.user.permiso_administrador ){
+            case true:
+                query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre, ventas.id_papel " +
+                    "from ventas, tiendas  " +
+                    "where (((ventas.fecha_venta >= $5 and ventas.fecha_venta <= $6) and ventas.id_nota = $7) " +
+                    " or ((ventas.fecha_venta >= $5 and ventas.fecha_venta <= $6) and ventas.id_papel = $10)) and ventas.id_tienda = tiendas.id and ventas.id_tienda=$9";
+                break;
+            default:
+                query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre, ventas.id_papel " +
+                    "from ventas, tiendas " +
+                    "where ((ventas.fecha_venta >= $5 and ventas.fecha_venta <= $6) and ventas.id_nota = $7) and ventas.id_usuario = $8 and ventas.id_tienda = tiendas.id and ventas.id_tienda=$9";
+        }
+    }
+
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from ventas as count'),
             // Lista ventas y tiendas físicas
-            this.manyOrNone('select ventas.id as ventaId, monto_pagado_tarjeta, precio_venta, fecha_venta, ' +
-                ' hora_venta, tiendas.nombre as nombreTienda, saldo_pendiente, unidades_vendidas, discount, monto_pagado_tarjeta,' +
-                ' monto_pagado, monto_por_pagar, id_venta, venta_articulos.estatus as estatusPrenda, articulos.articulo as nombreArt, ' +
-                ' modelo, proveedores.nombre as nombreProv ' +
-                ' from ventas, tiendas, venta_articulos, articulos, proveedores where ventas.estatus = $4 and ventas.id = venta_articulos.id_venta ' +
-                ' and ventas.id_tienda = tiendas.id and articulos.id = venta_articulos.id_articulo and articulos.id_proveedor = ' +
-                ' proveedores.id' +
-                ' order by ventaId desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
+            this.manyOrNone(query, [
+                req.user.id,
+                pageSize,
+                offset,
+                "activa",
+                req.body.data[3]['value'],//fecha_inicial,
+                req.body.data[4]['value'],//fecha_final,
+                req.body.data[0]['value'],//id_note, //¿id de venta? checar
+                req.user.id,
+                req.body.data[2]['value'],//id_tienda,
+                req.body.data[1]['value']]//id_papel]
+            )
         ]);
     }).then(function(data){
         res.render('partials/notes/print-notes-list',{
@@ -3319,7 +3347,7 @@ router.post('/search/employees/results', isAuthenticated, function (req, res) {
 });
 
 router.post('/search/notes/results', isAuthenticated, function (req, res) {
-    //console.log(req.body);
+    console.log(req.body);
     query = "";
 
     // ¿se debe buscar por id de venta o por id_nota?
