@@ -2646,7 +2646,7 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                 " articulos.articulo as nombre_articulo, articulos.modelo as modelo, costo, n_existencias, " +
                 " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta, saldo_pendiente, venta_articulos.estatus as estatus_prenda, id_papel, ventas.id as id_venta " +
                 " from proveedores, ventas, venta_articulos, articulos, tiendas where venta_articulos.id_venta = ventas.id and venta_articulos.id_articulo = articulos.id and " +
-                " articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id and proveedores.id = $1 and venta_articulos.estatus = 'entregada' and ventas.estatus = 'activa' " +
+                " articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id and proveedores.id = $1 and  ventas.estatus = 'activa' " +
                 " and fecha_venta <= $3 and fecha_venta >= $2", [
                 req.body.id,
                 req.body.fecha_inicial,
