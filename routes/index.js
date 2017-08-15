@@ -2651,10 +2651,16 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                 req.body.id,
                 req.body.fecha_inicial,
                 req.body.fecha_final
-            ])
+            ]),
+            this.oneOrNone('select * from proveedores where id = $1', req.body.id )
         ])
     }).then(function(data){
-        res.render('partials/suppliers/supplier_details', {ventas: data[0], venta_arts:data[1]})
+        res.render('partials/suppliers/supplier_details', {ventas: data[0],
+            venta_arts:data[1],
+            proveedor: data[2],
+            fecha_inicial: req.body.fecha_inicial,
+            fecha_final: req.body.fecha_final
+        });
     }).catch(function(error){
         console.log(error);
         res.json({
@@ -2802,6 +2808,49 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         console.log(error);
         res.send('<b>Error</b>');
     });
+});
+
+router.get('/print/supplier/details', (req,res)=>{
+    console.log(req.query);
+    var id = req.body.id;
+    db_conf.db.task(function(t){
+        return this.batch([
+            this.manyOrNone("select proveedores.nombre as nombre_proveedor, proveedores.rfc as rfc_proveedor, proveedores.razon_social as razon_social_proveedor, " +
+                " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta,  id_papel, ventas.id as id_venta " +
+                " from proveedores, ventas, tiendas where  " +
+                " ventas.id_tienda = tiendas.id and proveedores.id = $1 and ventas.estatus = 'activa' " +
+                " and fecha_venta <= $3 and fecha_venta >= $2", [
+                req.query.id,
+                req.query.fecha_inicial,
+                req.query.fecha_final
+            ]),
+            this.manyOrNone("select proveedores.nombre as nombre_proveedor, proveedores.rfc as rfc_proveedor, proveedores.razon_social as razon_social_proveedor, " +
+                " articulos.articulo as nombre_articulo, articulos.modelo as modelo, costo, n_existencias, " +
+                " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta, saldo_pendiente, venta_articulos.estatus as estatus_prenda, id_papel, ventas.id as id_venta " +
+                " from proveedores, ventas, venta_articulos, articulos, tiendas where venta_articulos.id_venta = ventas.id and venta_articulos.id_articulo = articulos.id and " +
+                " articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id and proveedores.id = $1 and venta_articulos.estatus = 'entregada' and ventas.estatus = 'activa' " +
+                " and fecha_venta <= $3 and fecha_venta >= $2", [
+                req.query.id,
+                req.query.fecha_inicial,
+                req.query.fecha_final
+            ]),
+            this.oneOrNone('select * from proveedores where id = $1', [req.query.id])
+        ])
+    }).then(function(data){
+        res.render('reports/supplier-details', {
+            ventas: data[0],
+            venta_arts:data[1],
+            proveedor: data[2],
+            fecha_inicial: req.query.fecha_inicial,
+            fecha_final: req.query.fecha_final
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al cargar los datos del proveedor'
+        })
+    })
 });
 
 router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) {

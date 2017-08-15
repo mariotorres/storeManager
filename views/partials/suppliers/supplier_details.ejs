@@ -1,25 +1,26 @@
 <h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
 <p>
     <label>Nombre(s)</label>
-<%if(ventas.length > 0){%>
-    <h5 style="color: #9E9E9E;"><%=ventas[0].nombre_proveedor%></h5>
-<%}%>
+
+    <h5 style="color: #9E9E9E;"><%= proveedor.razon_social %></h5>
+
 </p>
 <div class="row">
     <div class="col-sm-6">
         <p>
             <label>Razón Social</label>
-            <%if(ventas.length > 0){%>
-        <h5 style="color: #9E9E9E;"><%=ventas[0].razon_social_proveedor%></h5>
-        <%}%>
+
+
+        <h5 style="color: #9E9E9E;"><%= proveedor.razon_social %></h5>
+
         </p>
     </div>
     <div class="col-sm-6">
         <p>
             <label>RFC</label>
-            <%if(ventas.length > 0){%>
-        <h5 style="color: #9E9E9E;"><%=ventas[0].rfc_proveedor%></h5>
-        <%}%>
+
+        <h5 style="color: #9E9E9E;"><%= proveedor.rfc %></h5>
+
         </p>
     </div>
 </div>
@@ -98,3 +99,10 @@
     </h2>
     </p>
 </div>
+
+
+<p>
+    <%var url = '/print/supplier/details?id='+ proveedor.id +'&fecha_inicial='+ fecha_inicial +
+    '&fecha_final='+ fecha_final%>
+    <button class="btn btn-primary" onclick="<%= "window.open('"+ url +"')"%>"> <i class="fa fa-print"></i> Imprimir reporte</button>
+</p>

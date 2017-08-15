@@ -205,9 +205,12 @@ function modalEvents(button, modal, page ) {
                 modal.find('#findSuppliers').submit(function(e){
                     modal.find('#search_results').load('/search/suppliers/results', $(this).serializeArray(), function(){
                         $('#search_results').find('.list-group-item').click(function(){
+                            ////////////
                             modal.find('#modal_content').load('/supplier/details', {id: $(this).data('supplier_id'),
                                 fecha_inicial: $(this).data('fecha_inicial'),
-                                fecha_final:$(this).data('fecha_final')});
+                                fecha_final:$(this).data('fecha_final')
+                            });
+
                         });
                     });
                     e.preventDefault();
@@ -334,7 +337,7 @@ function modalEvents(button, modal, page ) {
                                             success: function (data) {
                                                 alert(data.message);
                                                 if (data)
-                                                    if (data.status == 'Ok') {
+                                                    if (data.status === 'Ok') {
                                                         modal.modal('hide');
                                                     }
                                             }
@@ -402,7 +405,7 @@ function modalEvents(button, modal, page ) {
                                     modal.find('form').submit(function(e){
                                         $.post('/notes/finitPayment', $(this).serialize()).done(function(data){
                                             alert(data.message);
-                                            if(data.status == 'Ok'){
+                                            if(data.status === 'Ok'){
                                                 modal.modal('hide');
                                             }
                                         });
@@ -432,7 +435,7 @@ function modalEvents(button, modal, page ) {
                             if ( confirm('¿Está seguro de eliminar el usuario?, se eliminarán todos los datos asociados al mismo.') ){
                                 $.post( '/user/delete', { id: $(this).data('id') }).done(function (data) {
                                     alert(data.message);
-                                    if (data.status == 'Ok'){
+                                    if (data.status === 'Ok'){
                                         modal.modal('hide');
                                     }
                                 });
@@ -443,7 +446,7 @@ function modalEvents(button, modal, page ) {
                         modal.find('form').submit(function (event) {
                             $.post('/user/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
-                                if(data.status=='Ok'){
+                                if(data.status ==='Ok'){
                                     modal.modal('hide');
                                 }
                             });
@@ -480,7 +483,7 @@ function modalEvents(button, modal, page ) {
                 modal.find('form').submit(function(event){
                     $.post('/terminal/register', $(this).serialize()).done(function (data){
                         alert(data.message);
-                        if(data.status == 'Ok'){
+                        if(data.status === 'Ok'){
                             modal.modal('hide');
                         }
                     });
@@ -499,7 +502,7 @@ function modalEvents(button, modal, page ) {
                             if (confirm('¿Está seguro de eliminar la terminal? Se eliminarán todos los datos asociados a ella')){
                                 $.post('/terminal/delete',{ id : $(this).data('id')}).done(function (data) {
                                     alert(data.message);
-                                    if (data.status == 'Ok'){
+                                    if (data.status === 'Ok'){
                                         modal.modal('hide');
                                     }
                                 });
@@ -510,7 +513,7 @@ function modalEvents(button, modal, page ) {
                         modal.find('form').submit(function (event) {
                             $.post('/terminal/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
-                                if(data.status=='Ok'){
+                                if(data.status ==='Ok'){
                                     modal.modal('hide');
                                 }
                             });
@@ -533,7 +536,7 @@ function modalEvents(button, modal, page ) {
                            if (confirm('¿Está seguro de eliminar la tienda?, se eliminarán todos los datos asociados a ella')){
                                $.post('/store/delete',{ id: $(this).data('id')}).done(function (data) {
                                    alert(data.message);
-                                   if ( data.status == 'Ok'){
+                                   if ( data.status === 'Ok'){
                                        modal.modal('hide');
                                    }
                                });
@@ -544,7 +547,7 @@ function modalEvents(button, modal, page ) {
                         modal.find('form').submit(function (event) {
                             $.post('/store/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
-                                if(data.status=='Ok'){
+                                if(data.status === 'Ok'){
                                     modal.modal('hide');
                                 }
                             });
@@ -567,7 +570,7 @@ function modalEvents(button, modal, page ) {
                         // Selected discount
                         $.post('/carrito/new', $(this).serialize()).done(function (data) {
                             alert(data.message);
-                            if(data.status=='Ok'){
+                            if(data.status ==='Ok'){
                                 modal.modal('hide');
                             }
                         });
@@ -585,7 +588,7 @@ function modalEvents(button, modal, page ) {
                     if (confirm("¿Está seguro que quiere agregar la nota a la lista de impresión?")){
                         $.post('/notas/imprimir/agregar',  $(this).serializeArray()).done(function (data) {
                             alert(data.message);
-                            if(data.status=='Ok'){
+                            if(data.status ==='Ok'){
                                 modal.modal('hide');
                             }
                         });
@@ -633,7 +636,7 @@ function modalEvents(button, modal, page ) {
                     if (confirm("¿Está seguro que quiere eliminar la nota: " +  $(this).data('id_venta'))){
                         $.post('/cancel/note', {note_id: $(this).data('id_venta')}).done(function (data) {
                             alert(data.message);
-                            if(data.status=='Ok'){
+                            if(data.status==='Ok'){
                                 modal.modal('hide');
                             }
                         });
@@ -650,7 +653,7 @@ function modalEvents(button, modal, page ) {
                 modal.find('form').submit(function(event){
                     $.post('/supplier/register', $(this).serialize()).done(function (data){
                         alert(data.message);
-                        if(data.status == 'Ok'){
+                        if(data.status === 'Ok'){
                             modal.modal('hide');
                         }
                     });
@@ -670,7 +673,7 @@ function modalEvents(button, modal, page ) {
                             if (confirm('¿Está seguro de eliminar el proveedor?, se eliminarán todos los datos asociados a el')){
                                 $.post('/supplier/delete', {id : $(this).data('id')}).done(function (data) {
                                     alert(data.message);
-                                   if (data.status == 'Ok'){
+                                   if (data.status === 'Ok'){
                                        modal.modal('hide');
                                    }
                                 });
@@ -680,7 +683,7 @@ function modalEvents(button, modal, page ) {
                         modal.find('form').submit(function (event) {
                             $.post('/supplier/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
-                                if(data.status=='Ok'){
+                                if(data.status ==='Ok'){
                                     modal.modal('hide');
                                 }
                             });
@@ -732,7 +735,7 @@ function modalEvents(button, modal, page ) {
                 modal.find('form').submit(function(event){
                     $.post('/employees/extra_pay/register', $(this).serialize()).done(function (data){
                         alert(data.message);
-                        if(data.status == 'Ok'){
+                        if(data.status === 'Ok'){
                             modal.modal('hide');
                         }
                     });
@@ -845,7 +848,7 @@ function modalEvents(button, modal, page ) {
                         modal.find('form').submit(function (event) {
                             $.post('/prize/update', $(this).serialize()).done(function (data) {
                                 alert(data.message);
-                                if(data.status=='Ok'){
+                                if(data.status ==='Ok'){
                                     modal.modal('hide');
                                 }
                             });

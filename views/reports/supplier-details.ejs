@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Usuario</title>
+
+    <!-- Bootstrap -->
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/stylesheets/style.css" rel="stylesheet">
+    <style>
+        body{
+            padding-top: 10px !important;
+        }
+    </style>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- font awesome -->
+    <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+    <h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
+    <p>
+        <label>Nombre(s)</label>
+
+    <h5 style="color: #9E9E9E;"><%= proveedor.razon_social %></h5>
+
+    </p>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <label>Razón Social</label>
+
+
+            <h5 style="color: #9E9E9E;"><%= proveedor.razon_social %></h5>
+
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p>
+                <label>RFC</label>
+
+            <h5 style="color: #9E9E9E;"><%= proveedor.rfc %></h5>
+
+            </p>
+        </div>
+    </div>
+    <!--Desgloce bonos!!!-->
+    <h5 style="color:#9E9E9E"><strong>Ventas correspondientes</strong></h5>
+    <%if(ventas.length > 0){ var totalVentas = 0;%>
+    <br>
+    <%for(var i = 0; i < ventas.length; i++){ var totalVenta = 0; %>
+    <p><strong>Venta <span style="color: #E91E63;"><%=i+1%></span></strong></p>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <td><b>ID papel</b></td>
+                <td><%= ventas[i].id_papel %></td>
+            </tr>
+            <tr>
+                <td><b>Fecha venta</b></td>
+                <td><%= ventas[i].fecha_venta %></td>
+            </tr>
+            <tr>
+                <td><b>Hora venta</b></td>
+                <td><%= ventas[i].hora_venta %></td>
+            </tr>
+            <tr>
+                <td><b>Tienda</b></td>
+                <td><%= ventas[i].nombre_tienda %></td>
+            </tr>
+            <tr>
+                <td><b>Prendas vendidas</b></td>
+                <td>
+                    <table class="table table-striped">
+                        <tbody>
+                        <%for(var j = 0; j < venta_arts.length; j++){if(venta_arts[j].id_venta == ventas[i].id_venta){ totalVenta += Number(venta_arts[j].costo);%>
+                        <tr>
+                            <td><b style="color: #E91E63;"><%=j+1%></b></td>
+                        </tr>
+                        <tr>
+                            <td><b>Artículo</b></td>
+                            <td><%= venta_arts[j].nombre_articulo %></td>
+                        </tr>
+                        <tr>
+                            <td><b>Modelo</b></td>
+                            <td><%= venta_arts[j].modelo %></td>
+                        </tr>
+                        <tr>
+                            <td><b>Existencias</b></td>
+                            <td><%= venta_arts[j].n_existencias %></td>
+                        </tr>
+                        <tr>
+                            <td><b>Costo</b></td>
+                            <td><span style="color: #E91E63;"><%= venta_arts[j].costo %></span></td>
+                        </tr>
+                        <%}}%>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Por pagar venta</b></td>
+                <td><b style="color: #e91e63"><%= totalVenta %></b></td>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+    <br><br>
+    <% totalVentas += Number(totalVenta)}}else{%>
+    <div class="alert alert-info" role="alert">El proveedor no tiene ventas registradas en el periodo seleccionado</div>
+    <%}%>
+    <div class="col-sm-3 col-md-offset-9">
+        <p>
+            <label>Saldo por pagar</label>
+        <h2 style="color: #E91E63;">
+            <%=totalVentas%>
+        </h2>
+        </p>
+    </div>
+
+
+<p>
+    <button class="btn btn-primary" onclick="window.print()"> <i class="fa fa-print"></i> Imprimir reporte</button>
+</p>
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
