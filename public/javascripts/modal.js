@@ -626,7 +626,7 @@ function modalEvents(button, modal, page ) {
 
                             doc.save('ticket.pdf');
                         });*/
-
+                    alert($(this).data('id_venta'))
                     window.open('/notes/getbyid/'+ $(this).data('id_venta'));
 
                 });

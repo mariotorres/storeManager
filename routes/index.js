@@ -859,8 +859,8 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
 });
 
 router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
-    const id = req.params.id;
-
+    const id = numericCol(req.params.id);
+    console.log(id);
     db_conf.db.task(function (t) {
 
         return this.batch([
