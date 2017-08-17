@@ -1801,6 +1801,7 @@ router.post('/brand/register', isAuthenticated, function(req, res){
  * Registro de proveedores
  */
 router.post('/supplier/register', isAuthenticated,function(req, res){
+    console.log(req.body);
     db_conf.db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
         'direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, a_cuenta, por_pagar) ' +
         'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, nombre ', [
@@ -1834,9 +1835,10 @@ router.post('/supplier/register', isAuthenticated,function(req, res){
  * Actualizacion de proveedores
  */
 router.post('/supplier/update', isAuthenticated,function(req, res){
+    console.log(req.body);
     db_conf.db.one('update proveedores set nombre=$2, razon_social=$3, rfc=$4, direccion_calle=$5,'+
         'direccion_numero_int=$6, direccion_numero_ext=$7, direccion_colonia=$8, direccion_localidad=$9,' +
-        'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12, a_cuenta=$13, por_pagar=$14 where id=$1 returning id, nombre ', [
+        'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12, por_pagar=$14 where id=$1 returning id, nombre ', [
         req.body.id,
         req.body.nombre,
         req.body.razon_social,
