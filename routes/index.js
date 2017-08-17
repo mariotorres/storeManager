@@ -1424,7 +1424,7 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                 //Si el artículo tiene un proveedor, se agrega a la cuenta
                 var proveedor = null;
                 if (req.body.id_proveedor != null && req.body.id_proveedor != ''){
-                    proveedor = t.one('update proveedores set a_cuenta=a_cuenta - $2 where id=$1 returning id, nombre',[
+                    proveedor = t.one('update proveedores set a_cuenta = a_cuenta - $2 where id=$1 returning id, nombre',[
                         numericCol(req.body.id_proveedor),
                         numericCol(req.body.costo)*numericCol(req.body.n_arts)
                     ]);
