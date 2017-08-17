@@ -950,6 +950,29 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "check-out":
+            modal.find('.modal-title').text('Registrar salida');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employee/list/check-in',{page:page},function(){
+                modal.find('form').submit(function(e){
+                    modal.find('#search_results').load('/search/employees/checkin', $(this).serializeArray(), function(){
+                        $(this).find('.list-group-item').click(function(){
+                            $("#modal_content").load('employee/check-out/form/',{id: $(this).data('user_id')}, function(){
+                                var today = new Date();
+                                $('#timepicker1').datetimepicker({
+                                    format: 'LT'
+                                });
+                                $('#datepicker1').datetimepicker({
+                                    format: 'YYYY-MM-DD',
+                                    defaultDate: today.setDate(today.getDate())
+                                });
+                            })
+                        })
+                    })
+                    e.preventDefault();
+                })
+            })
+            break;
         case "check-in":
             modal.find('.modal-title').text('Registrar ingreso');
             modal.find('#modal_content').html("");
@@ -975,12 +998,12 @@ function modalEvents(button, modal, page ) {
                                     });
                                     event.preventDefault();
                                 });
-                            })
-                        })
-                    })
-                    event.preventDefault();
-                })
-            })
+                            });
+                        });
+                    });
+                    e.preventDefault();
+                });
+            });
             break;
         case "edit_brand":
             modal.find('.modal-title').text('Editar marca');
