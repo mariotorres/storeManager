@@ -14,12 +14,6 @@
     </p>
 
     <p>
-        <button type="button" class="btn btn-primary" id = "deletestore" data-id ="<%= store.id %>"> Eliminar</button>
-            </p>
-
-
-
-    <p>
         <label>Calle</label>
         <input type="text" value="<%=store.direccion_calle%>"  class="form-control" name="direccion_calle" required>
     </p>
@@ -39,7 +33,6 @@
             </p>
         </div>
     </div>
-
 
     <p>
         <label>Colonia</label>
@@ -65,7 +58,16 @@
         <label>País</label>
         <input type="text" value="<%=store.direccion_pais%>" class="form-control" name = "direccion_pais" required>
     </p>
+    <div class="row">
+        <div class="col-md-2">
     <p>
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </p>
+        </div>
+        <div class="col-md-2">
+    <p>
+        <button type="button" class="btn btn-primary" id = "deletestore" data-id ="<%= store.id %>"> Eliminar</button>
+    </p>
+        </div>
+    </div>
 </form>

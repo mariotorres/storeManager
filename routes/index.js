@@ -1831,6 +1831,7 @@ router.post('/supplier/register', isAuthenticated,function(req, res){
         });
     });
 });
+
 /*
  * Actualizacion de proveedores
  */
