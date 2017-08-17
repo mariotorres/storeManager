@@ -966,6 +966,15 @@ function modalEvents(button, modal, page ) {
                                     format: 'YYYY-MM-DD',
                                     defaultDate: today.setDate(today.getDate())
                                 });
+                                modal.find('form').submit(function(e){
+                                    $.post('/employee/register/check-out',$(this).serializeArray()).done(function(data){
+                                        alert(data.message);
+                                        if(data.status == 'Ok'){
+                                            modal.modal('hide')
+                                        }
+                                    });
+                                    e.preventDefault();
+                                })
                             })
                         })
                     });
