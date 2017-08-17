@@ -968,10 +968,10 @@ function modalEvents(button, modal, page ) {
                                 });
                             })
                         })
-                    })
+                    });
                     e.preventDefault();
-                })
-            })
+                });
+            });
             break;
         case "check-in":
             modal.find('.modal-title').text('Registrar ingreso');

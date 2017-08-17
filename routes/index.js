@@ -3252,6 +3252,20 @@ router.post('/notes/finitPayment', isAuthenticated, function(req, res){
     });
 });
 
+router.post('/employee/check-out/form', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.oneOrNone('select * from usuarios where id = $1', [
+        req.body.id
+    ]).then(function(data){
+        res.render('partials/checkout-form', {'user': data})
+    }).catch(function (error) {
+        res.json({
+            'status': 'Error',
+            'message': 'Ocurrió un error al cargar los datos del usuario'
+        })
+    })
+})
+
 router.post('/employee/check-in/form', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.oneOrNone('select * from usuarios where id = $1 ',[
@@ -3262,7 +3276,7 @@ router.post('/employee/check-in/form', isAuthenticated, function(req, res){
         console.log(error);
         res.json({
             'status': 'Error',
-            'message': 'Ocucció un error al cargar los datos del usuario'
+            'message': 'Ocurrió un error al cargar los datos del usuario'
         })
     })
 });
