@@ -3,10 +3,8 @@
 <hr>
 <% if (items.length> 0){
 for (var i=0; i< items.length; i++){%>
-
 <div class="panel panel-default">
     <div class="panel-body">
-
         <form>
             <h3>Artículo: <%= items[i].articulo %></h3>
             <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Marca: </strong><%= items[i].nombre_prov %> | <strong>Tienda: </strong><%= items[i].nombre_tienda %></p>
@@ -21,7 +19,7 @@ for (var i=0; i< items.length; i++){%>
             <input type="text" name="item_id" value="<%= items[i].id %>" hidden>
 
             <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio %></strong></span></h3>
-
+            <input type="number" name="item_precio" value="<%=items[i].precio%>" hidden>
 
             <a href="#" class="thumbnail" style="min-height: 200px; text-align:center; min-width: 200px;">
                 <!--Aquí va la foto-->
@@ -75,11 +73,13 @@ for (var i=0; i< items.length; i++){%>
                 <div class="col-sm-6">
                     <label>Estatus transacción:</label>
                     <select id="estatus" name="id_estatus" class="form-control">
-                        <option value="">Entregada</option>
+                        <option value="entregada">Entregada</option>
                         <option value="modificacion">Modificación</option>
                         <option value="pendiente">Pendiente</option>
+                        <option value="solicitada">Solicitada</option>
                     </select>
                 </div>
+
                 <div class="col-sm-6">
                     <label>Monto que se deja a cuenta:</label>
                     <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="0" value="0">

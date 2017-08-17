@@ -85,8 +85,10 @@ if (itemProv.length > 0){%>
                         <option value="entregada">Entregada</option>
                         <option value="modificacion">Modificación</option>
                         <option value="pendiente">Pendiente</option>
+                        <option value="solicitada">Solicitada</option>
                     </select>
                 </div>
+
                 <div class="col-sm-6">
                     <label>Monto que se deja a cuenta:</label>
                     <input type="number" name="monto_pagado" class="form-control" max="<%= itemProv[i].precio * itemProv[i].n_existencias%>" min="0" value="0">

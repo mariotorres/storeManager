@@ -103,11 +103,16 @@
                                         <option value="modificacion">Modificación</option>
                                         <option value="pendiente" selected>Pendiente</option>
                                         <option value="solicitada">Solicitada</option>
-                                        <%}else{%>
+                                        <%}else if(items[i].estatus == "solicitada"){%>
                                         <option value="entregada">Entregada</option>
                                         <option value="modificacion">Modificación</option>
                                         <option value="pendiente">Pendiente</option>
                                         <option value="solicitada" selected>Solicitada</option>
+                                        <%}else{%>
+                                        <option value="entregada">Entregada</option>
+                                        <option value="modificacion">Modificación</option>
+                                        <option value="pendiente">Pendiente</option>
+                                        <option value="solicitada">Solicitada</option>
                                         <%}%>
                                     </select>
                                 </div>

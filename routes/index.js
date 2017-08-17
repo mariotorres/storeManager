@@ -2634,7 +2634,6 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
         console.log(error);
         res.send('<b>Error</b>');
     });
-
 });
 
 router.post('/suppliers/find-suppliers-view', isAuthenticated, function (req, res) {
