@@ -88,6 +88,7 @@
                     <option value="modificacion">Modificación</option>
                     <option value="pendiente">Pendiente</option>
                     <option value="devolucion">Devolución</option>
+                    <option value="solicitada">Solicitada</option>
                     <%
                     }else if(sales[i].estatus == "modificacion") {
                     %>
@@ -95,18 +96,27 @@
                     <option value="modificacion" selected>Modificación</option>
                     <option value="pendiente">Pendiente</option>
                     <option value="devolucion">Devolución</option>
+                    <option value="solicitada">Solicitada</option>
                     <%
-                    }else if(sales[i].estatus == "devolucion") {
+                    }else if(sales[i].estatus == "pendiente") {
                     %>
-                    <option value="entregada">Entregada</option>
-                    <option value="modificacion">Modificación</option>
-                    <option value="pendiente">Pendiente</option>
-                    <option value="devolucion" selected>Devolución</option>
-                    <% }else{%>
                     <option value="entregada">Entregada</option>
                     <option value="modificacion">Modificación</option>
                     <option value="pendiente" selected>Pendiente</option>
                     <option value="devolucion">Devolución</option>
+                    <option value="solicitada">Solicitada</option>
+                    <% }else if(sales[i].estatus == "devolucion"){%>
+                    <option value="entregada">Entregada</option>
+                    <option value="modificacion">Modificación</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="devolucion" selected>Devolución</option>
+                    <option value="solicitada">Solicitada</option>
+                    <%}else{%>
+                    <option value="entregada">Entregada</option>
+                    <option value="modificacion">Modificación</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="devolucion">Devolución</option>
+                    <option value="solicitada" selected>Solicitada</option>
                     <%}%>
                 </select>
             </td>
