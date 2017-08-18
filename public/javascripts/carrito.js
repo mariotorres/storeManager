@@ -43,6 +43,7 @@ $('input[name=monto_pagado]').change(function(){
     })
 });
 
+
 // Actualizar status
 $("select[name=estatus]").change(function(){
     var status = $(this).find('option:selected').val();

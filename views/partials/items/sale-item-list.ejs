@@ -29,7 +29,7 @@ if (itemProv.length > 0){%>
 
             <label>Descripción:</label><p>
                 <%= itemProv[i].descripcion %></p>
-
+            <!---
             <label>Descuento:</label>
             <div class="row">
                 <div class="col-sm-2">
@@ -63,6 +63,11 @@ if (itemProv.length > 0){%>
             <input type="number" id="desc" name="desc" class="form-control" max="<%= itemProv[i].precio%>" min="0" value="0">
                 <br>
             </div>
+            -->
+            <p>
+            <label>Precio Venta</label>
+            <input type="number" id="precio_pagado" name="precio_pagado" class="form-control" min="0" max="<%=itemProv[i].precio%>" value="<%=itemProv[i].precio%>">
+            </p>
             <div class="row">
                 <div class="col-sm-6">
                     <p>
@@ -85,8 +90,10 @@ if (itemProv.length > 0){%>
                         <option value="entregada">Entregada</option>
                         <option value="modificacion">Modificación</option>
                         <option value="pendiente">Pendiente</option>
+                        <option value="solicitada">Solicitada</option>
                     </select>
                 </div>
+
                 <div class="col-sm-6">
                     <label>Monto que se deja a cuenta:</label>
                     <input type="number" name="monto_pagado" class="form-control" max="<%= itemProv[i].precio * itemProv[i].n_existencias%>" min="0" value="0">

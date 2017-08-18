@@ -255,8 +255,15 @@ function modalEvents(button, modal, page ) {
                 });
                 modal.find('#find').submit(function (e) {
                     // Mostrar resultados
-                    modal.find('#search_results').load('/search/notes/results', $(this).serializeArray(), function () {
+                    modal.find('#search_results').load('/print/notes/list/', {data: $(this).serializeArray(), page:page}, function () {
                         //poder código para hacer algo con la nota seleccionada
+                        $('#search_results').find('.list-group-item').click(function(){
+                            modal.find('#modal_content').load('/notes/details', {id: $(this).data('sales_id')},function(){
+                                modal.find('form').submit(function(e){
+
+                                })
+                            })
+                        })
                     });
                     e.preventDefault();
                 });
@@ -360,13 +367,13 @@ function modalEvents(button, modal, page ) {
                     // Mostrar resultados
                    // var params = $(this).serializeArray();
                     //params[params.length] = {name:'page', value:page};
-                    modal.find('#search_results').load('/search/items/results', $(this).serializeArray()/*params*/, function () {
+                    modal.find('#search_results').load('/search/items/results', $(this).serializeArray(), function () {
                         $('#search_results').find('form').submit(function (e) {
                             if (confirm("¿Desea agregar el artículo " +  $('#search_results').find('input[name=articulo]').val() +
                                         ", con modelo: " +  $('#search_results').find('input[name=modelo]').val() +
                                 " al carrito?")){
                                 // Selected discount
-                                $.post('/carrito/new', $(this).serialize()).done(function (data) {
+                                $.post('/carrito/new', $(this).serializeArray()).done(function (data) {
                                     alert(data.message);
                                     if(data.status=='Ok'){
                                         modal.modal('hide');
@@ -582,7 +589,7 @@ function modalEvents(button, modal, page ) {
         case "print_notes":
             modal.find('.modal-title').text('Seleccionar notas');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/print/notes/list/',{ page: page}, function(){
+            modal.find('#modal_content').load('/print/notes/list/',{page: page}, function(){
 
                 $(this).find('form').submit(function(e){
                     if (confirm("¿Está seguro que quiere agregar la nota a la lista de impresión?")){
@@ -626,7 +633,7 @@ function modalEvents(button, modal, page ) {
 
                             doc.save('ticket.pdf');
                         });*/
-
+                    alert($(this).data('id_venta'))
                     window.open('/notes/getbyid/'+ $(this).data('id_venta'));
 
                 });
@@ -943,6 +950,38 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "check-out":
+            modal.find('.modal-title').text('Registrar salida');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/employee/list/check-in',{page:page},function(){
+                modal.find('form').submit(function(e){
+                    modal.find('#search_results').load('/search/employees/checkin', $(this).serializeArray(), function(){
+                        $(this).find('.list-group-item').click(function(){
+                            $("#modal_content").load('employee/check-out/form/',{id: $(this).data('user_id')}, function(){
+                                var today = new Date();
+                                $('#timepicker1').datetimepicker({
+                                    format: 'LT'
+                                });
+                                $('#datepicker1').datetimepicker({
+                                    format: 'YYYY-MM-DD',
+                                    defaultDate: today.setDate(today.getDate())
+                                });
+                                modal.find('form').submit(function(e){
+                                    $.post('/employee/register/check-out',$(this).serializeArray()).done(function(data){
+                                        alert(data.message);
+                                        if(data.status == 'Ok'){
+                                            modal.modal('hide')
+                                        }
+                                    });
+                                    e.preventDefault();
+                                })
+                            })
+                        })
+                    });
+                    e.preventDefault();
+                });
+            });
+            break;
         case "check-in":
             modal.find('.modal-title').text('Registrar ingreso');
             modal.find('#modal_content').html("");
@@ -968,12 +1007,12 @@ function modalEvents(button, modal, page ) {
                                     });
                                     event.preventDefault();
                                 });
-                            })
-                        })
-                    })
-                    event.preventDefault();
-                })
-            })
+                            });
+                        });
+                    });
+                    e.preventDefault();
+                });
+            });
             break;
         case "edit_brand":
             modal.find('.modal-title').text('Editar marca');

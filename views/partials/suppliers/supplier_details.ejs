@@ -50,14 +50,17 @@
             <td><%= ventas[i].nombre_tienda %></td>
         </tr>
         <tr>
-            <td><b>Prendas vendidas</b></td>
+            <td><b>Detalle Venta</b></td>
             <td>
                 <table class="table table-striped">
                     <tbody>
-            <%for(var j = 0; j < venta_arts.length; j++){if(venta_arts[j].id_venta == ventas[i].id_venta){ totalVenta += Number(venta_arts[j].costo);%>
-            <tr>
-                <td><b style="color: #E91E63;"><%=j+1%></b></td>
-            </tr>
+            <%for(var j = 0; j < venta_arts.length; j++){if(venta_arts[j].id_venta == ventas[i].id_venta){if(venta_arts[j].estatus_prenda == 'entregada'){ totalVenta += Number(venta_arts[j].costo);}%>
+                    <%if(j > 0){%>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    <%}%>
                     <tr>
                         <td><b>Artículo</b></td>
                         <td><%= venta_arts[j].nombre_articulo %></td>
@@ -73,6 +76,10 @@
                     <tr>
                         <td><b>Costo</b></td>
                         <td><span style="color: #E91E63;"><%= venta_arts[j].costo %></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>Estatus prenda</b></td>
+                        <td><span style="color: #9E9E9E"><strong><%= venta_arts[j].estatus_prenda %></strong></span></td>
                     </tr>
             <%}}%>
                     </tbody>

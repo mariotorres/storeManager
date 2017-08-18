@@ -156,9 +156,9 @@ router.get('/carrito', isAuthenticated, function (req, res) {
         return this.batch([
             this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo, estatus',[ req.user.id ]),
-            this.manyOrNone('select round(sum(precio * unidades_carrito * (1 - discount/(100))), 2) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+            this.manyOrNone('select sum(carrito_precio) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
-            this.manyOrNone('select round(precio*unidades_carrito*(1 - discount/(100)), 2) as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+            this.manyOrNone('select carrito_precio as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 'carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo, estatus',[ req.user.id ]),
             this.manyOrNone('select sum(monto_pagado) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
@@ -494,11 +494,11 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             });
 
         } else {
-            var discount = req.body.optradioDesc;
-            if(discount == 'otro'){
-                discount = numericCol(req.body.desc)/numericCol(req.body.item_precio)*100;
+            //var discount = req.body.optradioDesc;
+            //if(discount == 'otro'){
+                discount = (1 - numericCol(req.body.precio_pagado)/numericCol(req.body.item_precio))*100;
                 console.log('DISCOUNT:'  + discount);
-            }
+            //}
             db_conf.db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
                 'unidades_carrito, estatus, monto_pagado, carrito_precio) ' +
                 ' values($1, $2, $3, $4, $5, $6, $7, $8) returning id_articulo',[
@@ -508,8 +508,8 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
                 numericCol(discount),
                 req.body.existencias,
                 req.body.id_estatus,
-                numericCol(req.body.monto_pagado),
-                numericCol(req.body.item_precio)
+                numericCol(req.body.precio_pagado),
+                numericCol(req.body.precio_pagado)
             ]).then(function (data) {
                 console.log('Artículo añadido al carrito');
                 res.json({
@@ -611,20 +611,48 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
 
 // Display de notas para imprimir
 router.post('/print/notes/list/', isAuthenticated, function (req, res) {
+    console.log(req.body);
     var pageSize = 10;
     var offset = req.body.page * pageSize;
+    var query  = 'select ventas.id as ventaId, monto_pagado_tarjeta, precio_venta, fecha_venta, ' +
+        ' hora_venta, tiendas.nombre as nombreTienda, saldo_pendiente, unidades_vendidas, discount, monto_pagado_tarjeta,' +
+        ' monto_pagado, monto_por_pagar, id_venta, venta_articulos.estatus as estatusPrenda, articulos.articulo as nombreArt, ' +
+        ' modelo, proveedores.nombre as nombreProv ' +
+        ' from ventas, tiendas, venta_articulos, articulos, proveedores where ventas.estatus = $4 and ventas.id = venta_articulos.id_venta ' +
+        ' and ventas.id_tienda = tiendas.id and articulos.id = venta_articulos.id_articulo and articulos.id_proveedor = ' +
+        ' proveedores.id' +
+        ' order by ventaId desc limit $2 offset $3';
+    if(req.body.data[0]['value']){ ///// FIX
+        switch ( req.user.permiso_administrador ){
+            case true:
+                query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre, ventas.id_papel " +
+                    "from ventas, tiendas  " +
+                    "where (((ventas.fecha_venta >= $5 and ventas.fecha_venta <= $6) and ventas.id_nota = $7) " +
+                    " or ((ventas.fecha_venta >= $5 and ventas.fecha_venta <= $6) and ventas.id_papel = $10)) and ventas.id_tienda = tiendas.id and ventas.id_tienda=$9";
+                break;
+            default:
+                query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre, ventas.id_papel " +
+                    "from ventas, tiendas " +
+                    "where ((ventas.fecha_venta >= $5 and ventas.fecha_venta <= $6) and ventas.id_nota = $7) and ventas.id_usuario = $8 and ventas.id_tienda = tiendas.id and ventas.id_tienda=$9";
+        }
+    }
+
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from ventas as count'),
             // Lista ventas y tiendas físicas
-            this.manyOrNone('select ventas.id as ventaId, monto_pagado_tarjeta, precio_venta, fecha_venta, ' +
-                ' hora_venta, tiendas.nombre as nombreTienda, saldo_pendiente, unidades_vendidas, discount, monto_pagado_tarjeta,' +
-                ' monto_pagado, monto_por_pagar, id_venta, venta_articulos.estatus as estatusPrenda, articulos.articulo as nombreArt, ' +
-                ' modelo, proveedores.nombre as nombreProv ' +
-                ' from ventas, tiendas, venta_articulos, articulos, proveedores where ventas.estatus = $4 and ventas.id = venta_articulos.id_venta ' +
-                ' and ventas.id_tienda = tiendas.id and articulos.id = venta_articulos.id_articulo and articulos.id_proveedor = ' +
-                ' proveedores.id' +
-                ' order by ventaId desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
+            this.manyOrNone(query, [
+                req.user.id,
+                pageSize,
+                offset,
+                "activa",
+                req.body.data[3]['value'],//fecha_inicial,
+                req.body.data[4]['value'],//fecha_final,
+                req.body.data[0]['value'],//id_note, //¿id de venta? checar
+                req.user.id,
+                req.body.data[2]['value'],//id_tienda,
+                req.body.data[1]['value']]//id_papel]
+            )
         ]);
     }).then(function(data){
         res.render('partials/notes/print-notes-list',{
@@ -859,8 +887,8 @@ router.post('/marca/list/', isAuthenticated, function (req, res) {
 });
 
 router.get('/notes/getbyid/:id', isAuthenticated, function ( req, res ){
-    const id = req.params.id;
-
+    const id = numericCol(req.params.id);
+    console.log(id);
     db_conf.db.task(function (t) {
 
         return this.batch([
@@ -1396,7 +1424,7 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                 //Si el artículo tiene un proveedor, se agrega a la cuenta
                 var proveedor = null;
                 if (req.body.id_proveedor != null && req.body.id_proveedor != ''){
-                    proveedor = t.one('update proveedores set a_cuenta=a_cuenta - $2 where id=$1 returning id, nombre',[
+                    proveedor = t.one('update proveedores set a_cuenta = a_cuenta - $2 where id=$1 returning id, nombre',[
                         numericCol(req.body.id_proveedor),
                         numericCol(req.body.costo)*numericCol(req.body.n_arts)
                     ]);
@@ -1773,6 +1801,7 @@ router.post('/brand/register', isAuthenticated, function(req, res){
  * Registro de proveedores
  */
 router.post('/supplier/register', isAuthenticated,function(req, res){
+    console.log(req.body);
     db_conf.db.one('insert into proveedores(nombre, razon_social, rfc, direccion_calle, direccion_numero_int, direccion_numero_ext, ' +
         'direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_pais, a_cuenta, por_pagar) ' +
         'values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, nombre ', [
@@ -1802,13 +1831,15 @@ router.post('/supplier/register', isAuthenticated,function(req, res){
         });
     });
 });
+
 /*
  * Actualizacion de proveedores
  */
 router.post('/supplier/update', isAuthenticated,function(req, res){
+    console.log(req.body);
     db_conf.db.one('update proveedores set nombre=$2, razon_social=$3, rfc=$4, direccion_calle=$5,'+
         'direccion_numero_int=$6, direccion_numero_ext=$7, direccion_colonia=$8, direccion_localidad=$9,' +
-        'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12, a_cuenta=$13, por_pagar=$14 where id=$1 returning id, nombre ', [
+        'direccion_municipio=$10, direccion_ciudad=$11, direccion_pais=$12, por_pagar=$14 where id=$1 returning id, nombre ', [
         req.body.id,
         req.body.nombre,
         req.body.razon_social,
@@ -2583,7 +2614,7 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
         return this.batch([
             t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as nombre_tienda, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id" +
                 " from articulos, proveedores, tiendas where articulos.id_proveedor = proveedores.id and id_tienda = tiendas.id and articulos.id_tienda = tiendas.id and " +
-                "(id_tienda = $5 and id_proveedor = $1) and (articulo ilike '%$3#%' or modelo ilike '%$4#%') ", [
+                "(id_tienda = $5 and id_proveedor = $1 and modelo ilike '%$4#%') ", [
                 req.body.id_proveedor,
                 req.body.id_marca,
                 req.body.articulo,
@@ -2603,7 +2634,6 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
         console.log(error);
         res.send('<b>Error</b>');
     });
-
 });
 
 router.post('/suppliers/find-suppliers-view', isAuthenticated, function (req, res) {
@@ -2646,7 +2676,7 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                 " articulos.articulo as nombre_articulo, articulos.modelo as modelo, costo, n_existencias, " +
                 " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta, saldo_pendiente, venta_articulos.estatus as estatus_prenda, id_papel, ventas.id as id_venta " +
                 " from proveedores, ventas, venta_articulos, articulos, tiendas where venta_articulos.id_venta = ventas.id and venta_articulos.id_articulo = articulos.id and " +
-                " articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id and proveedores.id = $1 and venta_articulos.estatus = 'entregada' and ventas.estatus = 'activa' " +
+                " articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id and proveedores.id = $1 and  ventas.estatus = 'activa' " +
                 " and fecha_venta <= $3 and fecha_venta >= $2", [
                 req.body.id,
                 req.body.fecha_inicial,
@@ -3224,6 +3254,20 @@ router.post('/notes/finitPayment', isAuthenticated, function(req, res){
     });
 });
 
+router.post('/employee/check-out/form', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.oneOrNone('select * from usuarios where id = $1', [
+        req.body.id
+    ]).then(function(data){
+        res.render('partials/checkout-form', {'user': data})
+    }).catch(function (error) {
+        res.json({
+            'status': 'Error',
+            'message': 'Ocurrió un error al cargar los datos del usuario'
+        })
+    })
+})
+
 router.post('/employee/check-in/form', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.oneOrNone('select * from usuarios where id = $1 ',[
@@ -3234,10 +3278,32 @@ router.post('/employee/check-in/form', isAuthenticated, function(req, res){
         console.log(error);
         res.json({
             'status': 'Error',
-            'message': 'Ocucció un error al cargar los datos del usuario'
+            'message': 'Ocurrió un error al cargar los datos del usuario'
         })
     })
 });
+
+
+router.post('/employee/register/check-out', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.oneOrNone('insert into asistencia (id_usuario, fecha, hora, tipo) values($1, $2, $3, $4) returning id', [
+        req.body.id,
+        req.body.fecha,
+        req.body.salida,
+        'salida'
+    ]).then(function(data){
+        res.json({
+            status: 'Ok',
+            message: 'Se ha registrado la salida de "' + req.body.nombres + '" el día ' + req.body.fecha + ' a las ' + req.body.salida
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar la salida del usuario'
+        })
+    })
+})
 
 router.post('/employee/register/check-in', isAuthenticated, function(req, res){
     console.log(req.body);
@@ -3255,7 +3321,7 @@ router.post('/employee/register/check-in', isAuthenticated, function(req, res){
         console.log(error);
         res.json({
             status: 'Error',
-            message: 'Ocurrió un error al ingresar el usuario'
+            message: 'Ocurrió un error al registrar el ingreso del usuario'
         })
     })
 });
@@ -3319,7 +3385,7 @@ router.post('/search/employees/results', isAuthenticated, function (req, res) {
 });
 
 router.post('/search/notes/results', isAuthenticated, function (req, res) {
-    //console.log(req.body);
+    console.log(req.body);
     query = "";
 
     // ¿se debe buscar por id de venta o por id_nota?

@@ -88,10 +88,10 @@ for ( var i =0; i < count.count ; i ++ ){ %>
                     <button class="btn btn-primary" type="submit"><i class="fa fa-plus-square"></i> Agregar a lista</button>
                 </div>
                 <div class="col-sm-4">  <p>
-                        <button class="btn btn-primary" type="button" name="print-note" data-id_venta="<%= sales[i].id %>"> <i class="fa fa-print"></i> Imprimir nota</button>
+                        <button class="btn btn-primary" type="button" name="print-note" data-id_venta="<%= sales[i].ventaid %>"> <i class="fa fa-print"></i> Imprimir nota</button>
                     </p></div>
                 <div class="col-sm-4">
-                    <button class="btn btn-primary" type="button" name="cancel-note" data-id_venta="<%= sales[i].id %>"><i class="fa fa-trash"></i> Cancelar nota</button>
+                    <button class="btn btn-primary" type="button" name="cancel-note" data-id_venta="<%= sales[i].ventaid %>"><i class="fa fa-trash"></i> Cancelar nota</button>
                 </div>
             </div>
 
