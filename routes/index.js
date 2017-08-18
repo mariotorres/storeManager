@@ -158,7 +158,7 @@ router.get('/carrito', isAuthenticated, function (req, res) {
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo, estatus',[ req.user.id ]),
             this.manyOrNone('select round(sum(precio * unidades_carrito * (1 - discount/(100))), 2) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
-            this.manyOrNone('select round(precio*unidades_carrito*(1 - discount/(100)), 2) as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+            this.manyOrNone('select carrito_precio as totales from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 'carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo, estatus',[ req.user.id ]),
             this.manyOrNone('select sum(monto_pagado) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
@@ -494,11 +494,11 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             });
 
         } else {
-            var discount = req.body.optradioDesc;
-            if(discount == 'otro'){
-                discount = numericCol(req.body.desc)/numericCol(req.body.item_precio)*100;
+            //var discount = req.body.optradioDesc;
+            //if(discount == 'otro'){
+                discount = (1 - numericCol(req.body.precio_pagado)/numericCol(req.body.item_precio))*100;
                 console.log('DISCOUNT:'  + discount);
-            }
+            //}
             db_conf.db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
                 'unidades_carrito, estatus, monto_pagado, carrito_precio) ' +
                 ' values($1, $2, $3, $4, $5, $6, $7, $8) returning id_articulo',[
@@ -508,8 +508,8 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
                 numericCol(discount),
                 req.body.existencias,
                 req.body.id_estatus,
-                numericCol(req.body.monto_pagado),
-                numericCol(req.body.item_precio)
+                numericCol(req.body.precio_pagado),
+                numericCol(req.body.precio_pagado)
             ]).then(function (data) {
                 console.log('Artículo añadido al carrito');
                 res.json({
