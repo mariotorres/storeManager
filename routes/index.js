@@ -1408,7 +1408,7 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
     //console.log(req.file );
     db_conf.db.task(function(t) {
 
-        return this.oneOrNone('select count(*) as count from articulos where id_proveedor = $1 and id_tienda = $2 and articulo = $3 and' +
+        return this.oneOrNone('select count(*) as count from articulos where id_proveedor = $1 and id_tienda = $2 and' +
             ' modelo = $4 and id_marca = $5',[
             numericCol(req.body.id_proveedor),
             numericCol(req.body.id_tienda),
@@ -1464,7 +1464,7 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
         }else{
             res.json({
                 status: 'Error',
-                message: '¡Precaución! Existe un registro previo de la prenda ' + data[1].articulo
+                message: '¡Precaución! Existe un registro previo de la prenda "' + req.body.articulo + '" en esta tienda'
             });
         }
     }).catch(function(error){
