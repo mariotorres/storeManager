@@ -2555,6 +2555,35 @@ router.post('/items/list/item_registers', isAuthenticated, function(req, res){
 
 router.post('/search/registers/results', isAuthenticated, function(req, res){
     console.log(req.body);
+    query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
+        " descripcion, articulos.id as id, tiendas.id as id_tienda " +
+        " from articulos, proveedores, tiendas where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and " +
+        " articulos.id_tienda = tiendas.id and tiendas.id = $2  and articulos.fecha_ultima_modificacion >= $3 and " +
+        " articulos.fecha_ultima_modificacion <= $4 "
+    db_conf.db.task(function(t){
+        return this.batch([
+            t.manyOrNone( query, [
+                    req.body.id_proveedor,
+                    req.body.id_tienda,
+                    req.body.fecha_inicial,
+                    req.body.fecha_final
+                ]),
+            t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
+            t.manyOrNone('select * from terminales')
+        ])
+    }).then(function(data){
+        res.render('partials/items/search-items-results-inv',{
+            items: data[0],
+            user: data[1],
+            terminales: data[2]
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al buscar los registros'
+        })
+    })
 })
 
 router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
