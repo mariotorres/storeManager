@@ -147,7 +147,7 @@ function modalEvents(button, modal, page ) {
                            if (confirm('¿Está seguro de eliminar el artículo?')){
                                $.post('/item/delete', { id : $(this).data('id')}).done(function (data) {
                                    alert(data.message);
-                                   if (data.status =='Ok'){
+                                   if (data.status ==='Ok'){
                                        modal.modal('hide');
                                    }
                                });
@@ -175,7 +175,7 @@ function modalEvents(button, modal, page ) {
                                 success: function (data) {
                                     alert(data.message);
                                     if (data)
-                                        if (data.status == 'Ok') {
+                                        if (data.status === 'Ok') {
                                             modal.modal('hide');
                                         }
                                 }
@@ -317,7 +317,7 @@ function modalEvents(button, modal, page ) {
                                         if (confirm('¿Está seguro de eliminar el artículo?')){
                                             $.post('/item/delete', { id : $(this).data('id')}).done(function (data) {
                                                 alert(data.message);
-                                                if (data.status =='Ok'){
+                                                if (data.status ==='Ok'){
                                                     modal.modal('hide');
                                                 }
                                             });

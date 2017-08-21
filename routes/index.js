@@ -3552,12 +3552,17 @@ router.post('/item/delete', isAuthenticated, function (req, res ) {
         console.log('Articulo eliminado: ', data[0].id);
 
         // borra la imagen anterior
-        var img_path = path.join(__dirname, '..', 'uploads/', data[0].nombre_imagen);
-        fs.unlinkSync( img_path );
-        console.log('successfully deleted '+ img_path);
+        if ( data[0].nombre_imagen!== null ) {
+            const img_path = path.join(__dirname, '..', 'uploads/', data[0].nombre_imagen);
+
+            if (fs.existSync(img_path)) {
+                fs.unlinkSync(img_path);
+                console.log('successfully deleted ' + img_path);
+            }
+        }
 
 
-        if ( data[1] != null ){
+        if ( data[1] !== null ){
             console.log('El proveedor saldo a cuenta del proveedor '+ data[1].nombre +' ha sido actualizado' );
         }
 
