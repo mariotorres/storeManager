@@ -2533,6 +2533,24 @@ router.post('/item/find-items-view-inv', isAuthenticated, function (req, res) {
 
 });
 
+router.post('/items/list/item_registers', isAuthenticated, function(req, res){
+    db_conf.db.manyOrNone(
+        'select * from tiendas'
+    ).then(function(data){
+        res.render('partials/items/find-registers', {tiendas: data})
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            message: 'Ocurrió un error al cargar las tiendas',
+            status: 'Error'
+        })
+    })
+})
+
+router.post('/search/registers/results', isAuthenticated, function(req, res){
+    console.log(req.body);
+})
+
 router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
     console.log(req.body);
     console.log(req.user.permiso_administrador)
