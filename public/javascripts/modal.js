@@ -58,6 +58,12 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/new', {}, function(){
 
+                var ButtonValue;
+
+                $('button[type="submit"]').click(function(e){
+                    ButtonValue = $(this).val();
+                });
+
                 modal.find('form').submit(function (e) {
                     var formData = new FormData();
 
@@ -70,6 +76,8 @@ function modalEvents(button, modal, page ) {
                     var img = document.getElementById('imagen');
                     formData.append('imagen', img.files[0] );
 
+                    // alert(ButtonValue);
+                    // --------------------------------------------------------
                     if (confirm("¿Está seguro que quiere registrar " + $('#nArts').val() + " artículos?")) {
                         $.ajax({
                             url: '/item/register',
@@ -82,11 +90,18 @@ function modalEvents(button, modal, page ) {
                                 alert(data.message);
                                 if (data)
                                 if (data.status == 'Ok') {
-                                    modal.modal('hide');
+                                    if(ButtonValue == 'registrar') {
+                                        modal.modal('hide');
+                                    }else{
+                                        $(this).closest('form').find("input[type=text], textarea").val("");
+                                    }
                                 }
                             }
                         });
                     }
+                    // --------------------------------------------------------
+
+
                     e.preventDefault();
                 });
             });
