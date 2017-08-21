@@ -2534,10 +2534,16 @@ router.post('/item/find-items-view-inv', isAuthenticated, function (req, res) {
 });
 
 router.post('/items/list/item_registers', isAuthenticated, function(req, res){
-    db_conf.db.manyOrNone(
-        'select * from tiendas'
-    ).then(function(data){
-        res.render('partials/items/find-registers', {tiendas: data})
+    db_conf.db.task(function(t){
+        return this.batch([
+            this.manyOrNone('select * from tiendas'),
+            this.manyOrNone('select * from proveedores')
+        ])
+    }).then(function(data){
+        res.render('partials/items/find-registers', {
+            tiendas: data[0],
+            proveedores: data[1]
+        })
     }).catch(function(error){
         console.log(error);
         res.json({

@@ -8,6 +8,18 @@
             <%}%>
         </select>
     </p>
+
+    <p>
+        <label>Seleccione un proveedor</label>
+        <select class="form-control" name="id_proveedor">
+            <%for ( var i=0; i < proveedores.length; i++){%>
+            <option value="<%= proveedores[i].id %>"><%= proveedores[i].nombre %></option>
+            <%}%>
+        </select>
+    </p>
+
+
+
     <hr>
     <div class="row">
         <div class="col-sm-6">
