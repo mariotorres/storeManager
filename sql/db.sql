@@ -213,7 +213,7 @@ insert into marcas(nombre, descripcion) values ('Eli Corame', 'Marca de proveedo
 insert into marcas(nombre, descripcion) values ('Ema Valdemosa', 'Marca de proveedor Ema Valdemosa');
 insert into marcas(nombre, descripcion) values ('Lessan', 'Marca de proveedor Lessan');
 insert into marcas(nombre, descripcion) values ('Libertad', 'Marca de proveedor Libertad');
-insert into marcas(nombre, descripcion) values ('Dmosseli', 'Marca de proveedor Libertad');
+insert into marcas(nombre, descripcion) values ('D mosseli', 'Marca de proveedor Libertad');
 insert into marcas(nombre, descripcion) values ('Neon Nyx', 'Marca de proveedor Neon Nyx');
 insert into marcas(nombre, descripcion) values ('Nicoleta', 'Marca de proveedor Nicoleta');
 insert into marcas(nombre, descripcion) values ('Punto Blanco', 'Marca de proveedor Punto Blanco');
