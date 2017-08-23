@@ -40,7 +40,20 @@ create table tiendas (
 
 insert into tiendas (nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia,
 direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais) values
-('Tienda 1','-','-','-','-','-','-','-','-','México');
+('Celine','20 de noviembre','-','-','-','-','-','-','Ciudad de México','México');
+
+insert into tiendas (nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia,
+direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais) values
+('Bianca','20 de noviembre','-','-','-','-','-','-','Ciudad de México','México');
+
+insert into tiendas (nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia,
+direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais) values
+('Imagen','20 de noviembre','-','-','-','-','-','-','Ciudad de México','México');
+
+insert into tiendas (nombre, direccion_calle, direccion_numero_int, direccion_numero_ext, direccion_colonia,
+direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais) values
+('Mariana','20 de noviembre','-','-','-','-','-','-','Ciudad de México','México');
+
 
 /* Bonos */
 drop table if exists bonos cascade;
@@ -155,12 +168,55 @@ create table proveedores (
     por_pagar numeric(1000,2)  /* Esta cantidad se registra en el momento en el que se vende una prenda del proveedor */
 );
 
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio,
+direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
+                        ('Cocoon','-','-','-','-','-','-','-', '-', '-', 'Ciudad de México','México', 0, 0);
+
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais , a_cuenta, por_pagar) values
+                        ('Eli Corame','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
+                        ('Ema Valdemosa','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
+                        ('Lessan','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
+                        ('Libertad','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
+                        ('Neon Nyx','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
+                        ('Nicoleta','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
+                        ('Punto Blanco','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
+
 drop table if exists marcas cascade;
 create table marcas (
 id serial primary key,
 nombre text,
 descripcion text
 );
+
+insert into marcas(nombre, descripcion) values ('Cocoon', 'Marca de proveedor Cocoon');
+insert into marcas(nombre, descripcion) values ('Eli Corame', 'Marca de proveedor Eli Corame');
+insert into marcas(nombre, descripcion) values ('Ema Valdemosa', 'Marca de proveedor Ema Valdemosa');
+insert into marcas(nombre, descripcion) values ('Lessan', 'Marca de proveedor Lessan');
+insert into marcas(nombre, descripcion) values ('Libertad', 'Marca de proveedor Libertad');
+insert into marcas(nombre, descripcion) values ('Dmosseli', 'Marca de proveedor Libertad');
+insert into marcas(nombre, descripcion) values ('Neon Nyx', 'Marca de proveedor Neon Nyx');
+insert into marcas(nombre, descripcion) values ('Nicoleta', 'Marca de proveedor Nicoleta');
+insert into marcas(nombre, descripcion) values ('Punto Blanco', 'Marca de proveedor Punto Blanco');
 
 /* Inventario */
 drop table if exists articulos cascade;
