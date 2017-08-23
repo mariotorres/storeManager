@@ -77,3 +77,11 @@ clean_data$marca <- n_sim_sup(data$Mod.,
                                'Nicoleta',
                                'Punto Blanco',
                                'D Mosseli'))
+clean_data$existencias   <- data$Exi
+clean_data$nombre_prenda <- 'Vestido'
+
+
+## ----------------------------------------
+## write data
+## ----------------------------------------
+write.csv(clean_data, 'clean_data.csv', row.names = FALSE)
