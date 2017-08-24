@@ -38,16 +38,17 @@ n_sim_sup <- function(supp, suppliers = c('Cocoon',
                                          'Neon Nyx',
                                          'Nicoleta',
                                          'Punto Blanco')){
-    laply(supp, function(t)t <- sim_sup(t, suppliers))
+    res_sup <- laply(supp, function(t)t <- sim_sup(t, suppliers))
+    res_sup <- str_replace_all(res_sup, '\\*', '')
+    res_sup
 }
 
 ## Mod Supp
 mod_supp <- function(mod){
     mod <- str_trim(mod)
-    ldply(mod, function(t)t <- c(
-                              str_split(t, '[0-9] ')[[1]][1],
-                              str_split(t, '[0-9] ')[[1]][2])
-    )
+    data.frame('modelo'   = str_extract(mod, '^[^ ]+ ') %>%
+              str_replace_all('\\*', ''),
+               'provedor' = str_extract(mod, ' .*'))
 }
 
 ## ----------------------------------------
@@ -64,24 +65,18 @@ clean_data          <- mod_supp(data$Mod.)
 names(clean_data)   <- c('modelo', 'provedor')
 clean_data$provedor <- n_sim_sup(clean_data$provedor)
 ## Fixes
-clean_data$provedor[c(53, 54, 61, 98)]  <- 'Punto Blanco'
-clean_data$provedor[c(146, 147)]        <- 'Ema Valdemosa'
+clean_data$provedor[c(53, 54, 61)]  <- 'Punto Blanco'
+clean_data$provedor[c(146)]        <- 'Ema Valdemosa'
 ## Marca
-clean_data$marca <- n_sim_sup(data$Mod.,
-                             c('Cocoon',
-                               'Eli Corame',
-                               'Ema Valdemosa',
-                               'Lessan',
-                               'Libertad',
-                               'Neon Nyx',
-                               'Nicoleta',
-                               'Punto Blanco',
-                               'D Mosseli'))
+clean_data$marca         <- clean_data$provedor
 clean_data$existencias   <- data$Exi
+clean_data$costo         <- data$P.X.uni
 clean_data$nombre_prenda <- 'Vestido'
 
 
 ## ----------------------------------------
 ## write data
 ## ----------------------------------------
-write.csv(clean_data, 'clean_data.csv', row.names = FALSE)
+write.csv(clean_data,
+          'clean_data.csv',
+          row.names = FALSE)
