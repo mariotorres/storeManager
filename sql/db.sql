@@ -195,7 +195,7 @@ direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipi
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
 direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
-                        ('Nicoleta','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+                        ('Nicoletta','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
 direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
@@ -215,7 +215,7 @@ insert into marcas(nombre, descripcion) values ('Lessan', 'Marca de proveedor Le
 insert into marcas(nombre, descripcion) values ('Libertad', 'Marca de proveedor Libertad');
 insert into marcas(nombre, descripcion) values ('D mosseli', 'Marca de proveedor Libertad');
 insert into marcas(nombre, descripcion) values ('Neon Nyx', 'Marca de proveedor Neon Nyx');
-insert into marcas(nombre, descripcion) values ('Nicoleta', 'Marca de proveedor Nicoleta');
+insert into marcas(nombre, descripcion) values ('Nicoletta', 'Marca de proveedor Nicoleta');
 insert into marcas(nombre, descripcion) values ('Punto Blanco', 'Marca de proveedor Punto Blanco');
 
 /* Inventario */
