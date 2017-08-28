@@ -22,7 +22,7 @@ sim_sup <- function(supp, suppliers = c('Cocoon',
                                        'Lessan',
                                        'Libertad',
                                        'Neon Nyx',
-                                       'Nicoleta',
+                                       'Nicoletta',
                                        'Punto Blanco')){
     strsim <- stringdist(tolower(supp),
                         tolower(suppliers))
@@ -36,7 +36,7 @@ n_sim_sup <- function(supp, suppliers = c('Cocoon',
                                          'Lessan',
                                          'Libertad',
                                          'Neon Nyx',
-                                         'Nicoleta',
+                                         'Nicoletta',
                                          'Punto Blanco')){
     res_sup <- laply(supp, function(t)t <- sim_sup(t, suppliers))
     res_sup <- str_replace_all(res_sup, '\\*', '')
@@ -66,7 +66,7 @@ names(clean_data)   <- c('modelo', 'provedor')
 clean_data$provedor <- n_sim_sup(clean_data$provedor)
 ## Fixes
 clean_data$provedor[c(53, 54, 61)]  <- 'Punto Blanco'
-clean_data$provedor[c(146)]        <- 'Ema Valdemosa'
+clean_data$provedor[c(148)]        <- 'Ema Valdemosa'
 ## Marca
 clean_data$marca         <- clean_data$provedor
 clean_data$existencias   <- data$Exi

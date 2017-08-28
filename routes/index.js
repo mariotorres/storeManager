@@ -1409,12 +1409,13 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
     db_conf.db.task(function(t) {
 
         return this.oneOrNone('select count(*) as count from articulos where id_proveedor = $1 and id_tienda = $2 and' +
-            ' modelo = $4 and id_marca = $5',[
+            ' modelo = $4 and id_marca = $5 and descripcion = $6',[
             numericCol(req.body.id_proveedor),
             numericCol(req.body.id_tienda),
             req.body.articulo,
             req.body.modelo,
-            numericCol(req.body.id_marca)
+            numericCol(req.body.id_marca),
+            req.body.descripcion
         ]).then(function(data){
 
             //Si el producto se registró previamente
