@@ -256,9 +256,7 @@ create table articulos_solicitados (
     costo numeric(1000,2),
     codigo_barras numeric(1000,2),
     nombre_imagen text,
-    n_existencias integer,
-    fecha_registro timestamp,
-    fecha_ultima_modificacion timestamp
+    n_existencias integer
 );
 
 
@@ -268,17 +266,9 @@ create table nota_entrada(
     id serial primary key,
     id_nota_registro text, /* Nota del proveedor */
     id_usuario integer references usuarios(id),
+    num_arts    integer,
     hora time,
     fecha date
-);
-
-/* Transacción de entrada */
-drop table if exists trans_entrada cascade;
-create table trans_entrada(
-    id serial primary key,
-    id_nota_entrada integer references nota_entrada(id),
-    id_articulo integer references articulos(id),
-    num_arts    integer
 );
 
 /* terminales */

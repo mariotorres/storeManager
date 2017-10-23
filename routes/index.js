@@ -1434,8 +1434,8 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                 return t.batch([
                     {count : data.count},
                     t.one('insert into articulos(id_proveedor, id_tienda, articulo, descripcion, id_marca, modelo, ' +
-                        ' talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias, fecha_registro, fecha_ultima_modificacion) ' +
-                        ' values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, Now(), Now()) returning id, articulo, n_existencias, modelo', [
+                        ' talla, notas, precio, costo, codigo_barras, nombre_imagen, n_existencias) ' +
+                        ' values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id, articulo, n_existencias, modelo', [
                         numericCol(req.body.id_proveedor),
                         numericCol(req.body.id_tienda),
                         req.body.articulo,
@@ -1451,29 +1451,22 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                         numericCol(req.body.n_arts)
                     ]),
                     proveedor,
-                    t.one('insert into nota_entrada(id_nota_registro, id_usuario, hora, fecha) values($1, $2, localtime, current_date) returning id', [
+                    t.one('insert into nota_entrada(id_nota_registro, id_usuario, num_arts, hora, fecha) ' +
+                        ' values($1, $2, $3, localtime, current_date) returning id', [
                         req.body.id_nota_registro,
-                        req.user.id
+                        req.user.id,
+                        req.body.n_arts
                     ])
                 ]);
             }
-        }).then(function(data){
-            return t.batch([
-                data,
-                t.one('insert into trans_entrada(id_nota_entrada, id_articulo, num_arts) values($1, $2, $3) returning id', [
-                    data[3].id,
-                    data[1].id,
-                    req.body.n_arts
-                ])
-            ])
         })
     }).then(function(data) {
-        if ( data[0][0].count == 0 ){
+        if ( data[0].count == 0 ){
             res.json({
                 status: 'Ok',
-                message: 'Se ' + (data[0][1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[0][1].n_existencias + ' existencia' +
-                (data[0][1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[0][1].articulo +
-                '" modelo "' + data[0][1].modelo + '" ' + (data[0][2] ? ' del proveedor "' + data[0][2].nombre + '" ': '')
+                message: 'Se ' + (data[1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[1].n_existencias + ' existencia' +
+                (data[1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[1].articulo +
+                '" modelo "' + data[1].modelo + '" ' + (data[2] ? ' del proveedor "' + data[2].nombre + '" ': '')
             });
         }else{
             res.json({
