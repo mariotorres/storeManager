@@ -234,9 +234,7 @@ create table articulos (
     costo numeric(1000,2),
     codigo_barras numeric(1000,2),
     nombre_imagen text,
-    n_existencias integer,
-    fecha_registro timestamp,
-    fecha_ultima_modificacion timestamp
+    n_existencias integer
 );
 
 

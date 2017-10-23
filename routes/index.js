@@ -2570,7 +2570,7 @@ router.post('/items/list/item_registers', isAuthenticated, function(req, res){
 router.post('/search/registers/results', isAuthenticated, function(req, res){
     console.log(req.body);
     query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
-        " descripcion, articulos.id as id, tiendas.id as id_tienda, articulos.fecha_ultima_modificacion as fecha_modificacion " +
+        " descripcion, articulos.id as id, tiendas.id as id_tienda, nota_entrada.fecha as fecha, num_arts " +
         " from articulos, proveedores, tiendas, nota_entrada where id_proveedor = $1 and " +
         " articulos.id_proveedor = proveedores.id and nota_entrada.id_articulo = articulos.id and nota_entrada.id_nota_registro = $5 and " +
         " articulos.id_tienda = tiendas.id and tiendas.id = $2  and nota_entrada.fecha >= $3 and " +
