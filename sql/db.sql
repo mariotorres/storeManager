@@ -240,6 +240,28 @@ create table articulos (
 );
 
 
+/* Inventario Solicitado*/
+drop table if exists articulos_solicitados cascade;
+create table articulos_solicitados (
+    id serial primary key,
+    id_proveedor integer references proveedores(id),
+    id_tienda integer references tiendas(id),
+    articulo text,
+    descripcion text,
+    id_marca integer references marcas(id) on delete set null,
+    modelo text,
+    talla text,
+    notas text,
+    precio numeric(1000,2),
+    costo numeric(1000,2),
+    codigo_barras numeric(1000,2),
+    nombre_imagen text,
+    n_existencias integer,
+    fecha_registro timestamp,
+    fecha_ultima_modificacion timestamp
+);
+
+
 /* terminales */
 /*
 *  Agregar campos terminales
