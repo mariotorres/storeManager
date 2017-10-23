@@ -1450,23 +1450,28 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                         typeof req.file != 'undefined'?req.file.filename:null,
                         numericCol(req.body.n_arts)
                     ]),
-                    proveedor,
-                    t.one('insert into nota_entrada(id_nota_registro, id_usuario, num_arts, hora, fecha) ' +
-                        ' values($1, $2, $3, localtime, current_date) returning id', [
-                        req.body.id_nota_registro,
-                        req.user.id,
-                        req.body.n_arts
-                    ])
+                    proveedor
                 ]);
             }
+        }).then(function(data){
+            return t.batch([
+                data,
+                t.one('insert into nota_entrada(id_nota_registro, id_usuario, id_articulo, num_arts, hora, fecha) ' +
+                    ' values($1, $2, $3, $4, localtime, current_date) returning id', [
+                    req.body.id_nota_registro,
+                    req.user.id,
+                    data[1].id,
+                    req.body.n_arts
+                ])
+            ])
         })
     }).then(function(data) {
-        if ( data[0].count == 0 ){
+        if ( data[0][0].count == 0 ){
             res.json({
                 status: 'Ok',
-                message: 'Se ' + (data[1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[1].n_existencias + ' existencia' +
-                (data[1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[1].articulo +
-                '" modelo "' + data[1].modelo + '" ' + (data[2] ? ' del proveedor "' + data[2].nombre + '" ': '')
+                message: 'Se ' + (data[0][1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[0][1].n_existencias + ' existencia' +
+                (data[0][1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[0][1].articulo +
+                '" modelo "' + data[0][1].modelo + '" ' + (data[0][2] ? ' del proveedor "' + data[0][2].nombre + '" ': '')
             });
         }else{
             res.json({
@@ -2544,12 +2549,14 @@ router.post('/items/list/item_registers', isAuthenticated, function(req, res){
     db_conf.db.task(function(t){
         return this.batch([
             this.manyOrNone('select * from tiendas'),
-            this.manyOrNone('select * from proveedores')
+            this.manyOrNone('select * from proveedores'),
+            this.manyOrNone('select * from nota_entrada')
         ])
     }).then(function(data){
         res.render('partials/items/find-registers', {
             tiendas: data[0],
-            proveedores: data[1]
+            proveedores: data[1],
+            nota_entrada: data[2]
         })
     }).catch(function(error){
         console.log(error);

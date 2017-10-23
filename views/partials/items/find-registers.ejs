@@ -1,6 +1,15 @@
 <form>
 
     <p>
+        <label>Seleccione un id de registro de entrada</label>
+        <select class="form-control" name="id_nota_registro">
+            <%for ( var i=0; i < nota_entrada.length; i++){%>
+            <option value="<%= nota_entrada[i].id_nota_registro %>"><%= nota_entrada[i].id_nota_registro %></option>
+            <%}%>
+        </select>
+    </p>
+
+    <p>
         <label>Seleccione una tienda</label>
         <select class="form-control" name="id_tienda">
             <%for ( var i=0; i < tiendas.length; i++){%>
@@ -17,7 +26,6 @@
             <%}%>
         </select>
     </p>
-
 
 
     <hr>

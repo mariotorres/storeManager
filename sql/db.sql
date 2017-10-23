@@ -265,6 +265,7 @@ drop table if exists nota_entrada cascade;
 create table nota_entrada(
     id serial primary key,
     id_nota_registro text, /* Nota del proveedor */
+    id_articulo integer references articulos(id),
     id_usuario integer references usuarios(id),
     num_arts    integer,
     hora time,
