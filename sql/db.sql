@@ -266,11 +266,11 @@ create table articulos_solicitados (
 drop table if exists nota_entrada cascade;
 create table nota_entrada(
     id serial primary key,
-    id_nota_proveedor integer,
+    id_nota_registro text, /* Nota del proveedor */
     id_usuario integer references usuarios(id),
     hora timestamp,
     fecha date
-)
+);
 
 /* Transacción de entrada */
 drop table if exists trans_entrada cascade;
@@ -279,7 +279,7 @@ create table trans_entrada(
     id_nota_entrada integer references nota_entrada(id),
     id_articulo integer references articulos(id),
     num_arts    integer
-)
+);
 
 /* terminales */
 drop table if exists terminales cascade;

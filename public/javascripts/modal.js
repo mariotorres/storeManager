@@ -93,7 +93,7 @@ function modalEvents(button, modal, page ) {
                                     if(ButtonValue == 'registrar') {
                                         modal.modal('hide');
                                     }else{
-                                        $(this).closest('form').find("input[type=text], textarea").val("");
+                                        modal.find('form').trigger('reset')
                                     }
                                 }
                             }

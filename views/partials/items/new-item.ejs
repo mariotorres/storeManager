@@ -2,11 +2,15 @@
     <!--id_proveedor
     id_tienda-->
     <p>
-        <label>articulo</label>
+        <label>Id nota registro</label>
+        <input type="text" name="id_not_registro" class="form-control" required>
+    </p>
+    <p>
+        <label>Nombre artículo</label>
         <input type="text" class="form-control" name="articulo" required>
     </p>
     <p>
-        <label>Descripcion</label>
+        <label>Descripción</label>
         <input type="text" name="descripcion" class="form-control">
     </p>
     <p>
@@ -115,7 +119,7 @@
         </div>
         <div class="col-md-2">
            <p>
-          <button  type="submit" value="registrar_continuar" class="btn btn-primary">Registrar y continuar</button>
+          <button  type="submit" value="registrar_continuar" id="continuar" class="btn btn-primary">Registrar y continuar</button>
            </p>
         </div>
     </div>
@@ -125,5 +129,9 @@
 <script>
     $("#costo").on("keyup", function(){
         $("#precio").val($("#costo").val()*2);
+    })
+
+    $('#continuar').on('click', function(){
+        //$('#itemForm').trigger('reset');
     })
 </script>
