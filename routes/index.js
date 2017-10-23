@@ -2550,7 +2550,7 @@ router.post('/items/list/item_registers', isAuthenticated, function(req, res){
         return this.batch([
             this.manyOrNone('select * from tiendas'),
             this.manyOrNone('select * from proveedores'),
-            this.manyOrNone('select * from nota_entrada')
+            this.manyOrNone('select distinct id_nota_registro from nota_entrada')
         ])
     }).then(function(data){
         res.render('partials/items/find-registers', {
