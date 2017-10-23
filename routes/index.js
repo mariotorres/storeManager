@@ -1450,7 +1450,11 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                         typeof req.file != 'undefined'?req.file.filename:null,
                         numericCol(req.body.n_arts)
                     ]),
-                    proveedor
+                    proveedor,
+                    t.one('insert into nota_entrada(id_nota_registro, id_usuario, hora, fecha) values($1, $2, localtime, current_date) returning id', [
+                        req.body.id_nota_registro,
+                        req.user.id
+                    ])
                 ]);
             }
         })

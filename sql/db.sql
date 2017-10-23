@@ -268,7 +268,7 @@ create table nota_entrada(
     id serial primary key,
     id_nota_registro text, /* Nota del proveedor */
     id_usuario integer references usuarios(id),
-    hora timestamp,
+    hora time,
     fecha date
 );
 

@@ -3,7 +3,7 @@
     id_tienda-->
     <p>
         <label>Id nota registro</label>
-        <input type="text" name="id_not_registro" class="form-control" required>
+        <input type="text" name="id_nota_registro" class="form-control" required>
     </p>
     <p>
         <label>Nombre artículo</label>
@@ -129,9 +129,5 @@
 <script>
     $("#costo").on("keyup", function(){
         $("#precio").val($("#costo").val()*2);
-    })
-
-    $('#continuar').on('click', function(){
-        //$('#itemForm').trigger('reset');
     })
 </script>
