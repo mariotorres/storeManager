@@ -1457,14 +1457,23 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
                     ])
                 ]);
             }
+        }).then(function(data){
+            return t.batch([
+                data,
+                t.one('insert into trans_entrada(id_nota_entrada, id_articulo, num_arts) values($1, $2, $3) returning id', [
+                    data[3].id,
+                    data[1].id,
+                    req.body.n_arts
+                ])
+            ])
         })
     }).then(function(data) {
-        if ( data[0].count == 0 ){
+        if ( data[0][0].count == 0 ){
             res.json({
                 status: 'Ok',
-                message: 'Se ' + (data[1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[1].n_existencias + ' existencia' +
-                (data[1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[1].articulo +
-                '" modelo "' + data[1].modelo + '" ' + (data[2] ? ' del proveedor "' + data[2].nombre + '" ': '')
+                message: 'Se ' + (data[0][1].n_existencias == 1 ? 'ha' : 'han') + ' registrado ' + data[0][1].n_existencias + ' existencia' +
+                (data[0][1].n_existencias == 1 ? '' : 's') + '  de la prenda "' + data[0][1].articulo +
+                '" modelo "' + data[0][1].modelo + '" ' + (data[0][2] ? ' del proveedor "' + data[0][2].nombre + '" ': '')
             });
         }else{
             res.json({
