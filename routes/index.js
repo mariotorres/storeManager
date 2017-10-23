@@ -2571,16 +2571,18 @@ router.post('/search/registers/results', isAuthenticated, function(req, res){
     console.log(req.body);
     query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
         " descripcion, articulos.id as id, tiendas.id as id_tienda, articulos.fecha_ultima_modificacion as fecha_modificacion " +
-        " from articulos, proveedores, tiendas where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and " +
-        " articulos.id_tienda = tiendas.id and tiendas.id = $2  and articulos.fecha_ultima_modificacion >= $3 and " +
-        " articulos.fecha_ultima_modificacion <= $4 "
+        " from articulos, proveedores, tiendas, nota_entrada where id_proveedor = $1 and " +
+        " articulos.id_proveedor = proveedores.id and nota_entrada.id_articulo = articulos.id and nota_entrada.id_nota_registro = $5 and " +
+        " articulos.id_tienda = tiendas.id and tiendas.id = $2  and nota_entrada.fecha >= $3 and " +
+        " nota_entrada.fecha <= $4 "
     db_conf.db.task(function(t){
         return this.batch([
             t.manyOrNone( query, [
                     req.body.id_proveedor,
                     req.body.id_tienda,
                     req.body.fecha_inicial,
-                    req.body.fecha_final
+                    req.body.fecha_final,
+                    req.body.id_nota_registro
                 ]),
             t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
             t.manyOrNone('select * from terminales')
