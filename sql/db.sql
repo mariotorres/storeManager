@@ -247,7 +247,7 @@ create table articulos_solicitados (
 );
 
 
-/* Nota entrada (aquí mismo agregar artículos articulos_solicitados. */
+/* Nota entrada */
 drop table if exists nota_entrada cascade;
 create table nota_entrada(
     id serial primary key,
@@ -255,6 +255,17 @@ create table nota_entrada(
     id_articulo integer references articulos(id),
     id_usuario integer references usuarios(id),
     num_arts    integer,
+    hora time,
+    fecha date
+);
+
+/* Nota modificacion */
+drop table if exists nota_modificacion cascade;
+create table nota_modificacion(
+    id serial primary key,
+    id_articulo integer references articulos(id),
+    id_usuario integer references usuarios(id),
+    modificacion  text,
     hora time,
     fecha date
 );

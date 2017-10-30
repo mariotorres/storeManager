@@ -2101,7 +2101,7 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
         return this.batch([
             t.one('select nombre_imagen from articulos where id = $1',[req.body.id ]),
             t.one('update articulos set articulo=$2, descripcion=$3, id_marca=$4, modelo=$5, talla=$6, notas=$7, ' +
-                'precio=$8, costo=$9, codigo_barras=$10, nombre_imagen=$11, n_existencias= $12, id_proveedor=$13, fecha_ultima_modificacion = Now(), ' +
+                ' precio=$8, costo=$9, codigo_barras=$10, nombre_imagen=$11, n_existencias= $12, id_proveedor=$13, ' +
                 ' id_tienda=$14 where id=$1 returning id, articulo ',[
                 req.body.id,
                 req.body.articulo,
