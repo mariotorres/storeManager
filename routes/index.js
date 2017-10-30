@@ -2127,10 +2127,11 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
     }).then(function (data) {
 
         // borra la imagen anterior
-        var img_path = path.join(__dirname, '..', 'uploads/', data[0].nombre_imagen);
-        fs.unlinkSync( img_path );
-        console.log('successfully deleted '+ img_path);
-
+        if(data[0].nombre_imagen) {
+            var img_path = path.join(__dirname, '..', 'uploads/', data[0].nombre_imagen);
+            fs.unlinkSync(img_path);
+            console.log('successfully deleted ' + img_path);
+        }
         res.json({
             status :'Ok',
             message : 'Los datos del articulo "'+ data[1].articulo +'" han sido actualizados'
@@ -3591,7 +3592,7 @@ router.post('/item/delete', isAuthenticated, function (req, res ) {
     db_conf.db.tx(function (t) {
         return this.one("select id, costo, n_existencias, id_proveedor from articulos where id = $1 ", [ req.body.id ]).then(function (data) {
             return t.batch([
-                t.one("delete from articulos cascade where id = $1 returning id, costo, n_existencias, id_proveedor, nombre_imagen", [ data.id ]),
+                t.one("update articulos set n_existencias = 0 where id = $1 returning id, costo, n_existencias, id_proveedor, nombre_imagen", [ data.id ]),
                 t.oneOrNone('update proveedores set a_cuenta= a_cuenta + $2 where id = $1 returning id, nombre',[
                     data.id_proveedor,
                     data.costo * data.n_existencias
@@ -3603,14 +3604,16 @@ router.post('/item/delete', isAuthenticated, function (req, res ) {
         console.log('Articulo eliminado: ', data[0].id);
 
         // borra la imagen anterior
-        if ( data[0].nombre_imagen!== null ) {
+        /*
+        if ( data[0].nombre_imagen ) {
+
             const img_path = path.join(__dirname, '..', 'uploads/', data[0].nombre_imagen);
 
             if (fs.existSync(img_path)) {
                 fs.unlinkSync(img_path);
                 console.log('successfully deleted ' + img_path);
             }
-        }
+        }*/
 
 
         if ( data[1] !== null ){
