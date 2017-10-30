@@ -403,6 +403,26 @@ function modalEvents(button, modal, page ) {
             });
 
             break;
+        case "list_back_registers":
+            modal.find('.modal-title').text('Buscar registros');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/items/list/back_registers', {}, function(){
+                $('#registers_datepicker1').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date().setDate(new Date().getDate( ) - 1)
+                });
+                $('#registers_datepicker2').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date()
+                });
+                modal.find('form').submit(function(e){
+                    modal.find('#search_results').load('/search/back/results', $(this).serializeArray(), function(){
+                    })
+                    e.preventDefault()
+                });
+            });
+
+            break;
         case "list_item_registers":
             modal.find('.modal-title').text('Buscar registros');
             modal.find('#modal_content').html("");
