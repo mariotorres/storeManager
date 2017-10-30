@@ -2568,6 +2568,22 @@ router.post('/items/list/item_registers', isAuthenticated, function(req, res){
     })
 })
 
+router.post('/back/note_item', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.manyOrNone('select * from articulos, nota_entrada where articulos.id = nota_entrada.id_articulo and ' +
+        ' nota_entrada.id_nota_registro = $1', [
+            req.body.id_nota_registro
+    ]).then(function(data){
+        console.log(data);
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al realizar la devolución'
+        })
+    })
+})
+
 router.post('/search/registers/results_back', isAuthenticated, function(req, res){
     console.log(req.body);
     query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +

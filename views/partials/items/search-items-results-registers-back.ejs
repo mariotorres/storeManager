@@ -1,3 +1,4 @@
+<form id="dev_item">
 <hr>
 <% if (items.length> 0){
 for (var i=0; i< items.length; i++){%>
@@ -18,11 +19,10 @@ for (var i=0; i< items.length; i++){%>
     </div>
 </div>
 <%}%>
-<button type="button" data-action="back_items" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-exchange"></i> <strong>Devolver</strong></button>
+<button type="submit" data-action="back_items" data-toggle="modal" data-target="#genericModal" class="list-group-item"><i class="fa fa-exchange"></i> <strong>Devolver</strong></button>
 <%}else{%>
-
 <div class="alert alert-warning">
-
     La búsqueda no retornó resultados
 </div>
 <%}%>
+</form>
