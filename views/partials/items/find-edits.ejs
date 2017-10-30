@@ -1,0 +1,58 @@
+<form>
+
+    <p>
+        <label>Seleccione una tienda</label>
+        <select class="form-control" name="id_tienda">
+            <%for ( var i=0; i < tiendas.length; i++){%>
+            <option value="<%= tiendas[i].id %>"><%= tiendas[i].nombre %></option>
+            <%}%>
+        </select>
+    </p>
+
+    <p>
+        <label>Seleccione un proveedor</label>
+        <select class="form-control" name="id_proveedor">
+            <%for ( var i=0; i < proveedores.length; i++){%>
+            <option value="<%= proveedores[i].id %>"><%= proveedores[i].nombre %></option>
+            <%}%>
+        </select>
+    </p>
+
+
+    <hr>
+    <div class="row">
+        <div class="col-sm-6">
+            <label>Fecha inicial</label>
+            <div class="form-group">
+                <div class='input-group'>
+                    <input type="text" name="fecha_inicial" id="registers_datepicker1" class="form-control" required>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-6">
+            <label>Fecha final</label>
+            <div class="form-group">
+                <div class='input-group'>
+                    <input type="text" name="fecha_final" id="registers_datepicker2" class="form-control" required>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <p>
+        <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+    </p>
+
+</form>
+
+<div id = "search_results">
+
+</div>

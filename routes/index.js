@@ -2574,6 +2574,26 @@ router.post('/items/list/back_registers', isAuthenticated, function(req, res){
     })
 })
 
+router.post('/items/list/item_edits', isAuthenticated, function(req, res){
+    db_conf.db.task(function(t){
+        return this.batch([
+            this.manyOrNone('select * from tiendas'),
+            this.manyOrNone('select * from proveedores')
+        ])
+    }).then(function(data){
+        res.render('partials/items/find-edits', {
+            tiendas: data[0],
+            proveedores: data[1]
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            message: 'Ocurrió un error al cargar los registros',
+            status: 'Error'
+        })
+    })
+})
+
 router.post('/items/list/item_registers', isAuthenticated, function(req, res){
     db_conf.db.task(function(t){
         return this.batch([
@@ -2707,6 +2727,42 @@ router.post('/search/back/results', isAuthenticated, function(req, res){
         })
     })
 })
+
+router.post('/search/edits/results', isAuthenticated, function(req, res){
+    console.log(req.body);
+    query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
+        " descripcion, articulos.id as id, tiendas.id as id_tienda, nota_modificacion.fecha as fecha, num_arts, modificacion " +
+        " from articulos, proveedores, tiendas, nota_modificacion where id_proveedor = $1 and " +
+        " articulos.id_proveedor = proveedores.id and nota_modificacion.id_articulo = articulos.id and nota_modificacion.id_nota_registro = $5 and " +
+        " articulos.id_tienda = tiendas.id and tiendas.id = $2  and nota_modificacion.fecha >= $3 and " +
+        " nota_modificacion.fecha <= $4 "
+    db_conf.db.task(function(t){
+        return this.batch([
+            t.manyOrNone( query, [
+                req.body.id_proveedor,
+                req.body.id_tienda,
+                req.body.fecha_inicial,
+                req.body.fecha_final,
+                req.body.id_nota_registro
+            ]),
+            t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
+            t.manyOrNone('select * from terminales')
+        ])
+    }).then(function(data){
+        res.render('partials/items/search-items-results-registers',{
+            items: data[0],
+            user: data[1],
+            terminales: data[2]
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al buscar los registros'
+        })
+    })
+})
+
 
 router.post('/search/registers/results', isAuthenticated, function(req, res){
     console.log(req.body);
