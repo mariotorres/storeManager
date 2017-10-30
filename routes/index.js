@@ -2571,14 +2571,9 @@ router.post('/items/list/item_registers', isAuthenticated, function(req, res){
 router.post('/back/note_item', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.tx(function(t){
-        return t.batch([
-            t.manyOrNone('select * from articulos, nota_entrada where articulos.id = nota_entrada.id_articulo and ' +
+            return t.manyOrNone('select * from articulos, nota_entrada where articulos.id = nota_entrada.id_articulo and ' +
             ' nota_entrada.id_nota_registro = $1', [
             req.body.id_nota_registro
-            ]),
-            t.manyOrNone('delet from nota_entrada where id_nota_registro = $1 returning id', [
-                req.body.id_nota_registro
-            ])
             ]).then(function(data){
                 var query = []
                 for(var i = 0; i < data.length; i++){
@@ -2588,6 +2583,10 @@ router.post('/back/note_item', isAuthenticated, function(req, res){
                         ' where id = ' + data[i].id_proveedor + ' returning id'))
                 }
                 return t.batch(query)
+            }).then(function(data){
+                return t.manyOrNone('delete from nota_entrada where id_nota_registro = $1 returning id', [
+                    req.body.id_nota_registro
+                ])
             })
     }).then(function(data){
         console.log(data)
