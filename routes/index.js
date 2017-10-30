@@ -2672,7 +2672,7 @@ router.post('/search/back/results', isAuthenticated, function(req, res){
     query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
         " descripcion, articulos.id as id, tiendas.id as id_tienda, nota_devolucion.fecha as fecha, num_arts " +
         " from articulos, proveedores, tiendas, nota_devolucion where id_proveedor = $1 and " +
-        " articulos.id_proveedor = proveedores.id and nota_devolucion.id_articulo = articulos.id and nota_devolucion.id_nota_registro = $5 and " +
+        " articulos.id_proveedor = proveedores.id and nota_devolucion.id_articulo = articulos.id and nota_devolucion.id_nota_devolucion = $5 and " +
         " articulos.id_tienda = tiendas.id and tiendas.id = $2  and nota_devolucion.fecha >= $3 and " +
         " nota_devolucion.fecha <= $4 "
     db_conf.db.task(function(t){
@@ -2682,7 +2682,7 @@ router.post('/search/back/results', isAuthenticated, function(req, res){
                 req.body.id_tienda,
                 req.body.fecha_inicial,
                 req.body.fecha_final,
-                req.body.id_nota_registro
+                req.body.id_nota_devolucion
             ]),
             t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
             t.manyOrNone('select * from terminales')
