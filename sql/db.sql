@@ -259,11 +259,11 @@ create table nota_entrada(
     fecha date
 );
 
-/* Nota  */
-drop table if exists nota_entrada cascade;
-create table nota_entrada(
+/* Nota devolución */
+drop table if exists nota_devolucion cascade;
+create table nota_devolucion(
     id serial primary key,
-    id_nota_registro text, /* Nota del proveedor */
+    id_nota_devolucion text, /* Nota del proveedor */
     id_articulo integer references articulos(id),
     id_usuario integer references usuarios(id),
     num_arts    integer,
