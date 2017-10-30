@@ -2122,6 +2122,12 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
                 req.body.id_proveedor,
                 numericCol(req.body.costo_anterior)* numericCol(req.body.existencias_anterior),
                 numericCol(req.body.costo)* numericCol(req.body.n_existencias)
+            ]),
+            t.one('insert into nota_modificacion (id_articulo, id_usuario, modificacion, hora, fecha) ' +
+                ' values($1,$2,$3, localtime, current_date) returning id', [
+                req.body.id,
+                req.user.id,
+                req.body.desc_mod
             ])
         ]);
     }).then(function (data) {
