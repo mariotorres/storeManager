@@ -387,12 +387,12 @@ function modalEvents(button, modal, page ) {
                     defaultDate: new Date()
                 });
                 modal.find('form').submit(function(e){
+                    var form_data = $(this).serializeArray()
                     modal.find('#search_results').load('/search/registers/results_back', $(this).serializeArray(), function(){
-                        modal.find('#dev_item').submit(function(e){
-                            $.post('/back/note_item', $(this).serializeArray(), function(data){
+                        modal.find("#back_note").on('click', function(){
+                            $.post('/back/note_item', form_data, function(e){
 
                             })
-                            e.preventDefault();
                         })
                     })
                     e.preventDefault();

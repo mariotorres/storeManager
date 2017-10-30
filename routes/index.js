@@ -2570,9 +2570,10 @@ router.post('/items/list/item_registers', isAuthenticated, function(req, res){
 
 router.post('/back/note_item', isAuthenticated, function(req, res){
     console.log(req.body);
-    db_conf.db.manyOrNone('select * from articulos, nota_entrada where articulos.id = nota_entrada.id_articulo and ' +
+    console.log('INSIDE')
+    /*db_conf.db.manyOrNone('select * from articulos, nota_entrada where articulos.id = nota_entrada.id_articulo and ' +
         ' nota_entrada.id_nota_registro = $1', [
-            req.body.id_nota_registro
+            req.body.id_nota_registro.toString()
     ]).then(function(data){
         console.log(data);
     }).catch(function (error) {
@@ -2581,7 +2582,7 @@ router.post('/back/note_item', isAuthenticated, function(req, res){
             status: 'Error',
             message: 'Ocurrió un error al realizar la devolución'
         })
-    })
+    })*/
 })
 
 router.post('/search/registers/results_back', isAuthenticated, function(req, res){
