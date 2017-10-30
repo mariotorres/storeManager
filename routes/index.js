@@ -2581,6 +2581,13 @@ router.post('/back/note_item', isAuthenticated, function(req, res){
                         ' where id =  ' + data[i].id  + ' returning id'))
                     query.push(t.one('update proveedores set a_cuenta = a_cuenta + ' + data[i].num_arts*data[i].costo +
                         ' where id = ' + data[i].id_proveedor + ' returning id'))
+                    query.push(t.one('insert into nota_devolucion (id_nota_devolucion, id_articulo, id_usuario, num_arts, ' +
+                        ' hora, fecha) values ($1, $2, $3, $4, localtime, current_date) returning id', [
+                        data[i].id_nota_registro,
+                        data[i].id,
+                        req.user.id,
+                        data[i].num_arts
+                    ]))
                 }
                 return t.batch(query)
             }).then(function(data){
