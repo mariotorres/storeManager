@@ -2570,17 +2570,17 @@ router.post('/items/list/item_registers', isAuthenticated, function(req, res){
 
 router.post('/back/note_item', isAuthenticated, function(req, res){
     console.log(req.body);
-    db_conf.db.task(function(t){
+    db_conf.db.tx(function(t){
         return t.manyOrNone('select * from articulos, nota_entrada where articulos.id = nota_entrada.id_articulo and ' +
             ' nota_entrada.id_nota_registro = $1', [
             req.body.id_nota_registro
         ]).then(function(data){
                 var query = []
                 for(var i = 0; i < data.length; i++){
-                    query.push('update articulos set n_existencias = n_existencias - ' + data[i].num_arts +
-                        ' where id =  ' + data[i].id  + ' returning id')
-                    query.push('update proveedores set a_cuenta = a_cuenta + ' + data[i].num_arts*data[i].costo +
-                        ' where id = ' + data[i].id_proveedor + ' returning id')
+                    query.push(t.one('update articulos set n_existencias = n_existencias - ' + data[i].num_arts +
+                        ' where id =  ' + data[i].id  + ' returning id'))
+                    query.push(t.one('update proveedores set a_cuenta = a_cuenta + ' + data[i].num_arts*data[i].costo +
+                        ' where id = ' + data[i].id_proveedor + ' returning id'))
                 }
                 return t.batch(query)
             })
