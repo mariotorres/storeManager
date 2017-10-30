@@ -1,0 +1,27 @@
+<hr>
+<% if (items.length> 0){
+for (var i=0; i< items.length; i++){%>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form>
+            <h3>Artículo: <span style="color: #e0e0e0;"><%= items[i].articulo %></span> </h3>
+            <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Proveedor: </strong><%= items[i].nombre_prov %> | <strong>Fecha: </strong><span style="color:#E91E63"><%= items[i].fecha.toDateString() %></span></p>
+            <hr>
+            <div class="col-md-12">
+                <textarea rows="5" class = "form-control">
+                  <%=items[i].modificacion%>
+                </textarea>
+            </div>
+            <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio %></strong></span></h3>
+            <br>
+        </form>
+    </div>
+</div>
+<%}}else{%>
+
+<div class="alert alert-warning">
+
+    La búsqueda no retornó resultados
+</div>
+<%}%>

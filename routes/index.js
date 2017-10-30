@@ -2581,6 +2581,7 @@ router.post('/items/list/item_edits', isAuthenticated, function(req, res){
             this.manyOrNone('select * from proveedores')
         ])
     }).then(function(data){
+        console.log(data)
         res.render('partials/items/find-edits', {
             tiendas: data[0],
             proveedores: data[1]
@@ -2731,9 +2732,9 @@ router.post('/search/back/results', isAuthenticated, function(req, res){
 router.post('/search/edits/results', isAuthenticated, function(req, res){
     console.log(req.body);
     query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
-        " descripcion, articulos.id as id, tiendas.id as id_tienda, nota_modificacion.fecha as fecha, num_arts, modificacion " +
+        " descripcion, articulos.id as id, tiendas.id as id_tienda, nota_modificacion.fecha as fecha, modificacion " +
         " from articulos, proveedores, tiendas, nota_modificacion where id_proveedor = $1 and " +
-        " articulos.id_proveedor = proveedores.id and nota_modificacion.id_articulo = articulos.id and nota_modificacion.id_nota_registro = $5 and " +
+        " articulos.id_proveedor = proveedores.id and nota_modificacion.id_articulo = articulos.id and " +
         " articulos.id_tienda = tiendas.id and tiendas.id = $2  and nota_modificacion.fecha >= $3 and " +
         " nota_modificacion.fecha <= $4 "
     db_conf.db.task(function(t){
@@ -2742,14 +2743,13 @@ router.post('/search/edits/results', isAuthenticated, function(req, res){
                 req.body.id_proveedor,
                 req.body.id_tienda,
                 req.body.fecha_inicial,
-                req.body.fecha_final,
-                req.body.id_nota_registro
+                req.body.fecha_final
             ]),
             t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
             t.manyOrNone('select * from terminales')
         ])
     }).then(function(data){
-        res.render('partials/items/search-items-results-registers',{
+        res.render('partials/items/search-items-results-edits',{
             items: data[0],
             user: data[1],
             terminales: data[2]
