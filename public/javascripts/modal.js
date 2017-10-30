@@ -391,7 +391,11 @@ function modalEvents(button, modal, page ) {
                     modal.find('#search_results').load('/search/registers/results_back', $(this).serializeArray(), function(){
                         modal.find("#back_note").on('click', function(){
                             $.post('/back/note_item', form_data, function(e){
-
+                                alert(data.message);
+                                if(data.status=='Ok'){
+                                    modal.modal('hide');
+                                }
+                                e.preventDefault();
                             })
                         })
                     })
