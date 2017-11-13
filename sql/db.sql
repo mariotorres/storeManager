@@ -307,18 +307,12 @@ create table carrito (
         estatus text
 );
 
-/* Estatus ventas */
-/*drop table if exists estatus_ventas cascade;
-create table estatus_ventas (
-    id serial primary key,
-    estatus text,
-    descripcion text
-);
+/*
+ * --------------------------------------------------
+ * Lógica de ventas (BEGIN)
+ * --------------------------------------------------
+ */
 
-insert into estatus_ventas ("estatus","descripcion") values
-('Entregado','Se ha cubierto el importe y entregado el artículo'),
-('Ajuste','En artículo está en proceso de ajuste');
-*/
 /* Ventas */
 drop table if exists ventas cascade;
 create table ventas (
@@ -329,30 +323,37 @@ create table ventas (
     id_terminal integer references terminales(id) on delete set null,
     id_usuario integer references usuarios(id) on delete set null,
     precio_venta numeric(1000,2),
-    fecha_venta date,
-    hora_venta time,
-    monto_pagado_efectivo numeric(1000,2),
-    monto_cambio numeric(1000,2),
-    monto_pagado_tarjeta  numeric(1000,2),
-    forma_pago text, /* Efectivo, TDD, TDC*/
-    tarjeta_credito  boolean, /* Esto no jala; quitar*/
-    saldo_pendiente numeric(1000,2),
-    estatus text
+    estatus text /*liquidada, cancelada, activa*/
 );
 
+/* Venta articulos */
 drop table if exists venta_articulos;
 create table venta_articulos(
-    id serial primary key,
+    id bigserial primary key,
     id_articulo integer references articulos(id),
     id_venta integer references ventas(id),
-    /*id_estatus_venta integer references estatus_ventas(id),*/
     unidades_vendidas integer,
     discount    numeric(1000,2),
     precio numeric(1000,2),/* Falta incluir el precio que tenia el artículo en el momento de la venta */
-    monto_pagado numeric(1000,2),
-    monto_por_pagar numeric(1000,2),
-    estatus  text
+    estatus  text /* liquidada, reparacion, devolucion */
 );
+
+/* Transferencia */
+drop table if exists transferencia;
+create table transferencia (
+    id bigserial primary key,
+    id_venta integer references ventas(id),
+    id_venta_articulos integer references venta_articulos(id),
+    monto numeric(1000, 2),
+    forma_pago text, /*efectivo, tarjeta_debito, tarjeta_credito*/
+    id_terminal integer references terminales(id)
+)
+
+/*
+ * --------------------------------------------------
+ * Lógica de ventas (END)
+ * --------------------------------------------------
+ */
 
 
 drop table if exists carrito_notas;
