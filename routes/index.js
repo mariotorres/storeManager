@@ -395,44 +395,33 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                 user_sale_id
             ])
         ]).then(function(data){
-            return t.batch([ // En caso de venta con tarjeta, se tienen que mantener ambos registros. // ELIMINÉ ID NOTA
+            return t.batch([
                 data[0],
-                t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, fecha_venta, hora_venta, ' +
-                    'monto_pagado_efectivo, monto_pagado_tarjeta, id_terminal, saldo_pendiente, estatus, tarjeta_credito, monto_cambio, id_papel) ' +
-                    'values( ' +
-                    '(select coalesce(max(id_nota),0) from ventas where id_tienda = $1 ) +1 ,' +
-                    '$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id', [
-                    numericCol(data[1].id_tienda), // si el usuario es administrador, el id que el adjudique, si no el de la tienda del usuario
-                    numericCol(user_sale_id), // id de tienda del usuario que realiza la venta.
+                t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, id_terminal, estatus,  id_papel) ' +
+                    'values( (select coalesce(max(id_nota),0) from ventas where id_tienda = $1 ) + 1 ,' +
+                    '$1, $2, $3, $4, $5, $6) returning id', [
+                    numericCol(data[1].id_tienda),
+                    numericCol(user_sale_id),
                     numericCol(req.body.precio_tot),
-                    sale_date,
-                    sale_time,
-                    numericCol(req.body.monto_efec),
-                    (numericCol(req.body.efec_tot) - numericCol(req.body.monto_efec)),
                     req.body.terminal,
-                    numericCol(req.body.precio_tot) - numericCol(req.body.efec_tot),
                     "activa",
-                    req.body.optradio == "cred",
-                    (numericCol(req.body.monto_rec) - numericCol(req.body.monto_efec)),
                     req.body.id_papel
                 ])
             ]);
         }).then(function(data){
             var queries= [];
             for(var i = 0; i < data[0].length; i++){
-                var monto_por_pagar = numericCol( numericCol(data[0][i].unidades_carrito)*numericCol(data[0][i].precio) -
+                var monto_por_pagar = numericCol( numericCol(data[0][i].unidades_carrito) * numericCol(data[0][i].precio) -
                      numericCol(data[0][i].discount) -  numericCol(data[0][i].monto_pagado)) === null ? 0 :
                      numericCol( numericCol(data[0][i].unidades_carrito)*numericCol(data[0][i].precio) -
                      numericCol(data[0][i].discount) -  numericCol(data[0][i].monto_pagado));
                 queries.push(
-                    t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, ' +
-                        'monto_pagado, monto_por_pagar, estatus, precio) values($1, $2, $3, $4, $5, $6, $7, $8) returning id_articulo', [
+                    t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, estatus, precio) ' +
+                        ' values($1, $2, $3, $4, $5, $6) returning id_articulo', [
                         numericCol(data[1].id),
                         numericCol(data[0][i].id_articulo),
                         numericCol(data[0][i].unidades_carrito),
                         numericCol(data[0][i].discount),
-                        numericCol(data[0][i].monto_pagado),
-                        monto_por_pagar,
                         data[0][i].estatus,
                         data[0][i].carrito_precio
                     ])

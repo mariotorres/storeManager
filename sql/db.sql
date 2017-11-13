@@ -323,7 +323,7 @@ create table ventas (
     id_terminal integer references terminales(id) on delete set null,
     id_usuario integer references usuarios(id) on delete set null,
     precio_venta numeric(1000,2),
-    estatus text /*liquidada, cancelada, activa*/
+    estatus text /* cancelada, activa */
 );
 
 /* Venta articulos */
