@@ -496,9 +496,11 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
         } else {
             //var discount = req.body.optradioDesc;
             //if(discount == 'otro'){
-                discount = (1 - numericCol(req.body.precio_pagado)/numericCol(req.body.item_precio))*100;
-                console.log('DISCOUNT:'  + discount);
+            //    discount = (1 - numericCol(req.body.precio_pagado)/numericCol(req.body.item_precio))*100;
+            //    console.log('DISCOUNT:'  + discount);
             //}
+            // Absolut discount
+            var discount = numericCol(req.body.item_precio) - numericCol(req.body.precio_pagado)
             db_conf.db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
                 'unidades_carrito, estatus, monto_pagado, carrito_precio) ' +
                 ' values($1, $2, $3, $4, $5, $6, $7, $8) returning id_articulo',[
