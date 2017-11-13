@@ -347,7 +347,7 @@ create table transferencia (
     monto numeric(1000, 2),
     forma_pago text, /*efectivo, tarjeta_debito, tarjeta_credito*/
     id_terminal integer references terminales(id)
-)
+);  
 
 /*
  * --------------------------------------------------
