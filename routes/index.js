@@ -395,17 +395,22 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                 user_sale_id
             ])
         ]).then(function(data){
+            var cred = numericCol(req.body.optradio === 'cred')
             return t.batch([
                 data[0],
-                t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, id_terminal, estatus,  id_papel) ' +
+                t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, id_terminal, estatus,  id_papel, ' +
+                    'monto_efectivo, monto_tarjeta_cred, monto_tarjeta_deb) ' +
                     'values( (select coalesce(max(id_nota),0) from ventas where id_tienda = $1 ) + 1 ,' +
-                    '$1, $2, $3, $4, $5, $6) returning id', [
+                    '$1, $2, $3, $4, $5, $6, $7, $8, $9) returning id', [
                     numericCol(data[1].id_tienda),
                     numericCol(user_sale_id),
                     numericCol(req.body.precio_tot),
                     req.body.terminal,
                     "activa",
-                    req.body.id_papel
+                    req.body.id_papel,
+                    req.body.monto_efec,
+                    (req.body.monto_rec - req.body.monto_efec)*cred,
+                    (req.body.monto_rec - req.body.monto_efec)*(1 - cred)
                 ])
             ]);
         }).then(function(data){
@@ -416,8 +421,9 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                      numericCol( numericCol(data[0][i].unidades_carrito)*numericCol(data[0][i].precio) -
                      numericCol(data[0][i].discount) -  numericCol(data[0][i].monto_pagado));
                 queries.push(
-                    t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, estatus, precio) ' +
-                        ' values($1, $2, $3, $4, $5, $6) returning id_articulo', [
+                    t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, estatus, ' +
+                        ' precio) ' +
+                        ' values($1, $2, $3, $4, $5, $6) returning id, id_articulo', [
                         numericCol(data[1].id),
                         numericCol(data[0][i].id_articulo),
                         numericCol(data[0][i].unidades_carrito),
@@ -426,7 +432,6 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                         data[0][i].carrito_precio
                     ])
                 );
-
                 queries.push(t.none('delete from carrito where id_usuario=$1 and id_articulo=$2',[
                     numericCol(data[0][i].id_usuario),
                     numericCol(data[0][i].id_articulo)
@@ -448,7 +453,13 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     ]));
                 }
             }
-            return t.batch(queries);
+            return t.batch([data, queries]);
+        }).then(function(data){
+            // Neeeds fix
+           var queries = [];
+           for(var i = 0; i < data[0][0].length; i++){
+               queries.push('insert into transferencias (id_venta, id_venta_articulo, monto, forma_pago, id_terminal)')
+           }
 
         });
     }).then(function (data) {
