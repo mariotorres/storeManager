@@ -26,15 +26,14 @@ passport.use('login', new LocalStrategy({
         // check in postgres if a user with username exists or not
         db_conf.db.oneOrNone('select * from usuarios where usuario = $1', [ username ]).then(function (user) {
             // session
-
             if (!user){
-                console.log('User Not Found with username '+username);
+                console.log('User Not Found with username '+ username);
                 return done(null, false, req.flash('message', 'Usuario no registrado'));
             }
 
             if (!isValidPassword(user ,password)){
                 console.log('Contraseña no válida');
-                return done(null, false, req.flash('message', 'Contraseña no válida')); // redirect back to login page
+                return done(null, false, req.flash('message', 'Contraseña no válida'));
             }
 
             return done(null,user);
