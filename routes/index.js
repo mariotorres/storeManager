@@ -372,108 +372,110 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 
 // Carrito Sell
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
-    console.log(req.body);
-    // Si el usuario no es administrador, se asigna su id y la fecha y hora actual.
-    var user_sale_id = req.user.id
-    var sale_date    = new Date()
-    var sale_time    = new Date().toLocaleTimeString()
-    if(req.user.permiso_administrador){
-        // Si el usuario es administrador el ID de la venta es el que el asigna. Y la fecha y hora igual.
-        user_sale_id = req.body.user_sale;
-        sale_date    = req.body.fecha_venta;
-        sale_time    = req.body.hora_venta;
-    }
-    db_conf.db.tx(function (t) {
-        return t.batch([
-            t.manyOrNone(
-                'select * from carrito, articulos where carrito.id_articulo = articulos.id and ' +
-                ' carrito.id_usuario = $1 order by articulo', [
-                    numericCol(req.user.id) //numericCol(req.body.user_id)
-                ]),
-            t.one('select * from usuarios where id = $1', [
-                user_sale_id
-            ])
-        ]).then(function(data){
-            var cred = numericCol(req.body.optradio === 'cred')
-            return t.batch([
-                data[0],
-                t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, id_terminal, estatus,  id_papel, ' +
-                    'monto_efectivo, monto_tarjeta_cred, monto_tarjeta_deb) ' +
-                    'values( (select coalesce(max(id_nota),0) from ventas where id_tienda = $1 ) + 1 ,' +
-                    '$1, $2, $3, $4, $5, $6, $7, $8, $9) returning id', [
-                    numericCol(data[1].id_tienda),
-                    numericCol(user_sale_id),
-                    numericCol(req.body.precio_tot),
-                    req.body.terminal,
-                    "activa",
-                    req.body.id_papel,
-                    req.body.monto_efec,
-                    (req.body.monto_rec - req.body.monto_efec)*cred,
-                    (req.body.monto_rec - req.body.monto_efec)*(1 - cred)
+  console.log(req.body);
+  // Si el usuario no es administrador, se asigna su id y la fecha y hora actual.
+  var user_sale_id = req.user.id
+  var sale_date    = new Date()
+  var sale_time    = new Date().toLocaleTimeString()
+  var cred = numericCol(req.body.optradio === 'cred')
+  if(req.user.permiso_administrador){
+    // Si el usuario es administrador el ID de la venta es el que el asigna. Y la fecha y hora igual.
+    user_sale_id = req.body.user_sale;
+    sale_date    = req.body.fecha_venta;
+    sale_time    = req.body.hora_venta;
+  }
+  db_conf.db.tx(function (t) {
+    return t.batch([
+      t.manyOrNone(
+        'select * from carrito, articulos where carrito.id_articulo = articulos.id and ' +
+          ' carrito.id_usuario = $1 order by articulo', [
+            numericCol(req.user.id) //numericCol(req.body.user_id)
+          ]),
+      t.one('select * from usuarios where id = $1', [
+        user_sale_id
+      ])
+    ]).then(function(data){
+      return t.batch([
+        data[0],
+        t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, estatus,  id_papel)  ' +
+              'values( (select coalesce(max(id_nota), 0) from ventas where id_tienda = $1 ) + 1 ,' +
+              '$1, $2, $3, $4, $5, $6, $7, $8, $9) returning id', [
+                numericCol(data[1].id_tienda),
+                numericCol(user_sale_id),
+                numericCol(req.body.precio_tot),
+                "activa",
+                req.body.id_papel
+              ])
+      ]);
+    }).then(function(data){
+      var queries= [];
+      /*
+       * Agregar transacción
+       */
+      queries.push(t.one('insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, id_terminal) values($1, $2, $3, $4, $5) returning id', [
+        data[1].id,
+        req.body.monto_efec,
+        (req.body.monto_rec - req.body.monto_efec)*cred,
+        (req.body.monto_rec - req.body.monto_efec)*(1 - cred),
+        req.body.terminal
+      ]))
+      /*
+       * Venta artículos
+       */
+      for(var i = 0; i < data[0].length; i++){
+        var monto_por_pagar = numericCol( numericCol(data[0][i].unidades_carrito) * numericCol(data[0][i].precio) -
+                                          numericCol(data[0][i].discount) -  numericCol(data[0][i].monto_pagado)) === null ? 0 :
+            numericCol( numericCol(data[0][i].unidades_carrito) * numericCol(data[0][i].precio) -
+                        numericCol(data[0][i].discount) -  numericCol(data[0][i].monto_pagado));
+        // Aquí precio es el precio de venta del artículo
+        queries.push(
+          t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, estatus, ' +
+                ' precio) ' +
+                ' values($1, $2, $3, $4, $5, $6) returning id, id_articulo', [
+                  numericCol(data[1].id),
+                  numericCol(data[0][i].id_articulo),
+                  numericCol(data[0][i].unidades_carrito),
+                  numericCol(data[0][i].discount),
+                  data[0][i].estatus,
+                  data[0][i].carrito_precio
                 ])
-            ]);
-        }).then(function(data){
-            var queries= [];
-            for(var i = 0; i < data[0].length; i++){
-                var monto_por_pagar = numericCol( numericCol(data[0][i].unidades_carrito) * numericCol(data[0][i].precio) -
-                     numericCol(data[0][i].discount) -  numericCol(data[0][i].monto_pagado)) === null ? 0 :
-                     numericCol( numericCol(data[0][i].unidades_carrito)*numericCol(data[0][i].precio) -
-                     numericCol(data[0][i].discount) -  numericCol(data[0][i].monto_pagado));
-                queries.push(
-                    t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, estatus, ' +
-                        ' precio) ' +
-                        ' values($1, $2, $3, $4, $5, $6) returning id, id_articulo', [
-                        numericCol(data[1].id),
-                        numericCol(data[0][i].id_articulo),
-                        numericCol(data[0][i].unidades_carrito),
-                        numericCol(data[0][i].discount),
-                        data[0][i].estatus,
-                        data[0][i].carrito_precio
-                    ])
-                );
-                queries.push(t.none('delete from carrito where id_usuario=$1 and id_articulo=$2',[
-                    numericCol(data[0][i].id_usuario),
-                    numericCol(data[0][i].id_articulo)
-                ]));
+        );
+        queries.push(t.none('delete from carrito where id_usuario=$1 and id_articulo=$2',[
+          numericCol(data[0][i].id_usuario),
+          numericCol(data[0][i].id_articulo)
+        ]));
 
-                // Si la prenda no está en inventarios, no hay necesidad de decrementar las existencias.
-                if(data[0][i].estatus != "solicitada") {
-                    queries.push(t.one('update articulos set n_existencias = n_existencias - $2, fecha_ultima_modificacion = $3 where id =$1 returning id', [
-                        numericCol(data[0][i].id_articulo),
-                        numericCol(data[0][i].unidades_carrito),
-                        new Date()
-                    ]));
-                }
-                // Update saldo con proveedores solo de aquellas prendas que se entregaron y que están completamente pagadas.
-                if( monto_por_pagar == 0 ) {
-                    queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id', [
-                        numericCol(data[0][i].id_proveedor),
-                        numericCol(data[0][i].costo * data[0][i].unidades_carrito)
-                    ]));
-                }
-            }
-            return t.batch([data, queries]);
-        }).then(function(data){
-            // Neeeds fix
-           var queries = [];
-           for(var i = 0; i < data[0][0].length; i++){
-               queries.push('insert into transferencias (id_venta, id_venta_articulo, monto, forma_pago, id_terminal)')
-           }
-
-        });
-    }).then(function (data) {
-        console.log('Venta generada: ', data);
-        res.json({
-            status : 'Ok',
-            message : 'La venta ha sido registrada exitosamente'
-        });
-    }).catch(function (error) {
-        console.log(error);
-        res.json({
-            status : 'Error',
-            message: 'Ocurrio un error'
-        })
+        // Si la prenda no está en inventarios, no hay necesidad de decrementar las existencias.
+        if(data[0][i].estatus != "solicitada") {
+          queries.push(t.one('update articulos set n_existencias = n_existencias - $2, fecha_ultima_modificacion = $3 where id =$1 returning id', [
+            numericCol(data[0][i].id_articulo),
+            numericCol(data[0][i].unidades_carrito),
+            new Date()
+          ]));
+        }
+        // Arreglar.. siempre les debo pagar a los proveedores con la excepción de prendas solicitadas
+        if( data[0][i].estatus != "solicitada" ) {
+          queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id', [
+            numericCol(data[0][i].id_proveedor),
+            numericCol(data[0][i].costo * data[0][i].unidades_carrito)
+          ]));
+        }
+      }
+      return t.batch([data, queries]);
+    })
+  }).then(function (data) {
+    console.log('Venta generada: ', data);
+    res.json({
+      status : 'Ok',
+      message : 'La venta ha sido registrada exitosamente'
     });
+  }).catch(function (error) {
+    console.log(error);
+    res.json({
+      status : 'Error',
+      message: 'Ocurrio un error'
+    })
+  });
 });
 
 // Insertar prenda en carrito

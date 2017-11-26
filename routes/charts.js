@@ -24,7 +24,7 @@ router.get('/sales/data.json', isAuthenticated, function (req, res) {
     * Also, if store_id is set, returns sales only for that store */
 
     //por tienda ...
-    let options = {
+    var options = {
         start_date : new Date(),
         end_date : new Date(),
         store_id : null
@@ -83,7 +83,7 @@ router.get('/best-selling/data.json', function(req, res){
      * store_id
      */
 
-    let options = {
+    var options = {
         start_date : new Date(),
         end_date : new Date(),
         store_id : null
@@ -158,7 +158,7 @@ router.get('/employees/data.json', function (req, res) {
     * */
 
 
-    let options = {
+    var options = {
         start_date : new Date(),
         end_date : new Date(),
         store_id : null

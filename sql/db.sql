@@ -320,12 +320,8 @@ create table ventas (
     id_nota integer not null,
     id_papel integer not null,
     id_tienda integer not null references tiendas(id) on delete set null,
-    id_terminal integer references terminales(id) on delete set null,
     id_usuario integer references usuarios(id) on delete set null,
     precio_venta numeric(1000,2),
-    monto_efectivo numeric(1000, 2),
-    monto_tarjeta_cred numeric(1000, 2),
-    monto_tarjeta_deb  numeric(1000, 2),
     estatus text /* cancelada, activa */
 );
 
@@ -338,18 +334,19 @@ create table venta_articulos(
     unidades_vendidas integer,
     discount    numeric(1000,2),
     precio numeric(1000,2),/* Falta incluir el precio que tenia el artículo en el momento de la venta */
-    estatus  text /* liquidada, reparacion, devolucion */
+    estatus  text  /* liquidada, reparacion, devolucion */
 );
 
 /* Transferencia */
+/* Notar que las transferencias están asociadas*/
 drop table if exists transferencia;
 create table transferencia (
     id bigserial primary key,
     id_venta integer references ventas(id),
-    id_venta_articulos integer references venta_articulos(id),
-    monto numeric(1000, 2),
-    forma_pago text, /*efectivo, tarjeta_debito, tarjeta_credito*/
-    id_terminal integer references terminales(id)
+    monto_efectivo numeric(1000, 2),
+    monto_credito  numeric(1000, 2),
+    monto_debito  numeric(1000, 2),
+    id_terminal integer references terminales(id) on delete set null
 );
 
 /*
