@@ -1237,8 +1237,8 @@ router.post('/type/payment',function(req, res ){
             this.manyOrNone('select * from terminales order by nombre_facturador '),
             this.manyOrNone('select sum(monto_pagado) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
-            this.manyOrNone('select sum - discount from (select sum(precio * unidades_carrito) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
-                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1) as sum, carrito',[ req.user.id ]),
+            this.manyOrNone('select sum(carrito_precio) as sum from carrito, usuarios where  ' +
+                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 ',[ req.user.id ]),
             this.manyOrNone('select * from usuarios')
         ]);
     }).then(function(data){
