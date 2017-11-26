@@ -399,7 +399,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
         data[0],
         t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, estatus,  id_papel)  ' +
               'values( (select coalesce(max(id_nota), 0) from ventas where id_tienda = $1 ) + 1 ,' +
-              '$1, $2, $3, $4, $5, $6, $7, $8, $9) returning id', [
+              '$1, $2, $3, $4, $5) returning id', [
                 numericCol(data[1].id_tienda),
                 numericCol(user_sale_id),
                 numericCol(req.body.precio_tot),
@@ -410,7 +410,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
     }).then(function(data){
       var queries= [];
       /*
-       * Agregar transacción
+       * Agregar transferencia
        */
       queries.push(t.one('insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, id_terminal) values($1, $2, $3, $4, $5) returning id', [
         data[1].id,

@@ -379,6 +379,7 @@ create table devolucion_prov_articulos(
 tipo_transaccion
 retorno_mercancia
 pago_mercancia
+¿ esto debe existir ?
 */
 
 /* transacciones */
