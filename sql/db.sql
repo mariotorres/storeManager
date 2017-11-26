@@ -292,6 +292,7 @@ create table terminales(
         rfc text
 );
 
+insert into terminales (id_tienda, banco, nombre_facturador, rfc) values ('1', 'banamex', 'eduardo', 'rfcEduardo');
 
 
 /* Carrito */

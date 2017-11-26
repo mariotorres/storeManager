@@ -502,14 +502,15 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             //    console.log('DISCOUNT:'  + discount);
             //}
             // Absolut discount
-            var discount = numericCol(req.body.item_precio)*req.body.existencias - numericCol(req.body.precio_pagado)
+          var discount = numericCol(req.body.item_precio) * req.body.existencias - numericCol(req.body.precio_pagado)
+          console.log('DISCOUNT: ' + discount);
             db_conf.db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
                 'unidades_carrito, estatus, monto_pagado, carrito_precio) ' +
                 ' values($1, $2, $3, $4, $5, $6, $7, $8) returning id_articulo',[
                 new Date(),
                 numericCol(req.body.item_id),
                 numericCol(req.user.id),//numericCol(req.body.user_id),
-                numericCol(discount),
+                  discount,
                 req.body.existencias,
                 req.body.id_estatus,
                 numericCol(req.body.precio_pagado),
@@ -1236,8 +1237,8 @@ router.post('/type/payment',function(req, res ){
             this.manyOrNone('select * from terminales order by nombre_facturador '),
             this.manyOrNone('select sum(monto_pagado) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
-            this.manyOrNone('select sum(precio*unidades_carrito*(1- discount/100)) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
-                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
+            this.manyOrNone('select sum - discount from (select sum(precio * unidades_carrito) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+                ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1) as sum, carrito',[ req.user.id ]),
             this.manyOrNone('select * from usuarios')
         ]);
     }).then(function(data){
