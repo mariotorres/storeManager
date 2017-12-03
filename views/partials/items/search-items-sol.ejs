@@ -1,4 +1,3 @@
-
 <h3>Resultados</h3>
 <hr>
 <% if (items.length> 0){
@@ -20,12 +19,11 @@ for (var i=0; i< items.length; i++){%>
 
             <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio %></strong></span></h3>
             <input type="number" name="item_precio" value="<%=items[i].precio%>" hidden>
-
+            <!--
             <a href="#" class="thumbnail" style="min-height: 200px; text-align:center; min-width: 200px;">
-                <!--Aquí va la foto-->
                 <img src="<%= '/item/' + items[i].nombre_imagen +'/image.jpg'%>">
-                <!--<i class="fa fa-picture-o fa-5x" aria-hidden="true"></i>-->
             </a>
+            -->
 
             <label>Descripción:</label>
             <p><%= items[i].descripcion %></p>

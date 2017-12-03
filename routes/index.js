@@ -3029,7 +3029,7 @@ router.post('/search/items/sol', isAuthenticated, function (req, res) {
             t.manyOrNone('select * from terminales')
         ])
     }).then(function (data) {
-        res.render('partials/items/search-items-results',{
+        res.render('partials/items/search-items-sol',{
             items: data[0],
             user: data[1],
             terminales: data[2]
