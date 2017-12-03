@@ -16,7 +16,7 @@ var isAuthenticated = function (req, res, next) {
 
 //eventos del calendario
 router.post('/sales/data.json', isAuthenticated, function (req, res ){
-    db_conf.db.manyOrNone("select concat ( 'Ventas: ', count(*) ) as title, to_char(fecha_venta, 'YYYY-MM-DD') as start from ventas group by fecha_venta").then(function (data) {
+    db_conf.db.manyOrNone("select concat ( 'Ventas: ', count(*) ) as title, to_char(fecha, 'YYYY-MM-DD') as start from ventas, transferencia where transferencia.id_venta = ventas.id group by fecha").then(function (data) {
         res.jsonp( data );
     }).catch(function (error) {
         console.log(error);

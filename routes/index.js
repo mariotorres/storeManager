@@ -372,8 +372,7 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 
 // Carrito Sell
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
-  console.log(req.body);
-  // Si el usuario no es administrador, se asigna su id y la fecha y hora actual.
+    // Si el usuario no es administrador, se asigna su id y la fecha y hora actual.
   var user_sale_id = req.user.id
   var sale_date    = new Date()
   var sale_time    = new Date().toLocaleTimeString()
@@ -412,6 +411,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
       /*
        * Agregar transferencia
        */
+      console.log('IDDDD: ' + data[1].id)
       queries.push(t.one('insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, id_terminal) values($1, $2, $3, $4, $5) returning id', [
         data[1].id,
         req.body.monto_efec,

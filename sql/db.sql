@@ -347,6 +347,8 @@ create table transferencia (
     monto_efectivo numeric(1000, 2),
     monto_credito  numeric(1000, 2),
     monto_debito  numeric(1000, 2),
+    fecha date,
+    hora time,
     id_terminal integer references terminales(id) on delete set null
 );
 
