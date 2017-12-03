@@ -372,6 +372,7 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 
 // Carrito Sell
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
+  console.log(req.body);
     // Si el usuario no es administrador, se asigna su id y la fecha y hora actual.
   var user_sale_id = req.user.id
   var sale_date    = new Date()
@@ -412,7 +413,6 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
       /*
        * Agregar transferencia
        */
-      console.log('ID VENTA: ' + data[1].id)
       queries.push(t.one('insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, id_terminal) values($1, $2, $3, $4, $5) returning id', [
         data[1].id,
         req.body.monto_efec,
@@ -448,7 +448,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
 
         // Si la prenda no está en inventarios, no hay necesidad de decrementar las existencias.
         if(data[0][i].estatus != "solicitada") {
-          queries.push(t.one('update articulos set n_existencias = n_existencias - $2, fecha_ultima_modificacion = $3 where id =$1 returning id', [
+          queries.push(t.one('update articulos set n_existencias = n_existencias - $2 where id =$1 returning id', [
             numericCol(data[0][i].id_articulo),
             numericCol(data[0][i].unidades_carrito),
             new Date()
