@@ -1,15 +1,13 @@
 <form>
 
     <p>
-        <label>Seleccione un estatus</label>
-        <select class="form-control" name="estatus">
-        <option value="liquidada" selected>Liquidada</option>
-        <option value="compostura">Compostura</option>
-        <option value="pendiente_pago">Pendiente pago</option>
-        <option value="solicitada">Solicitada</option>
+        <label>Seleccione una nota</label>
+        <select class="form-control" name="id_papel">
+            <%for ( var i=0; i < notas.length; i++){%>
+                <option value="<%= notas[i].id_papel %>"><%= notas[i].id_papel %></option>
+            <%}%>
         </select>
     </p>
-
 
 
     <p>
@@ -31,10 +29,21 @@
         </select>
     </p>
 
+    <label>Nombre Artículo</label>
+    <p>
+        <input type="text" class="form-control" name="articulo" placeholder="Artículo...">
+    </p>
+    <p>
+        <label>Seleccione el modelo</label>
+        <input type="text"  class="form-control" name="modelo" placeholder="Modelo...">
+    </p>
+
     <p>
         <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
     </p>
 
 </form>
+
 <div id = "search_results">
+
 </div>

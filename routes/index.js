@@ -2541,6 +2541,31 @@ router.post('/item/find-items-ninv-view', isAuthenticated, function (req, res) {
 
 });
 
+router.post('/item/find-items-sol-view', isAuthenticated, function (req, res) {
+    var query = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda;
+    if(req.user.permiso_administrador){
+        query = 'select * from tiendas'
+    }
+
+    db_conf.db.task(function (t) {
+        return this.batch([
+          this.manyOrNone('select id, nombre from proveedores'),
+          this.manyOrNone(query),
+          this.manyOrNone('select id_papel from ventas')
+        ]);
+    }).then(function (data) {
+        res.render('partials/items/find-items-sol',{
+          proveedores: data[0],
+          tiendas: data[1],
+          notas: data[2]
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+
+});
+
 
 router.post('/item/find-items-view', isAuthenticated, function (req, res) {
 
@@ -2565,6 +2590,31 @@ router.post('/item/find-items-view', isAuthenticated, function (req, res) {
     });
 
 });
+
+router.post('/item/find-items-view', isAuthenticated, function (req, res) {
+
+    var query = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda;
+    if(req.user.permiso_administrador){
+        query = 'select * from tiendas'
+    }
+
+    db_conf.db.task(function (t) {
+        return this.batch([
+            this.manyOrNone('select id, nombre from proveedores'),
+            this.manyOrNone(query)
+        ]);
+    }).then(function (data) {
+        res.render('partials/items/find-items',{
+            proveedores: data[0],
+            tiendas: data[1]
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+
+});
+
 
 router.post('/item/find-items-view-inv', isAuthenticated, function (req, res) {
 

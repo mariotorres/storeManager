@@ -316,7 +316,7 @@ create table carrito (
 
 /* Ventas */
 drop table if exists ventas cascade;
-pcreate table ventas (
+create table ventas (
     id bigserial primary key,
     id_nota integer not null,
     id_papel integer not null,

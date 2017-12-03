@@ -474,8 +474,38 @@ function modalEvents(button, modal, page ) {
                 });
             });
 
-            break;
-        case "find_item":
+      break;
+    case "regis_sol":
+            modal.find('.modal-title').text('Buscar artículos');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/item/find-items-sol-view',{}, function () {
+                modal.find('form').submit(function (e) {
+                    // Mostrar resultados
+                   // var params = $(this).serializeArray();
+                    //params[params.length] = {name:'page', value:page};
+                    modal.find('#search_results').load('/search/items/results', $(this).serializeArray(), function () {
+                        $('#search_results').find('form').submit(function (e) {
+                            if (confirm("¿Desea agregar el artículo " +  $('#search_results').find('input[name=articulo]').val() +
+                                        ", con modelo: " +  $('#search_results').find('input[name=modelo]').val() +
+                                " al carrito?")){
+                                // Selected discount
+                                $.post('/carrito/new', $(this).serializeArray()).done(function (data) {
+                                    alert(data.message);
+                                    if(data.status=='Ok'){
+                                        modal.modal('hide');
+                                    }
+                                });
+                            }
+                            e.preventDefault();
+                        });
+
+                    });
+                e.preventDefault();
+                });
+            });
+      break;
+
+    case "find_item":
             modal.find('.modal-title').text('Buscar artículos');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/find-items-view',{}, function () {
