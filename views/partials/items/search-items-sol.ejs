@@ -1,122 +1,91 @@
 <h3>Resultados</h3>
 <hr>
 <% if (items.length> 0){
-for (var i=0; i< items.length; i++){%>
-<div class="panel panel-default">
-    <div class="panel-body">
-        <form>
-            <h3>Artículo: <%= items[i].articulo %></h3>
-            <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Marca: </strong><%= items[i].nombre_prov %> | <strong>Tienda: </strong><%= items[i].nombre_tienda %></p>
-            <hr>
-            <p hidden>
-            <input class="form-control" type="text" value="<%= items[i].articulo %>" name="articulo" hidden>
-            </p>
-            <p hidden>
-            <input class="form-control" type="text" value="<%= items[i].modelo %>" name="modelo" hidden>
-            </p>
-            <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
-            <input type="text" name="item_id" value="<%= items[i].id %>" hidden>
+    for (var i=0; i< items.length; i++){%>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form>
+                <h3>Artículo: <%= items[i].articulo %></h3>
+                <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Marca: </strong><%= items[i].nombre_prov %> | <strong>Tienda: </strong><%= items[i].nombre_tienda %></p>
+                <hr>
+                <p hidden>
+                    <input class="form-control" type="text" value="<%= items[i].id_venta_articulo %>" name="id_venta_articulo" hidden>
+                </p>
+                <p hidden>
+                    <input class="form-control" type="text" value="<%= items[i].articulo %>" name="articulo" hidden>
+                </p>
+                <p hidden>
+                    <input class="form-control" type="text" value="<%= items[i].modelo %>" name="modelo" hidden>
+                </p>
+                <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
+                <input type="text" name="item_id" value="<%= items[i].id %>" hidden>
 
-            <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio %></strong></span></h3>
-            <input type="number" name="item_precio" value="<%=items[i].precio%>" hidden>
-            <!--
-            <a href="#" class="thumbnail" style="min-height: 200px; text-align:center; min-width: 200px;">
-                <img src="<%= '/item/' + items[i].nombre_imagen +'/image.jpg'%>">
-            </a>
-            -->
+                <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio %></strong></span></h3>
+                <input type="number" name="item_precio" value="<%=items[i].precio%>" hidden>
+                <!--
+                     <a href="#" class="thumbnail" style="min-height: 200px; text-align:center; min-width: 200px;">
+                     <img src="<%= '/item/' + items[i].nombre_imagen +'/image.jpg'%>">
+                     </a>
+                -->
 
-            <label>Descripción:</label>
-            <p><%= items[i].descripcion %></p>
-            <!--
-            <label>Descuento:</label>
-            <div class="row">
-                <div class="col-sm-2">
-                    <p>
-                        <label class="radio-inline"><input type="radio" name="optradioDesc" checked value="0">0%</label>
-                    </p>
-                </div>
-                <div class="col-sm-2">
-                    <p>
-                        <label class="radio-inline"><input type="radio" name="optradioDesc" value="5">5%</label>
-                    </p>
-                </div>
-                <div class="col-sm-2">
-                    <p>
-                        <label class="radio-inline"><input type="radio" name="optradioDesc" value="10">10%</label>
-                    </p>
-                </div>
-                <div class="col-sm-2">
-                    <p>
-                        <label class="radio-inline"><input type="radio" name="optradioDesc" value="15">15%</label>
-                    </p>
-                </div>
-                <div class="col-sm-2">
-                    <p>
-                        <label class="radio-inline"><input type="radio" name="optradioDesc" value="otro">Otro</label>
-                    </p>
-                </div>
-            </div>
-            <div id="descAbs" style="visibility: hidden">
-                <label>Cantidad descontada:</label>
-                <input type="number" id="desc" name="desc" class="form-control" max="<%= items[i].precio%>" min="0" value="0">
+                <label>Descripción:</label>
+                <p><%= items[i].descripcion %></p>
+
+                <label>Precio Venta</label>
+                <input type="number" id="precio_pagado" name="precio_pagado" class="form-control" min="0" max="<%=items[i].precio%>" value="<%=items[i].precio%>">
                 <br>
-            </div>
-            -->
-            <label>Precio Venta</label>
-            <input type="number" id="precio_pagado" name="precio_pagado" class="form-control" min="0" max="<%=items[i].precio%>" value="<%=items[i].precio%>">
-            <br>
-            <div class="row">
-                <div class="col-sm-6">
-                    <p>
-                        <label>Existencias:</label>
-                        <input type="text" class="form-control" value="<%= items[i].n_existencias %>" disabled>
-                    </p>
-                </div>
-                <div class="col-sm-6">
-                    <p>
-                        <label>Unidades:</label>
-                        <input type="number" name="existencias" class="form-control" max="<%= items[i].n_existencias %>" min="1" value="1">
-                    </p>
-                </div>
-            </div>
-
-            <div class="row" style="visibility: hidden">
-                <div class="col-sm-6">
-                    <label>Estatus transacción:</label>
-                    <select id="estatus" name="id_estatus" class="form-control">
-                        <option value="entregada">Entregada</option>
-                        <option value="modificacion">Modificación</option>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="solicitada">Solicitada</option>
-                    </select>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p>
+                            <label>Existencias:</label>
+                            <input type="text" class="form-control" value="<%= items[i].n_existencias %>" disabled>
+                        </p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p>
+                            <label>Unidades:</label>
+                            <input type="number" name="existencias" class="form-control" max="<%= items[i].n_existencias %>" min="1" value="1">
+                        </p>
+                    </div>
                 </div>
 
-                <div class="col-sm-6">
-                    <label>Monto que se deja a cuenta:</label>
-                    <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="0" value="0">
-                </div>
-            </div>
+                <div class="row" style="visibility: hidden">
+                    <div class="col-sm-6">
+                        <label>Estatus transacción:</label>
+                        <select id="estatus" name="id_estatus" class="form-control">
+                            <option value="entregada">Entregada</option>
+                            <option value="modificacion">Modificación</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="solicitada">Solicitada</option>
+                        </select>
+                    </div>
 
-            <br>
-            <button type="submit" class="btn btn-default"> <i class="fa fa-cart-plus"></i></button>
-        </form>
+                    <div class="col-sm-6">
+                        <label>Monto que se deja a cuenta:</label>
+                        <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="0" value="0">
+                    </div>
+                </div>
+
+                <br>
+                <button type="submit" class="btn btn-default">Registrar</button>
+            </form>
+        </div>
     </div>
-</div>
 <%}}else{%>
 
-<div class="alert alert-warning">
+    <div class="alert alert-warning">
 
-    La búsqueda no retornó resultados
-</div>
+        La búsqueda no retornó resultados
+    </div>
 <%}%>
 
 
 <script>
-    $('input[type="radio"]').change(function(){
-        if($(this).val() == 'otro'){
-            document.getElementById("descAbs").style.visibility = 'visible';
-        }else{
-            document.getElementById("descAbs").style.visibility = 'hidden';
-        }
-    })
+ $('input[type="radio"]').change(function(){
+     if($(this).val() == 'otro'){
+         document.getElementById("descAbs").style.visibility = 'visible';
+     }else{
+         document.getElementById("descAbs").style.visibility = 'hidden';
+     }
+ })
 </script>

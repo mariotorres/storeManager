@@ -2974,36 +2974,39 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
     });
 
 });
-/*
- router.post('/search/items/results_inv', isAuthenticated, function(req, res){
- console.log(req.body);
- //var pageSize = 10;
- //var offset = req.body.page * pageSize;
- db_conf.db.task(function (t) {
- return this.batch([
- t.manyOrNone("select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as nombre_tienda, n_existencias, precio, modelo, nombre_imagen, descripcion, articulos.id as id" +
- " from articulos, proveedores, tiendas where articulos.id_proveedor = proveedores.id and id_tienda = tiendas.id and articulos.id_tienda = tiendas.id and " +
- "(id_tienda = $5 and id_proveedor = $1) and (articulo ilike '%$3#%' or modelo ilike '%$4#%') ", [
- req.body.id_proveedor,
- req.body.id_marca,
- req.body.articulo,
- req.body.modelo,
- req.body.id_tienda
- ]),
- t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
- t.manyOrNone('select * from terminales')
- ])
- }).then(function (data) {
- res.render('partials/items/search-items-results-inv',{
- items: data[0],
- user: data[1],
- terminales: data[2]
- });
- }).catch(function (error) {
- console.log(error);
- res.send('<b>Error</b>');
- });
- });*/
+
+router.post('/register/sol', isAuthenticated, function(req, res){
+  console.log(req.body);
+  db_conf.db.task(function(t){
+    return this.batch([
+      t.oneOrNone(" update venta_articulos set estatus = 'pendiente_pago' where id = $1 " +
+                  " returning id_articulo, unidades_vendidas", [
+                    req.body.id_venta_articulo
+                  ]),
+      t.oneOrNone(" select * from articulos where id = $1", [
+        req.body.item_id
+      ])
+    ]).then(function(data){
+      t.oneOrNone(' update proveedores set a_cuenta = a_cuenta + $2, ' +
+                  ' por_pagar = por_pagar - $2 where id = $1 returning id', [
+                    numericCol(data[1].id_proveedor),
+                    numericCol(data[1].costo * data[0].unidades_vendidas)
+                  ]);
+    }).then(function(data){
+      res.json({
+        estatus: 'Ok',
+        message: 'El artículo solicitado ha sido dado de alta exitosamente'
+      })
+    }).catch(function(error){
+      console.log(error)
+      res.json({
+        estatus: 'Error',
+        message: 'Ocurrió un error al registrar el artículo'
+      })
+    })
+  })
+})
+
 router.post('/search/items/sol', isAuthenticated, function (req, res) {
     console.log(req.body);
     //var pageSize = 10;
@@ -3012,7 +3015,7 @@ router.post('/search/items/sol', isAuthenticated, function (req, res) {
         return this.batch([
           t.manyOrNone(" select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as " +
                        " nombre_tienda, n_existencias, articulos.precio, modelo, nombre_imagen, " +
-                       " descripcion, articulos.id as id" +
+                       " descripcion, articulos.id as id, venta_articulos.id as id_venta_articulo " +
                        " from articulos, proveedores, tiendas, venta_articulos, ventas " +
                        " where articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id " +
                        " and ventas.id_tienda = tiendas.id and venta_articulos.id_articulo = articulos.id and " +
