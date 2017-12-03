@@ -413,12 +413,14 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
       /*
        * Agregar transferencia
        */
-      queries.push(t.one('insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, id_terminal) values($1, $2, $3, $4, $5) returning id', [
+      queries.push(t.one('insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, id_terminal, fecha, hora) values($1, $2, $3, $4, $5, $6, $7) returning id', [
         data[1].id,
         req.body.monto_efec,
         (req.body.monto_rec - req.body.monto_efec)*cred,
         (req.body.monto_rec - req.body.monto_efec)*(1 - cred),
-        req.body.terminal
+        req.body.terminal,
+        req.body.fecha_venta,
+        req.body.hora_venta
       ]))
       /*
        * Venta artículos
@@ -448,13 +450,13 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
 
         // Si la prenda no está en inventarios, no hay necesidad de decrementar las existencias.
         if(data[0][i].estatus != "solicitada") {
-          queries.push(t.one('update articulos set n_existencias = n_existencias - $2 where id =$1 returning id', [
+          queries.push(t.one('update articulos set n_existencias = n_existencias - $2 where id = $1 returning id', [
             numericCol(data[0][i].id_articulo),
             numericCol(data[0][i].unidades_carrito),
             new Date()
           ]));
         }
-        // Arreglar.. siempre les debo pagar a los proveedores con la excepción de prendas solicitadas
+        // Siempre pagar a proveedor a menos de que la prenda sea solicitada
         if( data[0][i].estatus != "solicitada" ) {
           queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id', [
             numericCol(data[0][i].id_proveedor),
@@ -2515,6 +2517,31 @@ router.get('/reporte/', isAuthenticated, function (req, res) {
     });
 });
 
+router.post('/item/find-items-ninv-view', isAuthenticated, function (req, res) {
+
+    var query = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda;
+    if(req.user.permiso_administrador){
+        query = 'select * from tiendas'
+    }
+
+    db_conf.db.task(function (t) {
+        return this.batch([
+            this.manyOrNone('select id, nombre from proveedores'),
+            this.manyOrNone(query)
+        ]);
+    }).then(function (data) {
+        res.render('partials/items/find-items-ninv',{
+            proveedores: data[0],
+            tiendas: data[1]
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+
+});
+
+
 router.post('/item/find-items-view', isAuthenticated, function (req, res) {
 
     var query = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda;
@@ -2804,6 +2831,56 @@ router.post('/search/registers/results', isAuthenticated, function(req, res){
         })
     })
 })
+
+router.post('/search/items/results_ninv', isAuthenticated, function (req, res) {
+  console.log(req.body);
+  console.log(req.user.permiso_administrador)
+  //var pageSize = 10;
+  //var offset = req.body.page * pageSize;
+  var query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, articulos.precio," +
+      " modelo, nombre_imagen, estatus, venta_articulos.precio as precio_venta, " +
+      " descripcion, articulos.id as id " +
+      " from articulos, proveedores, tiendas, usuarios, venta_articulos where id_proveedor = $1 and " +
+      " articulos.id_proveedor = proveedores.id and usuarios.id_tienda = articulos.id_tienda and " +
+      " articulos.id_tienda = tiendas.id and " +
+      " tiendas.id = $6 and venta_articulos.id_articulo = articulos.id and " +
+      " venta_articulos.estatus ilike '%$5#%' and usuarios.id =  " + req.user.id
+
+  if(req.user.permiso_administrador){
+    query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, articulos.precio as precio, " +
+      " modelo, nombre_imagen, estatus, venta_articulos.precio as precio_venta, " +
+      " descripcion, articulos.id as id, tiendas.id as id_tienda " +
+      " from articulos, proveedores, tiendas, venta_articulos " +
+      " where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and " +
+      " venta_articulos.id_articulo = articulos.id and venta_articulos.estatus ilike '%$5#%' and " +
+      " articulos.id_tienda = tiendas.id and tiendas.id = $6 "
+  }
+  console.log(query);
+  db_conf.db.task(function (t) {
+    return this.batch([
+      t.manyOrNone(query, [
+        req.body.id_proveedor,
+        req.body.id_marca,
+        req.body.articulo,
+        req.body.modelo,
+        req.body.estatus,
+        req.body.id_tienda
+      ]),
+      t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
+      t.manyOrNone('select * from terminales')
+    ])
+  }).then(function (data) {
+    res.render('partials/items/search-items-results-ninv',{
+      items: data[0],
+      user: data[1],
+      terminales: data[2]
+    });
+  }).catch(function (error) {
+    console.log(error);
+    res.send('<b>Error</b>');
+  });
+});
+
 
 router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
     console.log(req.body);

@@ -85,33 +85,33 @@
                                     <label>Estatus:</label>
                                     <select name = "estatus" data-item_id="<%=items[i].id_articulo%>"  class="form-control" required>
                                         <%
-                                        if (items[i].estatus == "entregada"){
+                                        if (items[i].estatus == "liquidada"){
                                         %>
-                                        <option value="entregada" selected>Entregada</option>
-                                        <option value="modificacion">Modificación</option>
-                                        <option value="pendiente">Pendiente</option>
+                                        <option value="liquidada" selected>Liquidada</option>
+                                        <option value="compostura">Compostura</option>
+                                        <option value="pendiente_pago">Pendiente pago</option>
                                         <option value="solicitada">Solicitada</option>
                                         <%
-                                        }else if(items[i].estatus == "modificacion") {
+                                        }else if(items[i].estatus == "compostura") {
                                         %>
-                                        <option value="entregada">Entregada</option>
-                                        <option value="modificacion" selected>Modificación</option>
-                                        <option value="pendiente">Pendiente</option>
+                                        <option value="liquidada">Liquidada</option>
+                                        <option value="compostura" selected>Compostura</option>
+                                        <option value="pendiente_pago">Pendiente pago</option>
                                         <option value="solicitada">Solicitada</option>
-                                        <% }else if(items[i].estatus == "pendiente"){%>
-                                        <option value="entregada">Entregada</option>
-                                        <option value="modificacion">Modificación</option>
-                                        <option value="pendiente" selected>Pendiente</option>
+                                        <% }else if(items[i].estatus == "pendiente_pago"){%>
+                                        <option value="liquidada">Liquidada</option>
+                                        <option value="compostura">Compostura</option>
+                                        <option value="pendiente_pago" selected>Pendiente pago</option>
                                         <option value="solicitada">Solicitada</option>
                                         <%}else if(items[i].estatus == "solicitada"){%>
-                                        <option value="entregada">Entregada</option>
-                                        <option value="modificacion">Modificación</option>
-                                        <option value="pendiente">Pendiente</option>
+                                        <option value="liquidada">Liquidada</option>
+                                        <option value="compostura">Compostura</option>
+                                        <option value="pendiente_pago">Pendiente pago</option>
                                         <option value="solicitada" selected>Solicitada</option>
                                         <%}else{%>
-                                        <option value="entregada">Entregada</option>
-                                        <option value="modificacion">Modificación</option>
-                                        <option value="pendiente">Pendiente</option>
+                                        <option value="liquidada">Liquidada</option>
+                                        <option value="compostura">Compostura</option>
+                                        <option value="pendiente_pago">Pendiente pago</option>
                                         <option value="solicitada">Solicitada</option>
                                         <%}%>
                                     </select>

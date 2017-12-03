@@ -318,6 +318,18 @@ function modalEvents(button, modal, page ) {
                     e.preventDefault();
                 });
             });
+      break;
+    case "find_item_ninv":
+            modal.find('.modal-title').text('Buscar artículos');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/item/find-items-ninv-view',{}, function () {//mod
+                modal.find('form').submit(function (e) {
+                    // Mostrar resultados
+                  modal.find('#search_results').load('/search/items/results_ninv',
+                                                     $(this).serializeArray()/*params*/, function () {});
+                    e.preventDefault();
+                });
+            });
             break;
         case "find_item_inv":
             modal.find('.modal-title').text('Buscar artículos');

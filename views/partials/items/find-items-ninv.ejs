@@ -1,0 +1,42 @@
+<form>
+
+    <p>
+        <label>Seleccione un estatus</label>
+        <select class="form-control" name="estatus">
+        <option value="liquidada" selected>Liquidada</option>
+        <option value="compostura">Compostura</option>
+        <option value="pendiente_pago">Pendiente pago</option>
+        <option value="solicitada">Solicitada</option>
+        </select>
+    </p>
+
+
+
+    <p>
+        <label>Seleccione un proveedor</label>
+        <select class="form-control" name="id_proveedor">
+            <%for ( var i=0; i < proveedores.length; i++){%>
+            <option value="<%= proveedores[i].id %>"><%= proveedores[i].nombre %></option>
+            <%}%>
+        </select>
+    </p>
+
+
+    <p>
+        <label>Seleccione una tienda</label>
+        <select class="form-control" name="id_tienda">
+            <%for ( var i=0; i < tiendas.length; i++){%>
+            <option value="<%= tiendas[i].id %>"><%= tiendas[i].nombre %></option>
+            <%}%>
+        </select>
+    </p>
+
+    <p>
+        <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+    </p>
+
+</form>
+
+<div id = "search_results">
+
+</div>

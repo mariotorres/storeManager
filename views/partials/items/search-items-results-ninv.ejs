@@ -1,4 +1,3 @@
-
 <h3>Resultados</h3>
 <hr>
 <% if (items.length> 0){
@@ -9,20 +8,18 @@ for (var i=0; i< items.length; i++){%>
 
         <form>
             <h3>Artículo: </h3>
-            <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Marca: </strong><%= items[i].nombre_prov %></p>
+            <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Marca: </strong><%= items[i].nombre_prov %> | <strong>Estatus:</strong> <%= items[i].estatus %> | <strong>Precio unitario:</strong> <%= items[i].precio %></p>
             <hr>
             <input class="form-control" type="text" value="<%= items[i].articulo %>" name="articulo" disabled>
             <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
             <input type="text" name="item_id" data-item_id="<%= items[i].id %>" value="<%= items[i].id %>" hidden>
 
-            <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio %></strong></span></h3>
+            <h3><span style="color:#9e9e9e"><strong>Precio venta:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio_venta %></strong></span></h3>
 
-
+            <!---
             <a href="#" class="thumbnail" style="min-height: 200px; text-align:center; min-width: 200px;">
-                <!--Aquí va la foto-->
                 <img src="<%= '/item/' + items[i].nombre_imagen +'/image.jpg'%>"">
-                <!--<i class="fa fa-picture-o fa-5x" aria-hidden="true"></i>-->
-            </a>
+            </a>-->
 
             <label>Modelo:</label>
             <p><%= items[i].modelo %></p>
@@ -32,9 +29,7 @@ for (var i=0; i< items.length; i++){%>
 
             <label>Existencias:</label>
             <p><%= items[i].n_existencias %></p>
-
             <br>
-            <button name="go_search" type="button" class="btn btn-primary"  data-item_id="<%= items[i].id %>" class="btn btn-default">Editar</button>
         </form>
     </div>
 </div>
