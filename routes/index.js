@@ -394,6 +394,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
         user_sale_id
       ])
     ]).then(function(data){
+      console.log('ID TIENDA VENTA: ' + data[1].id_tienda);
       return t.batch([
         data[0],
         t.one('insert into ventas (id_nota, id_tienda, id_usuario, precio_venta, estatus,  id_papel)  ' +
@@ -411,7 +412,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
       /*
        * Agregar transferencia
        */
-      console.log('IDDDD: ' + data[1].id)
+      console.log('ID VENTA: ' + data[1].id)
       queries.push(t.one('insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, id_terminal) values($1, $2, $3, $4, $5) returning id', [
         data[1].id,
         req.body.monto_efec,
@@ -2445,7 +2446,7 @@ router.post('/reports/', isAuthenticated, function (req, res) {
 
 router.get('/reporte/', isAuthenticated, function (req, res) {
 
-    const report_type = req.query.tipo;
+
     const id_tienda = req.query.id_tienda;
     const startdate = req.query.startdate;
     const enddate = req.query.enddate;
