@@ -3004,6 +3004,42 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
  res.send('<b>Error</b>');
  });
  });*/
+router.post('/search/items/sol', isAuthenticated, function (req, res) {
+    console.log(req.body);
+    //var pageSize = 10;
+    //var offset = req.body.page * pageSize;
+    db_conf.db.task(function (t) {
+        return this.batch([
+          t.manyOrNone(" select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as " +
+                       " nombre_tienda, n_existencias, articulos.precio, modelo, nombre_imagen, " +
+                       " descripcion, articulos.id as id" +
+                       " from articulos, proveedores, tiendas, venta_articulos, ventas " +
+                       " where articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id " +
+                       " and ventas.id_tienda = tiendas.id and venta_articulos.id_articulo = articulos.id and " +
+                       " venta_articulos.estatus = 'solicitada' and venta_articulos.id_venta = ventas.id and  " +
+                       " ventas.id_papel = $6 and (ventas.id_tienda = $5 and id_proveedor = $1 and modelo ilike '%$4#%') ", [
+                         req.body.id_proveedor,
+                         req.body.id_marca,
+                         req.body.articulo,
+                         req.body.modelo,
+                         req.body.id_tienda,
+                         req.body.id_papel
+            ]),
+            t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
+            t.manyOrNone('select * from terminales')
+        ])
+    }).then(function (data) {
+        res.render('partials/items/search-items-results',{
+            items: data[0],
+            user: data[1],
+            terminales: data[2]
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+});
+
 
 router.post('/search/items/results', isAuthenticated, function (req, res) {
     console.log(req.body);
