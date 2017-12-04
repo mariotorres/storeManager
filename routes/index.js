@@ -2987,7 +2987,7 @@ router.post('/register/sol', isAuthenticated, function(req, res){
         req.body.item_id
       ])
     ]).then(function(data){
-      t.oneOrNone(' update proveedores set a_cuenta = a_cuenta + $2, ' +
+      t.oneOrNone(' update proveedores set  ' +
                   ' por_pagar = por_pagar - $2 where id = $1 returning id', [
                     numericCol(data[1].id_proveedor),
                     numericCol(data[1].costo * data[0].unidades_vendidas)
@@ -3014,7 +3014,7 @@ router.post('/search/items/sol', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
           t.manyOrNone(" select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as " +
-                       " nombre_tienda, n_existencias, articulos.precio, modelo, nombre_imagen, " +
+                       " nombre_tienda, n_existencias, articulos.precio, modelo, nombre_imagen, unidades_vendidas, " +
                        " descripcion, articulos.id as id, venta_articulos.id as id_venta_articulo " +
                        " from articulos, proveedores, tiendas, venta_articulos, ventas " +
                        " where articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id " +
@@ -3824,15 +3824,17 @@ router.post('/search/employees/results', isAuthenticated, function (req, res) {
 
 router.post('/search/notes/results', isAuthenticated, function (req, res) {
     console.log(req.body);
-    query = "";
+    var query = "";
 
     // ¿se debe buscar por id de venta o por id_nota?
     switch ( req.user.permiso_administrador ){
         case true:
-            query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre, ventas.id_papel " +
-                "from ventas, tiendas  " +
-                "where (((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) and ventas.id_nota = $3) " +
-                " or ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) and ventas.id_papel = $6)) and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";
+      query = " select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, " +
+        " ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre, ventas.id_papel " +
+        " from ventas, tiendas  " +
+        " where (((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) and ventas.id_nota = $3) " +
+        " or ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) and ventas.id_papel = $6)) " +
+        " and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";
             break;
         default:
             query = "select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre, ventas.id_papel " +
