@@ -5,13 +5,13 @@
         <div class="col-sm-4">
             <p>
                 <label>Tienda</label>
-            <h5 style="color: #9E9E9E;"><%=sales[0].nombre%></h5>
+            <h5 style="color: #9E9E9E;"><%=sales[0].nombre_tienda%></h5>
             </p>
         </div>
         <div class="col-sm-4">
             <p>
                 <label>Vendedor</label>
-            <h5 style="color: #9E9E9E;"><%=sales[0].nombres%></h5>
+            <h5 style="color: #9E9E9E;"><%=sales[0].nombre_usuario%></h5>
             </p>
         </div>
         <div class="col-sm-4">
@@ -43,17 +43,13 @@
     </div>
     <hr>
     <h3 style="color:#9E9E9E"><strong>Detalle</strong></h3>
-    <div style="overflow: scroll">
+    <div>
     <table class="table">
         <thead>
         <tr>
             <th>Artículo</th>
             <th>Unidades vendidas</th>
-            <th>Monto pagado</th>
-            <th>Monto a pagar</th>
-            <th>Forma pago</th>
             <th>Estatus</th>
-            <th>Abono</th>
             <th></th>
         </tr>
         </thead>
@@ -65,65 +61,38 @@
         <tr style="text-align: center !important">
             <td  style="text-align: center !important"><%= sales[i].articulo%></td>
             <td  style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
-            <td  style="text-align: center !important"><%= sales[i].monto_pagado%></td>
-            <td  style="text-align: center !important"><p  value="<%=sales[i].monto_por_pagar%>"><%= sales[i].monto_por_pagar%></p></td>
-
-
-            <!-- Forma de pago -->
-            <td >
-                <label class="radio-inline"><input type="radio" name="optradio" value="cred" style="display:inline-block;">crédito</label>
-                <br>
-                <label class="radio-inline"><input type="radio" name="optradio" value="deb" style="display:inline-block;">débito  </label>
-                <br>
-                <label class="radio-inline"><input type="radio" name="optradio" value="efe" style="display:inline-block;" checked>efectivo</label>
-            </td>
-
             <!-- Estatus -->
             <td  style="text-align: center !important">
                 <select name = "estatus" class="form-control" required>
                     <%
-                    if (sales[i].estatus == "entregada"){
+                    if (sales[i].estatus == "liquidada"){
                     %>
-                    <option value="entregada" selected>Entregada</option>
-                    <option value="modificacion">Modificación</option>
-                    <option value="pendiente">Pendiente</option>
+                    <option value="liquidada" selected>Liquidada</option>
+                    <option value="compostura">Compostura</option>
+                    <option value="pendiente_pago">Pendiente pago</option>
                     <option value="solicitada">Solicitada</option>
                     <%
-                    }else if(sales[i].estatus == "modificacion") {
+                    }else if(sales[i].estatus == "compostura") {
                     %>
-                    <option value="entregada">Entregada</option>
-                    <option value="modificacion" selected>Modificación</option>
-                    <option value="pendiente">Pendiente</option>
+                    <option value="liquidada">Liquidada</option>
+                    <option value="compostura" selected>Compostura</option>
+                    <option value="pendiente_pago">Pendiente pago</option>
                     <option value="solicitada">Solicitada</option>
                     <%
-                    }else if(sales[i].estatus == "pendiente") {
+                    }else if(sales[i].estatus == "pendiente_pago") {
                     %>
-                    <option value="entregada">Entregada</option>
-                    <option value="modificacion">Modificación</option>
-                    <option value="pendiente" selected>Pendiente</option>
+                    <option value="liquidada">Liquidada</option>
+                    <option value="compostura">Compostura</option>
+                    <option value="pendiente_pago" selected>Pendiente pago</option>
                     <option value="solicitada">Solicitada</option>
                     <%}else{%>
-                    <option value="entregada">Entregada</option>
-                    <option value="modificacion">Modificación</option>
-                    <option value="pendiente">Pendiente</option>
-                    <option value="solicitada" selected>Solicitada</option>
+                    <option value="liquidada">Liquidada</option>
+                    <option value="compostura">Compostura</option>
+                    <option value="pendiente_pago" selected>Pendiente pago</option>
+                    <option value="solicitada">Solicitada</option>
                     <%}%>
                 </select>
             </td>
-
-            <td  style="text-align: center !important"><input name="abono" type="number" data-monto_pagar="<%=sales[i].monto_por_pagar%>" value=0  max="<%=sales[i].monto_por_pagar%>"></td>
-            <%
-            if (sales[i].estatus == "entregada"){
-            %>
-            <td><button name="abonar" data-estatus="entregada" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
-            <%
-            }else if(sales[i].estatus == "modificacion") {
-            %>
-            <td><button name="abonar" data-estatus="modificacion" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
-            <% }else{%>
-            <td><button name="abonar" data-estatus="pendiente" data-forma_pago="efe" data-monto_pagar="<%=sales[i].monto_por_pagar%>" data-sale_id="<%=sales[i].id_venta%>" data-item_id="<%=items_ids[i].id_item_sale%>" type="button" class="btn btn-primary" style="height:40px !important; text-align: center !important" disabled>Abonar</button></td>
-            <%}%>
-        </tr>
         <%
         }
         }else {
@@ -134,18 +103,18 @@
     </table>
     </div>
     <hr>
-    <h3 style="color:#9E9E9E"><strong>Pago</strong></h3>
     <div class="row">
-        <div class="col-md-5">
-    <label>Tipo pago:</label>
-    <label class="radio-inline"><input type="radio" name="optradio" value="tar">tarjeta</label>
-    <label class="radio-inline"><input type="radio" name="optradio" value="efe" checked>efectivo</label>
+        <div class="col-md-12">
+            <label>Tipo pago:</label>
+            <label class="radio-inline"><input type="radio" name="optradio" value="efe" checked>Efectivo</label>
+            <label class="radio-inline"><input type="radio" name="optradio" value="cred">Tarjeta crédito</label>
+            <label class="radio-inline"><input type="radio" name="optradio" value="deb">Tarjeta débito</label>
     </div>
     </div>
 
     <br>
     <p>
-        <button type="submit" class="btn btn-primary">Liquidar todo</button>
+        <button type="submit" class="btn btn-primary">Abonar</button>
     </p>
 </form>
 

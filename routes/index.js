@@ -3541,13 +3541,22 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.task(function(t){
         return t.batch([
-            db_conf.db.manyOrNone('select * from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
-                'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
-                ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
+          db_conf.db.manyOrNone(" select ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
+                                " fechas.fecha_venta, precio_venta, acum_transfer.monto_pagado, precio_venta - acum_transfer.monto_pagado " +
+                                " as saldo_pendiente, " +
+                                " articulo, unidades_vendidas, venta_articulos.estatus " +
+                                " from (select id_venta, min(fecha) as fecha_venta from transferencia group by id_venta) as fechas, " +
+                                " (select id_venta, (monto_credito + monto_debito + monto_efectivo) as monto_pagado from transferencia) " +
+                                " as acum_transfer, " +
+                                " ventas, venta_articulos, transferencia, tiendas, articulos, usuarios where "  +
+                                " ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and " +
+                                " venta_articulos.id_articulo = articulos.id and fechas.id_venta = ventas.id and " +
+                                " acum_transfer.id_venta = " +
+                                " ventas.id and tiendas.id = articulos.id_tienda and ventas.id = transferencia.id_venta and ventas.id = $1",[
                 req.body.id_sale
             ]),
             db_conf.db.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
-                'ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
+                ' ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
                 ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
                 req.body.id_sale
             ])
@@ -3555,8 +3564,8 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
     }).then(function(data){
         console.log(data);
         res.render('partials/notes/note-payment',{
-            sales: data[0],
-            items_ids:data[1]
+            sales:     data[0],
+            items_ids: data[1]
         })
     }).catch(function(error){
         console.log(error);
