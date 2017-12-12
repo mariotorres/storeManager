@@ -1,19 +1,23 @@
 <form id="find">
 
     <div class="row">
-        <div class="col-sm-4">
+        <!-- <div class="col-sm-4">
             <label>Número de nota</label>
-            <p>
-                <input type="number" class="form-control" name="id_note" value="1">
-            </p>
-        </div>
-        <div class="col-sm-4">
+            <select class="form-control" name = "id_nota">
+                <%for (var i=0; i< notas.length; i ++){%>
+                    <option value="<%= notas[i].id_nota %>"><%=notas[i].id_nota%></option>
+                <%}%>
+            </select>
+        </div>-->
+        <div class="col-sm-6">
             <label>Número de nota (papel)</label>
-            <p>
-                <input type="number" class="form-control" name="id_papel" value="1">
-            </p>
+            <select class="form-control" name = "id_papel">
+                <%for (var i=0; i< notas.length; i ++){%>
+                    <option value="<%= notas[i].id_papel %>"><%=notas[i].id_papel%></option>
+                <%}%>
+            </select>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-6">
             <label>Tienda</label>
             <select class="form-control" name = "id_tienda">
                 <%for (var i=0; i< tiendas.length; i ++){%>

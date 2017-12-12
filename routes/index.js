@@ -3083,13 +3083,21 @@ router.post('/employees/find-employees-view', isAuthenticated, function (req, re
 });
 
 router.post('/notes/find-notes-view', function (req, res) {
-    var query = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda
+  var query  = 'select * from ventas, tiendas where ventas.id_tienda = tiendas.id and tiendas.id = ' +
+      req.user.id_tienda
+  var query2 = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda
     if(req.user.permiso_administrador){
-        query = 'select * from tiendas'
+      query  = 'select * from ventas, tiendas where ventas.id_tienda = tiendas.id'
+      query2 = 'select * from tiendas'
     }
-    db_conf.db.manyOrNone(query).then(function (data) {
+  db_conf.db.task(function(t){
+    return t.batch([
+      t.manyOrNone(query),
+      t.manyOrNone(query2)
+    ])
+  }).then(function (data) {
         console.log(data.length);
-        res.render('partials/notes/find-notes',{ tiendas: data });
+    res.render('partials/notes/find-notes',{ tiendas: data[1], notas: data[0] });
     }).catch(function (error) {
         console.log(error);
         res.send('<b>Error</b>');
