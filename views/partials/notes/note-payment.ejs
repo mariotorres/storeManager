@@ -36,8 +36,31 @@
         </div>
         <div class="col-sm-4">
             <p>
-                <label>Saldo pendiente</label>
-            <h5 style="color: #E91E63;"><strong><%=sales[0].saldo_pendiente%></strong></h5>
+                <label>Saldo devoluciones</label>
+                <%if(saldo_devuelto.saldo_devuelto){%>
+                    <h5 style="color: #9E9E9E;"><%=saldo_devuelto.saldo_devuelto%></h5>
+                <%}else{%>
+                    <h5 style="color: #9E9E9E;">0</h5>
+                <%}%>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Monto pagado</label>
+                <h5 style="color: #9E9E9E;"><%=sales[0].monto_pagado%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <%if(sales[0].saldo_pendiente - saldo_devuelto.saldo_devuelto >= 0){%>
+                    <label>Saldo pendiente</label>
+                    <h3 style="color: #E91E63;"><strong><%=sales[0].saldo_pendiente - saldo_devuelto.saldo_devuelto%></strong></h3>
+                <%}else{%>
+                    <label>El cliente tiene un saldo a favor de </label>
+                    <h3 style="color: #E91E63;"><strong><%=-(sales[0].saldo_pendiente - saldo_devuelto.saldo_devuelto)%></strong></h3>
+                <%}%>
             </p>
         </div>
     </div>
@@ -71,6 +94,7 @@
                     <option value="compostura">Compostura</option>
                     <option value="pendiente_pago">Pendiente pago</option>
                     <option value="solicitada">Solicitada</option>
+                    <option value="devolucion">Devolución</option>
                     <%
                     }else if(sales[i].estatus == "compostura") {
                     %>
@@ -78,6 +102,7 @@
                     <option value="compostura" selected>Compostura</option>
                     <option value="pendiente_pago">Pendiente pago</option>
                     <option value="solicitada">Solicitada</option>
+                    <option value="devolucion">Devolución</option>
                     <%
                     }else if(sales[i].estatus == "pendiente_pago") {
                     %>
@@ -85,11 +110,19 @@
                     <option value="compostura">Compostura</option>
                     <option value="pendiente_pago" selected>Pendiente pago</option>
                     <option value="solicitada">Solicitada</option>
+                    <option value="devolucion">Devolución</option>
+                    <%}else if (sales[i].estatus == "solicitada"){%>
+                    <option value="liquidada">Liquidada</option>
+                    <option value="compostura">Compostura</option>
+                    <option value="pendiente_pago">Pendiente pago</option>
+                    <option value="solicitada" selected>Solicitada</option>
+                    <option value="devolucion">Devolución</option>
                     <%}else{%>
                     <option value="liquidada">Liquidada</option>
                     <option value="compostura">Compostura</option>
-                    <option value="pendiente_pago" selected>Pendiente pago</option>
+                    <option value="pendiente_pago">Pendiente pago</option>
                     <option value="solicitada">Solicitada</option>
+                    <option value="devolucion" selected>Devolución</option>
                     <%}%>
                 </select>
             </td>
@@ -115,6 +148,7 @@
     <br>
     <p>
         <button type="submit" class="btn btn-primary">Abonar</button>
+        <button type="submit" class="btn btn-primary">Liquidar saldo a favor</button>
     </p>
 </form>
 

@@ -3542,7 +3542,7 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
     db_conf.db.task(function(t){
         return t.batch([
           db_conf.db.manyOrNone(" select ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
-                                " fechas.fecha_venta, precio_venta, acum_transfer.monto_pagado, precio_venta - acum_transfer.monto_pagado " +
+                                " fechas.fecha_venta, precio_venta, acum_transfer.monto_pagado, (precio_venta - acum_transfer.monto_pagado) " +
                                 " as saldo_pendiente, " +
                                 " articulo, unidades_vendidas, venta_articulos.estatus " +
                                 " from (select id_venta, min(fecha) as fecha_venta from transferencia group by id_venta) as fechas, " +
@@ -3559,13 +3559,16 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
                 ' ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
                 ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
                 req.body.id_sale
-            ])
+                ]),
+          db_conf.db.oneOrNone(" select sum(precio) as saldo_devuelto from venta_articulos where estatus = 'devolucion' " +
+                               " and  id_venta = $1 ", [req.body.id_sale])
         ])
     }).then(function(data){
         console.log(data);
         res.render('partials/notes/note-payment',{
-            sales:     data[0],
-            items_ids: data[1]
+          sales:     data[0],
+          items_ids: data[1],
+          saldo_devuelto: data[2]
         })
     }).catch(function(error){
         console.log(error);
