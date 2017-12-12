@@ -303,14 +303,19 @@ function modalEvents(button, modal, page ) {
                         $('#search_results').find('.list-group-item').click(function () {
                             modal.find('#modal_content').load('/notes/payment', { id: $(this).data('user_id'), id_sale:$(this).data('sales_id') },
                             function(){
-                               modal.find('form').submit(function(e){
+                              modal.find('form').submit(function(e){
+                                var nameButton = $(this).find('input[type="submit"], button[type="submit"]').filter(':focus').attr('name')
+                                if(nameButton === 'liquidar'){
+                                  // Hacer que se registre una 'transferencia por el total del monto que se debe al cliente'
+                                }else{
                                    $.post('/notes/finitPayment', $(this).serialize()).done(function(data){
                                        alert(data.message);
                                        if(data.status == 'Ok'){
                                            modal.modal('hide');
                                        }
                                    })
-                                   e.preventDefault();
+                                }
+                                e.preventDefault();
                                })
                             });
                         });

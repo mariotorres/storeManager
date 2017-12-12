@@ -339,7 +339,7 @@ create table venta_articulos(
 );
 
 /* Transferencia */
-/* Notar que las transferencias están asociadas*/
+/* NOTAR: liquidar un saldo deudor con clientes es el equivalente a una salida de efectivo */
 drop table if exists transferencia;
 create table transferencia (
     id bigserial primary key,
