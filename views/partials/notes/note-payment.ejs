@@ -71,6 +71,8 @@
         <thead>
         <tr>
             <th>Artículo</th>
+            <th>Modelo</th>
+            <th>Proveedor</th>
             <th>Unidades vendidas</th>
             <th>Estatus</th>
             <th></th>
@@ -81,9 +83,11 @@
         if (sales.length > 0 ){
         for (var i =0; i < sales.length; i++){
         %>
-        <tr style="text-align: center !important">
-            <td  style="text-align: center !important"><%= sales[i].articulo%></td>
-            <td  style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
+            <tr style="text-align: center !important">
+                <td  style="text-align: center !important"><%= sales[i].articulo%></td>
+                <td  style="text-align: center !important"><%= sales[i].modelo%></td>
+                <td  style="text-align: center !important"><%= sales[i].nombre_proveedor%></td>
+                <td  style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
             <!-- Estatus -->
             <td  style="text-align: center !important">
                 <select name = "estatus" class="form-control" required>
