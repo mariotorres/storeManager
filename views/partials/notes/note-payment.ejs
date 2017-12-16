@@ -73,9 +73,9 @@
             <th>Artículo</th>
             <th>Modelo</th>
             <th>Proveedor</th>
+            <th>Precio</th>
             <th>Unidades vendidas</th>
             <th>Estatus</th>
-            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -84,11 +84,13 @@
         for (var i =0; i < sales.length; i++){
         %>
             <tr style="text-align: center !important">
+                <td hidden><input hidden type="text" name="id_articulo"  class="form-control" value="<%=sales[i].id_articulo%>"></td>
                 <td  style="text-align: center !important"><%= sales[i].articulo%></td>
                 <td  style="text-align: center !important"><%= sales[i].modelo%></td>
                 <td  style="text-align: center !important"><%= sales[i].nombre_proveedor%></td>
+                <td  style="text-align: center !important"><%= sales[i].precio_articulo%></td>
                 <td  style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
-            <!-- Estatus -->
+                <!-- Estatus -->
             <td  style="text-align: center !important">
                 <select name = "estatus" class="form-control" required>
                     <%
@@ -122,10 +124,10 @@
                     <option value="solicitada" selected>Solicitada</option>
                     <option value="devolucion">Devolución</option>
                     <%}else{%>
-                    <option value="liquidada">Liquidada</option>
-                    <option value="compostura">Compostura</option>
-                    <option value="pendiente_pago">Pendiente pago</option>
-                    <option value="solicitada">Solicitada</option>
+                    <option value="liquidada" disabled>Liquidada</option>
+                    <option value="compostura" disabled>Compostura</option>
+                    <option value="pendiente_pago" disabled>Pendiente pago</option>
+                    <option value="solicitada" disabled>Solicitada</option>
                     <option value="devolucion" selected>Devolución</option>
                     <%}%>
                 </select>
@@ -134,12 +136,53 @@
         }
         }else {
         %>
-        <option value="">Ninguna</option>
+            <option value="">Ninguna</option>
         <% }%>
         </tbody>
     </table>
     </div>
     <hr>
+    <h3 style="color:#9E9E9E"><strong>Abono</strong></h3>
+    <div class="row">
+        <div class="col-md-12">
+            <label>Monto a abonar</label>
+            <input type="text" name="monto_abonar" id="monto_abonar" class="form-control" value="<%=sales[0].saldo_pendiente - saldo_devuelto.saldo_devuelto%>">
+        </div>
+    </div>
+    <br>
+    <!-- DATE N TIME -->
+    <label>Fecha en la que se realiza el abono</label>
+    <div class="form-group">
+        <div class='input-group'>
+            <input type="text" name="fecha_venta" id="sale_datepicker1" class="form-control" required>
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+    </div>
+    <label>Hora en la que se realiza el abono</label>
+    <div class="form-group">
+        <div class='input-group'>
+            <input type="text" name="hora_venta" id="sale_timepicker1" class="form-control" required>
+        </div>
+    </div>
+    <p id="pay_tarj">
+        <label>Terminal: </label>
+        <%if (terminales.length > 0 ){%>
+            <select name="terminal" class="form-control" required>
+                <%
+                for (var i =0; i < terminales.length; i++){
+                %>
+                    <option value="<%= terminales[i].id %>"> <%= terminales[i].nombre_facturador %> </option>
+                <%
+                }
+                }else {
+                %>
+                    <option value="">Ninguno</option>
+                <% }%>
+            </select>
+    </p>
+    <br>
     <div class="row">
         <div class="col-md-12">
             <label>Tipo pago:</label>
@@ -152,7 +195,6 @@
     <br>
     <p>
         <button type="submit" class="btn btn-primary" name="abonar">Abonar</button>
-        <button type="submit" class="btn btn-primary" name="liquidar">Liquidar saldo a favor</button>
     </p>
 </form>
 

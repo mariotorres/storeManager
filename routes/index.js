@@ -3483,58 +3483,32 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
 
 router.post('/notes/abono', isAuthenticated, function(req, res){
     console.log(req.body);
-    var abono = req.body.abono == ''? 0 : req.body.abono;
-    console.log("Abono " + abono);
-    var query_venta = 'update ventas set saldo_pendiente = saldo_pendiente - $1, monto_pagado_efectivo = monto_pagado_efectivo + $1 where id = $2 returning id';
-    if(req.body.forma_pago == 'cred'){
-        query_venta = 'update ventas set saldo_pendiente = saldo_pendiente - $1, monto_pagado_tarjeta = monto_pagado_tarjeta + $1, tarjeta_credito = TRUE where id = $2 returning id';
-    }else if(req.body.forma_pago == 'deb'){
-        query_venta = 'update ventas set saldo_pendiente = saldo_pendiente - $1, monto_pagado_tarjeta = monto_pagado_tarjeta + $1, tarjeta_credito = FALSE where id = $2 returning id';
-    }
-    db_conf.db.tx(function(t){
+    db_conf.db.task(function(t){
         return t.batch([
-            t.one('update venta_articulos set monto_pagado = monto_pagado + $1, monto_por_pagar = monto_por_pagar - $1, estatus = $4 where id = $2 returning id_articulo, monto_por_pagar, monto_pagado, ' +
-                'unidades_vendidas',[
-                numericCol(abono),
-                req.body.item_id,
-                numericCol(abono),
-                req.body.estatus
+            this.manyOrNone('select * from venta_articulos where id_venta = $1', [
+                req.body.id
             ]),
-            t.one(query_venta, [
-                numericCol(abono),
-                req.body.sale_id
-            ])
-        ]).then(function(data){
-            return t.batch([
-                data,
-                t.one('select proveedores.id as id_prov, costo, precio from articulos, proveedores where articulos.id_proveedor = proveedores.id and articulos.id = $1 ', [
-                    data[0].id_articulo
-                ])
-            ])
-        }).then(function(data){
-            console.log("Monto Pagado: " + data[0][0].monto_pagado);
-            console.log("Precio: " + data[1].precio);
-            console.log("Unidades Vendidas: " + data[0][0].unidades_vendidas);
-            queries = [];
-            queries.push(data);
-            if(numericCol(data[0][0].monto_por_pagar) == 0){
-                queries.push( t.one('update proveedores set a_cuenta = a_cuenta + $1, por_pagar = por_pagar - $1 where id = $2 returning id', [
-                    numericCol(data[1].costo)*numericCol(data[0][0].unidades_vendidas),
-                    data[1].id_prov
-                ]));
-            }
-            return t.batch(queries)
-        })
+            this.manyOrNone(" insert into transferencia (id_venta, monto_efectivo, monto_credito, " +
+                            " monto_debito, id_terminal, fecha, hora) values ($1, $2, $3, $4, $5, $6, $7) returning id", [
+                                req.body.id,
+                                req.body.optradio === 'efe' ? req.body.monto_abonar : 0,
+                                req.body.optradio === 'cred' ? req.body.monto_abonar: 0,
+                                req.body.optradio === 'deb' ? req.body.monto_abonar : 0,
+                                req.body.terminal,
+                                req.body.fecha_venta,
+                                req.body.hora_venta,
+                            ])
+        ])
     }).then(function(data){
-        console.log('Nota abonada: ', data);
+        console.log('Se ha abonado la nota');
         res.json({
             status: 'Ok',
-            message: 'La nota ha sido abonada'
+            message: 'Se ha registrado el abono.'
         })
     }).catch(function(error){
         console.log(error);
         res.send('<b>Error</b>');
-    })
+    });
 });
 
 router.post('/notes/payment', isAuthenticated, function(req, res){
@@ -3544,7 +3518,8 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
           db_conf.db.manyOrNone(" select ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
                                 " fechas.fecha_venta, precio_venta, acum_transfer.monto_pagado, (precio_venta - acum_transfer.monto_pagado) " +
                                 " as saldo_pendiente, modelo, proveedores.nombre as nombre_proveedor, " +
-                                " articulo, unidades_vendidas, venta_articulos.estatus " +
+                                " articulo, venta_articulos.id_articulo as id_articulo, unidades_vendidas, venta_articulos.estatus , " +
+                                " venta_articulos.precio as precio_articulo " +
                                 " from (select id_venta, min(fecha) as fecha_venta from transferencia group by id_venta) as fechas, " +
                                 " (select id_venta, (monto_credito + monto_debito + monto_efectivo) as monto_pagado from transferencia) " +
                                 " as acum_transfer, " +
@@ -3561,14 +3536,16 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
                 req.body.id_sale
                 ]),
           db_conf.db.oneOrNone(" select sum(precio) as saldo_devuelto from venta_articulos where estatus = 'devolucion' " +
-                               " and  id_venta = $1 ", [req.body.id_sale])
+                               " and  id_venta = $1 ", [req.body.id_sale]),
+          db_conf.db.manyOrNone(" select * from terminales")
         ])
     }).then(function(data){
         console.log(data);
         res.render('partials/notes/note-payment',{
           sales:     data[0],
           items_ids: data[1],
-          saldo_devuelto: data[2]
+            saldo_devuelto: data[2],
+            terminales: data[3]
         })
     }).catch(function(error){
         console.log(error);
