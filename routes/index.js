@@ -3579,22 +3579,25 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.task(function(t){
         return t.batch([
-          db_conf.db.manyOrNone(" select ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
-                                " fechas.fecha_venta, precio_venta, acum_tot_transfer.sum as monto_pagado, (precio_venta - acum_tot_transfer.sum) " +
-                                " as saldo_pendiente, modelo, proveedores.nombre as nombre_proveedor, " +
-                                " articulo, venta_articulos.id_articulo as id_articulo, unidades_vendidas, venta_articulos.estatus , " +
-                                " venta_articulos.precio as precio_articulo " +
-                                " from (select id_venta, min(fecha) as fecha_venta from transferencia group by id_venta) as fechas, " +
-                                " (select id_venta, sum(monto_pagado) from (select id_venta, (monto_credito + monto_debito + "  +
-                                " monto_efectivo) as monto_pagado from transferencia) " +
-                                " as acum_transfer group by id_venta) as acum_tot_transfer, " +
-                                " ventas, venta_articulos, tiendas, articulos, usuarios, proveedores where "  +
-                                " ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and " +
-                                " venta_articulos.id_articulo = articulos.id and fechas.id_venta = ventas.id and " +
-                                " proveedores.id = articulos.id_proveedor and acum_tot_transfer.id_venta = " +
-                                " ventas.id and tiendas.id = articulos.id_tienda and ventas.id = $1",[
-                                    req.body.id_sale
-                                ]),
+            db_conf.db.manyOrNone(" select ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
+                                  " fechas.fecha_venta, precio_venta, acum_tot_transfer_pos.sum as monto_pagado, " +
+                                  " (precio_venta - acum_tot_transfer_pos.sum) " +
+                                  " as saldo_pendiente, modelo, proveedores.nombre as nombre_proveedor, " +
+                                  " articulo, venta_articulos.id_articulo as id_articulo, unidades_vendidas, venta_articulos.estatus , " +
+                                  " venta_articulos.precio as precio_articulo " +
+                                  " from (select id_venta, min(fecha) as fecha_venta from transferencia group by id_venta) as fechas, " +
+                                  " (select id_venta, sum(monto_pagado) from (select id_venta, (monto_credito + monto_debito + "  +
+                                  " monto_efectivo) as monto_pagado from transferencia where monto_credito >= 0 " +
+                                  " and monto_debito >= 0 and monto_efectivo >= 0) " +
+                                  " as acum_transfer group by id_venta) as acum_tot_transfer_pos, " +
+                                  " ventas, venta_articulos, tiendas, articulos, usuarios, proveedores where "  +
+                                  " ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and " +
+                                  " venta_articulos.id_articulo = articulos.id and fechas.id_venta = ventas.id and " +
+                                  " proveedores.id = articulos.id_proveedor and acum_tot_transfer_pos.id_venta = " +
+                                  " ventas.id and tiendas.id = " +
+                                  " articulos.id_tienda and ventas.id = $1",[
+                                      req.body.id_sale
+                                  ]),
             db_conf.db.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
                                   ' ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
                                   ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
@@ -3888,7 +3891,8 @@ router.post('/search/notes/results', isAuthenticated, function (req, res) {
   console.log(req.body);
     var query = " select ventas.id, id_nota, id_papel, precio_venta, precio_venta - acum_tot_transfer.sum as saldo_pendiente," +
                 " id_tienda, nombre, fechas.fecha_venta from (select id_venta, sum(monto_pagado) from (select id_venta, " +
-                " (monto_credito + monto_debito + monto_efectivo) as monto_pagado  from transferencia) as acum_transfer " +
+                " (monto_credito + monto_debito + monto_efectivo) as monto_pagado  from transferencia where " +
+                " monto_credito >= 0 and monto_debito >= 0  and monto_efectivo >= 0) as acum_transfer " +
                 " group by id_venta) as acum_tot_transfer, (select id_venta, min(fecha) as fecha_venta from transferencia " +
                 " where (fecha >= $1 and fecha <= $2) group by id_venta) as fechas, ventas, tiendas where " +
                 " acum_tot_transfer.id_venta = ventas.id and estatus = 'activa' and id_tienda = tiendas.id and " +

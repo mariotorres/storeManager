@@ -54,12 +54,12 @@
         </div>
         <div class="col-sm-4">
             <p>
-                <%if(sales[0].saldo_pendiente >= 0){%>
+                <%if(sales[0].saldo_pendiente - saldo_devuelto.saldo_devuelto >= 0){%>
                     <label>Saldo pendiente</label>
-                    <h3 style="color: #E91E63;"><strong><%=sales[0].saldo_pendiente%></strong></h3>
+                    <h3 style="color: #E91E63;"><strong><%=sales[0].saldo_pendiente - saldo_devuelto.saldo_devuelto %></strong></h3>
                 <%}else{%>
                     <label>El cliente tiene un saldo a favor de </label>
-                    <h3 style="color: #E91E63;"><strong><%=-(sales[0].saldo_pendiente)%></strong></h3>
+                    <h3 style="color: #E91E63;"><strong><%=-(sales[0].saldo_pendiente - saldo_devuelto.saldo_devuelto)%></strong></h3>
                 <%}%>
             </p>
         </div>
