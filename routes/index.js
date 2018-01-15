@@ -3821,28 +3821,22 @@ router.post('/search/employees/results', isAuthenticated, function (req, res) {
 
 router.post('/search/notes/results', isAuthenticated, function (req, res) {
   console.log(req.body);
-  var query = "select ventas.id, id_nota, id_papel, precio_venta, precio_venta " +
-      " - acum_transfer.monto_pagado as saldo_pendiente, id_tienda, nombre, fechas.fecha_venta " +
-      " from  (select id_venta, (monto_credito + monto_debito + monto_efectivo) as monto_pagado " +
-      " from transferencia) as acum_transfer, " +
-      " (select id_venta, min(fecha) as fecha_venta from transferencia where (fecha >= $1 " +
-      " and fecha <= $2) group by id_venta) as fechas, " +
-      " ventas, tiendas where acum_transfer.id_venta = ventas.id and estatus = 'activa' and id_tienda = " +
-      " tiendas.id and id_tienda = $4 and (id_papel = $6) and fechas.id_venta = ventas.id";
-    /*query = " select ventas.id, ventas.id_nota, ventas.precio_venta, ventas.saldo_pendiente, " +
-      " ventas.fecha_venta, ventas.hora_venta, ventas.id_tienda, tiendas.nombre, ventas.id_papel " +
-      " from ventas, tiendas  " +
-      " where (((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) and ventas.id_nota = $3) " +
-      " or ((ventas.fecha_venta >= $1 and ventas.fecha_venta <= $2) and ventas.id_papel = $6)) " +
-      " and ventas.id_tienda = tiendas.id and ventas.id_tienda=$5";*/
-  if( ! req.user.permiso_administrador ){
-    query = query + " and id_tienda = $4 ";
+    var query = " select ventas.id, id_nota, id_papel, precio_venta, precio_venta - acum_tot_transfer.sum as saldo_pendiente," +
+                " id_tienda, nombre, fechas.fecha_venta from (select id_venta, sum(monto_pagado) from (select id_venta, " +
+                " (monto_credito + monto_debito + monto_efectivo) as monto_pagado  from transferencia) as acum_transfer " +
+                " group by id_venta) as acum_tot_transfer, (select id_venta, min(fecha) as fecha_venta from transferencia " +
+                " where (fecha >= $1 and fecha <= $2) group by id_venta) as fechas, ventas, tiendas where " +
+                " acum_tot_transfer.id_venta = ventas.id and estatus = 'activa' and id_tienda = tiendas.id and " +
+                " id_tienda = $5 and id_papel = $6"
+
+    if( ! req.user.permiso_administrador ){
+        query = query + " and id_tienda = $4 ";
   }
     console.log("Administrador: " + req.user.permiso_administrador);
     db_conf.db.manyOrNone(query, [
         req.body.fecha_inicial,
         req.body.fecha_final,
-        req.body.id_note, //¿id de venta? checar
+        req.body.id_note,
         req.user.id,
         req.body.id_tienda,
         req.body.id_papel
