@@ -3481,6 +3481,41 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
 
 });
 
+router.post('/notes/update', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.manyOrNone('select * from venta_articulos where id_venta = $1', [
+        req.body.id
+    ]).then(function(data){
+        var queries = []
+        db_conf.db.task(function(t){
+            for(var i = 0; i < data.length; i++){
+                for(var j = 0; j < req.body.id_articulo.length; j++){
+                    if(req.body.id_articulo[j] == data[i].id_articulo &
+                       req.body.estatus[j]     != data[i].estatus){
+                        console.log('inside');
+                        queries.push(
+                            t.one(" update venta_articulos set estatus = $2 where id_articulo = $1 returning id ", [
+                                req.body.id_articulo[j],
+                                req.body.estatus[j]
+                            ])
+                        )
+                    }
+                }
+            }
+            return t.batch(queries)
+        })
+    }).then(function(data){
+        console.log('Se han actualizado los estatus')
+        res.json({
+            'status':'Ok',
+            'message':'Se han actualizado los estatus correctamente'
+        })
+    }).catch(function(error){
+        console.log(error)
+        res.send('<b>Error</b>')
+    })
+})
+
 router.post('/notes/abono', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.task(function(t){
