@@ -3828,8 +3828,7 @@ router.post('/search/notes/results', isAuthenticated, function (req, res) {
                 " group by id_venta) as acum_tot_transfer, (select id_venta, min(fecha) as fecha_venta from transferencia " +
                 " where (fecha >= $1 and fecha <= $2) group by id_venta) as fechas, ventas, tiendas where " +
                 " acum_tot_transfer.id_venta = ventas.id and estatus = 'activa' and id_tienda = tiendas.id and " +
-                " id_tienda = $5 and id_papel = $6"
-
+                " id_tienda = $5 and id_papel = $6 and fechas.id_venta = ventas.id "
     if( ! req.user.permiso_administrador ){
         query = query + " and id_tienda = $4 ";
   }

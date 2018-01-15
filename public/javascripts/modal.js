@@ -312,9 +312,12 @@ function modalEvents(button, modal, page ) {
                                                                       format: 'LT'
                                                                   });
                                                                   modal.find('form').submit(function(e){
-                                                                      var nameButton = $(this).find('input[type="submit"], button[type="submit"]').filter(':focus').attr('name')
-                                                                      if(nameButton === 'liquidar'){
-                                                                          alert('LIQUIDAR')
+                                                                      var nameButton = $(this)
+                                                                          .find('input[type="submit"], button[type="submit"]')
+                                                                          .filter(':focus')
+                                                                          .attr('name')
+                                                                      if(nameButton === 'actualizar'){
+
                                                                       }else{
                                                                           $.post('/notes/abono', $(this).serialize()).done(function(data){
                                                                               alert(data.message);
