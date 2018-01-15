@@ -3483,22 +3483,39 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
 
 router.post('/notes/update', isAuthenticated, function(req, res){
     console.log(req.body);
-    db_conf.db.manyOrNone('select * from venta_articulos where id_venta = $1', [
+    db_conf.db.manyOrNone(' select id_articulo, estatus, id_proveedor, costo, unidades_vendidas ' +
+                          ' from venta_articulos, proveedores, articulos ' +
+                          ' where id_venta = $1 and proveedores.id = articulos.id_proveedor and ' +
+                          ' articulos.id = venta_articulos.id_articulo ', [
         req.body.id
     ]).then(function(data){
         var queries = []
         db_conf.db.task(function(t){
             for(var i = 0; i < data.length; i++){
                 for(var j = 0; j < req.body.id_articulo.length; j++){
+                    var estatus = req.body.id_articulo.length > 1 ? req.body.estatus[j] : req.body.estatus
                     if(req.body.id_articulo[j] == data[i].id_articulo &
-                       req.body.estatus[j]     != data[i].estatus){
-                        console.log('inside');
+                       estatus                 != data[i].estatus){
                         queries.push(
                             t.one(" update venta_articulos set estatus = $2 where id_articulo = $1 returning id ", [
                                 req.body.id_articulo[j],
-                                req.body.estatus[j]
+                                estatus
                             ])
                         )
+                        if(estatus === 'devolucion'){
+                            console.log('unidades: ' + data[i].unidades_vendidas + ' id_art: ' + data[i].id_articulo);
+                            queries.push(
+                                t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
+                                      " where id = $2 returning id", [
+                                          data[i].costo * data[i].unidades_vendidas,
+                                          data[i].id_proveedor
+                                      ]))
+                            queries.push(
+                                t.one(" update articulos set n_existencias = n_existencias + $1 where id = $2 returning id ", [
+                                    data[i].unidades_vendidas,
+                                    data[i].id_articulo
+                                ]))
+                        }
                     }
                 }
             }
