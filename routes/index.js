@@ -3529,22 +3529,22 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
                                 " venta_articulos.id_articulo = articulos.id and fechas.id_venta = ventas.id and " +
                                 " proveedores.id = articulos.id_proveedor and acum_tot_transfer.id_venta = " +
                                 " ventas.id and tiendas.id = articulos.id_tienda and ventas.id = $1",[
-                req.body.id_sale
-            ]),
+                                    req.body.id_sale
+                                ]),
             db_conf.db.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
-                ' ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
-                ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
-                req.body.id_sale
-                ]),
-          db_conf.db.oneOrNone(" select sum(precio) as saldo_devuelto from venta_articulos where estatus = 'devolucion' " +
-                               " and  id_venta = $1 ", [req.body.id_sale]),
-          db_conf.db.manyOrNone(" select * from terminales")
+                                  ' ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
+                                  ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
+                                      req.body.id_sale
+                                  ]),
+            db_conf.db.oneOrNone(" select sum(precio) as saldo_devuelto from venta_articulos where estatus = 'devolucion' " +
+                                 " and  id_venta = $1 ", [req.body.id_sale]),
+            db_conf.db.manyOrNone(" select * from terminales")
         ])
     }).then(function(data){
         console.log(data);
         res.render('partials/notes/note-payment',{
-          sales:     data[0],
-          items_ids: data[1],
+            sales:     data[0],
+            items_ids: data[1],
             saldo_devuelto: data[2],
             terminales: data[3]
         })

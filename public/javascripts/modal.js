@@ -301,7 +301,8 @@ function modalEvents(button, modal, page ) {
                     modal.find('#search_results').load('/search/notes/results', $(this).serializeArray(), function () {
                         //poder código para hacer algo con la nota seleccionada
                         $('#search_results').find('.list-group-item').click(function () {
-                            modal.find('#modal_content').load('/notes/payment', { id: $(this).data('user_id'), id_sale:$(this).data('sales_id') },
+                            modal.find('#modal_content').load('/notes/payment',
+                                                              { id: $(this).data('user_id'), id_sale:$(this).data('sales_id') },
                                                               function(){
                                                                   $('#sale_datepicker1').datetimepicker({
                                                                       format: 'YYYY-MM-DD',
@@ -310,22 +311,21 @@ function modalEvents(button, modal, page ) {
                                                                   $('#sale_timepicker1').datetimepicker({
                                                                       format: 'LT'
                                                                   });
-
                                                                   modal.find('form').submit(function(e){
                                                                       var nameButton = $(this).find('input[type="submit"], button[type="submit"]').filter(':focus').attr('name')
-                                if(nameButton === 'liquidar'){
-                                  // Hacer que se registre una 'transferencia por el total del monto que se debe al cliente'
-                                }else{
-                                   $.post('/notes/abono', $(this).serialize()).done(function(data){
-                                       alert(data.message);
-                                       if(data.status == 'Ok'){
-                                           modal.modal('hide');
-                                       }
-                                   })
-                                }
-                                e.preventDefault();
-                               })
-                            });
+                                                                      if(nameButton === 'liquidar'){
+                                                                          alert('LIQUIDAR')
+                                                                      }else{
+                                                                          $.post('/notes/abono', $(this).serialize()).done(function(data){
+                                                                              alert(data.message);
+                                                                              if(data.status == 'Ok'){
+                                                                                  modal.modal('hide');
+                                                                              }
+                                                                          })
+                                                                      }
+                                                                      e.preventDefault();
+                                                                  })
+                                                              });
                         });
                     });
                     e.preventDefault();
