@@ -3483,7 +3483,7 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
 
 router.post('/notes/update', isAuthenticated, function(req, res){
     console.log(req.body);
-    db_conf.db.manyOrNone(' select id_articulo, estatus, id_proveedor, costo, unidades_vendidas ' +
+    db_conf.db.manyOrNone(' select id_articulo, estatus, id_proveedor, costo, articulos.precio, unidades_vendidas ' +
                           ' from venta_articulos, proveedores, articulos ' +
                           ' where id_venta = $1 and proveedores.id = articulos.id_proveedor and ' +
                           ' articulos.id = venta_articulos.id_articulo ', [
@@ -3515,6 +3515,18 @@ router.post('/notes/update', isAuthenticated, function(req, res){
                                     data[i].unidades_vendidas,
                                     data[i].id_articulo
                                 ]))
+                            queries.push(
+                                t.one(" insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, " +
+                                      " fecha, hora, id_terminal) values ($1, $2, $3, $4, $5, $6, $7) returning id", [
+                                          req.body.id,
+                                          - (data[i].precio * (req.body.optradio == 'efe')),
+                                          - (data[i].precio * (req.body.optradio == 'cred')),
+                                          - (data[i].precio * (req.body.optradio == 'deb')),
+                                          req.body.fecha_venta,
+                                          req.body.hora_venta,
+                                          req.body.terminal
+                                      ])
+                            )
                         }
                     }
                 }
