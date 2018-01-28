@@ -443,7 +443,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                             1, // numericCol(data[0][i].unidades_carrito),
                             numericCol(data[0][i].discount),
                             data[0][i].estatus,
-                            data[0][i].carrito_precio,
+                            data[0][i].carrito_precio/numericCol(data[0][i].unidades_carrito),
                             numericCol(data[0][i].id_articulo) + '-' + k
                         ])
               );
@@ -3488,7 +3488,7 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
 
 router.post('/notes/update', isAuthenticated, function(req, res){
     console.log(req.body);
-    db_conf.db.manyOrNone(' select id_articulo, estatus, id_proveedor, costo, articulos.precio, unidades_vendidas ' +
+    db_conf.db.manyOrNone(' select id_articulo, id_articulo_unidad, estatus, id_proveedor, costo, articulos.precio, unidades_vendidas ' +
                           ' from venta_articulos, proveedores, articulos ' +
                           ' where id_venta = $1 and proveedores.id = articulos.id_proveedor and ' +
                           ' articulos.id = venta_articulos.id_articulo ', [
@@ -3499,7 +3499,7 @@ router.post('/notes/update', isAuthenticated, function(req, res){
             for(var i = 0; i < data.length; i++){
                 for(var j = 0; j < req.body.id_articulo.length; j++){
                     var estatus = req.body.id_articulo.length > 1 ? req.body.estatus[j] : req.body.estatus
-                    if(req.body.id_articulo[j] == data[i].id_articulo &
+                    if(req.body.id_articulo_unidad[j] == data[i].id_articulo_unidad &
                        estatus                 != data[i].estatus){
                         queries.push(
                             t.one(" update venta_articulos set estatus = $2 where id_articulo_unidad = $1 returning id ", [
