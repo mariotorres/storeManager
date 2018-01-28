@@ -331,6 +331,7 @@ drop table if exists venta_articulos;
 create table venta_articulos(
     id bigserial primary key,
     id_articulo integer references articulos(id),
+    id_articulo_unidad text,
     id_venta integer references ventas(id),
     unidades_vendidas integer,
     discount    numeric(1000,2),

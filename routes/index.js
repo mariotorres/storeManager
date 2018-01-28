@@ -432,19 +432,22 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                                           numericCol(data[0][i].discount) -  numericCol(data[0][i].monto_pagado)) === null ? 0 :
             numericCol( numericCol(data[0][i].unidades_carrito) * numericCol(data[0][i].precio) -
                         numericCol(data[0][i].discount) -  numericCol(data[0][i].monto_pagado));
-        // Aquí precio es el precio de venta del artículo
-        queries.push(
-          t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, estatus, ' +
-                ' precio) ' +
-                ' values($1, $2, $3, $4, $5, $6) returning id, id_articulo', [
-                  numericCol(data[1].id),
-                  numericCol(data[0][i].id_articulo),
-                  numericCol(data[0][i].unidades_carrito),
-                  numericCol(data[0][i].discount),
-                  data[0][i].estatus,
-                  data[0][i].carrito_precio
-                ])
-        );
+          // Aquí precio es el precio de venta del artículo
+          for(var k = 0; k < data[0][i].unidades_carrito; k++){
+              queries.push(
+                  t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, estatus, ' +
+                        ' precio, id_articulo_unidad) ' +
+                        ' values($1, $2, $3, $4, $5, $6, $7) returning id, id_articulo', [
+                            numericCol(data[1].id),
+                            numericCol(data[0][i].id_articulo),
+                            1, // numericCol(data[0][i].unidades_carrito),
+                            numericCol(data[0][i].discount),
+                            data[0][i].estatus,
+                            data[0][i].carrito_precio,
+                            numericCol(data[0][i].id_articulo) + '-' + k
+                        ])
+              );
+          }
         queries.push(t.none('delete from carrito where id_usuario=$1 and id_articulo=$2',[
           numericCol(data[0][i].id_usuario),
           numericCol(data[0][i].id_articulo)
@@ -3499,8 +3502,8 @@ router.post('/notes/update', isAuthenticated, function(req, res){
                     if(req.body.id_articulo[j] == data[i].id_articulo &
                        estatus                 != data[i].estatus){
                         queries.push(
-                            t.one(" update venta_articulos set estatus = $2 where id_articulo = $1 returning id ", [
-                                req.body.id_articulo[j],
+                            t.one(" update venta_articulos set estatus = $2 where id_articulo_unidad = $1 returning id ", [
+                                req.body.id_articulo_unidad[j],
                                 estatus
                             ])
                         )
@@ -3509,7 +3512,7 @@ router.post('/notes/update', isAuthenticated, function(req, res){
                             queries.push(
                                 t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
                                       " where id = $2 returning id", [
-                                          data[i].costo * data[i].unidades_vendidas,
+                                          data[i].costo, // * data[i].unidades_vendidas,
                                           data[i].id_proveedor
                                       ]))
                             queries.push(
@@ -3588,7 +3591,7 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
             db_conf.db.manyOrNone(" select ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
                                   " fechas.fecha_venta, precio_venta, acum_tot_transfer_pos.sum as monto_pagado, " +
                                   " (precio_venta - acum_tot_transfer_pos.sum) " +
-                                  " as saldo_pendiente, modelo, proveedores.nombre as nombre_proveedor, " +
+                                  " as saldo_pendiente, modelo, proveedores.nombre as nombre_proveedor, id_articulo_unidad, " +
                                   " articulo, venta_articulos.id_articulo as id_articulo, unidades_vendidas, venta_articulos.estatus , " +
                                   " venta_articulos.precio as precio_articulo " +
                                   " from (select id_venta, min(fecha) as fecha_venta from transferencia group by id_venta) as fechas, " +
