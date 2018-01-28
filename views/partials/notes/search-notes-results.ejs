@@ -7,17 +7,10 @@
          <h5 class="list-group-item-heading"><strong>ID de nota (papel): <span style="color:#E91E63"><%=sales[i].id_papel%></span></strong></h5>
         <h4>Nota <strong><span style="color:#E91E63"><%=sales[i].id_nota%></span></strong> de tienda <strong><%= sales[i].nombre %></strong>
             el <%= sales[i].fecha_venta.toLocaleDateString('es-MX', {timeZone: 'America/Mexico_City'}) %></h4>
-
         <p class="list-group-item-text"> <strong>Precio:</strong> <%= sales[i].precio_venta %></p>
-        <%if (sales[i].saldo_pendiente > 0 ){%>
-        <p class="list-group-item-text"> <strong>Saldo Pendiente:</strong><span style="color:#E91E63"> <strong><%= sales[i].saldo_pendiente %></strong></span></p>
-        <%}else{%>
-        <p class="list-group-item-text"> <strong>Saldo Pendiente:</strong> <%= sales[i].saldo_pendiente %></p>
-        <%}%>
     </a>
     <%}%>
 </div>
-
 <%}else {%>
 <div class="alert alert-info" role="alert">No hay ventas registradas</div>
 <%}%>

@@ -344,6 +344,8 @@ drop table if exists transferencia;
 create table transferencia (
     id bigserial primary key,
     id_venta integer references ventas(id),
+    id_papel integer,
+    motivo_transferencia text, /* venta, abono, devolucion */
     monto_efectivo numeric(1000, 2),
     monto_credito  numeric(1000, 2),
     monto_debito  numeric(1000, 2),

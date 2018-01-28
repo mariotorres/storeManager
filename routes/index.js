@@ -413,14 +413,16 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
       /*
        * Agregar transferencia
        */
-      queries.push(t.one('insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, id_terminal, fecha, hora) values($1, $2, $3, $4, $5, $6, $7) returning id', [
-        data[1].id,
-        req.body.monto_efec,
-        (req.body.monto_rec - req.body.monto_efec)*cred,
-        (req.body.monto_rec - req.body.monto_efec)*(1 - cred),
-        req.body.terminal,
-        req.body.fecha_venta,
-        req.body.hora_venta
+      queries.push(t.one('insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, id_terminal, fecha, hora, id_papel, motivo_transferencia) values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id', [
+          data[1].id,
+          req.body.monto_efec,
+          (req.body.monto_rec - req.body.monto_efec)*cred,
+          (req.body.monto_rec - req.body.monto_efec)*(1 - cred),
+          req.body.terminal,
+          req.body.fecha_venta,
+          req.body.hora_venta,
+          req.body.id_papel,
+          'venta'
       ]))
       /*
        * Venta artículos
@@ -3517,14 +3519,15 @@ router.post('/notes/update', isAuthenticated, function(req, res){
                                 ]))
                             queries.push(
                                 t.one(" insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, " +
-                                      " fecha, hora, id_terminal) values ($1, $2, $3, $4, $5, $6, $7) returning id", [
+                                      " fecha, hora, id_terminal, motivo_transferencia) values ($1, $2, $3, $4, $5, $6, $7, $8) returning id", [
                                           req.body.id,
                                           - (data[i].precio * (req.body.optradio == 'efe')),
                                           - (data[i].precio * (req.body.optradio == 'cred')),
                                           - (data[i].precio * (req.body.optradio == 'deb')),
                                           req.body.fecha_venta,
                                           req.body.hora_venta,
-                                          req.body.terminal
+                                          req.body.terminal,
+                                          'devolucion'
                                       ])
                             )
                         }
@@ -3553,7 +3556,8 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
                 req.body.id
             ]),
             this.manyOrNone(" insert into transferencia (id_venta, monto_efectivo, monto_credito, " +
-                            " monto_debito, id_terminal, fecha, hora) values ($1, $2, $3, $4, $5, $6, $7) returning id", [
+                            " monto_debito, id_terminal, fecha, hora, id_papel, motivo_transferencia) " +
+                            " values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id", [
                                 req.body.id,
                                 req.body.optradio === 'efe' ? req.body.monto_abonar : 0,
                                 req.body.optradio === 'cred' ? req.body.monto_abonar: 0,
@@ -3561,6 +3565,8 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
                                 req.body.terminal,
                                 req.body.fecha_venta,
                                 req.body.hora_venta,
+                                req.body.id_papel,
+                                'abono'
                             ])
         ])
     }).then(function(data){
