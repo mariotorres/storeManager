@@ -100,7 +100,7 @@
                     <option value="liquidada" selected>Liquidada</option>
                     <option value="compostura">Compostura</option>
                     <option value="pendiente_pago">Pendiente pago</option>
-                    <option value="solicitada">Solicitada</option>
+                    <!-- -<option value="solicitada">Solicitada</option>-->
                     <option value="devolucion">Devolución</option>
                     <%
                     }else if(sales[i].estatus == "compostura") {
@@ -108,7 +108,7 @@
                     <option value="liquidada">Liquidada</option>
                     <option value="compostura" selected>Compostura</option>
                     <option value="pendiente_pago">Pendiente pago</option>
-                    <option value="solicitada">Solicitada</option>
+                    <!-- -<option value="solicitada">Solicitada</option>-->
                     <option value="devolucion">Devolución</option>
                     <%
                     }else if(sales[i].estatus == "pendiente_pago") {
@@ -116,19 +116,19 @@
                     <option value="liquidada">Liquidada</option>
                     <option value="compostura">Compostura</option>
                     <option value="pendiente_pago" selected>Pendiente pago</option>
-                    <option value="solicitada">Solicitada</option>
+                    <!-- -<option value="solicitada">Solicitada</option>-->
                     <option value="devolucion">Devolución</option>
                     <%}else if (sales[i].estatus == "solicitada"){%>
                     <option value="liquidada" disabled>Liquidada</option>
                     <option value="compostura" disabled>Compostura</option>
                     <option value="pendiente_pago" disabled>Pendiente pago</option>
-                    <option value="solicitada" selected>Solicitada</option>
-                    <option value="devolucion">Devolución</option>
+                    <!-- -<option value="solicitada" selected>Solicitada</option>-->
+                    <option value="devolucion" disabled>Devolución</option>
                     <%}else{%>
                     <option value="liquidada" disabled>Liquidada</option>
                     <option value="compostura" disabled>Compostura</option>
                     <option value="pendiente_pago" disabled>Pendiente pago</option>
-                    <option value="solicitada" disabled>Solicitada</option>
+                    <!-- -<option value="solicitada" disabled>Solicitada</option>-->
                     <option value="devolucion" selected>Devolución</option>
                     <%}%>
                 </select>
