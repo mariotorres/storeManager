@@ -301,6 +301,7 @@ create table carrito (
         fecha date,
         id_articulo integer references articulos(id),
         id_usuario integer references usuarios(id),
+        id_articulo_unidad text,
         discount    numeric(1000,2),
         monto_pagado numeric(1000,2),
         carrito_precio numeric(1000,2),

@@ -56,9 +56,8 @@
                                 <div class="col-sm-6">
                                     <p>
                                         <label>Descuento:</label>
-
                                         <% if (items[i].discount){%>
-                                        <%= items[i].discount %>
+                                            <%= items[i].precio - items[i].carrito_precio %>
                                         <%}else{%>
                                         0%
                                         <%}%>
@@ -73,17 +72,18 @@
                                 </div>
                                 <div class="col-sm-6">
                                   <p>
-                                    <label>Precio unitario:</label>
-                                    <%= items[i].precio %>
+                                      <label>Precio de venta:</label>
+                                      <!--<%= items[i].carrito_precio %>-->
+                                      <input type="number" name="precio_unitario_art" class="form-control" data-item_id="<%=items[i].id_articulo_unidad%>" value="<%=items[i].carrito_precio%>" data-precio="<%=items[i].precio%>">
                                   </p>
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Monto a cuenta:</label>
-                                    <input type="number" name="monto_pagado" class="form-control" data-item_id="<%=items[i].id_articulo %>" max="<%= totales[i].totales%>" value="<%= items[i].monto_pagado%>" >
+                                    <input type="number" name="monto_pagado" class="form-control" data-item_id="<%=items[i].id_articulo_unidad %>" max="<%= totales[i].totales%>" value="<%= items[i].monto_pagado%>" >
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Estatus:</label>
-                                    <select name = "estatus" data-item_id="<%=items[i].id_articulo%>"  class="form-control" required>
+                                    <select name = "estatus" data-item_id="<%=items[i].id_articulo_unidad%>"  class="form-control" required>
                                         <%
                                         if (items[i].estatus == "liquidada"){
                                         %>
@@ -120,15 +120,16 @@
                             </div>
                             <div class="col-sm-5" style="vertical-align: middle;">
                                 <h2>
-                                    <label style="color:#bdbdbd">Precio de venta: </label>
-                                    <span style="color: #e91e63"><%= totales[i].totales %></span>
+                                    <label style="color:#bdbdbd">Precio artículo: </label>
+                                    <!--                                     <span style="color: #e91e63"><%= totales[i].totales %></span>-->
+                                    <span style="color: #e91e63"><%= items[i].precio %></span>
                                 </h2>
                             </div>
 
 
                             <div class="col-sm-1" >
                                 <!--<button class="btn btn-default" ></button>-->
-                                <i id="rem" data-action="rem_item" data-estatus="<%=items[i].estatus%>"  data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo %>" class="fa fa-times-circle-o fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
+                                <i id="rem" data-action="rem_item" data-estatus="<%=items[i].estatus%>"  data-user_id="<%=items[i].id_usuario%>" data-item_id="<%=items[i].id_articulo_unidad %>" class="fa fa-times-circle-o fa-3x" style="cursor: pointer;color:#e0e0e0"></i>
                             </div>
 
                         </div>

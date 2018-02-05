@@ -5,6 +5,7 @@ $('body').find('form').submit(function (e) {
     var modal  = $("#genericModal");
     modal.find('.modal-title').text('Seleccionar tipo de pago');
     modal.find('#modal_content').html("");
+    var discounts = $('input')
     modal.find('#modal_content').load('/type/payment', { /*page:1*/ }, function(){
         $('#sale_datepicker1').datetimepicker({
             format: 'YYYY-MM-DD',
@@ -43,6 +44,21 @@ $('input[name=monto_pagado]').change(function(){
     })
 });
 
+// Actualizar precio unitario
+$('input[name=precio_unitario_art]').change(function(){
+    var precio   = $(this).val()
+    var id       = $(this).data('item_id')
+    var discount = $(this).data('precio') - precio
+    $.post('/carrito/precio_unitario', {
+        item_id: id,
+        precio: precio,
+        discount: discount
+    }).done(function(data) {
+        if (data.status == 'Ok') {
+            location.reload()
+        }
+    })
+})
 
 // Actualizar status
 $("select[name=estatus]").change(function(){

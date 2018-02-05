@@ -264,7 +264,7 @@ router.post('/notas/imprimir/remover', function (req, res) {
 
 router.post('/carrito/status', isAuthenticated, function(req, res){
     console.log(req.body);
-    db_conf.db.one('update carrito set estatus = $1 where carrito.id_articulo = $2 and ' +
+    db_conf.db.one('update carrito set estatus = $1 where carrito.id_articulo_unidad = $2 and ' +
         'carrito.id_usuario = $3 returning id_articulo',[
         req.body.status,
         req.body.item_id,
@@ -283,9 +283,32 @@ router.post('/carrito/status', isAuthenticated, function(req, res){
     })
 });
 
+router.post('/carrito/precio_unitario', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.one(' update carrito set carrito_precio = $1, monto_pagado = $1, discount=$4 where carrito.id_articulo_unidad = $2 and carrito.id_usuario = $3 ' +
+                   ' returning id_articulo', [
+                       numericCol(req.body.precio),
+                       req.body.item_id,
+                       req.user.id,
+                       req.body.discount
+                   ]).then(function(data){
+                       res.json({
+                           status: 'Ok',
+                           message: 'Se ha actualizado el monto del articulo'
+                      })
+                   }).catch(function(error){
+                       console.log(error)
+                       res.json({
+                           estatus: 'Error',
+                           message: 'Ocurrió un error al actualizar el precio'
+                       })
+                   })
+})
+
+
 router.post('/carrito/monto', isAuthenticated, function(req, res){
     console.log(req.body);
-    db_conf.db.one('update carrito set monto_pagado = $1 where carrito.id_articulo = $2 and ' +
+    db_conf.db.one('update carrito set monto_pagado = $1 where carrito.id_articulo_unidad = $2 and ' +
         'carrito.id_usuario = $3 returning id_articulo',[
         req.body.monto,
         req.body.item_id,
@@ -353,7 +376,7 @@ router.post('/carrito/dec', isAuthenticated, function (req, res) {
 });
 
 router.post('/carrito/rem', isAuthenticated, function (req, res) {
-    db_conf.db.one('delete from carrito where id_usuario=$1 and id_articulo=$2 returning id_articulo', [
+    db_conf.db.one('delete from carrito where id_usuario=$1 and id_articulo_unidad=$2 returning id_articulo', [
         req.user.id, //req.body.user_id,
         req.body.item_id
     ]).then(function (data) {
@@ -510,24 +533,32 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             //    console.log('DISCOUNT:'  + discount);
             //}
             // Absolut discount
+          var query    = []
           var discount = numericCol(req.body.item_precio) * req.body.existencias - numericCol(req.body.precio_pagado)
-          console.log('DISCOUNT: ' + discount);
-            db_conf.db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
-                'unidades_carrito, estatus, monto_pagado, carrito_precio) ' +
-                ' values($1, $2, $3, $4, $5, $6, $7, $8) returning id_articulo',[
-                new Date(),
-                numericCol(req.body.item_id),
-                numericCol(req.user.id),//numericCol(req.body.user_id),
-                  discount,
-                req.body.existencias,
-                req.body.id_estatus,
-                numericCol(req.body.precio_pagado),
-                numericCol(req.body.precio_pagado)
-            ]).then(function (data) {
+            console.log('DISCOUNT: ' + discount);
+            for(var i = 0; i < req.body.existencias; i++){
+                query.push(
+                    db_conf.db.oneOrNone('insert into carrito (fecha, id_articulo, id_usuario, discount,  ' +
+                                         'unidades_carrito, estatus, monto_pagado, carrito_precio, id_articulo_unidad) ' +
+                                         ' values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id_articulo',[
+                                             new Date(),
+                                             numericCol(req.body.item_id),
+                                             numericCol(req.user.id),//numericCol(req.body.user_id),
+                                             discount,
+                                             1, // req.body.existencias,
+                                             req.body.id_estatus,
+                                             numericCol(req.body.precio_pagado),
+                                             numericCol(req.body.precio_pagado),
+                                             req.body.item_id + '-' + i
+                                         ])
+                )}
+            db_conf.db.task(function(t){
+                return this.batch(query)
+            }).then(function (data) {
                 console.log('Artículo añadido al carrito');
                 res.json({
                     status:'Ok',
-                    message: 'La prenda "' + data.id_articulo + '" ha sido registrada en el carrito'
+                    message: 'La prenda "' + data[0].id_articulo + '" ha sido registrada en el carrito'
                 });
             }).catch(function (error) {
                 console.log(error);
@@ -1239,7 +1270,7 @@ router.post('/supplier/new', isAuthenticated,function(req, res ){
 });
 
 router.post('/type/payment',function(req, res ){
-
+    console.log(req.body)
     db_conf.db.task(function(t){
         return this.batch([
             this.manyOrNone('select * from terminales order by nombre_facturador '),
