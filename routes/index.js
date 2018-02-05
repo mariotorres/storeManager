@@ -456,7 +456,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
             numericCol( numericCol(data[0][i].unidades_carrito) * numericCol(data[0][i].precio) -
                         numericCol(data[0][i].discount) -  numericCol(data[0][i].monto_pagado));
           // Aquí precio es el precio de venta del artículo
-          for(var k = 0; k < data[0][i].unidades_carrito; k++){
+          // for(var k = 0; k < data[0][i].unidades_carrito; k++){
               queries.push(
                   t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, estatus, ' +
                         ' precio, id_articulo_unidad) ' +
@@ -467,10 +467,10 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                             numericCol(data[0][i].discount),
                             data[0][i].estatus,
                             data[0][i].carrito_precio/numericCol(data[0][i].unidades_carrito),
-                            numericCol(data[0][i].id_articulo) + '-' + k
+                            data[0][i].id_articulo_unidad//numericCol(data[0][i].id_articulo) + '-' + k
                         ])
               );
-          }
+          // }
         queries.push(t.none('delete from carrito where id_usuario=$1 and id_articulo=$2',[
           numericCol(data[0][i].id_usuario),
           numericCol(data[0][i].id_articulo)
