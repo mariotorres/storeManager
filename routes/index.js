@@ -534,7 +534,7 @@ router.post('/carrito/new', isAuthenticated, function(req, res){
             //}
             // Absolut discount
           var query    = []
-          var discount = numericCol(req.body.item_precio) * req.body.existencias - numericCol(req.body.precio_pagado)
+          var discount = numericCol(req.body.item_precio) - numericCol(req.body.precio_pagado)
             console.log('DISCOUNT: ' + discount);
             for(var i = 0; i < req.body.existencias; i++){
                 query.push(
