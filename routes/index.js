@@ -3745,7 +3745,7 @@ router.post('/notes/details', isAuthenticated, function(req, res){
             ])
         ])
     }).then(function(data){
-        console.log(data[0])
+        console.log(data[4])
         res.render('partials/notes/notes-details', {
             sales:          data[0],
             items_ids:      data[1],

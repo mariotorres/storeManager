@@ -143,6 +143,39 @@
         </table>
     </div>
     <hr>
+    <hr>
+    <h3 style="color:#9E9E9E"><strong>Lista de transacciones</strong></h3>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id papel</th>
+                    <th>Motivo</th>
+                    <th>Monto efectivo</th>
+                    <th>Monto crédito</th>
+                    <th>Monto débtio</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                if (trans_sale.length > 0 ){
+                    for (var i =0; i < trans_sale.length; i++){
+                %>
+                    <tr>
+                    <td  style="text-align: center !important"><%= trans_sale[i].id_papel%></td>
+                    <td  style="text-align: center !important"><%= trans_sale[i].motivo_transferencia%></td>
+                    <td  style="text-align: center !important"><%= trans_sale[i].monto_efectivo%></td>
+                    <td  style="text-align: center !important"><%= trans_sale[i].monto_credito%></td>
+                    <td  style="text-align: center !important"><%= trans_sale[i].monto_debito%></td>
+                    <td  style="text-align: center !important"><%= trans_sale[i].fecha.toLocaleDateString()%></td>
+                    <td  style="text-align: center !important"><%= trans_sale[i].hora%></td>
+                    </tr>
+                <%}}%>
+            </tbody>
+        </table>
+    </div>
 </form>
 
 <script src="/javascripts/notes.js"></script>
