@@ -153,7 +153,7 @@ router.get('/tablero', isAuthenticated, function (req, res) {
 router.get('/carrito', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) { // El descuento se aplica al total de la venta, no a cada artículo!!!!
         return this.batch([
-            this.manyOrNone('select * from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
+            this.manyOrNone('select * from carrito, proveedores, articulos, usuarios where carrito.id_articulo = articulos.id and articulos.id_proveedor = proveedores.id and  ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1 order by articulo, estatus',[ req.user.id ]),
             this.manyOrNone('select sum(carrito_precio) as sum from carrito, articulos, usuarios where carrito.id_articulo = articulos.id and ' +
                 ' carrito.id_usuario = usuarios.id and carrito.unidades_carrito > 0 and usuarios.id = $1',[ req.user.id ]),
@@ -3023,11 +3023,24 @@ router.post('/register/sol', isAuthenticated, function(req, res){
         req.body.item_id
       ])
     ]).then(function(data){
-      t.oneOrNone(' update proveedores set  ' +
-                  ' por_pagar = por_pagar - $2 where id = $1 returning id', [
-                    numericCol(data[1].id_proveedor),
-                    numericCol(req.body.costo_proveedor * data[0].unidades_vendidas)
-                  ]);
+        db_conf.db.task(function(t){
+            return this.batch([
+                t.oneOrNone(' update proveedores set  ' +
+                            ' por_pagar = por_pagar - $2 where id = $1 returning id', [
+                                numericCol(data[1].id_proveedor),
+                                numericCol(req.body.costo_proveedor * data[0].unidades_vendidas)
+                            ]),
+                t.oneOrNone(' insert into nota_entrada (id_nota_registro, id_articulo, ' +
+                            ' id_usuario, num_arts, hora, fecha) values ($1, $2, $3, ' +
+                            ' $4, now(), current_date)' +
+                            ' returning id_articulo', [
+                                req.body.id_papel,
+                                data[0].id_articulo,
+                                req.user.id,
+                                req.body.existencias
+                            ])
+            ])
+        })
     }).then(function(data){
       res.json({
         estatus: 'Ok',
@@ -3045,8 +3058,6 @@ router.post('/register/sol', isAuthenticated, function(req, res){
 
 router.post('/search/items/sol', isAuthenticated, function (req, res) {
     console.log(req.body);
-    //var pageSize = 10;
-    //var offset = req.body.page * pageSize;
     db_conf.db.task(function (t) {
         return this.batch([
           t.manyOrNone(" select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as " +

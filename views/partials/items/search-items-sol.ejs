@@ -52,20 +52,12 @@
                     </div>
                 </div>
 
-                <div class="row" style="visibility: hidden">
-                    <div class="col-sm-6">
-                        <label>Estatus transacción:</label>
-                        <select id="estatus" name="id_estatus" class="form-control">
-                            <option value="entregada">Entregada</option>
-                            <option value="modificacion">Modificación</option>
-                            <option value="pendiente">Pendiente</option>
-                            <option value="solicitada">Solicitada</option>
-                        </select>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <label>Monto que se deja a cuenta:</label>
-                        <input type="number" name="monto_pagado" class="form-control" max="<%= items[i].precio * items[i].n_existencias%>" min="0" value="0">
+                <div class="row">
+                    <div class="col-md-12">
+                    <p>
+                        <label>Id registro</label>
+                        <input type="number" name="id_papel" class="form-control">
+                    </p>
                     </div>
                 </div>
 

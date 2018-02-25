@@ -503,7 +503,8 @@ function modalEvents(button, modal, page ) {
                 modal.find('form').submit(function (e) {
                     modal.find('#search_results').load('/search/items/sol', $(this).serializeArray(), function () {
                         $('#search_results').find('form').submit(function (e) {
-                            if (confirm("¿Desea registrar la entrada del artículo " +  $('#search_results').find('input[name=articulo]').val() +
+                            if (confirm("¿Desea registrar la entrada del artículo " +
+                                        $('#search_results').find('input[name=articulo]').val() +
                                         ", con modelo: " +  $('#search_results').find('input[name=modelo]').val())){
                                 // Selected discount
                                 $.post('/register/sol', $(this).serializeArray()).done(function (data) {

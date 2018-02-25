@@ -46,14 +46,14 @@
                                 </h4>
                                 <hr>
                             </div>
-                            <div class="col-sm-5">
-                                <div class="col-sm-6">
+                            <div class="col-sm-12">
+                                <div class="col-sm-2">
                                     <p>
                                         <label>Artículo:</label>
                                         <%= items[i].articulo %>
                                     </p>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-2">
                                     <p>
                                         <label>Descuento:</label>
                                         <% if (items[i].discount){%>
@@ -63,25 +63,40 @@
                                         <%}%>
                                     </p>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-2">
                                     <p>
                                         <label>Unidades:</label>
                                         <%= items[i].unidades_carrito %>
                                     </p>
-
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-2">
+                                    <p>
+                                        <label>Modelo:</label>
+                                        <%= items[i].modelo %>
+                                    </p>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <p>
+                                        <label>Proveedor:</label>
+                                        <%= items[i].nombre %>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <br>
+                            <div class="col-sm-4">
                                   <p>
                                       <label>Precio de venta:</label>
                                       <!--<%= items[i].carrito_precio %>-->
                                       <input type="number" name="precio_unitario_art" class="form-control" data-item_id="<%=items[i].id_articulo_unidad%>" value="<%=items[i].carrito_precio%>" data-precio="<%=items[i].precio%>">
                                   </p>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-4">
                                     <label>Monto a cuenta:</label>
                                     <input type="number" name="monto_pagado" class="form-control" data-item_id="<%=items[i].id_articulo_unidad %>" max="<%= totales[i].totales%>" value="<%= items[i].monto_pagado%>" >
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-4">
                                     <label>Estatus:</label>
                                     <select name = "estatus" data-item_id="<%=items[i].id_articulo_unidad%>"  class="form-control" required>
                                         <%
@@ -118,6 +133,7 @@
                                 </div>
 
                             </div>
+                        </div>
                             <div class="col-sm-5" style="vertical-align: middle;">
                                 <h2>
                                     <label style="color:#bdbdbd">Precio artículo: </label>
