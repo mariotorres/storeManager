@@ -5,7 +5,7 @@ if ( suppliers.length > 0){%>
 <div class="list-group">
     <%
     for ( var i =0; i < suppliers.length ; i ++ ){ %>
-    <a href="#" class="list-group-item" data-supplier_id="<%= suppliers[i].id %>">
+    <a href="#" class="list-group-item" data-supplier_name="<%=suppliers[i].nombre%>" data-supplier_id="<%= suppliers[i].id %>">
         <h4 class="list-group-item-heading"> <i class="fa fa-male"></i> <%= suppliers[i].nombre %></h4>
         <p class="list-group-item-text"><%= "Razón social: "+ suppliers[i].razon_social + ", RFC: " + suppliers[i].rfc + ", Saldo a cuenta: " +  suppliers[i].a_cuenta + ", Saldo a pagar: " + suppliers[i].por_pagar %></p>
     </a>

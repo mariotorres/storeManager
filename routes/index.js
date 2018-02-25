@@ -1297,6 +1297,39 @@ router.post('/type/payment',function(req, res ){
     });
 });
 
+router.post('/supplier/payment', isAuthenticated, function(req, res){
+    console.log(req.body)
+    db_conf.db.oneOrNone('select * from proveedores where id = $1', [
+        req.body.id
+    ]).then(function(data){
+        console.log('Por pagar: ' + data.por_pagar)
+        db_conf.db.task(function(t){
+            return this.batch([
+                db_conf.db.oneOrNone(' update proveedores set por_pagar = 0 ' +
+                                     ' where id = $1 returning id', [
+                                         req.body.id
+                                     ]),
+                db_conf.db.one(' insert into nota_pago_prov (id_proveedor, monto_pagado, ' +
+                               ' hora, fecha) values($1, $2, now(), current_date) returning id', [
+                                   req.body.id,
+                                   data.por_pagar
+                               ])
+            ])
+        })
+    }).then(function(data){
+        res.json({
+            status: 'Ok',
+            message: 'Se actualizó el saldo del proveedor: '
+        })
+    }).catch(function(error){
+        console.log(error)
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al actualizar el saldo del proveedor'
+        })
+    })
+})
+
 // Listar proveedores
 router.post('/supplier/list/', isAuthenticated,function(req, res ){
     var page = req.body.page;
@@ -3010,6 +3043,7 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
     });
 
 });
+
 
 router.post('/register/sol', isAuthenticated, function(req, res){
   console.log(req.body);

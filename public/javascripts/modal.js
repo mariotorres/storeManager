@@ -521,7 +521,24 @@ function modalEvents(button, modal, page ) {
                 e.preventDefault();
                 });
             });
-      break;
+            break;
+
+        case "pay_supplier":
+            modal.find('.modal-title').text('Liquidar proveedores');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/supplier/list', {page: page}, function(){
+                $(this).find('.list-group-item').click(function(){
+                    if (confirm("Está seguro de que desea liquidar al proveedor: " + $(this).data('supplier_name'))){
+                        $.post('/supplier/payment/', {id: $(this).data('supplier_id')}).done(function (data) {
+                            alert(data.message);
+                            if(data.status=='Ok'){
+                                modal.modal('hide');
+                            }
+                        });
+                    }
+                });
+            });
+            break;
 
     case "find_item":
             modal.find('.modal-title').text('Buscar artículos');

@@ -269,7 +269,17 @@ create table nota_devolucion(
     num_arts    integer,
     hora time,
     fecha date
-);
+    );
+
+/* Nota pago proveedores */
+drop table if exists nota_pago_prov cascade;
+create table nota_pago_prov(
+        id serial primary key,
+        id_proveedor integer references proveedores(id),
+        monto_pagado numeric,
+        hora time,
+        fecha date
+        );
 
 /* Nota modificacion */
 drop table if exists nota_modificacion cascade;
