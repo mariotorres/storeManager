@@ -629,15 +629,18 @@ router.post('/item/list/sale', isAuthenticated, function (req, res) {
 
 // Display de notas
 router.post('/notes/list/', isAuthenticated, function (req, res) {
+    console.log(req.body)
     var pageSize = 10;
-    var offset = req.body.page * pageSize;
+    var offset   = req.body.page * pageSize;
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from ventas as count where ' +
-                'id_usuario = $1', [req.user.id]), // Sólo se imprimen las notas de las ventas completas o las que tienen pagos con tarjeta:::id_usuario = $1 and
-            this.manyOrNone('select * from ventas where estatus = $4 ' +
-                ' order by id desc limit $2 offset $3',[ req.user.id, pageSize, offset, "activa"])
-        ]);
+                     'id_tienda = $1 and id_papel = $2',
+                     [req.body['data[1][value]'], req.body['data[0][value]']]),
+            this.manyOrNone('select * from ventas where estatus = $4 and id_tienda = $1 and id_papel = $5 ' +
+                            ' order by id desc limit $2 offset $3',
+                            [ req.body['data[1][value]'], pageSize, offset, "activa", req.body['data[0][value]']])
+                     ]);
     }).then(function(data){
         res.render('partials/notes/notes-list',{
             status : 'Ok',
@@ -3705,6 +3708,56 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
         res.send('<b>Error</b>');
     })
 });
+
+router.post('/notes/details', isAuthenticated, function(req, res){
+    console.log(req.body)
+    db_conf.db.task(function(t){
+        return t.batch([
+            t.manyOrNone(" select ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
+                                  " fechas.fecha_venta, precio_venta, acum_tot_transfer_pos.sum as monto_pagado, " +
+                                  " (precio_venta - acum_tot_transfer_pos.sum) " +
+                                  " as saldo_pendiente, modelo, proveedores.nombre as nombre_proveedor, id_articulo_unidad, " +
+                                  " articulo, venta_articulos.id_articulo as id_articulo, unidades_vendidas, venta_articulos.estatus , " +
+                                  " venta_articulos.precio as precio_articulo " +
+                                  " from (select id_venta, min(fecha) as fecha_venta from transferencia group by id_venta) as fechas, " +
+                                  " (select id_venta, sum(monto_pagado) from (select id_venta, (monto_credito + monto_debito + "  +
+                                  " monto_efectivo) as monto_pagado from transferencia where monto_credito >= 0 " +
+                                  " and monto_debito >= 0 and monto_efectivo >= 0) " +
+                                  " as acum_transfer group by id_venta) as acum_tot_transfer_pos, " +
+                                  " ventas, venta_articulos, tiendas, articulos, usuarios, proveedores where "  +
+                                  " ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and " +
+                                  " venta_articulos.id_articulo = articulos.id and fechas.id_venta = ventas.id and " +
+                                  " proveedores.id = articulos.id_proveedor and acum_tot_transfer_pos.id_venta = " +
+                                  " ventas.id and tiendas.id = " +
+                                  " articulos.id_tienda and ventas.id = $1",[
+                                      req.body.id
+                                  ]),
+            t.manyOrNone('select venta_articulos.id as id_item_sale from ventas, venta_articulos, tiendas, articulos, usuarios where ' +
+                                  ' ventas.id = venta_articulos.id_venta and ventas.id_usuario = usuarios.id and venta_articulos.id_articulo = articulos.id ' +
+                                  ' and tiendas.id = articulos.id_tienda and ventas.id = $1',[
+                                      req.body.id
+                                  ]),
+            t.oneOrNone(" select sum(precio) as saldo_devuelto from venta_articulos where estatus = 'devolucion' " +
+                                 " and  id_venta = $1 ", [req.body.id]),
+            t.manyOrNone(" select * from terminales"),
+            t.manyOrNone('select * from transferencia where id_venta = $1', [
+                req.body.id
+            ])
+        ])
+    }).then(function(data){
+        console.log(data[0])
+        res.render('partials/notes/notes-details', {
+            sales:          data[0],
+            items_ids:      data[1],
+            saldo_devuelto: data[2],
+            terminales:     data[3],
+            trans_sale:     data[4]
+        })
+    }).catch(function(error){
+        console.log(error);
+        res.send('<b>Error</b>');
+    })
+})
 
 router.post('/notes/dev', isAuthenticated, function(req, res){
     console.log(req.body);

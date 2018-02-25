@@ -270,13 +270,14 @@ function modalEvents(button, modal, page ) {
                 });
                 modal.find('#find').submit(function (e) {
                     // Mostrar resultados
-                    modal.find('#search_results').load('/print/notes/list/', {data: $(this).serializeArray(), page:page}, function () {
+                    modal.find('#search_results').load('/notes/list/',
+                                                       {data: $(this).serializeArray(), page:page}, function () {
                         //poder código para hacer algo con la nota seleccionada
                         $('#search_results').find('.list-group-item').click(function(){
-                            modal.find('#modal_content').load('/notes/details', {id: $(this).data('sales_id')},function(){
-                                modal.find('form').submit(function(e){
+                            modal.find('#modal_content').load('/notes/details', {id: $(this).data('sales_id')}, function(){
+                                /*modal.find('form').submit(function(e){
 
-                                })
+                                })*/
                             })
                         })
                     });

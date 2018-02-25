@@ -1,0 +1,148 @@
+<form id="noteForm">
+    <input type="text" value="<%=sales[0].id_venta%>" name="id" hidden>
+    <h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Tienda</label>
+                <h5 style="color: #9E9E9E;"><%=sales[0].nombre_tienda%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Vendedor</label>
+                <h5 style="color: #9E9E9E;"><%=sales[0].nombre_usuario%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Fecha de venta</label>
+                <h5 style="color: #9E9E9E;"><%=sales[0].fecha_venta.toLocaleDateString()%></h5>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Articulos vendidos</label>
+                <h5 style="color: #9E9E9E;"><%=sales.length%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Monto venta</label>
+                <h5 style="color: #9E9E9E;"><%=sales[0].precio_venta%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <label>Saldo devoluciones</label>
+                <%if(saldo_devuelto.saldo_devuelto){%>
+                    <h5 style="color: #9E9E9E;"><%=saldo_devuelto.saldo_devuelto%></h5>
+                <%}else{%>
+                    <h5 style="color: #9E9E9E;">0</h5>
+                <%}%>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <label>Monto pagado</label>
+                <h5 style="color: #9E9E9E;"><%=sales[0].monto_pagado%></h5>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                <%if(sales[0].saldo_pendiente - saldo_devuelto.saldo_devuelto >= 0){%>
+                    <label>Saldo pendiente</label>
+                    <h3 style="color: #E91E63;"><strong><%=sales[0].saldo_pendiente - saldo_devuelto.saldo_devuelto %></strong></h3>
+                <%}else{%>
+                    <label>El cliente tiene un saldo a favor de </label>
+                    <h3 style="color: #E91E63;"><strong><%=-(sales[0].saldo_pendiente - saldo_devuelto.saldo_devuelto)%></strong></h3>
+                <%}%>
+            </p>
+        </div>
+    </div>
+    <hr>
+    <h3 style="color:#9E9E9E"><strong>Detalle</strong></h3>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Artículo</th>
+                    <th>Modelo</th>
+                    <th>Proveedor</th>
+                    <th>Precio</th>
+                    <th>Unidades vendidas</th>
+                    <th>Estatus</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                if (sales.length > 0 ){
+                    for (var i =0; i < sales.length; i++){
+                %>
+                    <tr style="text-align: center !important">
+                        <td hidden><input hidden type="text" name="id_articulo"  class="form-control" value="<%=sales[i].id_articulo%>"></td>
+                        <td hidden><input hidden type="text" name="id_articulo_unidad"  class="form-control" value="<%=sales[i].id_articulo_unidad%>"></td>
+                        <td  style="text-align: center !important"><%= sales[i].articulo%></td>
+                        <td  style="text-align: center !important"><%= sales[i].modelo%></td>
+                        <td  style="text-align: center !important"><%= sales[i].nombre_proveedor%></td>
+                        <td  style="text-align: center !important"><%= sales[i].precio_articulo%></td>
+                        <td  style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
+                        <!-- Estatus -->
+                        <td  style="text-align: center !important">
+                            <select name = "estatus" class="form-control" required>
+                                <%
+                                if (sales[i].estatus == "liquidada"){
+                                %>
+                                    <option value="liquidada" selected>Liquidada</option>
+                                    <option value="compostura">Compostura</option>
+                                    <option value="pendiente_pago">Pendiente pago</option>
+                                    <!-- -<option value="solicitada">Solicitada</option>-->
+                                    <option value="devolucion">Devolución</option>
+                                <%
+                                }else if(sales[i].estatus == "compostura") {
+                                %>
+                                <option value="liquidada">Liquidada</option>
+                                <option value="compostura" selected>Compostura</option>
+                                <option value="pendiente_pago">Pendiente pago</option>
+                                <!-- -<option value="solicitada">Solicitada</option>-->
+                                <option value="devolucion">Devolución</option>
+                <%
+                }else if(sales[i].estatus == "pendiente_pago") {
+                %>
+                <option value="liquidada">Liquidada</option>
+                <option value="compostura">Compostura</option>
+                <option value="pendiente_pago" selected>Pendiente pago</option>
+                <!-- -<option value="solicitada">Solicitada</option>-->
+                <option value="devolucion">Devolución</option>
+                    <%}else if (sales[i].estatus == "solicitada"){%>
+                    <option value="liquidada" disabled>Liquidada</option>
+                    <option value="compostura" disabled>Compostura</option>
+                    <option value="pendiente_pago" disabled>Pendiente pago</option>
+                    <option value="solicitada" selected>Solicitada</option>
+                    <option value="devolucion" disabled>Devolución</option>
+                    <%}else{%>
+                    <option value="liquidada" disabled>Liquidada</option>
+                    <option value="compostura" disabled>Compostura</option>
+                    <option value="pendiente_pago" disabled>Pendiente pago</option>
+                    <!-- -<option value="solicitada" disabled>Solicitada</option>-->
+                    <option value="devolucion" selected>Devolución</option>
+                    <%}%>
+                            </select>
+                        </td>
+        <%
+        }
+        }else {
+        %>
+                        <option value="">Ninguna</option>
+        <% }%>
+            </tbody>
+        </table>
+    </div>
+    <hr>
+</form>
+
+<script src="/javascripts/notes.js"></script>
