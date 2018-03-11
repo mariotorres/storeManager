@@ -397,10 +397,11 @@ router.post('/carrito/rem', isAuthenticated, function (req, res) {
 router.post('/carrito/sell', isAuthenticated, function (req, res) {
   console.log(req.body);
     // Si el usuario no es administrador, se asigna su id y la fecha y hora actual.
-  var user_sale_id = req.user.id
-  var sale_date    = new Date()
-  var sale_time    = new Date().toLocaleTimeString()
-  var cred = numericCol(req.body.optradio === 'cred')
+    var user_sale_id = req.user.id
+    var sale_date    = new Date()
+    var sale_time    = new Date().toLocaleTimeString()
+    var cred         = numericCol(req.body.optradio === 'cred')
+    console.log("CREEEDD: " + cred)
   if(req.user.permiso_administrador){
     // Si el usuario es administrador el ID de la venta es el que el asigna. Y la fecha y hora igual.
     user_sale_id = req.body.user_sale;
@@ -439,8 +440,8 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
       queries.push(t.one('insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, id_terminal, fecha, hora, id_papel, motivo_transferencia) values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id', [
           data[1].id,
           req.body.monto_efec,
-          (req.body.monto_rec - req.body.monto_efec)*cred,
-          (req.body.monto_rec - req.body.monto_efec)*(1 - cred),
+          (numericCol(req.body.monto_rec) - numericCol(req.body.monto_efec))*cred,
+          (numericCol(req.body.monto_rec) - numericCol(req.body.monto_efec))*(1 - cred),
           req.body.terminal,
           req.body.fecha_venta,
           req.body.hora_venta,
@@ -3745,7 +3746,7 @@ router.post('/notes/details', isAuthenticated, function(req, res){
             ])
         ])
     }).then(function(data){
-        console.log(data[4])
+        console.log(data[0])
         res.render('partials/notes/notes-details', {
             sales:          data[0],
             items_ids:      data[1],

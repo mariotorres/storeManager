@@ -318,7 +318,7 @@ function modalEvents(button, modal, page ) {
                                                                           .filter(':focus')
                                                                           .attr('name')
                                                                       if(nameButton === 'actualizar'){
-                                                                          $.post('/notes/update', $(this).serializeArray()).done(function(data){
+                                                                          $.post('/notes/update', $(this).serialize()).done(function(data){
                                                                               alert(data.message);
                                                                               if(data.status == 'Ok'){
                                                                                   modal.modal('hide');

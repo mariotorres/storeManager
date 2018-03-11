@@ -3,7 +3,6 @@
     <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
     <input type="text" name="efec_tot" id="efec_tot" value="<%=total[0].sum%>" hidden>
     <input type="text" name="precio_tot" id="precio_tot" value="<%=precio[0].sum%>" hidden>
-
     <p>
         <%if(permiso){%>
         <!-- ID PAPEL -->
@@ -55,11 +54,11 @@
     </p>
 
 
-    <div class="row">
+    <div class="row" style="visibility: hidden">
         <div class="col-sm-5">
             <p>
                 <label>Cantidad recibida: </label>
-                <input id="monto_rec" name="monto_rec" class="form-control" required value="<%=total[0].sum%>">
+                <input type="numeric" id="monto_rec" name="monto_rec" class="form-control" required value="<%=total[0].sum%>">
             </p>
         </div>
         <div class="col-sm-5 col-sm-offset-2">
