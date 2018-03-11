@@ -3567,68 +3567,76 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
 });
 
 router.post('/notes/update', isAuthenticated, function(req, res){
-    console.log(req.body);
     db_conf.db.manyOrNone(' select id_articulo, id_articulo_unidad, estatus, id_proveedor, costo, articulos.precio, unidades_vendidas ' +
                           ' from venta_articulos, proveedores, articulos ' +
                           ' where id_venta = $1 and proveedores.id = articulos.id_proveedor and ' +
                           ' articulos.id = venta_articulos.id_articulo ', [
-        req.body.id
-    ]).then(function(data){
-        var queries = []
-        db_conf.db.task(function(t){
-            for(var i = 0; i < data.length; i++){
-                for(var j = 0; j < req.body.id_articulo.length; j++){
-                    var estatus = req.body.id_articulo.length > 1 ? req.body.estatus[j] : req.body.estatus
-                    if(req.body.id_articulo_unidad[j] == data[i].id_articulo_unidad &
-                       estatus                 != data[i].estatus){
-                        queries.push(
-                            t.one(" update venta_articulos set estatus = $2 where id_articulo_unidad = $1 returning id ", [
-                                req.body.id_articulo_unidad[j],
-                                estatus
-                            ])
-                        )
-                        if(estatus === 'devolucion'){
-                            console.log('unidades: ' + data[i].unidades_vendidas + ' id_art: ' + data[i].id_articulo);
-                            queries.push(
-                                t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
-                                      " where id = $2 returning id", [
-                                          data[i].costo, // * data[i].unidades_vendidas,
-                                          data[i].id_proveedor
-                                      ]))
-                            queries.push(
-                                t.one(" update articulos set n_existencias = n_existencias + $1 where id = $2 returning id ", [
-                                    data[i].unidades_vendidas,
-                                    data[i].id_articulo
-                                ]))
-                            queries.push(
-                                t.one(" insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, " +
-                                      " fecha, hora, id_terminal, motivo_transferencia) values ($1, $2, $3, $4, $5, $6, $7, $8) returning id", [
-                                          req.body.id,
-                                          - (data[i].precio * (req.body.optradio == 'efe')),
-                                          - (data[i].precio * (req.body.optradio == 'cred')),
-                                          - (data[i].precio * (req.body.optradio == 'deb')),
-                                          req.body.fecha_venta,
-                                          req.body.hora_venta,
-                                          req.body.terminal,
-                                          'devolucion'
-                                      ])
-                            )
-                        }// Estatus 'solicitada'
-                    }
-                }
-            }
-            return t.batch(queries)
-        })
-    }).then(function(data){
-        console.log('Se han actualizado los estatus')
-        res.json({
-            'status':'Ok',
-            'message':'Se han actualizado los estatus correctamente'
-        })
-    }).catch(function(error){
-        console.log(error)
-        res.send('<b>Error</b>')
-    })
+                              req.body.id
+                          ]).then(function(data){
+                              var queries = []
+                              db_conf.db.task(function(t){
+                                  for(var i = 0; i < data.length; i++){
+                                      for(var j = 0; j < req.body.id_articulo.length; j++){
+                                          // Get Estatus & Id
+                                          if(req.body.id_articulo.length > 1){
+                                              var estatus            = req.body.estatus[j]
+                                              var id_articulo_unidad = req.body.id_articulo_unidad[j]
+                                          }else{
+                                              var estatus            = req.body.estatus
+                                              var id_articulo_unidad = req.body.id_articulo_unidad
+                                          }
+                                          if(id_articulo_unidad == data[i].id_articulo_unidad &
+                                             estatus            != data[i].estatus){
+                                              queries.push(
+                                                  t.one(" update venta_articulos set estatus = $2 where id_articulo_unidad = $1 returning id ", [
+                                                      id_articulo_unidad,
+                                                      estatus
+                                                  ])
+                                              )
+                                              if(estatus === 'devolucion'){
+                                                  console.log('unidades: ' + data[i].unidades_vendidas + ' id_art: ' + data[i].id_articulo);
+                                                  queries.push(
+                                                      t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
+                                                            " where id = $2 returning id", [
+                                                                data[i].costo, // * data[i].unidades_vendidas,
+                                                                data[i].id_proveedor
+                                                            ]))
+                                                  queries.push(
+                                                      t.one(" update articulos set n_existencias = n_existencias + $1 " +
+                                                            " where id = $2 returning id ", [
+                                                          data[i].unidades_vendidas,
+                                                          data[i].id_articulo
+                                                      ]))
+                                                  queries.push(
+                                                      t.one(" insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, " +
+                                                            " fecha, hora, id_terminal, motivo_transferencia) " +
+                                                            " values ($1, $2, $3, $4, $5, $6, $7, $8) returning id", [
+                                                                req.body.id,
+                                                                - (data[i].precio * (req.body.optradio == 'efe')),
+                                                                - (data[i].precio * (req.body.optradio == 'cred')),
+                                                                - (data[i].precio * (req.body.optradio == 'deb')),
+                                                                req.body.fecha_venta,
+                                                                req.body.hora_venta,
+                                                                req.body.terminal,
+                                                                'devolucion'
+                                                            ])
+                                                  )
+                                              }// Estatus 'solicitada'
+                                          }
+                                      }
+                                  }
+                                  return t.batch(queries)
+                              })
+                          }).then(function(data){
+                              console.log('Se han actualizado los estatus')
+                              res.json({
+                                  'status':'Ok',
+                                  'message':'Se han actualizado los estatus correctamente'
+                              })
+                          }).catch(function(error){
+                              console.log(error)
+                              res.send('<b>Error</b>')
+                          })
 })
 
 router.post('/notes/abono', isAuthenticated, function(req, res){
@@ -3661,7 +3669,7 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
     }).catch(function(error){
         console.log(error);
         res.send('<b>Error</b>');
-    });
+    })
 });
 
 router.post('/notes/payment', isAuthenticated, function(req, res){
