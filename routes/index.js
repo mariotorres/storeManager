@@ -3566,6 +3566,89 @@ router.get('/print/employee/details',/* isAuthenticated, */ function (req, res) 
 
 });
 
+
+router.post('/notes/cancel', isAuthenticated, function(req, res){
+    console.log(req.body)
+    db_conf.db.task(function(t){
+        return this.batch([
+            this.manyOrNone(' select id_articulo, id_articulo_unidad, estatus, id_proveedor, costo, articulos.precio, unidades_vendidas ' +
+                            ' from venta_articulos, proveedores, articulos ' +
+                            ' where id_venta = $1 and proveedores.id = articulos.id_proveedor and ' +
+                            ' articulos.id = venta_articulos.id_articulo ', [
+                                req.body.id
+                            ]),
+            this.oneOrNone(" update ventas set estatus = 'cancelada' where id = $1 returning id", [
+                req.body.id
+            ])
+        ])
+    }).then(function(data){
+        data = data[0]
+        var queries = []
+        db_conf.db.task(function(t){
+            for(var i = 0; i < data.length; i++){
+                for(var j = 0; j < req.body.id_articulo.length; j++){
+                    // Get Estatus & Id
+                    if(req.body.id_articulo.length > 1){
+                        var estatus            = req.body.estatus[j]
+                        var id_articulo_unidad = req.body.id_articulo_unidad[j]
+                    }else{
+                        var estatus            = req.body.estatus
+                        var id_articulo_unidad = req.body.id_articulo_unidad
+                    }
+                    if(id_articulo_unidad == data[i].id_articulo_unidad){
+                        queries.push(
+                            t.one(" update venta_articulos set estatus = $2 where id_articulo_unidad = $1 " +
+                                  " and id_venta = $3 returning id ", [
+                                      id_articulo_unidad,
+                                      "cancelada",
+                                      req.body.id
+                                  ])
+                        )
+                        if(estatus !== 'devolucion' && estatus !== 'solicitada'){
+                            queries.push(
+                                t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
+                                      " where id = $2 returning id", [
+                                          data[i].costo, // * data[i].unidades_vendidas,
+                                          data[i].id_proveedor
+                                      ]))
+                            queries.push(
+                                t.one(" update articulos set n_existencias = n_existencias + $1 " +
+                                      " where id = $2 returning id ", [
+                                          data[i].unidades_vendidas,
+                                          data[i].id_articulo
+                                      ]))
+                            queries.push(
+                                t.one(" insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, " +
+                                      " fecha, hora, id_terminal, motivo_transferencia) " +
+                                      " values ($1, $2, $3, $4, $5, $6, $7, $8) returning id", [
+                                          req.body.id,
+                                          - (data[i].precio * (req.body.optradio == 'efe')),
+                                          - (data[i].precio * (req.body.optradio == 'cred')),
+                                          - (data[i].precio * (req.body.optradio == 'deb')),
+                                          req.body.fecha_venta,
+                                          req.body.hora_venta,
+                                          req.body.terminal,
+                                          'cancelacion'
+                                      ])
+                            )
+                        }
+                    }
+                }
+            }
+            return t.batch(queries)
+        })
+    }).then(function(data){
+        console.log('Se ha cancelado la nota')
+        res.json({
+            'status':'Ok',
+            'message':'Se ha cancelado la nota'
+        })
+    }).catch(function(error){
+        console.log(error)
+        res.send('<b>Error</b>')
+    })
+})
+
 router.post('/notes/update', isAuthenticated, function(req, res){
     db_conf.db.manyOrNone(' select id_articulo, id_articulo_unidad, estatus, id_proveedor, costo, articulos.precio, unidades_vendidas ' +
                           ' from venta_articulos, proveedores, articulos ' +
@@ -3588,10 +3671,12 @@ router.post('/notes/update', isAuthenticated, function(req, res){
                                           if(id_articulo_unidad == data[i].id_articulo_unidad &
                                              estatus            != data[i].estatus){
                                               queries.push(
-                                                  t.one(" update venta_articulos set estatus = $2 where id_articulo_unidad = $1 returning id ", [
-                                                      id_articulo_unidad,
-                                                      estatus
-                                                  ])
+                                                  t.one(" update venta_articulos set estatus = $2 where id_articulo_unidad = $1 " +
+                                                        " and id_venta = $3 returning id ", [
+                                                            id_articulo_unidad,
+                                                            estatus,
+                                                            req.body.id
+                                                        ])
                                               )
                                               if(estatus === 'devolucion'){
                                                   console.log('unidades: ' + data[i].unidades_vendidas + ' id_art: ' + data[i].id_articulo);

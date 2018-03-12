@@ -321,7 +321,12 @@ function modalEvents(button, modal, page ) {
                                                                               }
                                                                           })
                                                                       }else if(buttonIndex == 1){
-                                                                          alert(buttonIndex)
+                                                                          $.post('/notes/cancel', $(this).serialize()).done(function(data){
+                                                                              alert(data.message);
+                                                                              if(data.status == 'Ok'){
+                                                                                  modal.modal('hide');
+                                                                              }
+                                                                          })
                                                                       }else{
                                                                           $.post('/notes/abono', $(this).serialize()).done(function(data){
                                                                               alert(data.message);
