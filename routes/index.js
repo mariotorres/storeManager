@@ -2239,7 +2239,7 @@ router.post('/item/return', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.tx(function(t){
         return t.batch([
-            t.one('update articulos set n_existencias = $2, fecha_ultima_modificacion = $3 where id=$1 returning id, articulo', [
+            t.one('update articulos set n_existencias = $2 where id=$1 returning id, articulo', [
                 req.body.id,
                 numericCol(req.body.n_existencias) - numericCol(req.body.n_devoluciones),
                 new Date()
@@ -3647,7 +3647,7 @@ router.post('/notes/cancel', isAuthenticated, function(req, res){
         console.log(error)
         res.send('<b>Error</b>')
     })
-})
+});
 
 router.post('/notes/update', isAuthenticated, function(req, res){
     db_conf.db.manyOrNone(' select id_articulo, id_articulo_unidad, estatus, id_proveedor, costo, articulos.precio, unidades_vendidas ' +
