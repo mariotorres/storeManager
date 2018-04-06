@@ -4042,15 +4042,29 @@ router.post('/employee/register/check-out', isAuthenticated, function(req, res){
 
 router.post('/employee/register/check-in', isAuthenticated, function(req, res){
     console.log(req.body);
-    db_conf.db.oneOrNone('insert into asistencia (id_usuario, fecha, hora, tipo) values($1, $2, $3, $4) returning id',[
-        req.body.id,
-        req.body.fecha,
-        req.body.llegada,
-        'entrada'
+    db_conf.db.one(" select count(*) from asistencia where fecha = " +
+                   " $2 and tipo = 'entrada' and id_usuario = $1",[
+                       numericCol(req.body.id),
+                       req.body.fecha
     ]).then(function(data){
+        if(data.count > 0) {
+            return null
+        }
+        return  db_conf.db.oneOrNone(' insert into asistencia (id_usuario, ' +
+                                     ' fecha, hora, tipo) values($1, $2, $3, $4) returning id',[
+            req.body.id,
+            req.body.fecha,
+            req.body.llegada,
+            'entrada'
+       ])
+    }).then(function(data){
+        var message = 'El usuario: ' + req.body.nombres + ' ya había sido registrado el día:  ' + req.body.fecha
+        if(data){
+            message = 'Se ha registrado el ingreso de "' + req.body.nombres + '" el día ' + req.body.fecha + ' a las ' + req.body.llegada
+        }
         res.json({
             status:'Ok',
-            message: 'Se ha registrado el ingreso de "' + req.body.nombres + '" el día ' + req.body.fecha + ' a las ' + req.body.llegada
+            message: message
         })
     }).catch(function(error){
         console.log(error);

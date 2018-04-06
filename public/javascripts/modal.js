@@ -1156,6 +1156,7 @@ function modalEvents(button, modal, page ) {
                                         alert(data.message);
                                         if(data.status == 'Ok'){
                                             modal.modal('hide')
+                                            location.reload()
                                         }
                                     });
                                     e.preventDefault();
@@ -1183,14 +1184,15 @@ function modalEvents(button, modal, page ) {
                                     format: 'YYYY-MM-DD',
                                     defaultDate: today.setDate(today.getDate())
                                 });
-                                modal.find('form').submit(function(event){
+                                modal.find('form').submit(function (e){
                                     $.post('/employee/register/check-in', $(this).serializeArray()).done(function (data){
                                         alert(data.message);
                                         if(data.status == 'Ok'){
                                             modal.modal('hide');
+                                            location.reload()
                                         }
                                     });
-                                    event.preventDefault();
+                                    e.preventDefault();
                                 });
                             });
                         });
