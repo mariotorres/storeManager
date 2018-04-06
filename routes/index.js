@@ -1314,9 +1314,10 @@ router.post('/supplier/payment', isAuthenticated, function(req, res){
                                          req.body.id
                                      ]),
                 db_conf.db.one(' insert into nota_pago_prov (id_proveedor, monto_pagado, ' +
-                               ' hora, fecha) values($1, $2, now(), current_date) returning id', [
+                               ' fecha) values($1, $2, $3) returning id', [
                                    req.body.id,
-                                   data.por_pagar
+                                   data.por_pagar,
+                                   req.body.fecha_pago
                                ])
             ])
         })
@@ -1333,6 +1334,31 @@ router.post('/supplier/payment', isAuthenticated, function(req, res){
         })
     })
 })
+
+
+// Listar proveedores
+router.post('/supplier/list/pay', isAuthenticated,function(req, res ){
+    var page = req.body.page;
+    var pageSize = 10;
+    var offset = page * pageSize;
+    db_conf.db.task(function (t) {
+        return this.batch([
+            this.one('select count(*) from proveedores as count'),
+            this.manyOrNone('select * from proveedores order by nombre limit $1 offset $2',[ pageSize, offset ])
+        ]);
+    }).then(function( data ){
+        res.render('partials/suppliers/supplier-list-pay', {
+            status : "Ok",
+            suppliers: data[1],
+            pageNumber : page,
+            numberOfPages: parseInt( (+data[0].count + pageSize - 1 ) / pageSize )
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+});
+
 
 // Listar proveedores
 router.post('/supplier/list/', isAuthenticated,function(req, res ){

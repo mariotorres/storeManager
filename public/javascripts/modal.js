@@ -530,10 +530,24 @@ function modalEvents(button, modal, page ) {
         case "pay_supplier":
             modal.find('.modal-title').text('Liquidar proveedores');
             modal.find('#modal_content').html("");
-            modal.find('#modal_content').load('/supplier/list', {page: page}, function(){
+            modal.find('#modal_content').load('/supplier/list/pay', {page: page}, function(){
+                $('#payment_date').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date().setDate(new Date().getDate( ) - 1)
+                });
+                var fecha_pago = ''
+
+                $(this).find('#payment_date').on('dp.change', function(e){
+                    fecha_pago = new Date(e.date._d)
+                    fecha_pago = fecha_pago.toLocaleDateString()
+                    fecha_pago = fecha_pago.split('/')
+                    fecha_pago = fecha_pago[2] + '-' + fecha_pago[1] + '-' + fecha_pago[0]
+                    console.log(fecha_pago)
+                })
+
                 $(this).find('.list-group-item').click(function(){
                     if (confirm("Está seguro de que desea liquidar al proveedor: " + $(this).data('supplier_name'))){
-                        $.post('/supplier/payment/', {id: $(this).data('supplier_id')}).done(function (data) {
+                        $.post('/supplier/payment/', {id: $(this).data('supplier_id'), fecha_pago: fecha_pago}).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');

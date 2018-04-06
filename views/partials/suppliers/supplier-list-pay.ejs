@@ -1,0 +1,27 @@
+<%
+if ( suppliers.length > 0){%>
+<div class="list-group">
+    <%
+    for ( var i =0; i < suppliers.length ; i ++ ){ %>
+    <a href="#" class="list-group-item" data-supplier_name="<%=suppliers[i].nombre%>" data-supplier_id="<%= suppliers[i].id %>">
+        <h4 class="list-group-item-heading"> <i class="fa fa-male"></i> <%= suppliers[i].nombre %></h4>
+        <p class="list-group-item-text"><%= "Razón social: "+ suppliers[i].razon_social + ", RFC: " + suppliers[i].rfc + ", Saldo a cuenta: " +  suppliers[i].a_cuenta + ", Saldo a pagar: " + suppliers[i].por_pagar %></p>
+    </a>
+    <%}%>
+</div>
+
+<%include ../pagination.ejs %>
+
+<%} else {%>
+<div class="alert alert-info" role="alert">No se han registrado proveedores</div>
+<%}%>
+<label>Fecha en la que se realiza el pagoa</label>
+
+<div class="form-group">
+    <div class='input-group'>
+        <input type="text" name="fecha_pago" id="payment_date" class="form-control" required>
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+    </div>
+</div>
