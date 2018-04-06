@@ -3241,53 +3241,93 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             /* Asistencia:  */
             // Retrasos
             this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
-                "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
-                "and hora > hora_llegada and tipo = 'entrada' and usuarios.id = asistencia.id_usuario ", id),
+                            "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
+                            "and hora > hora_llegada and tipo = 'entrada' and usuarios.id = asistencia.id_usuario ", id),
             // Salidas prematuras
             this.manyOrNone("select * from asistencia, usuarios where id_usuario = $1 " +
-                "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
-                "and hora < hora_salida and tipo = 'salida' and usuarios.id = asistencia.id_usuario ", id),
+                            "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
+                            "and hora < hora_salida and tipo = 'salida' and usuarios.id = asistencia.id_usuario ", id),
             // Domingos
             this.oneOrNone("select count(*) as domingos from usuarios, asistencia where id_usuario = $1 " +
-                "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
-                "and EXTRACT(DOW from asistencia.fecha::DATE) = 7 and usuarios.id = asistencia.id_usuario ", id),
+                           "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
+                           "and EXTRACT(DOW from asistencia.fecha::DATE) = 7 and usuarios.id = asistencia.id_usuario ", id),
             /* Préstamos */
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             /* Ventas Individuales en la semana */
-            this.manyOrNone("select * from ventas where ventas.id_usuario = $1 and " +
-                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
-            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1 and " +
-                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
-            this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1 and " +
-                " ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
-            this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda ", id),
+            // as montoVentas
+            this.manyOrNone(" select * from ventas, transferencia  where ventas.id_usuario = $1 and " +
+                            " transferencia.fecha <= date_trunc('day', now()) and transferencia.fecha > " +
+                            " date_trunc('day', now() - interval '1 week') and transferencia.id_venta = ventas.id " +
+                            " and transferencia.motivo_transferencia != 'devolucion'", id),
+            this.oneOrNone(" select sum(monto) as montoVentas from (select monto_efectivo + monto_credito + " +
+                           " monto_debito as monto from ventas, " +
+                           " transferencia where ventas.id_usuario = $1 and " +
+                           " transferencia.fecha <= date_trunc('day', now()) and transferencia.fecha > " +
+                           " date_trunc('day', now() - interval '1 week') and transferencia.id_venta = ventas.id " +
+                           " and transferencia.motivo_transferencia != 'devolucion') as montos ", id),
+            this.oneOrNone(" select sum(monto)*.03 as comision from (select monto_efectivo + monto_credito + " +
+                           " monto_debito as monto from ventas, " +
+                           " transferencia where ventas.id_usuario = $1 and " +
+                           " transferencia.fecha <= date_trunc('day', now()) and transferencia.fecha > " +
+                           " date_trunc('day', now() - interval '1 week') and transferencia.id_venta = ventas.id " +
+                           " and transferencia.motivo_transferencia != 'devolucion') as montos ", id),
+            this.oneOrNone(" select * from usuarios, tiendas where usuarios.id = $1 and " +
+                           " tiendas.id = usuarios.id_tienda ", id),
             /* Ventas Tienda en la semana*/
-            this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
-                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
-                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1 ", id),
-            this.oneOrNone("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
-                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
-                "ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id),
+            this.manyOrNone(" select * from ventas, venta_articulos, articulos, usuarios, transferencia " +
+                            " where venta_articulos.id_venta = ventas.id and " +
+                            " venta_articulos.id_articulo = articulos.id and articulos.id_tienda = " +
+                            " usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
+                            " transferencia.id_venta = ventas.id and transferencia.motivo_transferencia != 'devolucion' " +
+                            " and transferencia.fecha <= date_trunc('day', now()) and transferencia.fecha > " +
+                            " date_trunc('day', now() - interval '1 week') and usuarios.id = $1 ", id),
+
+            this.oneOrNone(" select sum(monto) as montotienda from (select monto_efectivo + monto_debito + " +
+                           " monto_credito as monto from ventas, venta_articulos, articulos, usuarios, " +
+                           " transferencia where venta_articulos.id_venta = ventas.id and venta_articulos.id_articulo " +
+                           " = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = " +
+                           " usuarios.id and transferencia.id_venta = ventas.id and transferencia.fecha <= " +
+                           " date_trunc('day', now()) and transferencia.fecha > date_trunc('day', now() - " +
+                           " interval '1 week') and transferencia.motivo_transferencia != 'devolucion' and " +
+                           " usuarios.id = $1) as montos", id),
             /* Pagos extras */
-            this.oneOrNone("select * from pagos_extra, usuarios where pagos_extra.id_usuario = usuarios.id and usuarios.id = $1 and " +
-                " pagos_extra.fecha_pago_extra <= date_trunc('day', now()) and pagos_extra.fecha_pago_extra > date_trunc('day', now() - interval '1 week')", id),
+            this.oneOrNone(" select * from pagos_extra, usuarios where pagos_extra.id_usuario = usuarios.id " +
+                           " and usuarios.id = $1 and " +
+                           " pagos_extra.fecha_pago_extra <= date_trunc('day', now()) and " +
+                           " pagos_extra.fecha_pago_extra > date_trunc('day', now() - interval '1 week')", id),
             /* Ventas Individuales en la semana premios asumiendo que se hacen los lunes */
-            this.manyOrNone("select * from ventas where ventas.id_usuario = $1 and " +
-                " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
-                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
-            this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1 and " +
-                " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
-                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week')", id),
+            this.manyOrNone(" select * from ventas, transferencia  where ventas.id_usuario = $1 and " +
+                            " transferencia.fecha <= date_trunc('day', now() - interval '2 days') " +
+                            " and transferencia.fecha > " +
+                            " date_trunc('day', now() - interval '1 week') and transferencia.id_venta = ventas.id " +
+                            " and transferencia.motivo_transferencia != 'devolucion'", id),
+            this.oneOrNone(" select sum(monto) as montoVentas from (select monto_efectivo + monto_credito + " +
+                           " monto_debito as monto from ventas, " +
+                           " transferencia where ventas.id_usuario = $1 and " +
+                           " transferencia.fecha <= date_trunc('day', now() - interval '2 days') and " +
+                           " transferencia.fecha > " +
+                           " date_trunc('day', now() - interval '1 week') and transferencia.id_venta = ventas.id " +
+                           " and transferencia.motivo_transferencia != 'devolucion') as montos ", id),
             /* Ventas Tienda en la semana*/
-            this.manyOrNone("select * from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
-                "venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
-                "ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and " +
-                " usuarios.id = $1 ", id),
-            this.oneOrNone("select sum(ventas.precio_venta) as montotienda from ventas, venta_articulos, articulos, usuarios where venta_articulos.id_venta = ventas.id and " +
-                " venta_articulos.id_articulo = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
-                " ventas.fecha_venta <= date_trunc('day', now() - interval '2 days') and " +
-                " ventas.fecha_venta > date_trunc('day', now() - interval '1 week') and usuarios.id = $1", id)
+            this.manyOrNone(" select * from ventas, venta_articulos, articulos, usuarios, transferencia " +
+                            " where venta_articulos.id_venta = ventas.id and " +
+                            " venta_articulos.id_articulo = articulos.id and articulos.id_tienda = " +
+                            " usuarios.id_tienda and ventas.id_usuario = usuarios.id and " +
+                            " transferencia.id_venta = ventas.id and transferencia.motivo_transferencia != 'devolucion' " +
+                            " and transferencia.fecha <= date_trunc('day', now() - interval '2 days') and " +
+                            " transferencia.fecha > " +
+                            " date_trunc('day', now() - interval '1 week') and usuarios.id = $1 ", id),
+
+            this.oneOrNone(" select sum(monto) as montotienda from (select monto_efectivo + monto_debito + " +
+                           " monto_credito as monto from ventas, venta_articulos, articulos, usuarios, " +
+                           " transferencia where venta_articulos.id_venta = ventas.id and venta_articulos.id_articulo " +
+                           " = articulos.id and articulos.id_tienda = usuarios.id_tienda and ventas.id_usuario = " +
+                           " usuarios.id and transferencia.id_venta = ventas.id and transferencia.fecha <= " +
+                           " date_trunc('day', now() - interval '2 days') and transferencia.fecha > " +
+                           " date_trunc('day', now() - " +
+                           " interval '1 week') and transferencia.motivo_transferencia != 'devolucion' and " +
+                           " usuarios.id = $1) as montos", id)
         ]).then(function(data){
             return t.batch([
                 data,
