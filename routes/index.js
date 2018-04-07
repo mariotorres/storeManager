@@ -3186,7 +3186,14 @@ router.post('/search/items/results', isAuthenticated, function (req, res) {
 });
 
 router.post('/suppliers/find-suppliers-view', isAuthenticated, function (req, res) {
-    res.render('partials/find-suppliers');
+    db_conf.db.manyOrNone(
+        'select nombre, id from proveedores'
+    ).then(function(data){
+        res.render('partials/find-suppliers', {proveedores: data});
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
 });
 
 router.post('/employees/find-employees-view', isAuthenticated, function (req, res) {
@@ -3217,37 +3224,44 @@ router.post('/notes/find-notes-view', function (req, res) {
 
 router.post('/supplier/details', isAuthenticated, function(req, res){
     console.log(req.body);
-    var id = req.body.id;
-    db_conf.db.task(function(t){
-        return this.batch([
-            this.manyOrNone("select proveedores.nombre as nombre_proveedor, proveedores.rfc as rfc_proveedor, proveedores.razon_social as razon_social_proveedor, " +
-                " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta,  id_papel, ventas.id as id_venta " +
-                " from proveedores, ventas, tiendas where  " +
-                " ventas.id_tienda = tiendas.id and proveedores.id = $1 and ventas.estatus = 'activa' " +
-                " and fecha_venta <= $3 and fecha_venta >= $2", [
-                req.body.id,
-                req.body.fecha_inicial,
-                req.body.fecha_final
-            ]),
-            this.manyOrNone("select proveedores.nombre as nombre_proveedor, proveedores.rfc as rfc_proveedor, proveedores.razon_social as razon_social_proveedor, " +
-                " articulos.articulo as nombre_articulo, articulos.modelo as modelo, costo, n_existencias, " +
-                " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta, saldo_pendiente, venta_articulos.estatus as estatus_prenda, id_papel, ventas.id as id_venta " +
-                " from proveedores, ventas, venta_articulos, articulos, tiendas where venta_articulos.id_venta = ventas.id and venta_articulos.id_articulo = articulos.id and " +
-                " articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id and proveedores.id = $1 and  ventas.estatus = 'activa' " +
-                " and fecha_venta <= $3 and fecha_venta >= $2", [
-                req.body.id,
-                req.body.fecha_inicial,
-                req.body.fecha_final
-            ]),
-            this.oneOrNone('select * from proveedores where id = $1', req.body.id )
-        ])
-    }).then(function(data){
-        res.render('partials/suppliers/supplier_details', {ventas: data[0],
-            venta_arts:data[1],
-            proveedor: data[2],
-            fecha_inicial: req.body.fecha_inicial,
-            fecha_final: req.body.fecha_final
-        });
+    console.log(req.body);
+    db_conf.db.oneOrNone(
+        ' select max(fecha) as lat_pay from nota_pago_prov ' +
+        ' where id_proveedor = $1', [
+            req.body.id_proveedor
+        ]).then(function(data){
+            var fecha_inicial = req.body.fecha_inicial
+            if(data.lat_pay && req.body.hasOwnProperty(lat_pay)){
+                fecha_inicial = data.lat_pay
+            }
+            db_conf.db.task(function(t){
+                return t.batch([
+                    t.manyOrNone(
+                        " select tiendas.nombre as nombre_tienda, sum(unidades_vendidas) " +
+                        " as unidades_vendidas, id_articulo, articulo, descripcion, ventas.id_papel, " +
+                        " articulos.costo as costo, articulos.modelo as modelo, fecha_venta from tiendas, " +
+                        " venta_articulos, articulos, ventas, (select min(fecha) as fecha_venta, " +
+                        " transferencia.id_venta as id_venta from ventas, transferencia where " +
+                        " transferencia.id_venta = ventas.id group by id_venta) as fechas_ventas " +
+                        " where venta_articulos.estatus != 'devolucion' and venta_articulos.estatus " +
+                        " != 'solicitada' and ventas.estatus = 'activa' and ventas.id = " +
+                        " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
+                        " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
+                        " and id_proveedor = $3 and tiendas.id = ventas.id_tienda group by id_articulo, " +
+                        " id_papel, costo, modelo, articulo, descripcion, fecha_venta, nombre_tienda", [
+                            fecha_inicial,
+                            req.body.fecha_final,
+                            req.body.id_proveedor
+                        ])
+                ])
+            })
+        }).then(function(data){
+            res.render('partials/suppliers/supplier_details', {ventas: data[0],
+                                                               venta_arts:data[1],
+                                                               proveedor: data[2],
+                                                               fecha_inicial: req.body.fecha_inicial,
+                                                               fecha_final: req.body.fecha_final
+            });
     }).catch(function(error){
         console.log(error);
         res.json({
@@ -3439,31 +3453,17 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
 
 router.get('/print/supplier/details', (req,res)=>{
     console.log(req.query);
-    var id = req.body.id;
-    db_conf.db.task(function(t){
-        return this.batch([
-            this.manyOrNone("select proveedores.nombre as nombre_proveedor, proveedores.rfc as rfc_proveedor, proveedores.razon_social as razon_social_proveedor, " +
-                " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta,  id_papel, ventas.id as id_venta " +
-                " from proveedores, ventas, tiendas where  " +
-                " ventas.id_tienda = tiendas.id and proveedores.id = $1 and ventas.estatus = 'activa' " +
-                " and fecha_venta <= $3 and fecha_venta >= $2", [
-                req.query.id,
-                req.query.fecha_inicial,
-                req.query.fecha_final
-            ]),
-            this.manyOrNone("select proveedores.nombre as nombre_proveedor, proveedores.rfc as rfc_proveedor, proveedores.razon_social as razon_social_proveedor, " +
-                " articulos.articulo as nombre_articulo, articulos.modelo as modelo, costo, n_existencias, " +
-                " tiendas.nombre as nombre_tienda, fecha_venta, hora_venta, saldo_pendiente, venta_articulos.estatus as estatus_prenda, id_papel, ventas.id as id_venta " +
-                " from proveedores, ventas, venta_articulos, articulos, tiendas where venta_articulos.id_venta = ventas.id and venta_articulos.id_articulo = articulos.id and " +
-                " articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id and proveedores.id = $1 and venta_articulos.estatus = 'entregada' and ventas.estatus = 'activa' " +
-                " and fecha_venta <= $3 and fecha_venta >= $2", [
-                req.query.id,
-                req.query.fecha_inicial,
-                req.query.fecha_final
-            ]),
-            this.oneOrNone('select * from proveedores where id = $1', [req.query.id])
-        ])
-    }).then(function(data){
+    db_conf.db.oneOrNone(
+        ' select max(fecha) as lat_pay from nota_pago_prov ' +
+        ' where id_proveedor = $1', [
+            req.query.id_proveedor
+        ]).then(function(data){
+            var fecha_inicial = req.body.fecha_inicial
+            if(req.query.hasOwnProperty(lat_pay)){
+                fecha_inicial = data.max
+            }
+            console.log(`DATE: ${fecha_inicial} ` )
+        }).then(function(data){
         res.render('reports/supplier-details', {
             ventas: data[0],
             venta_arts:data[1],

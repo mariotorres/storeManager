@@ -218,16 +218,16 @@ function modalEvents(button, modal, page ) {
                     defaultDate: new Date().setDate(new Date().getDate( ))
                 });
                 modal.find('#findSuppliers').submit(function(e){
-                    modal.find('#search_results').load('/search/suppliers/results', $(this).serializeArray(), function(){
+                    modal.find('#modal_content').load('/supplier/details', $(this).serializeArray(), function(){
+
+                    });
+
+                    /*modal.find('#search_results').load('/search/suppliers/results', $(this).serializeArray(), function(){
                         $('#search_results').find('.list-group-item').click(function(){
-                            ////////////
-                            modal.find('#modal_content').load('/supplier/details', {id: $(this).data('supplier_id'),
-                                fecha_inicial: $(this).data('fecha_inicial'),
-                                fecha_final:$(this).data('fecha_final')
-                            });
 
                         });
                     });
+                    */
                     e.preventDefault();
                 });
             });
@@ -535,13 +535,16 @@ function modalEvents(button, modal, page ) {
                     format: 'YYYY-MM-DD',
                     defaultDate: new Date().setDate(new Date().getDate( ) - 1)
                 });
-                var fecha_pago = ''
+                var fecha_pago = new Date()
+                fecha_pago = fecha_pago.toLocaleDateString()
+                fecha_pago = fecha_pago.split('/')
+                fecha_pago = fecha_pago[2] + '-' + fecha_pago[0] + '-' + fecha_pago[1]
 
                 $(this).find('#payment_date').on('dp.change', function(e){
                     fecha_pago = new Date(e.date._d)
                     fecha_pago = fecha_pago.toLocaleDateString()
                     fecha_pago = fecha_pago.split('/')
-                    fecha_pago = fecha_pago[2] + '-' + fecha_pago[1] + '-' + fecha_pago[0]
+                    fecha_pago = fecha_pago[2] + '-' + fecha_pago[0] + '-' + fecha_pago[1]
                     console.log(fecha_pago)
                 })
 
