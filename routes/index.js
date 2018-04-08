@@ -3249,17 +3249,18 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                     t.manyOrNone(
                         " select tiendas.nombre as nombre_tienda, sum(unidades_vendidas) " +
                         " as unidades_vendidas, id_articulo, articulo, descripcion, ventas.id_papel, " +
+                        " venta_articulos.estatus, " +
                         " articulos.costo as costo, articulos.modelo as modelo, fecha_venta from tiendas, " +
                         " venta_articulos, articulos, ventas, (select min(fecha) as fecha_venta, " +
                         " transferencia.id_venta as id_venta from ventas, transferencia where " +
                         " transferencia.id_venta = ventas.id group by id_venta) as fechas_ventas " +
-                        " where venta_articulos.estatus != 'devolucion' and venta_articulos.estatus " +
+                        " where venta_articulos.estatus " +
                         " != 'solicitada' and ventas.estatus = 'activa' and ventas.id = " +
                         " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
                         " fue_sol = 0 and " +
                         " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
                         " and id_proveedor = $3 and tiendas.id = ventas.id_tienda group by id_articulo, " +
-                        " id_papel, costo, modelo, articulo, descripcion, fecha_venta, nombre_tienda", [
+                        " id_papel, costo, modelo, articulo, descripcion, fecha_venta, nombre_tienda, venta_articulos.estatus", [
                             fecha_inicial,
                             req.body.fecha_final,
                             req.body.id_proveedor

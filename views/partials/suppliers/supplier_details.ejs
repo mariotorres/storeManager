@@ -35,6 +35,7 @@
                     <td><b>Modelo</b></td>
                     <td><b>Unidades</b></td>
                     <td><b>Costo unitario</b></td>
+                    <td><b>Estatus</b></td>
                 </tr>
             </thead>
             <tbody>
@@ -46,12 +47,20 @@
                     <td><%= ventas[i].articulo %></td>
                     <td><%= ventas[i].modelo %></td>
                     <td><%= ventas[i].unidades_vendidas %></td>
-                    <td><%= ventas[i].costo %></td>
+                    <td><%= ventas[i].estatus %></td>
+                    <td>
+                        <%if(ventas[i].estatus === 'devolucion'){%>
+                            <span style="color:#BDBDBD"><%=ventas[i].costo%></span>
+                        <%}else{%>
+                            <span><%=ventas[i].costo%></span>
+                        <%}%>
+                    </td>
                 </tr>
                 <%}%>
                 <hr>
                 <tr>
                     <td><strong>Total ventas</strong></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
