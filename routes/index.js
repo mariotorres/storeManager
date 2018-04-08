@@ -3230,16 +3230,17 @@ router.post('/notes/find-notes-view', function (req, res) {
 
 router.post('/supplier/details', isAuthenticated, function(req, res){
     console.log(req.body)
+    var fecha_inicial = req.body.fecha_inicial
     db_conf.db.oneOrNone(
         ' select max(fecha) as lat_pay from nota_pago_prov ' +
         ' where id_proveedor = $1', [
             req.body.id_proveedor
         ]).then(function(data){
-            var fecha_inicial = req.body.fecha_inicial
+            // var fecha_inicial = req.body.fecha_inicial
             if(data.lat_pay && req.body.hasOwnProperty(lat_pay)){
                 fecha_inicial = data.lat_pay
             }
-            db_conf.db.task(function(t){
+            return db_conf.db.task(function(t){
                 return t.batch([
                     t.oneOrNone(" select * from proveedores where id = $1 ", [
                         req.body.id_proveedor
@@ -3255,6 +3256,7 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                         " where venta_articulos.estatus != 'devolucion' and venta_articulos.estatus " +
                         " != 'solicitada' and ventas.estatus = 'activa' and ventas.id = " +
                         " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
+                        " fue_sol = 0 and " +
                         " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
                         " and id_proveedor = $3 and tiendas.id = ventas.id_tienda group by id_articulo, " +
                         " id_papel, costo, modelo, articulo, descripcion, fecha_venta, nombre_tienda", [
@@ -3270,14 +3272,14 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                         " = ventas.id group by id_venta) as fechas_ventas where venta_articulos.estatus != 'devolucion' " +
                         " and venta_articulos.estatus != 'solicitada' and ventas.estatus = 'activa' and ventas.id = " +
                         " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
+                        " fue_sol = 0 and " +
                         " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
                         " and id_proveedor = $3 group by id_articulo, venta_articulos.id_venta, costo, modelo, " +
                         " articulo, descripcion, fecha_venta) as costos", [
                             fecha_inicial,
                             req.body.fecha_final,
                             req.body.id_proveedor
-                        ]
-                    ),
+                        ]),
                     // Total Artículos Solicitados
                     t.manyOrNone(
                         " select tiendas.nombre as nombre_tienda,  " +
@@ -3294,7 +3296,7 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                         ]
                     ),
                     // Monto Por Pagar Articulos Solicitados
-                    t.manyOrNone(
+                    t.oneOrNone(
                         " select sum(costo_tot) as costo_tot from (" +
                         " select sum(costo * num_arts) as costo_tot  " +
                         " from tiendas, " +
@@ -3306,8 +3308,7 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                             fecha_inicial,
                             req.body.fecha_final,
                             req.body.id_proveedor
-                        ]
-                    ),
+                        ]),
                     // Total Artículos Devueltos
                     t.manyOrNone(
                         " select tiendas.nombre as nombre_tienda, sum(unidades_vendidas) " +
@@ -3340,20 +3341,22 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                             fecha_inicial,
                             req.body.fecha_final,
                             req.body.id_proveedor
-                        ]
-                    )
+                        ])
                 ])
             })
         }).then(function(data){
+            console.log(JSON.stringify(data))
             res.render('partials/suppliers/supplier_details',
                        {
-                           proveedores: data[0],
+                           proveedor: data[0],
                            ventas: data[1],
                            total_ventas: data[2],
                            solicitudes: data[3],
                            total_sol: data[4],
                            devoluciones: data[5],
-                           total_dev: data[6]
+                           total_dev: data[6],
+                           fecha_inicial: fecha_inicial,
+                           fecha_final: req.body.fecha_final,
                        }
             );
     }).catch(function(error){

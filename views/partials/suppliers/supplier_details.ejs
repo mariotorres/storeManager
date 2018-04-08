@@ -1,115 +1,165 @@
 <h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
 <p>
-    <label>Nombre(s)</label>
+    <label>Nombre proveedor</label>
 
-    <h5 style="color: #9E9E9E;"><%= proveedor.razon_social %></h5>
+    <h4 style="color: #E91E63;"><%= proveedor.nombre %></h4>
 
 </p>
-<div class="row">
+<!-- <div class="row">
     <div class="col-sm-6">
         <p>
             <label>Razón Social</label>
-
-
         <h5 style="color: #9E9E9E;"><%= proveedor.razon_social %></h5>
-
         </p>
     </div>
     <div class="col-sm-6">
         <p>
             <label>RFC</label>
-
-        <h5 style="color: #9E9E9E;"><%= proveedor.rfc %></h5>
-
+            <h5 style="color: #9E9E9E;"><%= proveedor.rfc %></h5>
         </p>
     </div>
-</div>
-<!--Desgloce bonos!!!-->
-<h5 style="color:#9E9E9E"><strong>Ventas correspondientes</strong></h5>
-<%if(ventas.length > 0){ var totalVentas = 0;%>
-<br>
-<%for(var i = 0; i < ventas.length; i++){ var totalVenta = 0; %>
-<p><strong>Venta <span style="color: #E91E63;"><%=i+1%></span></strong></p>
-<div class="table-responsive">
-    <table class="table table-striped">
-        <tbody>
-        <tr>
-            <td><b>ID papel</b></td>
-            <td><%= ventas[i].id_papel %></td>
-        </tr>
-        <tr>
-            <td><b>Fecha venta</b></td>
-            <td><%= ventas[i].fecha_venta %></td>
-        </tr>
-        <tr>
-            <td><b>Hora venta</b></td>
-            <td><%= ventas[i].hora_venta %></td>
-        </tr>
-        <tr>
-            <td><b>Tienda</b></td>
-            <td><%= ventas[i].nombre_tienda %></td>
-        </tr>
-        <tr>
-            <td><b>Detalle Venta</b></td>
-            <td>
-                <table class="table table-striped">
-                    <tbody>
-            <%for(var j = 0; j < venta_arts.length; j++){if(venta_arts[j].id_venta == ventas[i].id_venta){if(venta_arts[j].estatus_prenda == 'entregada'){ totalVenta += Number(venta_arts[j].costo);}%>
-                    <%if(j > 0){%>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    <%}%>
-                    <tr>
-                        <td><b>Artículo</b></td>
-                        <td><%= venta_arts[j].nombre_articulo %></td>
-                    </tr>
-                    <tr>
-                        <td><b>Modelo</b></td>
-                        <td><%= venta_arts[j].modelo %></td>
-                    </tr>
-                    <tr>
-                        <td><b>Existencias</b></td>
-                        <td><%= venta_arts[j].n_existencias %></td>
-                    </tr>
-                    <tr>
-                        <td><b>Costo</b></td>
-                        <td><span style="color: #E91E63;"><%= venta_arts[j].costo %></span></td>
-                    </tr>
-                    <tr>
-                        <td><b>Estatus prenda</b></td>
-                        <td><span style="color: #9E9E9E"><strong><%= venta_arts[j].estatus_prenda %></strong></span></td>
-                    </tr>
-            <%}}%>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td><b>Por pagar venta</b></td>
-            <td><b style="color: #e91e63"><%= totalVenta %></b></td>
-        </tr>
-        </tbody>
+</div>-->
 
-    </table>
-</div>
-<br><br>
-<% totalVentas += Number(totalVenta)}}else{%>
-<div class="alert alert-info" role="alert">El proveedor no tiene ventas registradas en el periodo seleccionado</div>
+<!-- Desgloce Ventas!!!-->
+<hr>
+<h5 style="color:#9E9E9E"><strong>Ventas periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+<%if(ventas.length > 0){%>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td><b>ID papel</b></td>
+                    <td><b>Fecha venta</b></td>
+                    <td><b>Tienda</b></td>
+                    <td><b>Artículo</b></td>
+                    <td><b>Modelo</b></td>
+                    <td><b>Unidades</b></td>
+                    <td><b>Costo unitario</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i = 0; i < ventas.length; i++){ %>
+                <tr>
+                    <td><%= ventas[i].id_papel %></td>
+                    <td><%= new Date(ventas[i].fecha_venta).toLocaleDateString() %></td>
+                    <td><%= ventas[i].nombre_tienda %></td>
+                    <td><%= ventas[i].articulo %></td>
+                    <td><%= ventas[i].modelo %></td>
+                    <td><%= ventas[i].unidades_vendidas %></td>
+                    <td><%= ventas[i].costo %></td>
+                </tr>
+                <%}%>
+                <hr>
+                <tr>
+                    <td><strong>Total ventas</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><strong><%= total_ventas.tot_costos %></strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<%}else{%>
+    <div class="alert alert-info" role="alert">El proveedor no tiene ventas registradas en el periodo seleccionado</div>
 <%}%>
-<div class="col-sm-3 col-md-offset-9">
-    <p>
-        <label>Saldo por pagar</label>
-    <h2 style="color: #E91E63;">
-        <%=totalVentas%>
-    </h2>
-    </p>
-</div>
+
+<!-- Desgloce Solicitadas!!!-->
+<h5 style="color:#9E9E9E"><strong>Ingreso prendas solicitadas periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+<%if(solicitudes.length > 0){%>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td><b>ID Nota Registro</b></td>
+                    <td><b>Fecha Registro</b></td>
+                    <td><b>Tienda</b></td>
+                    <td><b>Artículo</b></td>
+                    <td><b>Modelo</b></td>
+                    <td><b>Unidades</b></td>
+                    <td><b>Costo unitario</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i = 0; i < solicitudes.length; i++){ %>
+                    <tr>
+                        <td><%= solicitudes[i].id_nota_registro %></td>
+                        <td><%= new Date(solicitudes[i].fecha).toLocaleDateString() %></td>
+                        <td><%= solicitudes[i].nombre_tienda %></td>
+                        <td><%= solicitudes[i].articulo %></td>
+                        <td><%= solicitudes[i].modelo %></td>
+                        <td><%= solicitudes[i].num_arts %></td>
+                        <td><%= solicitudes[i].costo_unitario %></td>
+                    </tr>
+                <%}%>
+                <hr>
+                <tr>
+                    <td><strong>Total costo prendas solicitadas</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><strong><%= total_sol.costo_tot %></strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<%}else{%>
+    <div class="alert alert-info" role="alert">El proveedor no tiene prendas solicitadas registradas en el periodo seleccionado</div>
+<%}%>
+
+<!-- Desgloce Devoluciones!!!-->
+<hr>
+<h5 style="color:#9E9E9E"><strong>Prendas devueltas periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+<%if(devoluciones.length > 0){%>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td><b>ID papel</b></td>
+                    <td><b>Fecha venta</b></td>
+                    <td><b>Tienda</b></td>
+                    <td><b>Artículo</b></td>
+                    <td><b>Modelo</b></td>
+                    <td><b>Unidades</b></td>
+                    <td><b>Costo unitario</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i = 0; i < devoluciones.length; i++){ %>
+                    <tr>
+                        <td><%= devoluciones[i].id_papel %></td>
+                        <td><%= new Date(devoluciones[i].fecha_venta).toLocaleDateString() %></td>
+                        <td><%= devoluciones[i].nombre_tienda %></td>
+                        <td><%= devoluciones[i].articulo %></td>
+                        <td><%= devoluciones[i].modelo %></td>
+                        <td><%= devoluciones[i].unidades_vendidas %></td>
+                        <td><%= devoluciones[i].costo %></td>
+                    </tr>
+                <%}%>
+                <hr>
+                <tr>
+                    <td><strong>Total devoluciones</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><strong><%= total_dev.tot_costos %></strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<%}else{%>
+    <div class="alert alert-info" role="alert">El proveedor no tiene ventas registradas en el periodo seleccionado</div>
+<%}%>
+
+
 
 
 <p>
-    <%var url = '/print/supplier/details?id='+ proveedor.id +'&fecha_inicial='+ fecha_inicial +
-    '&fecha_final='+ fecha_final%>
-    <button class="btn btn-primary" onclick="<%= "window.open('"+ url +"')"%>"> <i class="fa fa-print"></i> Imprimir reporte</button>
+    <button class="btn btn-primary"> <i class="fa fa-print"></i> Imprimir reporte</button>
 </p>
