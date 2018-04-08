@@ -1563,12 +1563,15 @@ router.post('/item/register', upload.single('imagen'),function(req, res){
         }).then(function(data){
             return t.batch([
                 data,
-                t.one('insert into nota_entrada(id_nota_registro, id_usuario, id_articulo, num_arts, hora, fecha) ' +
-                    ' values($1, $2, $3, $4, localtime, current_date) returning id', [
-                    req.body.id_nota_registro,
-                    req.user.id,
-                    data[1].id,
-                    req.body.n_arts
+                t.one(' insert into nota_entrada(id_nota_registro, id_usuario, id_articulo, ' +
+                      ' num_arts, hora, fecha, costo_unitario, concepto) ' +
+                      ' values($1, $2, $3, $4, localtime, current_date, $5, $6) returning id', [
+                          req.body.id_nota_registro,
+                          req.user.id,
+                          data[1].id,
+                          req.body.n_arts,
+                          req.body.costo,
+                          'ingreso articulos'
                 ])
             ])
         })
@@ -2782,7 +2785,7 @@ router.post('/items/list/item_registers', isAuthenticated, function(req, res){
         return this.batch([
             this.manyOrNone('select * from tiendas'),
             this.manyOrNone('select * from proveedores'),
-            this.manyOrNone('select distinct id_nota_registro from nota_entrada')
+            this.manyOrNone("select distinct id_nota_registro from nota_entrada where concepto = 'ingreso articulos'")
         ])
     }).then(function(data){
         res.render('partials/items/find-registers', {
@@ -3095,13 +3098,15 @@ router.post('/register/sol', isAuthenticated, function(req, res){
                                 numericCol(req.body.costo_proveedor * data[0].unidades_vendidas)
                             ]),
                 t.oneOrNone(' insert into nota_entrada (id_nota_registro, id_articulo, ' +
-                            ' id_usuario, num_arts, hora, fecha) values ($1, $2, $3, ' +
-                            ' $4, now(), current_date)' +
+                            ' id_usuario, num_arts, hora, fecha, costo_unitario, concepto) values ($1, $2, $3, ' +
+                            ' $4, now(), current_date, $5, $6)' +
                             ' returning id_articulo', [
                                 req.body.id_papel,
                                 data[0].id_articulo,
                                 req.user.id,
-                                req.body.existencias
+                                req.body.existencias,
+                                req.body.costo_proveedor,
+                                'ingreso articulos solicitados'
                             ])
             ])
         })
@@ -3236,6 +3241,10 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
             }
             db_conf.db.task(function(t){
                 return t.batch([
+                    t.oneOrNone(" select * from proveedores where id = $1 ", [
+                        req.body.id_proveedor
+                    ]),
+                    // Monto de Ventas Periodo
                     t.manyOrNone(
                         " select tiendas.nombre as nombre_tienda, sum(unidades_vendidas) " +
                         " as unidades_vendidas, id_articulo, articulo, descripcion, ventas.id_papel, " +
@@ -3252,16 +3261,36 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                             fecha_inicial,
                             req.body.fecha_final,
                             req.body.id_proveedor
-                        ])
+                        ]),
+                    // Monto Por Pagar de Ventas
+                    t.oneOrNone(
+                        " select sum(tot_costos) as tot_costos from (select sum(costo * unidades_vendidas) " +
+                        " as tot_costos from venta_articulos, articulos, ventas, (select min(fecha) as fecha_venta, " +
+                        " transferencia.id_venta as id_venta from ventas, transferencia where transferencia.id_venta " +
+                        " = ventas.id group by id_venta) as fechas_ventas where venta_articulos.estatus != 'devolucion' " +
+                        " and venta_articulos.estatus != 'solicitada' and ventas.estatus = 'activa' and ventas.id = " +
+                        " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
+                        " fechas_ventas.fecha_venta > $1 and fechas_ventas.id_venta = ventas.id " +
+                        " and id_proveedor = $3 group by id_articulo, venta_articulos.id_venta, costo, modelo, " +
+                        " articulo, descripcion, fecha_venta) as costos", [
+                            fecha_inicial,
+                            req.body.fecha_final,
+                            req.body.id_proveedor
+                        ]
+                    )
+                    // Total Artículos Solicitados
+                    // Monto Por Pagar Articulos Solicitados
+                    // Total Artículos Devueltos
+                    // Monto Por Recibir Articulos Devueltos
                 ])
             })
         }).then(function(data){
-            res.render('partials/suppliers/supplier_details', {ventas: data[0],
-                                                               venta_arts:data[1],
-                                                               proveedor: data[2],
-                                                               fecha_inicial: req.body.fecha_inicial,
-                                                               fecha_final: req.body.fecha_final
-            });
+            res.render('partials/suppliers/supplier_details',
+                       {
+                           proveedores: data[0],
+                           ventas: data[1]
+                       }
+            );
     }).catch(function(error){
         console.log(error);
         res.json({

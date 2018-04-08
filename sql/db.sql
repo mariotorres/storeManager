@@ -255,8 +255,10 @@ create table nota_entrada(
     id_articulo integer references articulos(id),
     id_usuario integer references usuarios(id),
     num_arts    integer,
+    costo_unitario integer,
     hora time,
-    fecha date
+    fecha date,
+    concepto text
 );
 
 /* Nota devolución */
