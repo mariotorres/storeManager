@@ -460,15 +460,16 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
           // for(var k = 0; k < data[0][i].unidades_carrito; k++){
               queries.push(
                   t.one('insert into venta_articulos (id_venta, id_articulo, unidades_vendidas, discount, estatus, ' +
-                        ' precio, id_articulo_unidad) ' +
-                        ' values($1, $2, $3, $4, $5, $6, $7) returning id, id_articulo', [
+                        ' precio, id_articulo_unidad, fue_sol) ' +
+                        ' values($1, $2, $3, $4, $5, $6, $7, $8) returning id, id_articulo', [
                             numericCol(data[1].id),
                             numericCol(data[0][i].id_articulo),
                             1, // numericCol(data[0][i].unidades_carrito),
                             numericCol(data[0][i].discount),
                             data[0][i].estatus,
                             data[0][i].carrito_precio/numericCol(data[0][i].unidades_carrito),
-                            data[0][i].id_articulo_unidad//numericCol(data[0][i].id_articulo) + '-' + k
+                            data[0][i].id_articulo_unidad, //numericCol(data[0][i].id_articulo) + '-' + k
+                            data[0][i].estatus === "solicitada" ? 1 : 0
                         ])
               );
           // }
@@ -3228,8 +3229,7 @@ router.post('/notes/find-notes-view', function (req, res) {
 });
 
 router.post('/supplier/details', isAuthenticated, function(req, res){
-    console.log(req.body);
-    console.log(req.body);
+    console.log(req.body)
     db_conf.db.oneOrNone(
         ' select max(fecha) as lat_pay from nota_pago_prov ' +
         ' where id_proveedor = $1', [
@@ -3270,7 +3270,71 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                         " = ventas.id group by id_venta) as fechas_ventas where venta_articulos.estatus != 'devolucion' " +
                         " and venta_articulos.estatus != 'solicitada' and ventas.estatus = 'activa' and ventas.id = " +
                         " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
-                        " fechas_ventas.fecha_venta > $1 and fechas_ventas.id_venta = ventas.id " +
+                        " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
+                        " and id_proveedor = $3 group by id_articulo, venta_articulos.id_venta, costo, modelo, " +
+                        " articulo, descripcion, fecha_venta) as costos", [
+                            fecha_inicial,
+                            req.body.fecha_final,
+                            req.body.id_proveedor
+                        ]
+                    ),
+                    // Total Artículos Solicitados
+                    t.manyOrNone(
+                        " select tiendas.nombre as nombre_tienda,  " +
+                        " id_articulo, articulo, descripcion, id_nota_registro, " +
+                        " costo_unitario, articulos.modelo as modelo, fecha, concepto, num_arts from tiendas, " +
+                        " articulos, nota_entrada, proveedores where nota_entrada.concepto = " +
+                        " 'ingreso articulos solicitados' and proveedores.id = $3 and " +
+                        " articulos.id = nota_entrada.id_articulo and articulos.id_proveedor = proveedores.id and " +
+                        " tiendas.id = articulos.id_tienda  and " +
+                        " nota_entrada.fecha >= $1 and nota_entrada.fecha <= $2", [
+                            fecha_inicial,
+                            req.body.fecha_final,
+                            req.body.id_proveedor
+                        ]
+                    ),
+                    // Monto Por Pagar Articulos Solicitados
+                    t.manyOrNone(
+                        " select sum(costo_tot) as costo_tot from (" +
+                        " select sum(costo * num_arts) as costo_tot  " +
+                        " from tiendas, " +
+                        " articulos, nota_entrada, proveedores where nota_entrada.concepto = " +
+                        " 'ingreso articulos solicitados' and proveedores.id = $3 and " +
+                        " articulos.id = nota_entrada.id_articulo and articulos.id_proveedor = proveedores.id and " +
+                        " tiendas.id = articulos.id_tienda  and " +
+                        " nota_entrada.fecha >= $1 and nota_entrada.fecha <= $2) as costos", [
+                            fecha_inicial,
+                            req.body.fecha_final,
+                            req.body.id_proveedor
+                        ]
+                    ),
+                    // Total Artículos Devueltos
+                    t.manyOrNone(
+                        " select tiendas.nombre as nombre_tienda, sum(unidades_vendidas) " +
+                        " as unidades_vendidas, id_articulo, articulo, descripcion, ventas.id_papel, " +
+                        " articulos.costo as costo, articulos.modelo as modelo, fecha_venta from tiendas, " +
+                        " venta_articulos, articulos, ventas, (select min(fecha) as fecha_venta, " +
+                        " transferencia.id_venta as id_venta from ventas, transferencia where " +
+                        " transferencia.id_venta = ventas.id group by id_venta) as fechas_ventas " +
+                        " where venta_articulos.estatus = 'devolucion'  " +
+                        " and ventas.estatus = 'activa' and ventas.id = " +
+                        " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
+                        " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
+                        " and id_proveedor = $3 and tiendas.id = ventas.id_tienda group by id_articulo, " +
+                        " id_papel, costo, modelo, articulo, descripcion, fecha_venta, nombre_tienda", [
+                            fecha_inicial,
+                            req.body.fecha_final,
+                            req.body.id_proveedor
+                        ]),
+                    // Monto Por Recibir Articulos Devueltos
+                    t.oneOrNone(
+                        " select sum(tot_costos) as tot_costos from (select sum(costo * unidades_vendidas) " +
+                        " as tot_costos from venta_articulos, articulos, ventas, (select min(fecha) as fecha_venta, " +
+                        " transferencia.id_venta as id_venta from ventas, transferencia where transferencia.id_venta " +
+                        " = ventas.id group by id_venta) as fechas_ventas where venta_articulos.estatus = 'devolucion' " +
+                        " and ventas.estatus = 'activa' and ventas.id = " +
+                        " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
+                        " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
                         " and id_proveedor = $3 group by id_articulo, venta_articulos.id_venta, costo, modelo, " +
                         " articulo, descripcion, fecha_venta) as costos", [
                             fecha_inicial,
@@ -3278,17 +3342,18 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                             req.body.id_proveedor
                         ]
                     )
-                    // Total Artículos Solicitados
-                    // Monto Por Pagar Articulos Solicitados
-                    // Total Artículos Devueltos
-                    // Monto Por Recibir Articulos Devueltos
                 ])
             })
         }).then(function(data){
             res.render('partials/suppliers/supplier_details',
                        {
                            proveedores: data[0],
-                           ventas: data[1]
+                           ventas: data[1],
+                           total_ventas: data[2],
+                           solicitudes: data[3],
+                           total_sol: data[4],
+                           devoluciones: data[5],
+                           total_dev: data[6]
                        }
             );
     }).catch(function(error){

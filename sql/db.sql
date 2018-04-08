@@ -349,7 +349,8 @@ create table venta_articulos(
     unidades_vendidas integer,
     discount    numeric(1000,2),
     precio numeric(1000,2),/* Falta incluir el precio que tenia el artículo en el momento de la venta */
-    estatus  text  /* liquidada, compostura, devolucion, solicitada, pendiente_pago */
+    estatus  text,  /* liquidada, compostura, devolucion, solicitada, pendiente_pago */
+    fue_sol  integer
 );
 
 /* Transferencia */
