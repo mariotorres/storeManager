@@ -255,7 +255,7 @@ create table nota_entrada(
     id_articulo integer references articulos(id),
     id_usuario integer references usuarios(id),
     num_arts    integer,
-    costo_unitario integer,
+    costo_unitario numeric,
     hora time,
     fecha date,
     concepto text

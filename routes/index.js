@@ -3105,7 +3105,7 @@ router.post('/register/sol', isAuthenticated, function(req, res){
                                 data[0].id_articulo,
                                 req.user.id,
                                 req.body.existencias,
-                                req.body.costo_proveedor,
+                                numericCol(req.body.costo_proveedor),
                                 'ingreso articulos solicitados'
                             ])
             ])
