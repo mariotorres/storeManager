@@ -5,20 +5,31 @@
     <h4 style="color: #E91E63;"><%= proveedor.nombre %></h4>
 
 </p>
+
+<p>
+    <%if(proveedor.por_pagar < 0){%>
+    <label>Saldo por pagar</label>
+    <h3 style="color: #E91E63;"><%= (-1)*proveedor.por_pagar %></h3>
+    <%}else{%>
+    <label>El proveedor tiene un saldo deudor de </label>
+    <h3 style="color: #E91E63;"><%= (-1)*proveedor.por_pagar %></h3>
+    <%}%>
+</p>
+
 <!-- <div class="row">
-    <div class="col-sm-6">
-        <p>
-            <label>Razón Social</label>
-        <h5 style="color: #9E9E9E;"><%= proveedor.razon_social %></h5>
-        </p>
-    </div>
-    <div class="col-sm-6">
-        <p>
-            <label>RFC</label>
-            <h5 style="color: #9E9E9E;"><%= proveedor.rfc %></h5>
-        </p>
-    </div>
-</div>-->
+     <div class="col-sm-6">
+     <p>
+     <label>Razón Social</label>
+     <h5 style="color: #9E9E9E;"><%= proveedor.razon_social %></h5>
+     </p>
+     </div>
+     <div class="col-sm-6">
+     <p>
+     <label>RFC</label>
+     <h5 style="color: #9E9E9E;"><%= proveedor.rfc %></h5>
+     </p>
+     </div>
+     </div>-->
 
 <!-- Desgloce Ventas!!!-->
 <hr>
@@ -161,6 +172,7 @@
                 </tr>
             </tbody>
         </table>
+        <hr>
     </div>
 <%}else{%>
     <div class="alert alert-info" role="alert">El proveedor no tiene ventas registradas en el periodo seleccionado</div>

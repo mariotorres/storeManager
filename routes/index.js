@@ -408,7 +408,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
     sale_date    = req.body.fecha_venta;
     sale_time    = req.body.hora_venta;
   }
-  db_conf.db.tx(function (t) {
+    db_conf.db.tx(function (t) {
     return t.batch([
       t.manyOrNone(
         'select * from carrito, articulos where carrito.id_articulo = articulos.id and ' +
@@ -419,6 +419,10 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
         user_sale_id
       ])
     ]).then(function(data){
+        var id_papel = data[1].id_tienda
+        if(req.user.permiso_administrador){
+            id_papel = req.body.id_papel
+        }
       console.log('ID TIENDA VENTA: ' + data[1].id_tienda);
       return t.batch([
         data[0],
@@ -429,7 +433,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                 numericCol(user_sale_id),
                 numericCol(req.body.precio_tot),
                 "activa",
-                req.body.id_papel
+                id_papel //req.body.id_papel
               ])
       ]);
     }).then(function(data){
@@ -3259,8 +3263,10 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                         " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
                         " fue_sol = 0 and " +
                         " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
+                        " and venta_articulos.id_articulo = articulos.id " +
                         " and id_proveedor = $3 and tiendas.id = ventas.id_tienda group by id_articulo, " +
-                        " id_papel, costo, modelo, articulo, descripcion, fecha_venta, nombre_tienda, venta_articulos.estatus", [
+                        " id_papel, costo, modelo, articulo, descripcion, fecha_venta, " +
+                        " nombre_tienda, venta_articulos.estatus", [
                             fecha_inicial,
                             req.body.fecha_final,
                             req.body.id_proveedor
@@ -3274,6 +3280,7 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                         " and venta_articulos.estatus != 'solicitada' and ventas.estatus = 'activa' and ventas.id = " +
                         " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
                         " fue_sol = 0 and " +
+                        " venta_articulos.id_articulo = articulos.id and " +
                         " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
                         " and id_proveedor = $3 group by id_articulo, venta_articulos.id_venta, costo, modelo, " +
                         " articulo, descripcion, fecha_venta) as costos", [
@@ -3388,7 +3395,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             // Domingos
             this.oneOrNone("select count(*) as domingos from usuarios, asistencia where id_usuario = $1 " +
                            "and fecha <= date_trunc('day', now()) and fecha > date_trunc('day', now() - interval '1 week') " +
-                           "and EXTRACT(DOW from asistencia.fecha::DATE) = 7 and usuarios.id = asistencia.id_usuario ", id),
+                           "and EXTRACT(DOW from asistencia.fecha::DATE) = 0 and usuarios.id = asistencia.id_usuario ", id),
             /* Préstamos */
             this.manyOrNone("select * from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
             this.one("select sum(pago_semanal) as pago from prestamos where id_usuario = $1 and fecha_liquidacion >= date_trunc('day', now())", id),
