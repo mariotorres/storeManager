@@ -3328,6 +3328,7 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                         " where venta_articulos.estatus = 'devolucion'  " +
                         " and ventas.estatus = 'activa' and ventas.id = " +
                         " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
+                        " venta_articulos.id_articulo = articulos.id and " +
                         " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
                         " and id_proveedor = $3 and tiendas.id = ventas.id_tienda group by id_articulo, " +
                         " id_papel, costo, modelo, articulo, descripcion, fecha_venta, nombre_tienda", [
@@ -3343,6 +3344,7 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                         " = ventas.id group by id_venta) as fechas_ventas where venta_articulos.estatus = 'devolucion' " +
                         " and ventas.estatus = 'activa' and ventas.id = " +
                         " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
+                        " venta_articulos.id_articulo = articulos.id and " +
                         " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
                         " and id_proveedor = $3 group by id_articulo, venta_articulos.id_venta, costo, modelo, " +
                         " articulo, descripcion, fecha_venta) as costos", [
