@@ -2398,9 +2398,19 @@ router.post('/employee/check-out', function(req,res ){
 router.post('/cancel/note', isAuthenticated,function(req, res){
     db_conf.db.tx(function(t){
         return t.batch([
-            t.manyOrNone('select * from venta_articulos where id_venta = $1 ',[
-                numericCol(req.body.note_id)
-            ]),
+            t.manyOrNone(" select id_articulo, id_articulo_unidad, estatus, id_proveedor, " +
+                         " costo, precio, unidades_vendidas, fue_sol, max(costo_def) as costo_def from " +
+                         " (select venta_articulos.id_articulo, id_articulo_unidad, estatus, " +
+                         " id_proveedor,  costo, articulos.precio, unidades_vendidas, fue_sol, " +
+                         " case when fue_sol > 0 then costo_unitario else costo end as costo_def " +
+                         " from venta_articulos, proveedores, nota_entrada, articulos where " +
+                         " id_venta = $1 and proveedores.id = articulos.id_proveedor and  " +
+                         " articulos.id = venta_articulos.id_articulo and articulos.id = " +
+                         " nota_entrada.id_articulo) as temp group by id_articulo, " +
+                         " id_articulo_unidad, estatus, id_proveedor, costo, precio, " +
+                         " unidades_vendidas, fue_sol",[
+                             numericCol(req.body.note_id)
+                         ]),
             t.one('update ventas set estatus = $2 where id = $1 returning id', [req.body.note_id, "cancelada"])
         ]).then(function( articulos ){
             var queries = [];
@@ -2420,7 +2430,7 @@ router.post('/cancel/note', isAuthenticated,function(req, res){
                 proveedores.push(
                     t.one('update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1 returning id', [
                         numericCol(data[i].id_proveedor),
-                        numericCol(data[i].costo) * numericCol(data[data.length - 1][i].unidades_vendidas)
+                        numericCol(data[i].costo_def) * numericCol(data[data.length - 1][i].unidades_vendidas)
                     ])
                 )
             }
@@ -3306,7 +3316,7 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                     // Monto Por Pagar Articulos Solicitados
                     t.oneOrNone(
                         " select sum(costo_tot) as costo_tot from (" +
-                        " select sum(costo * num_arts) as costo_tot  " +
+                        " select sum(costo_unitario * num_arts) as costo_tot  " +
                         " from tiendas, " +
                         " articulos, nota_entrada, proveedores where nota_entrada.concepto = " +
                         " 'ingreso articulos solicitados' and proveedores.id = $3 and " +
@@ -3318,36 +3328,44 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                             req.body.id_proveedor
                         ]),
                     // Total Artículos Devueltos
-                    t.manyOrNone(
-                        " select tiendas.nombre as nombre_tienda, sum(unidades_vendidas) " +
-                        " as unidades_vendidas, id_articulo, articulo, descripcion, ventas.id_papel, " +
-                        " articulos.costo as costo, articulos.modelo as modelo, fecha_venta from tiendas, " +
-                        " venta_articulos, articulos, ventas, (select min(fecha) as fecha_venta, " +
-                        " transferencia.id_venta as id_venta from ventas, transferencia where " +
-                        " transferencia.id_venta = ventas.id group by id_venta) as fechas_ventas " +
-                        " where venta_articulos.estatus = 'devolucion'  " +
-                        " and ventas.estatus = 'activa' and ventas.id = " +
-                        " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
-                        " venta_articulos.id_articulo = articulos.id and " +
-                        " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
-                        " and id_proveedor = $3 and tiendas.id = ventas.id_tienda group by id_articulo, " +
-                        " id_papel, costo, modelo, articulo, descripcion, fecha_venta, nombre_tienda", [
-                            fecha_inicial,
-                            req.body.fecha_final,
-                            req.body.id_proveedor
-                        ]),
+                    t.manyOrNone(" select nombre_tienda, unidades_vendidas, id_articulo, articulo, " +
+                                 " descripcion, id_papel, modelo, fecha_venta, fue_sol, max(costo_def) " +
+                                 " as costo from ( select tiendas.nombre as nombre_tienda, " +
+                                 " unidades_vendidas, venta_articulos.id_articulo, articulo, descripcion, " +
+                                 " ventas.id_papel, articulos.modelo as modelo, fecha_venta, fue_sol, " +
+                                 " case when fue_sol > 0 then nota_entrada.costo_unitario else articulos.costo " +
+                                 " end as costo_def from nota_entrada, tiendas, venta_articulos, articulos, " +
+                                 " ventas, (select min(fecha) as fecha_venta, transferencia.id_venta as " +
+                                 " id_venta from ventas, transferencia where transferencia.id_venta = ventas.id " +
+                                 " group by id_venta) as fechas_ventas where nota_entrada.id_articulo = " +
+                                 " venta_articulos.id_articulo and venta_articulos.estatus = 'devolucion'  " +
+                                 " and ventas.estatus = 'activa' and ventas.id = venta_articulos.id_venta and " +
+                                 " fechas_ventas.fecha_venta <= $2 and  venta_articulos.id_articulo = " +
+                                 " articulos.id and  fechas_ventas.fecha_venta >= $1 and " +
+                                 " fechas_ventas.id_venta = ventas.id and id_proveedor = $3 and tiendas.id = " +
+                                 " ventas.id_tienda) as temp group by nombre_tienda, unidades_vendidas, " +
+                                 " id_articulo, articulo, descripcion, id_papel, modelo, fecha_venta, fue_sol", [
+                        fecha_inicial,
+                        req.body.fecha_final,
+                        req.body.id_proveedor
+                    ]),
                     // Monto Por Recibir Articulos Devueltos
                     t.oneOrNone(
-                        " select sum(tot_costos) as tot_costos from (select sum(costo * unidades_vendidas) " +
-                        " as tot_costos from venta_articulos, articulos, ventas, (select min(fecha) as fecha_venta, " +
-                        " transferencia.id_venta as id_venta from ventas, transferencia where transferencia.id_venta " +
-                        " = ventas.id group by id_venta) as fechas_ventas where venta_articulos.estatus = 'devolucion' " +
-                        " and ventas.estatus = 'activa' and ventas.id = " +
-                        " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
-                        " venta_articulos.id_articulo = articulos.id and " +
-                        " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
-                        " and id_proveedor = $3 group by id_articulo, venta_articulos.id_venta, costo, modelo, " +
-                        " articulo, descripcion, fecha_venta) as costos", [
+                        " select sum(costo_def * unidades_vendidas) as tot_costos from (select max(costo_def) " +
+                        " as costo_def, id_articulo, id_venta, id_articulo, unidades_vendidas from " +
+                        " (select case when fue_sol > 0 then costo_unitario else costo end as costo_def, " +
+                        " unidades_vendidas, venta_articulos.id_venta, venta_articulos.id_articulo from " +
+                        " venta_articulos, nota_entrada, articulos, ventas, (select min(fecha) as fecha_venta, " +
+                        " transferencia.id_venta as id_venta from ventas, transferencia where " +
+                        " transferencia.id_venta  = ventas.id group by id_venta) as fechas_ventas where " +
+                        " venta_articulos.estatus = 'devolucion'  and ventas.estatus = 'activa' and ventas.id =  " +
+                        " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and  " +
+                        " venta_articulos.id_articulo = articulos.id and  fechas_ventas.fecha_venta >= $1 " +
+                        " and fechas_ventas.id_venta = ventas.id  and nota_entrada.id_articulo = " +
+                        " venta_articulos.id_articulo and id_proveedor = $3 group by venta_articulos.id_articulo, " +
+                        " venta_articulos.id_venta, modelo,  articulo, descripcion, fecha_venta, fue_sol, " +
+                        " costo_def, venta_articulos.id_articulo, unidades_vendidas) as temp group by " +
+                        " id_articulo, id_venta, id_articulo, unidades_vendidas) as temp1", [
                             fecha_inicial,
                             req.body.fecha_final,
                             req.body.id_proveedor
@@ -3823,14 +3841,21 @@ router.post('/notes/cancel', isAuthenticated, function(req, res){
 });
 
 router.post('/notes/update', isAuthenticated, function(req, res){
-    db_conf.db.manyOrNone(' select id_articulo, id_articulo_unidad, estatus, id_proveedor, costo, articulos.precio, unidades_vendidas ' +
-                          ' from venta_articulos, proveedores, articulos ' +
-                          ' where id_venta = $1 and proveedores.id = articulos.id_proveedor and ' +
-                          ' articulos.id = venta_articulos.id_articulo ', [
-                              req.body.id
-                          ]).then(function(data){
-                              var queries = []
-                              db_conf.db.task(function(t){
+    db_conf.db.manyOrNone(" select id_articulo, id_articulo_unidad, estatus, id_proveedor, " +
+                          " costo, precio, unidades_vendidas, fue_sol, max(costo_def) as costo_def from " +
+                          " (select venta_articulos.id_articulo, id_articulo_unidad, estatus, " +
+                          " id_proveedor,  costo, articulos.precio, unidades_vendidas, fue_sol, " +
+                          " case when fue_sol > 0 then costo_unitario else costo end as costo_def " +
+                          " from venta_articulos, proveedores, nota_entrada, articulos where " +
+                          " id_venta = $1 and proveedores.id = articulos.id_proveedor and  " +
+                          " articulos.id = venta_articulos.id_articulo and articulos.id = " +
+                          " nota_entrada.id_articulo) as temp group by id_articulo, " +
+                          " id_articulo_unidad, estatus, id_proveedor, costo, precio, " +
+                          " unidades_vendidas, fue_sol", [
+        req.body.id
+    ]).then(function(data){
+        var queries = []
+        db_conf.db.task(function(t){
                                   for(var i = 0; i < data.length; i++){
                                       for(var j = 0; j < req.body.id_articulo.length; j++){
                                           // Get Estatus & Id
@@ -3856,7 +3881,7 @@ router.post('/notes/update', isAuthenticated, function(req, res){
                                                   queries.push(
                                                       t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
                                                             " where id = $2 returning id", [
-                                                                data[i].costo, // * data[i].unidades_vendidas,
+                                                                data[i].costo_def, // * data[i].unidades_vendidas,
                                                                 data[i].id_proveedor
                                                             ]))
                                                   queries.push(
