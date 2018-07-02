@@ -339,37 +339,46 @@ create table ventas (
     estatus text /* cancelada, activa */
 );
 
-/* Venta articulos */
+/* Annotations */
+drop table if exists anotaciones cascade;
+create table anotaciones (
+        id bigserial primary key,
+        id_venta integer references ventas(id) on delete set null,
+        texto text,
+        fecha date
+        );
+
+    /* Venta articulos */
 drop table if exists venta_articulos;
 create table venta_articulos(
-    id bigserial primary key,
-    id_articulo integer references articulos(id),
-    id_articulo_unidad text,
-    id_venta integer references ventas(id),
-    unidades_vendidas integer,
-    discount    numeric(1000,2),
-    precio numeric(1000,2),/* Falta incluir el precio que tenia el artículo en el momento de la venta */
-    estatus  text,  /* liquidada, compostura, devolucion, solicitada, pendiente_pago */
-    fue_sol  integer
-);
+        id bigserial primary key,
+        id_articulo integer references articulos(id),
+        id_articulo_unidad text,
+        id_venta integer references ventas(id),
+        unidades_vendidas integer,
+        discount    numeric(1000,2),
+        precio numeric(1000,2),/* Falta incluir el precio que tenia el artículo en el momento de la venta */
+        estatus  text,  /* liquidada, compostura, devolucion, solicitada, pendiente_pago */
+        fue_sol  integer
+        );
 
-/* Transferencia */
-/* NOTAR: liquidar un saldo deudor con clientes es el equivalente a una salida de efectivo */
+    /* Transferencia */
+    /* NOTAR: liquidar un saldo deudor con clientes es el equivalente a una salida de efectivo */
 drop table if exists transferencia;
 create table transferencia (
-    id bigserial primary key,
-    id_venta integer references ventas(id),
-    id_papel integer,
-    motivo_transferencia text, /* venta, abono, devolucion */
-    monto_efectivo numeric(1000, 2),
-    monto_credito  numeric(1000, 2),
-    monto_debito  numeric(1000, 2),
-    fecha date,
-    hora time,
-    id_terminal integer references terminales(id) on delete set null
-);
+        id bigserial primary key,
+        id_venta integer references ventas(id),
+        id_papel integer,
+        motivo_transferencia text, /* venta, abono, devolucion */
+        monto_efectivo numeric(1000, 2),
+        monto_credito  numeric(1000, 2),
+        monto_debito  numeric(1000, 2),
+        fecha date,
+        hora time,
+        id_terminal integer references terminales(id) on delete set null
+        );
 
-/*
+    /*
  * --------------------------------------------------
  * Lógica de ventas (END)
  * --------------------------------------------------
@@ -378,47 +387,47 @@ create table transferencia (
 
 drop table if exists carrito_notas;
 create table carrito_notas(
-id_venta integer references ventas (id ),
-id_usuario integer references usuarios(id)
-);
+        id_venta integer references ventas (id ),
+        id_usuario integer references usuarios(id)
+        );
 
-/* Devolución de artículos */
+    /* Devolución de artículos */
 drop table if exists devolucion_prov_articulos;
 create table devolucion_prov_articulos(
-    id serial primary key,
-    id_articulo integer references articulos(id),
-    id_proveedor integer references proveedores(id),
-    unidades_regresadas integer,
-    fecha date,
-    costo_unitario numeric(1000,2)
-);
+        id serial primary key,
+        id_articulo integer references articulos(id),
+        id_proveedor integer references proveedores(id),
+        unidades_regresadas integer,
+        fecha date,
+        costo_unitario numeric(1000,2)
+        );
 
 
 
-/*
+    /*
 tipo_transaccion
 retorno_mercancia
 pago_mercancia
 ¿ esto debe existir ?
 */
 
-/* transacciones */
+    /* transacciones */
 drop table if exists transacciones;
- create table transacciones(
-    id serial primary key,
-    id_proveedor integer references proveedores(id),
-    id_tipo_transaccion integer,
-    notas text,
-    monto numeric(1000,2)
-    /* ... */
-);
+create table transacciones(
+        id serial primary key,
+        id_proveedor integer references proveedores(id),
+        id_tipo_transaccion integer,
+        notas text,
+        monto numeric(1000,2)
+        /* ... */
+        );
 
-/* Operaciones nomina */
+    /* Operaciones nomina */
 drop table if exists operaciones_nomina cascade;
 create table operaciones_nomina(
-    id serial primary key,
-    operacion text
-);
+        id serial primary key,
+        operacion text
+        );
 
 insert into operaciones_nomina("operacion") values
 ('Salario'),('Bono'),('Deducción');

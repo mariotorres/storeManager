@@ -70,27 +70,37 @@
         </div>
     </div>
 
+
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                <label>Notas o comentarios: </label>
+                <textarea class="form-control" rows="5" name="anotacion"></textarea>
+            </p>
+        </div>
+    </div>
+    
     <p id="pay_tarj" style="visibility: hidden">
         <label>Terminal: </label>
         <%if (terminales.length > 0 ){%>
-        <select name="terminal" class="form-control" required>
-            <%
-            for (var i =0; i < terminales.length; i++){
-            %>
-            <option value="<%= terminales[i].id %>"> <%= terminales[i].nombre_facturador %> </option>
-            <%
-            }
-            }else {
-            %>
-            <option value="">Ninguno</option>
-            <% }%>
-        </select>
+            <select name="terminal" class="form-control" required>
+                <%
+                for (var i =0; i < terminales.length; i++){
+                %>
+                    <option value="<%= terminales[i].id %>"> <%= terminales[i].nombre_facturador %> </option>
+                <%
+                }
+                }else {
+                %>
+                    <option value="">Ninguno</option>
+                <% }%>
+            </select>
     </p>
     <br>
     <p id="pay_tarj_op" style="visibility: hidden">
-    <label>Tipo tarjeta:</label>
-    <label class="radio-inline"><input type="radio" name="optradio" value="cred" disabled>crédito</label>
-    <label class="radio-inline"><input type="radio" name="optradio" value="deb" disabled>débito</label>
+        <label>Tipo tarjeta:</label>
+        <label class="radio-inline"><input type="radio" name="optradio" value="cred" disabled>crédito</label>
+        <label class="radio-inline"><input type="radio" name="optradio" value="deb" disabled>débito</label>
     </p>
     <br>
     <br>
