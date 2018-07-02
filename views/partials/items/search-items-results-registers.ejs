@@ -1,18 +1,19 @@
 <hr>
+<h2><span style="color:#9e9e9e"><strong>Saldo A Cuenta <%=por_pagar.nombre%>:  </strong></span><span style="color:#E91E63"><strong><%= (-1) * por_pagar.a_cuenta %></strong></span></h2>
 <% if (items.length> 0){
-for (var i=0; i< items.length; i++){%>
+    for (var i=0; i< items.length; i++){%>
 
 <div class="panel panel-default">
     <div class="panel-body">
         <form>
             <h3>Artículo: <span style="color: #e0e0e0;"><%= items[i].articulo %></span> </h3>
-            <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Proveedor: </strong><%= items[i].nombre_prov %> | <strong>Registros: </strong><%= items[i].num_arts %> | <strong>Fecha: </strong><span style="color:#E91E63"><%= items[i].fecha.toDateString() %></span></p>
+            <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Proveedor: </strong><%= items[i].nombre_prov %> | <strong>Precio unitario: </strong><%= items[i].precio %> | <strong>Registros: </strong><%= items[i].num_arts %> | <strong>Fecha: </strong><span style="color:#E91E63"><%= items[i].fecha.toDateString() %></span></p>
             <hr>
             <!--<input class="form-control" type="text" value="<%= items[i].articulo %>" name="articulo" disabled>
             <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
             <input type="text" name="item_id" data-item_id="<%= items[i].id %>" value="<%= items[i].id %>" hidden>
              -->
-            <h3><span style="color:#9e9e9e"><strong>Precio Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].precio %></strong></span></h3>
+            <h3><span style="color:#9e9e9e"><strong>Costo Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].costo %></strong></span></h3>
             <br>
         </form>
     </div>

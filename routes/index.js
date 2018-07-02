@@ -643,10 +643,18 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
             this.one('select count(*) from ventas as count where ' +
                      'id_tienda = $1 and id_papel = $2',
                      [req.body['data[1][value]'], req.body['data[0][value]']]),
-            this.manyOrNone('select * from ventas where estatus = $4 and id_tienda = $1 and id_papel = $5 ' +
-                            ' order by id desc limit $2 offset $3',
-                            [ req.body['data[1][value]'], pageSize, offset, "activa", req.body['data[0][value]']])
-                     ]);
+            this.manyOrNone(" select * from ventas, transferencia where estatus = $4 and id_tienda = $1 and ventas.id_papel = $5 and " +
+                            " transferencia.id_venta = ventas.id and transferencia.motivo_transferencia = 'venta' and fecha <= $7 and " +
+                            " fecha >= $6 " +
+                            " order by ventas.id desc limit $2 offset $3 ",
+                            [ req.body['data[1][value]'],
+                              pageSize,
+                              offset,
+                              "activa",
+                              req.body['data[0][value]'],
+                              req.body['data[2][value]'],
+                              req.body['data[3][value]']])
+        ]);
     }).then(function(data){
         res.render('partials/notes/notes-list',{
             status : 'Ok',
@@ -2966,7 +2974,7 @@ router.post('/search/edits/results', isAuthenticated, function(req, res){
 
 router.post('/search/registers/results', isAuthenticated, function(req, res){
     console.log(req.body);
-    query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
+    query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, costo, modelo, nombre_imagen, " +
         " descripcion, articulos.id as id, tiendas.id as id_tienda, nota_entrada.fecha as fecha, num_arts " +
         " from articulos, proveedores, tiendas, nota_entrada where id_proveedor = $1 and " +
         " articulos.id_proveedor = proveedores.id and nota_entrada.id_articulo = articulos.id and nota_entrada.id_nota_registro = $5 and " +
@@ -2975,20 +2983,22 @@ router.post('/search/registers/results', isAuthenticated, function(req, res){
     db_conf.db.task(function(t){
         return this.batch([
             t.manyOrNone( query, [
-                    req.body.id_proveedor,
-                    req.body.id_tienda,
-                    req.body.fecha_inicial,
-                    req.body.fecha_final,
-                    req.body.id_nota_registro
-                ]),
+                req.body.id_proveedor,
+                req.body.id_tienda,
+                req.body.fecha_inicial,
+                req.body.fecha_final,
+                req.body.id_nota_registro
+            ]),
             t.oneOrNone('select * from usuarios where id = $1', [ req.user.id ]),
-            t.manyOrNone('select * from terminales')
+            t.manyOrNone('select * from terminales'),
+            t.oneOrNone('select nombre, a_cuenta from proveedores where proveedores.id = $1', [req.body.id_proveedor])
         ])
     }).then(function(data){
         res.render('partials/items/search-items-results-registers',{
             items: data[0],
             user: data[1],
-            terminales: data[2]
+            terminales: data[2],
+            por_pagar: data[3]
         });
     }).catch(function(error){
         console.log(error);
