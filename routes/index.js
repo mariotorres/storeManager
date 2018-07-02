@@ -4002,7 +4002,10 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
                                   ]),
             db_conf.db.oneOrNone(" select sum(precio) as saldo_devuelto from venta_articulos where estatus = 'devolucion' " +
                                  " and  id_venta = $1 ", [req.body.id_sale]),
-            db_conf.db.manyOrNone(" select * from terminales")
+            db_conf.db.manyOrNone(" select * from terminales"),
+            db_conf.db.manyOrNone(" select * from anotaciones where id_venta = $1", [
+                req.body.id_sale
+            ])
         ])
     }).then(function(data){
         console.log(data);
@@ -4010,7 +4013,8 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
             sales:     data[0],
             items_ids: data[1],
             saldo_devuelto: data[2],
-            terminales: data[3]
+            terminales: data[3],
+            comentarios: data[4]
         })
     }).catch(function(error){
         console.log(error);

@@ -64,60 +64,69 @@
             </p>
         </div>
     </div>
+    <div>
+        <h3 style="color:#9E9E9E"><strong>Notas o comentarios (historicos)</strong></h3>
+        <%if(comentarios.length > 0){ for(var i = 0; i < comentarios.length; i++){%>
+            <label>Comentario hecho <span style="color: #E91E63;"><%=comentarios[i].fecha.toLocaleDateString()%></span></label>
+            <textarea rows="3" class = "form-control" readonly><%=comentarios[i].texto%></textarea>
+        <%}}else{%>
+            <option value="">Ninguno</option>
+        <%}%>
+    </div>
     <hr>
     <h3 style="color:#9E9E9E"><strong>Detalle</strong></h3>
     <div>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Artículo</th>
-            <th>Modelo</th>
-            <th>Proveedor</th>
-            <th>Precio</th>
-            <th>Unidades vendidas</th>
-            <th>Estatus</th>
-        </tr>
-        </thead>
-        <tbody>
-        <%
-        if (sales.length > 0 ){
-        for (var i =0; i < sales.length; i++){
-        %>
-            <tr style="text-align: center !important">
-                <td hidden><input hidden type="text" name="id_articulo"  class="form-control" value="<%=sales[i].id_articulo%>"></td>
-                <td hidden><input hidden type="text" name="id_articulo_unidad"  class="form-control" value="<%=sales[i].id_articulo_unidad%>"></td>
-                <td  style="text-align: center !important"><%= sales[i].articulo%></td>
-                <td  style="text-align: center !important"><%= sales[i].modelo%></td>
-                <td  style="text-align: center !important"><%= sales[i].nombre_proveedor%></td>
-                <td  style="text-align: center !important"><%= sales[i].precio_articulo%></td>
-                <td  style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
-                <!-- Estatus -->
-            <td  style="text-align: center !important">
-                <select name = "estatus" class="form-control" required>
-                    <%
-                    if (sales[i].estatus == "liquidada"){
-                    %>
-                    <option value="liquidada" selected>Liquidada</option>
-                    <option value="compostura">Compostura</option>
-                    <option value="pendiente_pago">Pendiente pago</option>
-                    <!-- -<option value="solicitada">Solicitada</option>-->
-                    <option value="devolucion">Devolución</option>
-                    <%
-                    }else if(sales[i].estatus == "compostura") {
-                    %>
-                    <option value="liquidada">Liquidada</option>
-                    <option value="compostura" selected>Compostura</option>
-                    <option value="pendiente_pago">Pendiente pago</option>
-                    <!-- -<option value="solicitada">Solicitada</option>-->
-                    <option value="devolucion">Devolución</option>
-                    <%
-                    }else if(sales[i].estatus == "pendiente_pago") {
-                    %>
-                    <option value="liquidada">Liquidada</option>
-                    <option value="compostura">Compostura</option>
-                    <option value="pendiente_pago" selected>Pendiente pago</option>
-                    <!-- -<option value="solicitada">Solicitada</option>-->
-                    <option value="devolucion">Devolución</option>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Artículo</th>
+                    <th>Modelo</th>
+                    <th>Proveedor</th>
+                    <th>Precio</th>
+                    <th>Unidades vendidas</th>
+                    <th>Estatus</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                if (sales.length > 0 ){
+                    for (var i =0; i < sales.length; i++){
+                %>
+                    <tr style="text-align: center !important">
+                        <td hidden><input hidden type="text" name="id_articulo"  class="form-control" value="<%=sales[i].id_articulo%>"></td>
+                        <td hidden><input hidden type="text" name="id_articulo_unidad"  class="form-control" value="<%=sales[i].id_articulo_unidad%>"></td>
+                        <td  style="text-align: center !important"><%= sales[i].articulo%></td>
+                        <td  style="text-align: center !important"><%= sales[i].modelo%></td>
+                        <td  style="text-align: center !important"><%= sales[i].nombre_proveedor%></td>
+                        <td  style="text-align: center !important"><%= sales[i].precio_articulo%></td>
+                        <td  style="text-align: center !important"><%= sales[i].unidades_vendidas%></td>
+                        <!-- Estatus -->
+                        <td  style="text-align: center !important">
+                            <select name = "estatus" class="form-control" required>
+                                <%
+                                if (sales[i].estatus == "liquidada"){
+                                %>
+                                    <option value="liquidada" selected>Liquidada</option>
+                                    <option value="compostura">Compostura</option>
+                                    <option value="pendiente_pago">Pendiente pago</option>
+                                    <!-- -<option value="solicitada">Solicitada</option>-->
+                                    <option value="devolucion">Devolución</option>
+                                <%
+                                }else if(sales[i].estatus == "compostura") {
+                                %>
+                                <option value="liquidada">Liquidada</option>
+                                <option value="compostura" selected>Compostura</option>
+                                <option value="pendiente_pago">Pendiente pago</option>
+                                <!-- -<option value="solicitada">Solicitada</option>-->
+                                <option value="devolucion">Devolución</option>
+                <%
+                }else if(sales[i].estatus == "pendiente_pago") {
+                %>
+                <option value="liquidada">Liquidada</option>
+                <option value="compostura">Compostura</option>
+                <option value="pendiente_pago" selected>Pendiente pago</option>
+                <!-- -<option value="solicitada">Solicitada</option>-->
+                <option value="devolucion">Devolución</option>
                     <%}else if (sales[i].estatus == "solicitada"){%>
                     <option value="liquidada" disabled>Liquidada</option>
                     <option value="compostura" disabled>Compostura</option>
@@ -131,16 +140,16 @@
                     <!-- -<option value="solicitada" disabled>Solicitada</option>-->
                     <option value="devolucion" selected>Devolución</option>
                     <%}%>
-                </select>
-            </td>
+                            </select>
+                        </td>
         <%
         }
         }else {
         %>
-            <option value="">Ninguna</option>
+                        <option value="">Ninguna</option>
         <% }%>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
     </div>
     <hr>
     <h3 style="color:#9E9E9E"><strong>Abono</strong></h3>
@@ -174,6 +183,19 @@
             <input type="text" name="hora_venta" id="sale_timepicker1" class="form-control" required>
         </div>
     </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                <label>Notas o comentarios: </label>
+                <textarea class="form-control" rows="5" name="anotacion"></textarea>
+            </p>
+        </div>
+    </div>
+
+
+
     <p id="pay_tarj">
         <label>Terminal: </label>
         <%if (terminales.length > 0 ){%>
@@ -197,7 +219,7 @@
             <label class="radio-inline"><input type="radio" name="optradio" value="efe" checked>Efectivo</label>
             <label class="radio-inline"><input type="radio" name="optradio" value="cred">Tarjeta crédito</label>
             <label class="radio-inline"><input type="radio" name="optradio" value="deb">Tarjeta débito</label>
-    </div>
+        </div>
     </div>
 
     <br>
