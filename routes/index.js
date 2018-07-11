@@ -4042,6 +4042,7 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
 });
 
 router.post('/notes/details', isAuthenticated, function(req, res){
+    console.log('HOLA')
     console.log(req.body)
     db_conf.db.task(function(t){
         return t.batch([
@@ -4074,6 +4075,9 @@ router.post('/notes/details', isAuthenticated, function(req, res){
             t.manyOrNone(" select * from terminales"),
             t.manyOrNone('select * from transferencia where id_venta = $1', [
                 req.body.id
+            ]),
+            t.manyOrNone(" select * from anotaciones where id_venta = $1", [
+                req.body.id
             ])
         ])
     }).then(function(data){
@@ -4083,7 +4087,8 @@ router.post('/notes/details', isAuthenticated, function(req, res){
             items_ids:      data[1],
             saldo_devuelto: data[2],
             terminales:     data[3],
-            trans_sale:     data[4]
+            trans_sale:     data[4],
+            comentarios:    data[5]
         })
     }).catch(function(error){
         console.log(error);

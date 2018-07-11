@@ -64,6 +64,19 @@
             </p>
         </div>
     </div>
+
+
+    <div>
+        <h3 style="color:#9E9E9E"><strong>Notas o comentarios (historicos)</strong></h3>
+        <%if(comentarios.length > 0){ for(var i = 0; i < comentarios.length; i++){%>
+            <label>Comentario hecho <span style="color: #E91E63;"><%=comentarios[i].fecha.toLocaleDateString()%></span></label>
+            <textarea rows="3" class = "form-control" readonly><%=comentarios[i].texto%></textarea>
+        <%}}else{%>
+            <option value="">Ninguno</option>
+        <%}%>
+    </div>
+
+
     <hr>
     <h3 style="color:#9E9E9E"><strong>Detalle</strong></h3>
     <div>
