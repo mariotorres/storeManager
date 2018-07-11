@@ -3995,7 +3995,7 @@ router.post('/notes/payment', isAuthenticated, function(req, res){
     console.log(req.body);
     db_conf.db.task(function(t){
         return t.batch([
-            db_conf.db.manyOrNone(" select ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
+            db_conf.db.manyOrNone(" select id_papel, ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
                                   " fechas.fecha_venta, precio_venta, acum_tot_transfer_pos.sum as monto_pagado, " +
                                   " (precio_venta - acum_tot_transfer_pos.sum) " +
                                   " as saldo_pendiente, modelo, proveedores.nombre as nombre_proveedor, id_articulo_unidad, " +
@@ -4046,7 +4046,7 @@ router.post('/notes/details', isAuthenticated, function(req, res){
     console.log(req.body)
     db_conf.db.task(function(t){
         return t.batch([
-            t.manyOrNone(" select ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
+            t.manyOrNone(" select id_papel, ventas.id as id_venta, tiendas.nombre as nombre_tienda, usuarios.nombres as nombre_usuario, " +
                                   " fechas.fecha_venta, precio_venta, acum_tot_transfer_pos.sum as monto_pagado, " +
                                   " (precio_venta - acum_tot_transfer_pos.sum) " +
                                   " as saldo_pendiente, modelo, proveedores.nombre as nombre_proveedor, id_articulo_unidad, " +
