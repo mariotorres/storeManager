@@ -494,6 +494,11 @@ function modalEvents(button, modal, page ) {
                 });
                 modal.find('form').submit(function(e){
                     modal.find('#search_results').load('/search/registers/results', $(this).serializeArray(), function(){
+                        modal.find('form').submit(function(e){
+                            modal.find('#modal_content').load('/item/registers/edit', $(this).serializeArray(), function(){
+
+                            })
+                        })
                     })
                     e.preventDefault()
                 });

@@ -2811,6 +2811,24 @@ router.post('/items/list/item_edits', isAuthenticated, function(req, res){
     })
 })
 
+router.post('/item/registers/edit', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.oneOrNone(
+        " select id_articulo, id_tienda, id_proveedor, proveedores.nombre as nombre_proveedor, " +
+        " tiendas.nombre as nombre_tienda, articulo, descripcion, id_marca, modelo, talla, notas " +
+        " precio, costo, codigo_barras, nombre_imagen, num_arts, id_nota_registro  from  " +
+        " nota_entrada, proveedores, articulos, tiendas where tiendas.id = articulos.id_tienda " +
+        " and articulos.id = nota_entrada.id_articulo and articulos.id_proveedor = proveedores.id " +
+        " and nota_entrada.id = $1 ", [
+            req.body.note_id
+        ]).then(function(data){
+            res.render('partials/items', {
+                item_data: data
+            })
+        })
+})
+
+
 router.post('/items/list/item_registers', isAuthenticated, function(req, res){
     db_conf.db.task(function(t){
         return this.batch([
@@ -2982,7 +3000,7 @@ router.post('/search/edits/results', isAuthenticated, function(req, res){
 
 router.post('/search/registers/results', isAuthenticated, function(req, res){
     console.log(req.body);
-    query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, costo, modelo, nombre_imagen, " +
+    query = "select id_nota_registro, articulo, proveedores.nombre as nombre_prov, n_existencias, precio, costo, modelo, nombre_imagen, " +
         " descripcion, articulos.id as id, tiendas.id as id_tienda, nota_entrada.fecha as fecha, num_arts " +
         " from articulos, proveedores, tiendas, nota_entrada where id_proveedor = $1 and " +
         " articulos.id_proveedor = proveedores.id and nota_entrada.id_articulo = articulos.id and nota_entrada.id_nota_registro = $5 and " +
