@@ -439,12 +439,13 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
     }).then(function(data){
         var queries= [];
         // Agregar anotaciones
-        queries.push(t.one('insert into anotaciones (id_venta, fecha, texto) values ($1, $2, $3) returning id', [
-            data[1].id,
-            req.body.fecha_venta,
-            req.body.anotacion
-        ])
-        )
+        if(req.body.anotacion !== ""){
+            queries.push(t.one('insert into anotaciones (id_venta, fecha, texto) values ($1, $2, $3) returning id', [
+                data[1].id,
+                req.body.fecha_venta,
+                req.body.anotacion
+            ]))
+        }
         /*
          * Agregar transferencia
          */
@@ -3869,10 +3870,17 @@ router.post('/notes/update', isAuthenticated, function(req, res){
                           " nota_entrada.id_articulo) as temp group by id_articulo, " +
                           " id_articulo_unidad, estatus, id_proveedor, costo, precio, " +
                           " unidades_vendidas, fue_sol", [
-        req.body.id
-    ]).then(function(data){
-        var queries = []
-        db_conf.db.task(function(t){
+                              req.body.id
+                          ]).then(function(data){
+                              var queries = []
+                              db_conf.db.task(function(t){
+                                  if(req.body.anotacion !== ""){
+                                      queries.push(t.oneOrNone( " insert into anotaciones (id_venta, texto, fecha) values ($1, $2, $3) returning id ", [
+                                          req.body.id,
+                                          req.body.anotacion,
+                                          req.body.fecha_venta
+                                      ]));
+                                  }
                                   for(var i = 0; i < data.length; i++){
                                       for(var j = 0; j < req.body.id_articulo.length; j++){
                                           // Get Estatus & Id
@@ -3941,11 +3949,13 @@ router.post('/notes/update', isAuthenticated, function(req, res){
 
 router.post('/notes/abono', isAuthenticated, function(req, res){
     console.log(req.body);
+    var the_query = []
     db_conf.db.task(function(t){
-        return t.batch([
+        the_query.push(
             this.manyOrNone('select * from venta_articulos where id_venta = $1', [
                 req.body.id
-            ]),
+            ]));
+        the_query.push(
             this.manyOrNone(" insert into transferencia (id_venta, monto_efectivo, monto_credito, " +
                             " monto_debito, id_terminal, fecha, hora, id_papel, motivo_transferencia) " +
                             " values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id", [
@@ -3958,8 +3968,17 @@ router.post('/notes/abono', isAuthenticated, function(req, res){
                                 req.body.hora_venta,
                                 req.body.id_papel,
                                 'abono'
-                            ])
-        ])
+                            ]));
+        if(req.body.anotacion !== ""){
+            the_query.push(
+                this.oneOrNone( " insert into anotaciones (id_venta, texto, fecha) values ($1, $2, $3) returning id ", [
+                    req.body.id,
+                    req.body.anotacion,
+                    req.body.fecha_venta
+                ])
+            )
+        }
+        return t.batch(the_query)
     }).then(function(data){
         console.log('Se ha abonado la nota');
         res.json({
