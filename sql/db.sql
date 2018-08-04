@@ -238,15 +238,6 @@ create table articulos (
 );
 
 
-/* Inventario Solicitado*/
-drop table if exists articulos_solicitados cascade;
-create table articulos_solicitados (
-    id serial primary key,
-    id_articulo integer references articulos(id),
-    n_solicitudes integer
-);
-
-
 /* Nota entrada */
 drop table if exists nota_entrada cascade;
 create table nota_entrada(
@@ -338,6 +329,20 @@ create table ventas (
     precio_venta numeric(1000,2),
     estatus text /* cancelada, activa */
 );
+
+/* Inventario Solicitado*/
+drop table if exists articulos_solicitados cascade;
+create table articulos_solicitados (
+    id serial primary key,
+    id_venta integer references ventas(id),
+    id_articulo integer references articulos(id),
+    id_articulo_unidad text,
+    n_solicitudes integer,
+    costo_unitario numeric,
+    estatus text
+);
+
+
 
 /* Annotations */
 drop table if exists anotaciones cascade;

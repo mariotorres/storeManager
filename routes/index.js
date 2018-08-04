@@ -401,6 +401,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
     var sale_date    = new Date()
     var sale_time    = new Date().toLocaleTimeString()
     var cred         = numericCol(req.body.optradio === 'cred')
+    var id_papel     = 0
     console.log("CREEEDD: " + cred)
   if(req.user.permiso_administrador){
     // Si el usuario es administrador el ID de la venta es el que el asigna. Y la fecha y hora igual.
@@ -419,7 +420,7 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
         user_sale_id
       ])
     ]).then(function(data){
-        var id_papel = data[1].id_tienda
+        id_papel = data[1].id_tienda
         if(req.user.permiso_administrador){
             id_papel = req.body.id_papel
         }
@@ -498,12 +499,28 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     new Date()
                 ]));
             }
+
             // Siempre pagar a proveedor a menos de que la prenda sea solicitada
             if( data[0][i].estatus != "solicitada" ) {
                 queries.push(t.oneOrNone('update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id', [
                     numericCol(data[0][i].id_proveedor),
                     numericCol(data[0][i].costo * data[0][i].unidades_carrito)
                 ]));
+            }
+
+            // Agregar prenda solicitada a inventario de prendas solicitadas
+            if(data[0][i].estatus === "solicitada") {
+                queries.push(
+                    t.oneOrNone(" insert into articulos_solicitados (id_venta, id_articulo, " +
+                                " id_articulo_unidad, n_solicitudes, costo_unitario, estatus) values " +
+                                " ($1, $2, $3, $4, $5, 'no ingresada') returning id", [
+                                    numericCol(data[1].id),
+                                    data[0][i].id_articulo,
+                                    data[0][i].id_articulo_unidad,
+                                    1,
+                                    data[0][i].costo
+                                ])
+                )
             }
         }
         return t.batch([data, queries]);
@@ -3148,6 +3165,7 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
 
 
 router.post('/register/sol', isAuthenticated, function(req, res){
+  console.log('register solicitados')
   console.log(req.body);
   db_conf.db.task(function(t){
     return this.batch([
@@ -3157,14 +3175,22 @@ router.post('/register/sol', isAuthenticated, function(req, res){
                   ]),
       t.oneOrNone(" select * from articulos where id = $1", [
         req.body.item_id
-      ])
+      ]),
+        t.oneOrNone(" update articulos_solicitados set costo_unitario = $1, n_solicitudes = $2, estatus = 'ingresada' " +
+                    " where id_venta = $3 and id_articulo = $4 and id_articulo_unidad = $5 returning id", [
+                        req.body.costo_proveedor,
+                        req.body.existencias,
+                        req.body.id_venta_articulo,
+                        req.body.item_id,
+                        req.body.id_articulo_unidad
+                    ])
     ]).then(function(data){
         db_conf.db.task(function(t){
             return this.batch([
                 t.oneOrNone(' update proveedores set  ' +
                             ' por_pagar = por_pagar - $2 where id = $1 returning id', [
                                 numericCol(data[1].id_proveedor),
-                                numericCol(req.body.costo_proveedor * data[0].unidades_vendidas)
+                                numericCol(req.body.costo_proveedor)
                             ]),
                 t.oneOrNone(' insert into nota_entrada (id_nota_registro, id_articulo, ' +
                             ' id_usuario, num_arts, hora, fecha, costo_unitario, concepto) values ($1, $2, $3, ' +
@@ -3173,7 +3199,7 @@ router.post('/register/sol', isAuthenticated, function(req, res){
                                 req.body.id_papel,
                                 data[0].id_articulo,
                                 req.user.id,
-                                req.body.existencias,
+                                1,
                                 numericCol(req.body.costo_proveedor),
                                 'ingreso articulos solicitados'
                             ])
@@ -3200,8 +3226,8 @@ router.post('/search/items/sol', isAuthenticated, function (req, res) {
         return this.batch([
           t.manyOrNone(" select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as " +
                        " nombre_tienda, n_existencias, articulos.precio, modelo, nombre_imagen, unidades_vendidas, " +
-                       " descripcion, articulos.id as id, venta_articulos.id as id_venta_articulo, articulos.costo " +
-                       " from articulos, proveedores, tiendas, venta_articulos, ventas " +
+                       " descripcion, articulos.id as id, venta_articulos.id as id_venta_articulo, articulos.costo, " +
+                       " id_articulo_unidad from articulos, proveedores, tiendas, venta_articulos, ventas " +
                        " where articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id " +
                        " and ventas.id_tienda = tiendas.id and venta_articulos.id_articulo = articulos.id and " +
                        " venta_articulos.estatus = 'solicitada' and venta_articulos.id_venta = ventas.id and  " +
