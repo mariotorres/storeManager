@@ -337,6 +337,7 @@ create table articulos_solicitados (
     id_venta integer references ventas(id),
     id_articulo integer references articulos(id),
     id_articulo_unidad text,
+    id_registro_entrada integer,
     n_solicitudes integer,
     costo_unitario numeric,
     estatus text

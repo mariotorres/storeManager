@@ -498,6 +498,7 @@ function modalEvents(button, modal, page ) {
                             modal.find('#modal_content').load('/item/registers/edit', $(this).serializeArray(), function(){
 
                             })
+                            e.preventDefault()
                         })
                     })
                     e.preventDefault()

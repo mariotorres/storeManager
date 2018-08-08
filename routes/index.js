@@ -2833,7 +2833,7 @@ router.post('/item/registers/edit', isAuthenticated, function(req, res){
     db_conf.db.task(function(t){
         return this.batch([
             this.oneOrNone(
-                " select id_articulo, id_tienda, id_proveedor, proveedores.nombre as nombre_proveedor, " +
+                " select id_nota_registro, id_articulo, id_tienda, id_proveedor, proveedores.nombre as nombre_proveedor, " +
                 " tiendas.nombre as nombre_tienda, articulo, descripcion, id_marca, modelo, talla, notas " +
                 " precio, costo, codigo_barras, nombre_imagen, num_arts, id_nota_registro  from  " +
                 " nota_entrada, proveedores, articulos, tiendas where tiendas.id = articulos.id_tienda " +
@@ -2844,10 +2844,8 @@ router.post('/item/registers/edit', isAuthenticated, function(req, res){
             this.manyOrNone('select * from tiendas'),
             this.manyOrNone('select * from proveedores'),
             this.manyOrNone('select * from marcas')
-
         ])
     }).then(function(data){
-        console.log(data)
             res.render('partials/items/edit-registers', {
                 item_data: data[0],
                 tiendas: data[1],
@@ -3168,30 +3166,43 @@ router.post('/register/sol', isAuthenticated, function(req, res){
   console.log('register solicitados')
   console.log(req.body);
   db_conf.db.task(function(t){
-    return this.batch([
-      t.oneOrNone(" update venta_articulos set estatus = 'pendiente_pago' where id = $1 " +
-                  " returning id_articulo, unidades_vendidas", [
-                    req.body.id_venta_articulo
-                  ]),
-      t.oneOrNone(" select * from articulos where id = $1", [
-        req.body.item_id
-      ]),
-        t.oneOrNone(" update articulos_solicitados set costo_unitario = $1, n_solicitudes = $2, estatus = 'ingresada' " +
-                    " where id_venta = $3 and id_articulo = $4 and id_articulo_unidad = $5 returning id", [
-                        req.body.costo_proveedor,
-                        req.body.existencias,
-                        req.body.id_venta_articulo,
-                        req.body.item_id,
-                        req.body.id_articulo_unidad
-                    ])
-    ]).then(function(data){
+      return this.batch([
+          t.oneOrNone(" update venta_articulos set estatus = 'pendiente_pago' where id = $1 " +
+                      " returning id_articulo, unidades_vendidas", [
+                          req.body.id_venta_articulo
+                      ]),
+          t.oneOrNone(" select * from articulos where id = $1", [
+              req.body.item_id
+          ]),
+          t.oneOrNone(" update articulos_solicitados set costo_unitario = $1, n_solicitudes = $2, estatus = 'ingresada',  " +
+                      " id_registro_entrada = $6 " +
+                      " where id_venta = $3 and id_articulo = $4 and id_articulo_unidad = $5 returning id", [
+                          req.body.costo_proveedor,
+                          req.body.existencias,
+                          req.body.id_venta_articulo,
+                          req.body.item_id,
+                          req.body.id_articulo_unidad,
+                          req.body.id_papel
+                      ])
+      ]).then(function(data){
         db_conf.db.task(function(t){
-            return this.batch([
+            var the_query = [];
+            // In case there are more registers than the selled (solicited) clothes amigo
+            if(req.body.existencias){
+                the_query.push(
+                    t.oneOrNone(" update articulos set n_existencias = n_existencias + $1 returning id ", [
+                        numericCol(req.body.existencias - 1)
+                    ])
+                )
+            }
+            the_query.push(
                 t.oneOrNone(' update proveedores set  ' +
                             ' por_pagar = por_pagar - $2 where id = $1 returning id', [
                                 numericCol(data[1].id_proveedor),
-                                numericCol(req.body.costo_proveedor)
-                            ]),
+                                numericCol(req.body.costo_proveedor*req.body.existencias)
+                            ])
+            )
+            the_query.push(
                 t.oneOrNone(' insert into nota_entrada (id_nota_registro, id_articulo, ' +
                             ' id_usuario, num_arts, hora, fecha, costo_unitario, concepto) values ($1, $2, $3, ' +
                             ' $4, now(), current_date, $5, $6)' +
@@ -3199,11 +3210,12 @@ router.post('/register/sol', isAuthenticated, function(req, res){
                                 req.body.id_papel,
                                 data[0].id_articulo,
                                 req.user.id,
-                                1,
+                                req.body.existencias,
                                 numericCol(req.body.costo_proveedor),
                                 'ingreso articulos solicitados'
                             ])
-            ])
+            )
+            return this.batch(the_query)
         })
     }).then(function(data){
       res.json({
@@ -3842,7 +3854,7 @@ router.post('/notes/cancel', isAuthenticated, function(req, res){
     console.log(req.body)
     db_conf.db.task(function(t){
         return this.batch([
-            this.manyOrNone(' select id_articulo, id_articulo_unidad, estatus, id_proveedor, costo, articulos.precio, unidades_vendidas ' +
+            this.manyOrNone(' select id_articulo, id_articulo_unidad, estatus, id_proveedor, costo, articulos.precio, unidades_vendidas, fue_sol ' +
                             ' from venta_articulos, proveedores, articulos ' +
                             ' where id_venta = $1 and proveedores.id = articulos.id_proveedor and ' +
                             ' articulos.id = venta_articulos.id_articulo ', [
@@ -3862,9 +3874,11 @@ router.post('/notes/cancel', isAuthenticated, function(req, res){
                     if(req.body.id_articulo.length > 1){
                         var estatus            = req.body.estatus[j]
                         var id_articulo_unidad = req.body.id_articulo_unidad[j]
+                        // var fue_sol            = req.body.fue_sol[j]
                     }else{
                         var estatus            = req.body.estatus
                         var id_articulo_unidad = req.body.id_articulo_unidad
+                        // var fue_sol            = req.body.fue_sol
                     }
                     if(id_articulo_unidad == data[i].id_articulo_unidad){
                         queries.push(
@@ -3876,12 +3890,14 @@ router.post('/notes/cancel', isAuthenticated, function(req, res){
                                   ])
                         )
                         if(estatus !== 'devolucion' && estatus !== 'solicitada'){
-                            queries.push(
-                                t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
-                                      " where id = $2 returning id", [
-                                          data[i].costo, // * data[i].unidades_vendidas,
-                                          data[i].id_proveedor
-                                      ]))
+                            if(!data[i].fue_sol){
+                                queries.push(
+                                    t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
+                                          " where id = $2 returning id", [
+                                              data[i].costo, // * data[i].unidades_vendidas,
+                                              data[i].id_proveedor
+                                          ]))
+                            }
                             queries.push(
                                 t.one(" update articulos set n_existencias = n_existencias + $1 " +
                                       " where id = $2 returning id ", [
