@@ -2300,7 +2300,56 @@ router.post('/item/update', upload.single('imagen'), function(req, res){
 });
 
 /*
- * Devolución de items (Revisar)
+ * Devolución de items (Solicitados)
+ */
+router.post('/item/return_sols', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.oneOrNone(" select id_articulo, id_proveedor, costo_unitario " +
+                         " from articulos_solicitados, articulos where id_registro_entrada = $1 and " +
+                         " articulos.id = articulos_solicitados.id_articulo ", [
+        req.body.nota_registro_entrada
+    ]).then(function(data){
+        db_conf.db.task(function(t){
+            return t.batch([
+                t.oneOrNone(" update articulos_solicitados set unidades_sin_regresar = unidades_sin_regresar - $1 " +
+                            " where id_registro_entrada = $2 returning id", [
+                                numericCol(req.body.unidades_devolver),
+                                req.body.nota_registro_entrada
+                            ]),
+                t.oneOrNone(" update articulos set n_existencias = n_existencias - $1 where id = $2 returning id", [
+                    numericCol(req.body.unidades_devolver),
+                    data.id_articulo
+                ]),
+                t.oneOrNone(" update proveedores set por_pagar = por_pagar + $1 where id = $2 returning id", [
+                    numericCol(req.body.unidades_devolver * data.costo_unitario),
+                    data.id_proveedor
+                ]),
+                t.one('insert into devolucion_prov_articulos ("id_articulo" , "id_proveedor", "unidades_regresadas", "fecha", "costo_unitario", "fue_sol") values( ' +
+                      '$1, $2, $3, Now(), $4, 1) returning id', [
+                          numericCol(data.id_articulo),
+                          numericCol(data.id_proveedor),
+                          numericCol(req.body.unidades_devolver),
+                          numericCol(data.costo_unitario)
+                      ])
+            ])
+        })
+    }).then(function(data){
+        res.json({
+            status :'Ok',
+            message : 'Se ha registrado la devolución del artículo'
+        });
+    }).catch(function(error){
+        console.log(error)
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al registrar la devolución'
+        })
+    })
+})
+
+
+/*
+ * Devolución de items (solo mostrar items que no fueron solicitados)
  */
 router.post('/item/return', isAuthenticated, function(req, res){
     console.log(req.body);
@@ -2315,8 +2364,8 @@ router.post('/item/return', isAuthenticated, function(req, res){
                 numericCol( req.body.id_proveedor),
                 numericCol( req.body.costo *  req.body.n_devoluciones)
             ]),
-            t.one('insert into devolucion_prov_articulos ("id_articulo" , "id_proveedor", "unidades_regresadas", "fecha", "costo_unitario") values( ' +
-                '$1, $2, $3, Now(), $4) returning id', [
+            t.one('insert into devolucion_prov_articulos ("id_articulo" , "id_proveedor", "unidades_regresadas", "fecha", "costo_unitario", "fue_sol") values( ' +
+                '$1, $2, $3, Now(), $4, 0) returning id', [
                 numericCol(req.body.id),
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.n_devoluciones),
@@ -2717,7 +2766,7 @@ router.post('/item/find-items-sol-view', isAuthenticated, function (req, res) {
 });
 
 
-/*Devolucion solicitudes a trabajadores*/
+/* Devolucion solicitudes a proveedores */
 router.post('/item/find-items-view-sol-prov', isAuthenticated, function(req, res){
     var query = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda;
     if(req.user.permiso_administrador){
@@ -3098,7 +3147,7 @@ router.post('/search/items/results_sols', isAuthenticated, function(req, res){
                           " modelo, id_registro_entrada, descripcion,  n_solicitudes, costo_unitario, tiendas.nombre as nombre_tienda " +
                           " from articulos_solicitados, articulos, proveedores, tiendas where articulos_solicitados.id_articulo = " +
                           " articulos.id and articulos.id_proveedor = proveedores.id and articulos.id_tienda = tiendas.id and " +
-                          " articulos_solicitados.id_registro_entrada = $1", [
+                          " articulos_solicitados.id_registro_entrada = $1 and unidades_sin_regresar > 0", [
                               req.body.id_papel
                           ]).then(function(data){
                               console.log(data)

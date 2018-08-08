@@ -112,7 +112,15 @@ function modalEvents(button, modal, page ) {
             modal.find('#modal_content').load('/item/find-items-view-sol-prov', {page: page}, function(){
                 modal.find('form').submit(function(e) {
                     modal.find('#search_results').load('/search/items/results_sols', $(this).serializeArray(), function(){
-
+                        modal.find('form').submit(function(e) {
+                            $.post('/item/return_sols', $(this).serializeArray()).done(function(data){
+                                alert(data.message);
+                                if(data.status == 'Ok'){
+                                    modal.modal('hide')
+                                }
+                            })
+                            e.preventDefault();
+                        })
                     })
                     e.preventDefault();
                 })

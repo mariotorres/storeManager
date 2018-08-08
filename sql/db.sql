@@ -345,7 +345,6 @@ create table articulos_solicitados (
 );
 
 
-
 /* Annotations */
 drop table if exists anotaciones cascade;
 create table anotaciones (
@@ -355,7 +354,7 @@ create table anotaciones (
         fecha date
         );
 
-    /* Venta articulos */
+/* Venta articulos */
 drop table if exists venta_articulos;
 create table venta_articulos(
         id bigserial primary key,
@@ -369,8 +368,8 @@ create table venta_articulos(
         fue_sol  integer
         );
 
-    /* Transferencia */
-    /* NOTAR: liquidar un saldo deudor con clientes es el equivalente a una salida de efectivo */
+/* Transferencia */
+/* NOTAR: liquidar un saldo deudor con clientes es el equivalente a una salida de efectivo */
 drop table if exists transferencia;
 create table transferencia (
         id bigserial primary key,
@@ -404,6 +403,7 @@ create table devolucion_prov_articulos(
         id serial primary key,
         id_articulo integer references articulos(id),
         id_proveedor integer references proveedores(id),
+        unidades_regresadas integer,
         fecha date,
         costo_unitario numeric,
         fue_sol integer

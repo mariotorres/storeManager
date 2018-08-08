@@ -10,11 +10,11 @@ for (var i=0; i< items.length; i++){%>
             <h3>Artículo: <span style="color:#E91E63"><strong><%= items[i].articulo %></h3>
                 <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Proveedor: </strong><%= items[i].nombre_proveedor %> | <strong>Tienda:</strong> <%= items[i].nombre_tienda %> | <strong>Unidades solicitadas:</strong> <%= items[i].n_solicitudes %> | <strong>Unidades sin regresar a proveedor: </strong> <%= items[i].unidades_sin_regresar %></p>
                 <hr>
-                <input type="text" name="item_id" data-id_papel="<%= items[i].id_registro_entrada %>" value="<%= items[i].id_registro_entrada %>" hidden>
+                <input type="text" name="nota_registro_entrada" data-nota_registro_entrada="<%= items[i].id_registro_entrada %>" value="<%= items[i].id_registro_entrada %>" hidden>
                 <h3><span style="color:#9e9e9e"><strong>Costo unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].costo_unitario %></strong></span></h3>
                 <br>
                 <label>Unidades a devolver: </label>
-                <input class="form-control" type="text" name="unidades_devolver"  value="<%= items[i].unidades_sin_regresar %>">
+                <input class="form-control" type="number" name="unidades_devolver"  value="<%= items[i].unidades_sin_regresar %>" max="<%= items[i].unidades_sin_regresar %>" min="0">
                 <br>
                 <p>
                     <button  type="submit" value="devolver" id="devolver" class="btn btn-primary">Devolver</button>
