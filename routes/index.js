@@ -3188,7 +3188,7 @@ router.post('/register/sol', isAuthenticated, function(req, res){
         db_conf.db.task(function(t){
             var the_query = [];
             // In case there are more registers than the selled (solicited) clothes amigo
-            if(req.body.existencias){
+            if(req.body.existencias > 1){
                 the_query.push(
                     t.oneOrNone(" update articulos set n_existencias = n_existencias + $1 returning id ", [
                         numericCol(req.body.existencias - 1)

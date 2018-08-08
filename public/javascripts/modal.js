@@ -519,7 +519,7 @@ function modalEvents(button, modal, page ) {
                                 // Selected discount
                                 $.post('/register/sol', $(this).serializeArray()).done(function (data) {
                                     alert(data.message);
-                                    if(data.status=='Ok'){
+                                    if(data.estatus=='Ok'){
                                         modal.modal('hide');
                                     }
                                 });
