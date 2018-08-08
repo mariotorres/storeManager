@@ -106,6 +106,18 @@ function modalEvents(button, modal, page ) {
                 });
             });
             break;
+        case "back_item_sol":
+            modal.find('.modal-title').text('Devolución de artículos solicitados');
+            modal.find('#modal_content').html("");
+            modal.find('#modal_content').load('/item/find-items-view-sol-prov', {page: page}, function(){
+                modal.find('form').submit(function(e) {
+                    modal.find('#search_results').load('/search/items/results_sols', $(this).serializeArray(), function(){
+
+                    })
+                    e.preventDefault();
+                })
+            })
+            break;
         case "back_item":
             modal.find('.modal-title').text('Devolución de artículos');
             modal.find('#modal_content').html("");
@@ -113,7 +125,7 @@ function modalEvents(button, modal, page ) {
                 // ------------------------------------------------------
                 modal.find('form').submit(function (e) {
                     // Mostrar resultados
-                    modal.find('#search_results').load('/search/items/results_inv', $(this).serializeArray()/*params*/, function () {//mod
+                    modal.find('#search_results').load('/search/items/results_inv', $(this).serializeArray(), function () {//mod
                         $('#search_results').find('button[name=go_search]').click(function () {
                             modal.find('#modal_content').load('/item/return-item', {id:$(this).data('item_id')}, function() {
                                 modal.find('form').submit(function(event){
@@ -130,9 +142,8 @@ function modalEvents(button, modal, page ) {
                     })
                     e.preventDefault();
                 })
-                                // ------------------------------------------------------
+                /*
                 $(this).find('.list-group-item').click(function(){
-                    // alert("Funciona, item: "+ $(this).data('item_id'));
                     $("#modal_content").load('/item/return-item/',{ id: $(this).data('item_id') }, function () {
                         modal.find('form').submit(function (event) {
                             $.post('/item/return', $(this).serialize()).done(function (data) {
@@ -148,6 +159,7 @@ function modalEvents(button, modal, page ) {
                 $('.pagination').find('li').click(function () {
                     modalEvents(button, modal, $(this).data('pagenumber'));
                 });
+                */
             });
             break;
         case "edit_item":

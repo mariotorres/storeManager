@@ -2717,8 +2717,32 @@ router.post('/item/find-items-sol-view', isAuthenticated, function (req, res) {
 });
 
 
-router.post('/item/find-items-view', isAuthenticated, function (req, res) {
+/*Devolucion solicitudes a trabajadores*/
+router.post('/item/find-items-view-sol-prov', isAuthenticated, function(req, res){
+    var query = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda;
+    if(req.user.permiso_administrador){
+        query = 'select * from tiendas'
+    }
 
+    db_conf.db.task(function (t){
+        return this.batch([
+            this.manyOrNone("select id, nombre from proveedores"),
+            this.manyOrNone(query),
+            this.manyOrNone("select id_registro_entrada as id_papel from articulos_solicitados")
+        ]);
+    }).then(function(data){
+        res.render('partials/items/find-items-sol', {
+            proveedores: data[0],
+            tiendas: data[1],
+            notas: data[2]
+        });
+    }).catch(function(error){
+        console.log(error);
+        res.render("<b>Error</b>")
+    })
+});
+
+router.post('/item/find-items-view', isAuthenticated, function (req, res) {
     var query = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda;
     if(req.user.permiso_administrador){
         query = 'select * from tiendas'
@@ -3068,6 +3092,25 @@ router.post('/search/registers/results', isAuthenticated, function(req, res){
     })
 })
 
+router.post('/search/items/results_sols', isAuthenticated, function(req, res){
+    console.log(req.body);
+    db_conf.db.manyOrNone(" select articulo, proveedores.nombre as nombre_proveedor, unidades_sin_regresar, " +
+                          " modelo, id_registro_entrada, descripcion,  n_solicitudes, costo_unitario, tiendas.nombre as nombre_tienda " +
+                          " from articulos_solicitados, articulos, proveedores, tiendas where articulos_solicitados.id_articulo = " +
+                          " articulos.id and articulos.id_proveedor = proveedores.id and articulos.id_tienda = tiendas.id and " +
+                          " articulos_solicitados.id_registro_entrada = $1", [
+                              req.body.id_papel
+                          ]).then(function(data){
+                              console.log(data)
+                              res.render('partials/items/search-items-results-sols', {
+                                  items: data
+                              })
+                          }).catch(function(error){
+                              console.log(error);
+                              res.send('<b>Error</b>');
+                          })
+})
+
 router.post('/search/items/results_ninv', isAuthenticated, function (req, res) {
   console.log(req.body);
   console.log(req.user.permiso_administrador)
@@ -3175,7 +3218,7 @@ router.post('/register/sol', isAuthenticated, function(req, res){
               req.body.item_id
           ]),
           t.oneOrNone(" update articulos_solicitados set costo_unitario = $1, n_solicitudes = $2, estatus = 'ingresada',  " +
-                      " id_registro_entrada = $6 " +
+                      " id_registro_entrada = $6, unidades_sin_regresar = $2 " +
                       " where id_venta = $3 and id_articulo = $4 and id_articulo_unidad = $5 returning id", [
                           req.body.costo_proveedor,
                           req.body.existencias,
@@ -3187,7 +3230,7 @@ router.post('/register/sol', isAuthenticated, function(req, res){
       ]).then(function(data){
         db_conf.db.task(function(t){
             var the_query = [];
-            // In case there are more registers than the selled (solicited) clothes amigo
+            // In case there are more registers than the selled (solicited) clothes
             if(req.body.existencias > 1){
                 the_query.push(
                     t.oneOrNone(" update articulos set n_existencias = n_existencias + $1 returning id ", [

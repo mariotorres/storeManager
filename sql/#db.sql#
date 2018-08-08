@@ -338,7 +338,6 @@ create table articulos_solicitados (
     id_articulo integer references articulos(id),
     id_articulo_unidad text,
     id_registro_entrada integer,
-    unidades_sin_regresar integer,  
     n_solicitudes integer,
     costo_unitario numeric,
     estatus text
@@ -404,6 +403,7 @@ create table devolucion_prov_articulos(
         id serial primary key,
         id_articulo integer references articulos(id),
         id_proveedor integer references proveedores(id),
+        unidades_regresadas integer,
         fecha date,
         costo_unitario numeric,
         fue_sol integer
