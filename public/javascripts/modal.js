@@ -566,6 +566,10 @@ function modalEvents(button, modal, page ) {
                 fecha_pago = fecha_pago.split('/')
                 fecha_pago = fecha_pago[2] + '-' + fecha_pago[0] + '-' + fecha_pago[1]
 
+                var monto_pago = 0
+
+                var concepto = ''
+                
                 $(this).find('#payment_date').on('dp.change', function(e){
                     fecha_pago = new Date(e.date._d)
                     fecha_pago = fecha_pago.toLocaleDateString()
@@ -574,9 +578,20 @@ function modalEvents(button, modal, page ) {
                     console.log(fecha_pago)
                 })
 
+                $(this).find('#monto_pago').on('change', function(e){
+                    monto_pago = $(this).val()
+                })
+
+                $(this).find('#concepto').on('change', function(e){
+                    concepto = $(this).val()
+                })
+
                 $(this).find('.list-group-item').click(function(){
                     if (confirm("Está seguro de que desea liquidar al proveedor: " + $(this).data('supplier_name'))){
-                        $.post('/supplier/payment/', {id: $(this).data('supplier_id'), fecha_pago: fecha_pago}).done(function (data) {
+                        $.post('/supplier/payment/', {id: $(this).data('supplier_id'),
+                                                      fecha_pago: fecha_pago,
+                                                      monto_pago: monto_pago,
+                                                      concepto: concepto}).done(function (data) {
                             alert(data.message);
                             if(data.status=='Ok'){
                                 modal.modal('hide');

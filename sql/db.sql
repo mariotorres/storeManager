@@ -271,7 +271,8 @@ create table nota_pago_prov(
         id_proveedor integer references proveedores(id),
         monto_pagado numeric,
         hora time,
-        fecha date
+        fecha date,
+        concepto_de_pago text
         );
 
 /* Nota modificacion */
