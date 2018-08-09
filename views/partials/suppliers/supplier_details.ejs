@@ -131,9 +131,46 @@
     <div class="alert alert-info" role="alert">El proveedor no tiene prendas solicitadas registradas en el periodo seleccionado</div>
 <%}%>
 
+<!-- Desgloce Devoluciones Proveedores!!!-->
+<hr>
+<h5 style="color:#9E9E9E"><strong>Devoluciones a proveedores periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+<%if(devs_prov.length > 0){%>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td><b>Nombre</b></td>
+                    <td><b>Modelo</b></td>
+                    <td><b>Fecha</b></td>
+                    <td><b>Unidades regresadas</b></td>
+                    <td><b>Fue prenda solicitada</b></td>
+                    <td><b>Costo unitario</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i = 0; i < devs_prov.length; i++){ %>
+                    <tr>
+                        <td><%= devs_prov[i].articulo %></td>
+                        <td><%= devs_prov[i].modelo %></td>
+                        <td><%= new Date(devs_prov[i].fecha).toLocaleDateString() %></td>
+                        <td><%= devs_prov[i].unidades_regresadas %></td>
+                        <td><%= devs_prov[i].fue_sol == 1 ? 'Si' : 'No' %></td>
+                        <td><%= devs_prov[i].costo_unitario %></td>
+                    </tr>
+                <%}%>
+            </tbody>
+        </table>
+        <hr>
+    </div>
+<%}else{%>
+    <div class="alert alert-info" role="alert">No se hicieron devoluciones al proveedor en el periodo seleccionado</div>
+<%}%>
+
+
+
 <!-- Desgloce Devoluciones!!!-->
 <hr>
-<h5 style="color:#9E9E9E"><strong>Prendas devueltas periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+<h5 style="color:#9E9E9E"><strong>Devoluciones de clientes periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
 <%if(devoluciones.length > 0){%>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -175,7 +212,7 @@
         <hr>
     </div>
 <%}else{%>
-    <div class="alert alert-info" role="alert">El proveedor no tiene ventas registradas en el periodo seleccionado</div>
+    <div class="alert alert-info" role="alert">No se hicieron devoluciones de clientes en el periodo seleccionado</div>
 <%}%>
 
 <!-- Desgloce Pagos!!!-->

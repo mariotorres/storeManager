@@ -3569,7 +3569,16 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                             fecha_inicial,
                             req.body.fecha_final,
                             req.body.id_proveedor
-                        ])
+                        ]),
+                    t.manyOrNone(
+                        " select articulo, modelo, unidades_regresadas, fecha, devolucion_prov_articulos.costo_unitario, " +
+                        " fue_sol from devolucion_prov_articulos, articulos where fecha <= $2 and fecha >= $1 and articulos.id_proveedor = $3 " +
+                        " and articulos.id = devolucion_prov_articulos.id_articulo", [
+                            fecha_inicial,
+                            req.body.fecha_final,
+                            req.body.id_proveedor
+                        ]
+                    )
                 ])
             })
         }).then(function(data){
@@ -3585,6 +3594,7 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                            total_dev: data[6],
                            total_pagos: data[7],
                            total_pago: data[8],
+                           devs_prov: data[9],
                            fecha_inicial: fecha_inicial,
                            fecha_final: req.body.fecha_final,
                        }
