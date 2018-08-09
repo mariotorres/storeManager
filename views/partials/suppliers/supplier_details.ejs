@@ -178,6 +178,38 @@
     <div class="alert alert-info" role="alert">El proveedor no tiene ventas registradas en el periodo seleccionado</div>
 <%}%>
 
+<!-- Desgloce Pagos!!!-->
+<h5 style="color:#9E9E9E"><strong>Pagos realizados al proveedor en el periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+<%if(solicitudes.length > 0){%>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td><b>Concepto</b></td>
+                    <td><b>Fecha Registro</b></td>
+                    <td><b>Monto</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i = 0; i < total_pagos.length; i++){ %>
+                    <tr>
+                        <td><%= total_pagos[i].concepto_de_pago %></td>
+                        <td><%= new Date(total_pagos[i].fecha).toLocaleDateString() %></td>
+                        <td><%= total_pagos[i].monto_pagado %></td>
+                    </tr>
+                <%}%>
+                <hr>
+                <tr>
+                    <td><strong>Total pagado a proveedor en periodo</strong></td>
+                    <td></td>
+                    <td><strong><%= total_pago.monto_total %></strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<%}else{%>
+    <div class="alert alert-info" role="alert">El proveedor no tiene pagos registrados en el periodo seleccionado</div>
+<%}%>
 
 
 
