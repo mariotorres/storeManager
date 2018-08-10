@@ -516,7 +516,14 @@ function modalEvents(button, modal, page ) {
                     modal.find('#search_results').load('/search/registers/results', $(this).serializeArray(), function(){
                         modal.find('form').submit(function(e){
                             modal.find('#modal_content').load('/item/registers/edit', $(this).serializeArray(), function(){
-
+                                modal.find('form').submit(function(e){
+                                    $.post('/item/registers/update', $(this).serializeArray(), function(){
+                                        alert(data.message);
+                                        if(data.estatus == 'Ok'){
+                                            modal.modal('hide');
+                                        }
+                                    })
+                                })
                             })
                             e.preventDefault()
                         })

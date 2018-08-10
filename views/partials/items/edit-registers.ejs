@@ -1,7 +1,11 @@
 <form id="itemForm"> <!--method="post" action="/item/register" enctype="multipart/form-data"> -->
     <!--id_proveedor
-    id_tienda-->
-    <p>
+         id_tienda-->
+    <p hidden>
+        <input type="text" name="unique_id_nota_registro" class="form-control" value="<%=item_data.unique_id_registro%>" required>
+    </p>
+
+        <p>
         <label>Id nota registro</label>
         <input type="text" name="id_nota_registro" class="form-control" value="<%=item_data.id_nota_registro%>" required>
     </p>

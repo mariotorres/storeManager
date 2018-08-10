@@ -14,6 +14,7 @@
                  <input type="text" name="user_id" value="<%=user.id%>" data-user_id="<%=user.id%>" hidden>
                  <input type="text" name="item_id" data-item_id="<%= items[i].id %>" value="<%= items[i].id %>" hidden>
             -->
+            <input type="number" name="unique_id_register" data-unique_id_register="<%=items[i].unique_id_register%>" value="<%=items[i].unique_id_register%>" style="visibility:hidden">
             <h3><span style="color:#9e9e9e"><strong>Costo Unitario:  </strong></span><span style="color:#E91E63"><strong><%= items[i].costo %></strong></span></h3>
             <br>
             <p>
