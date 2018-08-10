@@ -517,12 +517,13 @@ function modalEvents(button, modal, page ) {
                         modal.find('form').submit(function(e){
                             modal.find('#modal_content').load('/item/registers/edit', $(this).serializeArray(), function(){
                                 modal.find('form').submit(function(e){
-                                    $.post('/item/registers/update', $(this).serializeArray(), function(){
+                                    $.post('/item/registers/update', $(this).serializeArray(), function(data){
                                         alert(data.message);
                                         if(data.estatus == 'Ok'){
                                             modal.modal('hide');
                                         }
                                     })
+                                    e.preventDefault();
                                 })
                             })
                             e.preventDefault()

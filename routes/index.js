@@ -2948,13 +2948,13 @@ router.post('/item/registers/update', isAuthenticated, function(req, res){
                 ]).then(function(data){
                     console.log(data)
                     res.json({
-                        status: 'Ok',
+                        estatus: 'Ok',
                         message: 'Se han actualizado los datos exitosamente'
                     })
                 }).catch(function (error) {
                     console.log(error);
                     res.json({
-                        status: 'Error',
+                        estatus: 'Error',
                         message: 'Ocurrió un error al actualizar los datos'
                     })
                 })
