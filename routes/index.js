@@ -2905,14 +2905,63 @@ router.post('/items/list/item_edits', isAuthenticated, function(req, res){
 
 router.post('/item/registers/update', isAuthenticated, function(req, res){
     console.log(req.body)
-    db_conf.db.task(function(t){
-        return this.batch([
-            this.oneOrNone(
-                "update nota_entrada set "
-            )
-        ])
+    db_conf.db.oneOrNone(
+        " update nota_entrada set num_arts = $1, costo_unitario = $2, hora = localtime, fecha = current_date, " +
+        " concepto = 'ingreso articulos' where id = $3 and id_nota_registro = $4 returning id_articulo", [
+            req.body.n_arts,
+            req.body.costo,
+            req.body.unique_id_nota_registro,
+            req.body.id_nota_registro
+        ]
+    ).then(function(data){
+        console.log('First step: ' + data.id_articulo)
+        db_conf.db.task(function(t){
+            return this.batch([
+                t.oneOrNone(
+                    "select * from articulos where id = $1", [
+                        data.id_articulo
+                    ]),
+                t.oneOrNone(
+                    " update articulos set articulo =$1, descripcion = $2, id_marca = $3, " +
+                    " modelo = $4, id_tienda = $5, talla = $6, notas = $7,  " +
+                    " precio = $8, costo = $9, n_existencias = $10 where id = $11 returning id", [
+                        req.body.articulo,
+                        req.body.descripcion,
+                        req.body.id_marc,
+                        req.body.modelo,
+                        req.body.id_tienda,
+                        req.body.talla,
+                        req.body.notas,
+                        req.body.precio,
+                        req.body.costo,
+                        req.body.n_arts,
+                        data.id_articulo
+                    ])
+            ])
+        }).then(function(data){
+            console.log(data)
+            db_conf.db.oneOrNone(
+                "update proveedores set a_cuenta = (a_cuenta + $1) - $2 where id = $3 returning id", [
+                    data[0].n_existencias*data[0].costo,
+                    req.body.n_arts*req.body.costo,
+                    data[0].id_proveedor
+                ]).then(function(data){
+                    console.log(data)
+                    res.json({
+                        status: 'Ok',
+                        message: 'Se han actualizado los datos exitosamente'
+                    })
+                }).catch(function (error) {
+                    console.log(error);
+                    res.json({
+                        status: 'Error',
+                        message: 'Ocurrió un error al actualizar los datos'
+                    })
+                })
+        })
     })
-})
+});
+
 
 router.post('/item/registers/edit', isAuthenticated, function(req, res){
     console.log(req.body);
