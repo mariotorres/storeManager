@@ -3282,17 +3282,19 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
     //var pageSize = 10;
     //var offset = req.body.page * pageSize;
     var query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
-        " descripcion, articulos.id as id " +
-        " from articulos, proveedores, tiendas, usuarios where id_proveedor = $1 and " +
-        " articulos.id_proveedor = proveedores.id and usuarios.id_tienda = articulos.id_tienda and " +
-        " articulo ilike '%$3#%' and modelo ilike '%$4#%' and  articulos.id_tienda = tiendas.id and " +
-        " tiendas.id = $5 and usuarios.id =  " + req.user.id
+                " descripcion, articulos.id as id " +
+                " from articulos, proveedores, tiendas, usuarios where id_proveedor = $1 and " +
+                " articulos.id_proveedor = proveedores.id and usuarios.id_tienda = articulos.id_tienda and " +
+                // " articulo ilike '%$3#%' and modelo ilike '%$4#%' and  articulos.id_tienda = tiendas.id and " +
+                " modelo ilike '%$4#%' and  articulos.id_tienda = tiendas.id and " +
+                " tiendas.id = $5 and usuarios.id =  " + req.user.id
 
     if(req.user.permiso_administrador){
         query = "select articulo, proveedores.nombre as nombre_prov, n_existencias, precio, modelo, nombre_imagen, " +
-            " descripcion, articulos.id as id, tiendas.id as id_tienda " +
-            " from articulos, proveedores, tiendas where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and " +
-            " articulo ilike '%$3#%' and articulos.id_tienda = tiendas.id and tiendas.id = $5 and modelo ilike '%$4#%' "
+                " descripcion, articulos.id as id, tiendas.id as id_tienda " +
+                " from articulos, proveedores, tiendas where id_proveedor = $1 and articulos.id_proveedor = proveedores.id and " +
+                " articulos.id_tienda = tiendas.id and tiendas.id = $5 and modelo ilike '%$4#%' "
+                // " articulo ilike '%$3#%' and articulos.id_tienda = tiendas.id and tiendas.id = $5 and modelo ilike '%$4#%' "
     }
     db_conf.db.task(function (t) {
         return this.batch([

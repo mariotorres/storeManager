@@ -201,6 +201,19 @@ insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_n
 direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
                         ('Punto Blanco','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
 
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
+                        ('D Moseli','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
+
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
+                        ('Bianchi','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
+
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
+                        ('No Especificado','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
+
+
 drop table if exists marcas cascade;
 create table marcas (
 id serial primary key,
@@ -217,6 +230,9 @@ insert into marcas(nombre, descripcion) values ('D mosseli', 'Marca de proveedor
 insert into marcas(nombre, descripcion) values ('Neon Nyx', 'Marca de proveedor Neon Nyx');
 insert into marcas(nombre, descripcion) values ('Nicoletta', 'Marca de proveedor Nicoleta');
 insert into marcas(nombre, descripcion) values ('Punto Blanco', 'Marca de proveedor Punto Blanco');
+insert into marcas(nombre, descripcion) values ('D Moseli', 'Marca de proveedor D Moseli');
+insert into marcas(nombre, descripcion) values ('Bianchi', 'Marca de proveedor Bianchi');
+insert into marcas(nombre, descripcion) values ('No Especificado', 'Marca de proveedor No Especificado');
 
 /* Inventario */
 drop table if exists articulos cascade;
@@ -461,6 +477,17 @@ hora time,
 tipo text
 );
 
+/*
+* ----------------------------------------
+** Insert data
+* ----------------------------------------
+*/
+
+/* Insert into inventory */
+\copy articulos(modelo, n_existencias, precio, descripcion, id_proveedor, id_marca, costo, id_tienda, notas, articulo) from './inv_data.csv' DELIMITER ',' CSV HEADER;
 
 
-
+/* Update supplier account */
+with new_values as (select id_proveedor, - sum(costo*n_existencias) as a_cuenta from articulos group by id_proveedor)
+update proveedores set a_cuenta = new_values.a_cuenta from new_values
+where new_values.id_proveedor = proveedores.id;
