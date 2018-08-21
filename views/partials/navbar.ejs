@@ -13,7 +13,7 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <% if ( user.permiso_tablero ) {%>
-                <li class="<%= section=='tablero'?'active':'' %>"><a href="/tablero">Tablero</a></li>
+                    <li class="<%= section=='tablero'?'active':'' %>"><a href="/tablero">Tablero</a></li>
                 <%}
                 if (user.permiso_administrador){%>
                 <li class="<%= section=='admin'?'active':'' %>"><a href="/admin">Administrador</a></li>
@@ -28,7 +28,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <% if ( user.permiso_empleados ){%>
-                <li class="<%= section=='carrito'?'active':'' %>"><a href="/carrito"><i class="fa fa-shopping-cart"></i></a></li>
+                    <li class="<%= section=='carrito'?'active':'' %>"><a href="/carrito"><i class="fa fa-shopping-cart"></i></a></li>
                 <%}
                 if (user.permiso_administrador){%>
                 <li class="<%= section=='notas'?'active':'' %>"><a href="/notas/imprimir"><i class="fa fa-print"></i></a></li>
