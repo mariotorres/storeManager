@@ -113,8 +113,26 @@ create table usuarios(
     hora_salida time
 );
 
+
+
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno","apellido_materno","permiso_tablero","permiso_administrador","permiso_empleados", "permiso_inventario") values
 (1,'admin','$2a$10$DmxbjTLBYDdcha8qlXpsaOyUqkJ0BAQ3Q4EIyMtr5HLXm6R0gSvbm','Administrador','','', true, true, true, true);
+
+insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
+                      "apellido_materno","permiso_tablero","permiso_administrador",
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
+(1,'eddus','$2a$10$9tP9kfd31uKWUA3Eh1hXAOdL8/IbZvXuxA4hY8AeKwD0CbX4mdDeW','Eduardo','','', true, false, true, false, 500.0, '10:00:00', '18:00:00');
+
+insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
+                      "apellido_materno","permiso_tablero","permiso_administrador",
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
+(3,'claus','$2a$10$sy8M9I19WT12UiCiBlx8Ge7fUHZBJg4a33pC/HREuZwvIx11OvAA2','Claudia','','', true, false, true, false, 700.0, '10:00:00', '18:00:00');
+
+insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
+                      "apellido_materno","permiso_tablero","permiso_administrador",
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
+(4,'elena','$2a$10$CjY39hte0kRZvAMc1S6.2uxFM3f87cl7A90xCuHAxH68XrEaQZnVm','Elena','','', true, false, true, false, 550.0, '10:00:00', '18:00:00');
+
 
 /* prestamos */
 drop table if exists prestamos cascade;
