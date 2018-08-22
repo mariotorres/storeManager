@@ -3323,7 +3323,7 @@ router.post('/search/items/results_inv', isAuthenticated, function (req, res) {
 
 
 router.post('/register/sol', isAuthenticated, function(req, res){
-  console.log('register solicitados')
+  console.log('register solicitados');
   console.log(req.body);
   db_conf.db.task(function(t){
       return this.batch([
@@ -3350,7 +3350,8 @@ router.post('/register/sol', isAuthenticated, function(req, res){
             // In case there are more registers than the selled (solicited) clothes
             if(req.body.existencias > 1){
                 the_query.push(
-                    t.oneOrNone(" update articulos set n_existencias = n_existencias + $1 returning id ", [
+                    t.oneOrNone(" update articulos set n_existencias = n_existencias + $2 where id = $1 returning id ", [
+                        req.body.item_id,
                         numericCol(req.body.existencias - 1)
                     ])
                 )
