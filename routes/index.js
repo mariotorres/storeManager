@@ -1379,7 +1379,7 @@ router.post('/supplier/payment', isAuthenticated, function(req, res){
 // Listar proveedores
 router.post('/supplier/list/pay', isAuthenticated,function(req, res ){
     var page = req.body.page;
-    var pageSize = 10;
+    var pageSize = 15;
     var offset = page * pageSize;
     db_conf.db.task(function (t) {
         return this.batch([
@@ -1403,7 +1403,7 @@ router.post('/supplier/list/pay', isAuthenticated,function(req, res ){
 // Listar proveedores
 router.post('/supplier/list/', isAuthenticated,function(req, res ){
     var page = req.body.page;
-    var pageSize = 10;
+    var pageSize = 15;
     var offset = page * pageSize;
     db_conf.db.task(function (t) {
         return this.batch([
