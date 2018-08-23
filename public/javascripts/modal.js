@@ -268,7 +268,8 @@ function modalEvents(button, modal, page ) {
                             e.preventDefault();
                         })*/
                         $('#search_results').find('.list-group-item').click(function () {
-                            modal.find('#modal_content').load('/employee/details', { id: $(this).data('user_id') });
+                          modal.find('#modal_content').load('/employee/details', { id: $(this).data('user_id'),
+                                                                                   id_tienda: $(this).data('store_id') });
                         });
                     });
                     e.preventDefault();

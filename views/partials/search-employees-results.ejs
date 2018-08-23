@@ -3,7 +3,7 @@ if (employees.length > 0){%>
 <label>Resultados</label>
 <div class="list-group">
     <% for ( var i =0; i < employees.length ; i ++ ){ %>
-    <a href="#" class="list-group-item" data-user_id="<%= employees[i].id%>">
+    <a href="#" class="list-group-item" data-store_id="<%=employees[i].id_tienda%>" data-user_id="<%= employees[i].id%>">
         <h4 class="list-group-item-heading"><%= employees[i].nombres%></h4>
         <p class="list-group-item-text"> <strong>Id :</strong> <%= employees[i].id %></p>
         <p class="list-group-item-text"> <strong>Apellido Paterno:</strong> <%= employees[i].apellido_paterno %></p>
