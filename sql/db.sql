@@ -171,7 +171,7 @@ insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_pat
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
                       "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(4,'elena','$2a$10$CjY39hte0kRZvAMc1S6.2uxFM3f87cl7A90xCuHAxH68XrEaQZnVm','Elena','','', true, false, true, false, 550.0, '10:00:00', '18:00:00');
+(4,'elena','$2a$10$CjY39hte0kRZvAMc1S6.2uxFM3f87cl7A90xCuHAxH68XrEaQZnVm','Elena','','', true, true, true, true, 550.0, '10:00:00', '18:00:00');
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
