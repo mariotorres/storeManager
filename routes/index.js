@@ -3339,7 +3339,8 @@ router.post('/register/sol', isAuthenticated, function(req, res){
                       " where id_venta = $3 and id_articulo = $4 and id_articulo_unidad = $5 returning id", [
                           req.body.costo_proveedor,
                           req.body.existencias,
-                          req.body.id_venta_articulo,
+                          //req.body.id_venta_articulo,
+                          req.body.venta_id_tot,
                           req.body.item_id,
                           req.body.id_articulo_unidad,
                           req.body.id_papel
@@ -3400,7 +3401,7 @@ router.post('/search/items/sol', isAuthenticated, function (req, res) {
           t.manyOrNone(" select articulo, proveedores.nombre as nombre_prov, tiendas.nombre as " +
                        " nombre_tienda, n_existencias, articulos.precio, modelo, nombre_imagen, unidades_vendidas, " +
                        " descripcion, articulos.id as id, venta_articulos.id as id_venta_articulo, articulos.costo, " +
-                       " id_articulo_unidad from articulos, proveedores, tiendas, venta_articulos, ventas " +
+                       " id_articulo_unidad, ventas.id as venta_id_tot from articulos, proveedores, tiendas, venta_articulos, ventas " +
                        " where articulos.id_proveedor = proveedores.id and ventas.id_tienda = tiendas.id " +
                        " and ventas.id_tienda = tiendas.id and venta_articulos.id_articulo = articulos.id and " +
                        " venta_articulos.estatus = 'solicitada' and venta_articulos.id_venta = ventas.id and  " +
@@ -3582,10 +3583,10 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                             req.body.id_proveedor
                         ]),
                     // Total Artículos Devueltos
-                    t.manyOrNone(" select nombre_tienda, unidades_vendidas, id_articulo, articulo, " +
+                    t.manyOrNone(" select nombre_tienda, unidades_vendidas, id_articulo, id_articulo_unidad, articulo, " +
                                  " descripcion, id_papel, modelo, fecha_venta, fue_sol, max(costo_def) " +
                                  " as costo from ( select tiendas.nombre as nombre_tienda, " +
-                                 " unidades_vendidas, venta_articulos.id_articulo, articulo, descripcion, " +
+                                 " unidades_vendidas, venta_articulos.id_articulo, id_articulo_unidad, articulo, descripcion, " +
                                  " ventas.id_papel, articulos.modelo as modelo, fecha_venta, fue_sol, " +
                                  " case when fue_sol > 0 then nota_entrada.costo_unitario else articulos.costo " +
                                  " end as costo_def from nota_entrada, tiendas, venta_articulos, articulos, " +
@@ -3598,32 +3599,45 @@ router.post('/supplier/details', isAuthenticated, function(req, res){
                                  " articulos.id and  fechas_ventas.fecha_venta >= $1 and " +
                                  " fechas_ventas.id_venta = ventas.id and id_proveedor = $3 and tiendas.id = " +
                                  " ventas.id_tienda) as temp group by nombre_tienda, unidades_vendidas, " +
-                                 " id_articulo, articulo, descripcion, id_papel, modelo, fecha_venta, fue_sol", [
-                        fecha_inicial,
-                        req.body.fecha_final,
-                        req.body.id_proveedor
-                    ]),
+                                 " id_articulo, articulo, descripcion, id_papel, modelo, fecha_venta, fue_sol, id_articulo_unidad", [
+                                     fecha_inicial,
+                                     req.body.fecha_final,
+                                     req.body.id_proveedor
+                                 ]),
                     // Monto Por Recibir Articulos Devueltos
-                    t.oneOrNone(
-                        " select sum(costo_def * unidades_vendidas) as tot_costos from (select max(costo_def) " +
-                        " as costo_def, id_articulo, id_venta, id_articulo, unidades_vendidas from " +
-                        " (select case when fue_sol > 0 then costo_unitario else costo end as costo_def, " +
-                        " unidades_vendidas, venta_articulos.id_venta, venta_articulos.id_articulo from " +
-                        " venta_articulos, nota_entrada, articulos, ventas, (select min(fecha) as fecha_venta, " +
-                        " transferencia.id_venta as id_venta from ventas, transferencia where " +
-                        " transferencia.id_venta  = ventas.id group by id_venta) as fechas_ventas where " +
-                        " venta_articulos.estatus = 'devolucion'  and ventas.estatus = 'activa' and ventas.id =  " +
-                        " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and  " +
-                        " venta_articulos.id_articulo = articulos.id and  fechas_ventas.fecha_venta >= $1 " +
-                        " and fechas_ventas.id_venta = ventas.id  and nota_entrada.id_articulo = " +
-                        " venta_articulos.id_articulo and id_proveedor = $3 group by venta_articulos.id_articulo, " +
-                        " venta_articulos.id_venta, modelo,  articulo, descripcion, fecha_venta, fue_sol, " +
-                        " costo_def, venta_articulos.id_articulo, unidades_vendidas) as temp group by " +
-                        " id_articulo, id_venta, id_articulo, unidades_vendidas) as temp1", [
-                            fecha_inicial,
-                            req.body.fecha_final,
-                            req.body.id_proveedor
-                        ]),
+                    t.oneOrNone(" select sum(costo_def * unidades_vendidas) as tot_costos from (select max(costo_def)  " +
+                                " as costo_def, id_articulo, id_articulo_unidad, id_venta, id_articulo, unidades_vendidas " +
+                                " from (select case when fue_sol > 0 then costo_unitario else costo end as costo_def,  " +
+                                " unidades_vendidas, venta_articulos.id_venta, venta_articulos.id_articulo, id_articulo_unidad from  " +
+                                " venta_articulos, nota_entrada, articulos, ventas, (select min(fecha) as fecha_venta,  " +
+                                " transferencia.id_venta as id_venta from ventas, transferencia where  transferencia.id_venta = " +
+                                " ventas.id group by id_venta) as fechas_ventas where  venta_articulos.estatus = 'devolucion' and " +
+                                " ventas.estatus = 'activa' and ventas.id =  venta_articulos.id_venta and fechas_ventas.fecha_venta <= " +
+                                " $2 and  venta_articulos.id_articulo = articulos.id and fechas_ventas.fecha_venta >= $1  and " +
+                                " fechas_ventas.id_venta = ventas.id and nota_entrada.id_articulo =  venta_articulos.id_articulo " +
+                                " and id_proveedor = $3 group by venta_articulos.id_articulo,  id_articulo_unidad, venta_articulos.id_venta, " +
+                                " modelo, articulo, descripcion, fecha_venta, fue_sol,  costo_def, venta_articulos.id_articulo, " +
+                                " unidades_vendidas) as temp group by id_articulo, id_articulo_unidad, id_venta, id_articulo, unidades_vendidas) as temp1"
+                        /*
+                           " select sum(costo_def * unidades_vendidas) as tot_costos from (select max(costo_def) " +
+                           " as costo_def, id_articulo, id_venta, id_articulo, unidades_vendidas from " +
+                           " (select case when fue_sol > 0 then costo_unitario else costo end as costo_def, " +
+                           " unidades_vendidas, venta_articulos.id_venta, venta_articulos.id_articulo from " +
+                           " venta_articulos, nota_entrada, articulos, ventas, (select min(fecha) as fecha_venta, " +
+                           " transferencia.id_venta as id_venta from ventas, transferencia where " +
+                           " transferencia.id_venta  = ventas.id group by id_venta) as fechas_ventas where " +
+                           " venta_articulos.estatus = 'devolucion'  and ventas.estatus = 'activa' and ventas.id =  " +
+                           " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and  " +
+                           " venta_articulos.id_articulo = articulos.id and  fechas_ventas.fecha_venta >= $1 " +
+                           " and fechas_ventas.id_venta = ventas.id  and nota_entrada.id_articulo = " +
+                           " venta_articulos.id_articulo and id_proveedor = $3 group by venta_articulos.id_articulo, " +
+                           " venta_articulos.id_venta, modelo,  articulo, descripcion, fecha_venta, fue_sol, " +
+                           " costo_def, venta_articulos.id_articulo, unidades_vendidas) as temp group by " +
+                           " id_articulo, id_venta, id_articulo, unidades_vendidas) as temp1"*/, [
+                               fecha_inicial,
+                               req.body.fecha_final,
+                               req.body.id_proveedor
+                           ]),
                     // Todos los pagos efectuados en el periodo
                     t.manyOrNone(
                         " select * from nota_pago_prov where fecha <= $2 and fecha >= $1 and id_proveedor = $3", [
@@ -4159,6 +4173,8 @@ router.post('/notes/cancel', isAuthenticated, function(req, res){
 });
 
 router.post('/notes/update', isAuthenticated, function(req, res){
+    console.log('Notes update: ')
+    console.log(req.body)
     db_conf.db.manyOrNone(" select id_articulo, id_articulo_unidad, estatus, id_proveedor, " +
                           " costo, precio, unidades_vendidas, fue_sol, max(costo_def) as costo_def from " +
                           " (select venta_articulos.id_articulo, id_articulo_unidad, estatus, " +
@@ -4172,6 +4188,8 @@ router.post('/notes/update', isAuthenticated, function(req, res){
                           " unidades_vendidas, fue_sol", [
                               req.body.id
                           ]).then(function(data){
+                              console.log('Inside notes update')
+                              console.log(data)
                               var queries = []
                               db_conf.db.task(function(t){
                                   if(req.body.anotacion !== ""){
@@ -4181,28 +4199,23 @@ router.post('/notes/update', isAuthenticated, function(req, res){
                                           req.body.fecha_venta
                                       ]));
                                   }
-                                  for(var i = 0; i < data.length; i++){
-                                      for(var j = 0; j < req.body.id_articulo.length; j++){
-                                          // Get Estatus & Id
-                                          if(req.body.id_articulo.length > 1){
-                                              var estatus            = req.body.estatus[j]
-                                              var id_articulo_unidad = req.body.id_articulo_unidad[j]
-                                          }else{
-                                              var estatus            = req.body.estatus
-                                              var id_articulo_unidad = req.body.id_articulo_unidad
-                                          }
-                                          if(id_articulo_unidad == data[i].id_articulo_unidad &
-                                             estatus            != data[i].estatus){
-                                              queries.push(
-                                                  t.one(" update venta_articulos set estatus = $2 where id_articulo_unidad = $1 " +
-                                                        " and id_venta = $3 returning id ", [
-                                                            id_articulo_unidad,
-                                                            estatus,
-                                                            req.body.id
-                                                        ])
-                                              )
-                                              if(estatus === 'devolucion'){
-                                                  console.log('unidades: ' + data[i].unidades_vendidas + ' id_art: ' + data[i].id_articulo);
+                                  console.log('LENGTH: ' + req.body.id_articulo.length)
+                                  if(data.length === 1){
+                                      var i = 0
+                                      var estatus            = req.body.estatus
+                                      var id_articulo_unidad = req.body.id_articulo_unidad
+                                      if(id_articulo_unidad == data[i].id_articulo_unidad &
+                                         estatus            != data[i].estatus){
+                                          queries.push(
+                                              t.one(" update venta_articulos set estatus = $2 where id_articulo_unidad = $1 " +
+                                                    " and id_venta = $3 returning id ", [
+                                                        id_articulo_unidad,
+                                                        estatus,
+                                                        req.body.id
+                                                    ])
+                                          )
+                                          if(estatus === 'devolucion'){
+                                              console.log('unidades: ' + data[i].unidades_vendidas + ' id_art: ' + data[i].id_articulo);
                                                   queries.push(
                                                       t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
                                                             " where id = $2 returning id", [
@@ -4231,8 +4244,60 @@ router.post('/notes/update', isAuthenticated, function(req, res){
                                                   )
                                               }// Estatus 'solicitada'
                                           }
-                                      }
-                                  }
+                                  }else{
+                                      for(var i = 0; i < data.length; i++){
+                                          for(var j = 0; j < req.body.id_articulo.length; j++){
+                                              // Get Estatus & Id
+                                              if(req.body.id_articulo.length > 1){
+                                                  var estatus            = req.body.estatus[j]
+                                                  var id_articulo_unidad = req.body.id_articulo_unidad[j]
+                                              }else{
+                                                  var estatus            = req.body.estatus
+                                                  var id_articulo_unidad = req.body.id_articulo_unidad
+                                              }
+                                              console.log('ID ARTICULO UNIDAD: ' + id_articulo_unidad + 'DATA ID ARTICULO UNIDAD: ' + data[i].id_articulo_unidad)
+                                              if(id_articulo_unidad == data[i].id_articulo_unidad &
+                                                 estatus            != data[i].estatus){
+                                                  queries.push(
+                                                      t.one(" update venta_articulos set estatus = $2 where id_articulo_unidad = $1 " +
+                                                            " and id_venta = $3 returning id ", [
+                                                                id_articulo_unidad,
+                                                                estatus,
+                                                                req.body.id
+                                                            ])
+                                                  )
+                                                  if(estatus === 'devolucion'){
+                                                      console.log('unidades: ' + data[i].unidades_vendidas + ' id_art: ' + data[i].id_articulo);
+                                                      queries.push(
+                                                          t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
+                                                                " where id = $2 returning id", [
+                                                                    data[i].costo_def, // * data[i].unidades_vendidas,
+                                                                    data[i].id_proveedor
+                                                                ]))
+                                                      queries.push(
+                                                          t.one(" update articulos set n_existencias = n_existencias + $1 " +
+                                                                " where id = $2 returning id ", [
+                                                                    data[i].unidades_vendidas,
+                                                                    data[i].id_articulo
+                                                                ]))
+                                                      queries.push(
+                                                          t.one(" insert into transferencia (id_venta, monto_efectivo, monto_credito, monto_debito, " +
+                                                                " fecha, hora, id_terminal, motivo_transferencia) " +
+                                                                " values ($1, $2, $3, $4, $5, $6, $7, $8) returning id", [
+                                                                    req.body.id,
+                                                                    - (data[i].precio * (req.body.optradio == 'efe')),
+                                                                    - (data[i].precio * (req.body.optradio == 'cred')),
+                                                                    - (data[i].precio * (req.body.optradio == 'deb')),
+                                                                    req.body.fecha_venta,
+                                                                    req.body.hora_venta,
+                                                                    req.body.terminal,
+                                                                    'devolucion'
+                                                                ])
+                                                      )
+                                                  }// Estatus 'solicitada'
+                                              }
+                                          }
+                                      }}
                                   return t.batch(queries)
                               })
                           }).then(function(data){

@@ -559,3 +559,10 @@ tipo text
 with new_values as (select id_proveedor, - sum(costo*n_existencias) as a_cuenta from articulos group by id_proveedor)
 update proveedores set a_cuenta = new_values.a_cuenta from new_values
 where new_values.id_proveedor = proveedores.id;
+
+
+/* Update notas entrada */
+insert into nota_entrada (id_nota_registro, id_articulo, costo_unitario, num_arts, hora, fecha, concepto, id_usuario)
+select '0' as id_nota_registro, id as id_articulo, costo as costo_unitario, n_existencias as num_arts, now() as hora, date_trunc('day', now()) as fecha, 'ingreso articulos' as concepto, '1' as id_usuario from articulos;
+
+

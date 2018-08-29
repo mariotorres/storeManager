@@ -9,6 +9,9 @@
                 <p style="color:#9e9e9e"><strong>Modelo:</strong> <%= items[i].modelo %> | <strong>Marca: </strong><%= items[i].nombre_prov %> | <strong>Tienda: </strong><%= items[i].nombre_tienda %></p>
                 <hr>
                 <p hidden>
+                    <input class="form-control" type="text" value="<%= items[i].venta_id_tot %>" name="venta_id_tot" hidden>
+                </p>
+                <p hidden>
                     <input class="form-control" type="text" value="<%= items[i].id_venta_articulo %>" name="id_venta_articulo" hidden>
                 </p>
                 <p hidden>
