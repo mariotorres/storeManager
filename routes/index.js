@@ -1339,7 +1339,27 @@ router.post('/type/payment',function(req, res ){
     });
 });
 
+router.post('/supplier/supplier-to-pay', isAuthenticated, function(req, res){
+    console.log(req.body)
+    db_conf.db.oneOrNone("select * from proveedores where id = $1", [
+        req.body.id
+    ]).then(function(data){
+        console.log(data)
+        res.render('partials/suppliers/supplier-to-pay', {
+            prov: data
+        })
+    }).catch(function(error){
+        console.log(error)
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al cargar los proveedores'
+        })
+    })
+})
+
+
 router.post('/supplier/payment', isAuthenticated, function(req, res){
+    console.log('INSIDE PAYMENT');
     console.log(req.body)
     db_conf.db.oneOrNone('select * from proveedores where id = $1', [
         req.body.id
