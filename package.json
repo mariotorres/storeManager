@@ -8,7 +8,7 @@
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.5.0",
-    "body-parser": "~1.15.1",
+    "body-parser": "^1.18.3",
     "bootstrap": "^3.3.7",
     "bower": "^1.8.4",
     "connect-flash": "^0.1.1",
@@ -17,10 +17,10 @@
     "debug": "~2.2.0",
     "dotenv": "^4.0.0",
     "ejs": "^2.5.7",
-    "express": "~4.13.4",
-    "express-session": "^1.14.1",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
     "json2csv": "^3.7.3",
-    "morgan": "~1.7.0",
+    "morgan": "^1.9.1",
     "multer": "^1.2.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
@@ -29,9 +29,9 @@
     "pg-promise": "^5.3.4",
     "remove": "^0.1.5",
     "sequelize": "^3.30.4",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.18.0"
+    "babel-cli": "^6.26.0"
   }
 }
