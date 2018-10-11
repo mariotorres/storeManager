@@ -4795,7 +4795,9 @@ router.post('/search/employees/results', isAuthenticated, function (req, res) {
         req.body.apellido_materno
     ]).then(function (data) {
         res.render('partials/search-employees-results',{
-            employees: data
+            employees: data,
+            fecha_init: req.body.fecha_inicial,
+            fecha_fin: req.body.fecha_final
         });
     }).catch(function (error) {
         console.log(error);
