@@ -3716,8 +3716,8 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
     console.log(req.body);
     var id = req.body.id;
     var store_id = req.body.id_tienda;
-    var fecha_inicial = req.body.fecha_inicial;
-    var fecha_final = req.body.fecha_final;
+    var fecha_inicial = req.body.fecha_init;
+    var fecha_final = req.body.fecha_fin;
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select * from usuarios where id = $1', id),
@@ -3754,7 +3754,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             ]),
             this.one(
                 " select  sum(pago_semanal * (( least(to_date($3, 'YYYY-MM-DD'), fecha_liquidacion) - " +
-                " greatest(to_date($2, 'YYYY-MM-DD'), fecha_prestamo))/7)::int  )  from prestamos where " +
+                " greatest(to_date($2, 'YYYY-MM-DD'), fecha_prestamo))/7)::int  ) as pago from prestamos where " +
                 " fecha_liquidacion >= $2 and fecha_prestamo <= $3 and id_usuario = $1", [
                     id,
                     fecha_inicial,
@@ -3807,7 +3807,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                 " = articulos.id and articulos.id_tienda = tiendas.id and transferencia.id_venta " +
                 " = ventas.id and transferencia.motivo_transferencia != 'devolucion'  and " +
                 " transferencia.fecha <= $3 and transferencia.fecha >=  " +
-                " $3 and ventas.id_tienda = $1", [
+                " $2 and ventas.id_tienda = $1", [
                 store_id,
                 fecha_inicial,
                 fecha_final
@@ -3951,6 +3951,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             ])
         });
     }).then(function (data) {
+        console.log(data)
         var totalComsion = (data[0][8] === null ? {'comision': 0} : data[0][8]);
         var pagoExtra = (data[0][12] === null ? {'monto': 0, 'descripcion': ''} : data[0][12]);
         var montoPrestamos = (data[0][5] === null ? {'pago': 0} : data[0][5]);
@@ -3965,9 +3966,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         var tienda = (data[0][9].length > 0 ? data[0][9] : []);
         var ventaTiendas = (data[0][10].length > 0 ? data[0][10] : []);
         var montoPremios = (data[5] === null ? {'monto': 0} : data[5]);
-        console.log("monto tienda" + data[0][11]);
-        console.log("monto individual" + data[0][5]);
-        console.log("Tienda " + data[0][9]);
+
         res.render('partials/employee-detail', {
             usuario: data[0][0],
             entradasTarde: entradasTarde,
