@@ -256,6 +256,14 @@ function modalEvents(button, modal, page ) {
             modal.find('.modal-title').text('Buscar empleado');
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/employees/find-employees-view',{}, function () {
+                $('#employees_datepicker1').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date().setDate(new Date().getDate( ) - 1)
+                });
+                $('#employees_datepicker2').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date().setDate(new Date().getDate( ))
+                });
                 modal.find('#findEmployees').submit(function (e) {
                     modal.find('#search_results').load('/search/employees/results', $(this).serializeArray(), function () {
                         /*$('#search_results').find('#findEmployees').submit(function(e){
