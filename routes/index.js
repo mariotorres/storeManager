@@ -1575,7 +1575,6 @@ router.post('/item/register', upload.single('imagen'), function (req, res) {
     console.log(req.body);
     //console.log(req.file );
     db_conf.db.task(function (t) {
-
         return this.oneOrNone('select count(*) as count from articulos where id_proveedor = $1 and id_tienda = $2 and' +
             ' modelo = $4 and id_marca = $5 and descripcion = $6', [
             numericCol(req.body.id_proveedor),
@@ -1588,7 +1587,19 @@ router.post('/item/register', upload.single('imagen'), function (req, res) {
 
             //Si el producto se registró previamente
             if (data.count > 0) {
-                return [{count: data.count}];
+                //return [{count: data.count}];
+                return t.batch([
+                    {count: data.count},
+                    t.oneOrNone(' update articulos set n_existencias = n_existencias + $1 where id_proveedor = $2 and ' +
+                        ' id_tienda = $3 and modelo = $4 and id_marca = $5 and descripcion = $6 returning id', [
+                        numericCol(req.body.n_arts),
+                        numericCol(req.body.id_proveedor),
+                        numericCol(req.body.id_tienda),
+                        req.body.modelo,
+                        numericCol(req.body.id_marca),
+                        req.body.descripcion
+                    ])
+                ])
             } else {
                 //Si el artículo tiene un proveedor, se agrega a la cuenta
                 var proveedor = null;
@@ -1646,8 +1657,8 @@ router.post('/item/register', upload.single('imagen'), function (req, res) {
             });
         } else {
             res.json({
-                status: 'Error',
-                message: '¡Precaución! Existe un registro previo de la prenda "' + req.body.articulo + '" en esta tienda'
+                status: 'Ok',
+                message: '¡Precaución! Existe un registro previo de la prenda "' + req.body.articulo + '" en esta tienda | se actualizaron los valores de existencias'
             });
         }
     }).catch(function (error) {
