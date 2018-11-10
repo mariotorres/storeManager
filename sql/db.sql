@@ -333,7 +333,8 @@ create table nota_entrada(
     costo_unitario numeric,
     hora time,
     fecha date,
-    concepto text
+    concepto text,
+    descuento_proveedor numeric
 );
 
 /* Nota devolución */

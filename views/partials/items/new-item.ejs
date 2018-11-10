@@ -13,37 +13,38 @@
         <label>Descripción</label>
         <input type="text" name="descripcion" class="form-control">
     </p>
+
     <p>
         <label>Proveedor</label>
         <select name="id_proveedor" class="form-control" required>
             <%
             if (proveedores.length > 0 ){
-            for (var i =0; i < proveedores.length; i++){
+            for (var i = 0; i < proveedores.length; i++){
             %>
-            <option value="<%= proveedores[i].id %>"> <%= proveedores[i].nombre %> </option>
+                <option value="<%= proveedores[i].id %>"> <%= proveedores[i].nombre %> </option>
             <%
             }
             }else {
             %>
-            <option value="">Ninguno</option>
-            <% }%>
+                <option value="">Ninguno</option>
+            <% } %>
         </select>
     </p>
 
     <p>
         <label>Marca</label>
-        <select name = "id_marca" class="form-control" required>
+        <select name="id_marca" class="form-control" required>
             <%
             if (marcas.length > 0 ){
-            for (var i =0; i < marcas.length; i++){
+            for (var i = 0; i < marcas.length; i++){
             %>
-            <option value="<%= marcas[i].id %>"> <%= marcas[i].nombre %> </option>
+                <option value="<%= marcas[i].id %>"> <%= marcas[i].nombre %> </option>
             <%
             }
             }else {
             %>
-            <option value="">Ninguna</option>
-            <% }%>
+                <option value="">Ninguna</option>
+            <% } %>
         </select>
     </p>
     <p>
@@ -53,18 +54,18 @@
 
     <p>
         <label>Tienda</label>
-        <select name = "id_tienda" class="form-control" required>
+        <select name="id_tienda" class="form-control" required>
             <%
             if (tiendas.length > 0 ){
-            for (var i =0; i < tiendas.length; i++){
+            for (var i = 0; i < tiendas.length; i++){
             %>
-            <option value="<%= tiendas[i].id %>"> <%= tiendas[i].nombre %> </option>
+                <option value="<%= tiendas[i].id %>"> <%= tiendas[i].nombre %> </option>
             <%
             }
             }else {
             %>
-            <option value="">Ninguna</option>
-            <% }%>
+                <option value="">Ninguna</option>
+            <% } %>
         </select>
     </p>
     <p>
@@ -77,19 +78,26 @@
     </p>
 
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <p>
                 <label>Precio proveedor</label>
                 <input type="number" step="any" id="costo" name="costo" class="form-control" required>
             </p>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
+            <p>
+                <label>Descuento de proveedor (%)</label>
+                <input id="nArts" type="number" value="0" class="form-control" name="discount">
+
+            </p>
+        </div>
+        <div class="col-sm-3">
             <p>
                 <label>Precio venta</label>
                 <input type="number" step="any" id="precio" name="precio" class="form-control" required>
             </p>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <p>
                 <!--No se debe permitir mismo código de barras para cada uno de los vestidos ver cómo adaptar el código de barras-->
                 <label>Número de existencias</label>
@@ -114,20 +122,22 @@
     <div class="row">
         <div class="col-md-2">
             <p>
-          <button  value="registrar" type="submit" class="btn btn-primary">Registrar</button>
+                <button value="registrar" type="submit" class="btn btn-primary">Registrar</button>
             </p>
         </div>
         <div class="col-md-2">
-           <p>
-          <button  type="submit" value="registrar_continuar" id="continuar" class="btn btn-primary">Registrar y continuar</button>
-           </p>
+            <p>
+                <button type="submit" value="registrar_continuar" id="continuar" class="btn btn-primary">Registrar y
+                    continuar
+                </button>
+            </p>
         </div>
     </div>
 
 </form>
 
 <script>
-    $("#costo").on("keyup", function(){
-        $("#precio").val($("#costo").val()*2);
+    $("#costo").on("keyup", function () {
+        $("#precio").val($("#costo").val() * 2);
     })
 </script>
