@@ -1624,7 +1624,7 @@ router.post('/item/register', upload.single('imagen'), function (req, res) {
                         req.body.talla,
                         req.body.notas,
                         numericCol(req.body.precio),
-                        numericCol(req.body.costo),
+                        numericCol(req.body.costo)*(1 - req.body.discount/100),
                         numericCol(req.body.codigo_barras),
                         typeof req.file != 'undefined' ? req.file.filename : null,
                         numericCol(req.body.n_arts)
@@ -1636,14 +1636,15 @@ router.post('/item/register', upload.single('imagen'), function (req, res) {
             return t.batch([
                 data,
                 t.one(' insert into nota_entrada(id_nota_registro, id_usuario, id_articulo, ' +
-                    ' num_arts, hora, fecha, costo_unitario, concepto) ' +
-                    ' values($1, $2, $3, $4, localtime, current_date, $5, $6) returning id', [
+                    ' num_arts, hora, fecha, costo_unitario, concepto, descuento_proveedor) ' +
+                    ' values($1, $2, $3, $4, localtime, current_date, $5, $6, $7) returning id', [
                     req.body.id_nota_registro,
                     req.user.id,
                     data[1].id,
                     req.body.n_arts,
                     req.body.costo,
-                    'ingreso articulos'
+                    'ingreso articulos',
+                    req.body.discount
                 ])
             ])
         })
