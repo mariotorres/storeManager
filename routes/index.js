@@ -3529,7 +3529,7 @@ router.post('/notes/find-notes-view', function (req, res) {
 });
 
 router.post('/supplier/details', isAuthenticated, function (req, res) {
-    console.log(req.body)
+    console.log(req.body);
     var fecha_inicial = req.body.fecha_inicial
     db_conf.db.oneOrNone(
         ' select max(fecha) as lat_pay from nota_pago_prov ' +
@@ -4005,6 +4005,202 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
 });
 
 router.get('/print/supplier/details', (req, res) => {
+
+
+    const {id_proveedor, fecha_inicial, fecha_final} = req.query;
+
+
+    //var fecha_inicial = req.body.fecha_inicial
+    db_conf.db.oneOrNone(
+        ' select max(fecha) as lat_pay from nota_pago_prov ' +
+        ' where id_proveedor = $1', [
+            id_proveedor
+        ]).then(function (data) {
+        // var fecha_inicial = req.body.fecha_inicial
+        /*
+        if(data.lat_pay && req.body.hasOwnProperty('lat_pay')){
+            fecha_inicial = data.lat_pay
+        }*/
+        return db_conf.db.task(function (t) {
+            return t.batch([
+                t.oneOrNone(" select * from proveedores where id = $1 ", [
+                    id_proveedor
+                ]),
+                // Monto de Ventas Periodo
+                t.manyOrNone(
+                    " select tiendas.nombre as nombre_tienda, sum(unidades_vendidas) " +
+                    " as unidades_vendidas, id_articulo, articulo, descripcion, ventas.id_papel, " +
+                    " venta_articulos.estatus, " +
+                    " articulos.costo as costo, articulos.modelo as modelo, fecha_venta from tiendas, " +
+                    " venta_articulos, articulos, ventas, (select min(fecha) as fecha_venta, " +
+                    " transferencia.id_venta as id_venta from ventas, transferencia where " +
+                    " transferencia.id_venta = ventas.id group by id_venta) as fechas_ventas " +
+                    " where venta_articulos.estatus " +
+                    " != 'solicitada' and ventas.estatus = 'activa' and ventas.id = " +
+                    " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
+                    " fue_sol = 0 and " +
+                    " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
+                    " and venta_articulos.id_articulo = articulos.id " +
+                    " and id_proveedor = $3 and tiendas.id = ventas.id_tienda group by id_articulo, " +
+                    " id_papel, costo, modelo, articulo, descripcion, fecha_venta, " +
+                    " nombre_tienda, venta_articulos.estatus", [
+                        fecha_inicial,
+                        fecha_final,
+                        id_proveedor
+                    ]),
+                // Monto Por Pagar de Ventas
+                t.oneOrNone(
+                    " select sum(tot_costos) as tot_costos from (select sum(costo * unidades_vendidas) " +
+                    " as tot_costos from venta_articulos, articulos, ventas, (select min(fecha) as fecha_venta, " +
+                    " transferencia.id_venta as id_venta from ventas, transferencia where transferencia.id_venta " +
+                    " = ventas.id group by id_venta) as fechas_ventas where venta_articulos.estatus != 'devolucion' " +
+                    " and venta_articulos.estatus != 'solicitada' and ventas.estatus = 'activa' and ventas.id = " +
+                    " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and " +
+                    " fue_sol = 0 and " +
+                    " venta_articulos.id_articulo = articulos.id and " +
+                    " fechas_ventas.fecha_venta >= $1 and fechas_ventas.id_venta = ventas.id " +
+                    " and id_proveedor = $3 group by id_articulo, venta_articulos.id_venta, costo, modelo, " +
+                    " articulo, descripcion, fecha_venta) as costos", [
+                        fecha_inicial,
+                        fecha_final,
+                        id_proveedor
+                    ]),
+                // Total Artículos Solicitados
+                t.manyOrNone(
+                    " select tiendas.nombre as nombre_tienda,  " +
+                    " id_articulo, articulo, descripcion, id_nota_registro, " +
+                    " costo_unitario, articulos.modelo as modelo, fecha, concepto, num_arts from tiendas, " +
+                    " articulos, nota_entrada, proveedores where nota_entrada.concepto = " +
+                    " 'ingreso articulos solicitados' and proveedores.id = $3 and " +
+                    " articulos.id = nota_entrada.id_articulo and articulos.id_proveedor = proveedores.id and " +
+                    " tiendas.id = articulos.id_tienda  and " +
+                    " nota_entrada.fecha >= $1 and nota_entrada.fecha <= $2", [
+                        fecha_inicial,
+                        fecha_final,
+                        id_proveedor
+                    ]
+                ),
+                // Monto Por Pagar Articulos Solicitados
+                t.oneOrNone(
+                    " select sum(costo_tot) as costo_tot from (" +
+                    " select sum(costo_unitario * num_arts) as costo_tot  " +
+                    " from tiendas, " +
+                    " articulos, nota_entrada, proveedores where nota_entrada.concepto = " +
+                    " 'ingreso articulos solicitados' and proveedores.id = $3 and " +
+                    " articulos.id = nota_entrada.id_articulo and articulos.id_proveedor = proveedores.id and " +
+                    " tiendas.id = articulos.id_tienda  and " +
+                    " nota_entrada.fecha >= $1 and nota_entrada.fecha <= $2) as costos", [
+                        fecha_inicial,
+                        fecha_final,
+                        id_proveedor
+                    ]),
+                // Total Artículos Devueltos
+                t.manyOrNone(" select nombre_tienda, unidades_vendidas, id_articulo, id_articulo_unidad, articulo, " +
+                    " descripcion, id_papel, modelo, fecha_venta, fue_sol, max(costo_def) " +
+                    " as costo from ( select tiendas.nombre as nombre_tienda, " +
+                    " unidades_vendidas, venta_articulos.id_articulo, id_articulo_unidad, articulo, descripcion, " +
+                    " ventas.id_papel, articulos.modelo as modelo, fecha_venta, fue_sol, " +
+                    " case when fue_sol > 0 then nota_entrada.costo_unitario else articulos.costo " +
+                    " end as costo_def from nota_entrada, tiendas, venta_articulos, articulos, " +
+                    " ventas, (select min(fecha) as fecha_venta, transferencia.id_venta as " +
+                    " id_venta from ventas, transferencia where transferencia.id_venta = ventas.id " +
+                    " group by id_venta) as fechas_ventas where nota_entrada.id_articulo = " +
+                    " venta_articulos.id_articulo and venta_articulos.estatus = 'devolucion'  " +
+                    " and ventas.estatus = 'activa' and ventas.id = venta_articulos.id_venta and " +
+                    " fechas_ventas.fecha_venta <= $2 and  venta_articulos.id_articulo = " +
+                    " articulos.id and  fechas_ventas.fecha_venta >= $1 and " +
+                    " fechas_ventas.id_venta = ventas.id and id_proveedor = $3 and tiendas.id = " +
+                    " ventas.id_tienda) as temp group by nombre_tienda, unidades_vendidas, " +
+                    " id_articulo, articulo, descripcion, id_papel, modelo, fecha_venta, fue_sol, id_articulo_unidad", [
+                    fecha_inicial,
+                    fecha_final,
+                    id_proveedor
+                ]),
+                // Monto Por Recibir Articulos Devueltos
+                t.oneOrNone(" select sum(costo_def * unidades_vendidas) as tot_costos from (select max(costo_def)  " +
+                    " as costo_def, id_articulo, id_articulo_unidad, id_venta, id_articulo, unidades_vendidas " +
+                    " from (select case when fue_sol > 0 then costo_unitario else costo end as costo_def,  " +
+                    " unidades_vendidas, venta_articulos.id_venta, venta_articulos.id_articulo, id_articulo_unidad from  " +
+                    " venta_articulos, nota_entrada, articulos, ventas, (select min(fecha) as fecha_venta,  " +
+                    " transferencia.id_venta as id_venta from ventas, transferencia where  transferencia.id_venta = " +
+                    " ventas.id group by id_venta) as fechas_ventas where  venta_articulos.estatus = 'devolucion' and " +
+                    " ventas.estatus = 'activa' and ventas.id =  venta_articulos.id_venta and fechas_ventas.fecha_venta <= " +
+                    " $2 and  venta_articulos.id_articulo = articulos.id and fechas_ventas.fecha_venta >= $1  and " +
+                    " fechas_ventas.id_venta = ventas.id and nota_entrada.id_articulo =  venta_articulos.id_articulo " +
+                    " and id_proveedor = $3 group by venta_articulos.id_articulo,  id_articulo_unidad, venta_articulos.id_venta, " +
+                    " modelo, articulo, descripcion, fecha_venta, fue_sol,  costo_def, venta_articulos.id_articulo, " +
+                    " unidades_vendidas) as temp group by id_articulo, id_articulo_unidad, id_venta, id_articulo, unidades_vendidas) as temp1"
+                    /*
+                       " select sum(costo_def * unidades_vendidas) as tot_costos from (select max(costo_def) " +
+                       " as costo_def, id_articulo, id_venta, id_articulo, unidades_vendidas from " +
+                       " (select case when fue_sol > 0 then costo_unitario else costo end as costo_def, " +
+                       " unidades_vendidas, venta_articulos.id_venta, venta_articulos.id_articulo from " +
+                       " venta_articulos, nota_entrada, articulos, ventas, (select min(fecha) as fecha_venta, " +
+                       " transferencia.id_venta as id_venta from ventas, transferencia where " +
+                       " transferencia.id_venta  = ventas.id group by id_venta) as fechas_ventas where " +
+                       " venta_articulos.estatus = 'devolucion'  and ventas.estatus = 'activa' and ventas.id =  " +
+                       " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and  " +
+                       " venta_articulos.id_articulo = articulos.id and  fechas_ventas.fecha_venta >= $1 " +
+                       " and fechas_ventas.id_venta = ventas.id  and nota_entrada.id_articulo = " +
+                       " venta_articulos.id_articulo and id_proveedor = $3 group by venta_articulos.id_articulo, " +
+                       " venta_articulos.id_venta, modelo,  articulo, descripcion, fecha_venta, fue_sol, " +
+                       " costo_def, venta_articulos.id_articulo, unidades_vendidas) as temp group by " +
+                       " id_articulo, id_venta, id_articulo, unidades_vendidas) as temp1"*/, [
+                        fecha_inicial,
+                        fecha_final,
+                        id_proveedor
+                    ]),
+                // Todos los pagos efectuados en el periodo
+                t.manyOrNone(
+                    " select * from nota_pago_prov where fecha <= $2 and fecha >= $1 and id_proveedor = $3", [
+                        fecha_inicial,
+                        fecha_final,
+                        id_proveedor
+                    ]),
+                t.oneOrNone(
+                    " select sum(monto_pagado) as monto_total from nota_pago_prov where fecha <= $2 and fecha >= $1 and id_proveedor = $3", [
+                        fecha_inicial,
+                        fecha_final,
+                        id_proveedor
+                    ]),
+                t.manyOrNone(
+                    " select articulo, modelo, unidades_regresadas, fecha, devolucion_prov_articulos.costo_unitario, " +
+                    " fue_sol from devolucion_prov_articulos, articulos where fecha <= $2 and fecha >= $1 and articulos.id_proveedor = $3 " +
+                    " and articulos.id = devolucion_prov_articulos.id_articulo", [
+                        fecha_inicial,
+                        fecha_final,
+                        id_proveedor
+                    ]
+                )
+            ])
+        })
+    }).then(function (data) {
+        console.log(JSON.stringify(data))
+        res.render('partials/suppliers/supplier_details',
+            {
+                proveedor: data[0],
+                ventas: data[1],
+                total_ventas: data[2],
+                solicitudes: data[3],
+                total_sol: data[4],
+                devoluciones: data[5],
+                total_dev: data[6],
+                total_pagos: data[7],
+                total_pago: data[8],
+                devs_prov: data[9],
+                fecha_inicial: fecha_inicial,
+                fecha_final: req.body.fecha_final,
+            }
+        );
+    }).catch(function (error) {
+        console.log(error);
+        res.json({
+            status: 'Error',
+            message: 'Ocurrió un error al cargar los datos del proveedor'
+        })
+    })
+
+    /*
     console.log(req.query);
     db_conf.db.oneOrNone(
         ' select max(fecha) as lat_pay from nota_pago_prov ' +
@@ -4031,6 +4227,7 @@ router.get('/print/supplier/details', (req, res) => {
             message: 'Ocurrió un error al cargar los datos del proveedor'
         })
     })
+    */
 });
 
 router.get('/print/employee/details', /* isAuthenticated, */ function (req, res) {

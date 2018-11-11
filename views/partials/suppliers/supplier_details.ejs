@@ -249,7 +249,8 @@
 <%}%>
 
 
-
+<%
+var url = '/print/supplier/details?id_proveedor='+ proveedor.id+'&fecha_inicial='+ fecha_inicial+ '&fecha_final='+fecha_final %>
 <p>
-    <button class="btn btn-primary"> <i class="fa fa-print"></i> Imprimir reporte</button>
+<button class="btn btn-primary" onclick="<%= "window.open('"+ url +"')"%>"> <i class="fa fa-print"></i> Imprimir reporte</button>
 </p>
