@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Usuario</title>
+
+    <!-- Bootstrap -->
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/stylesheets/style.css" rel="stylesheet">
+    <style>
+        body{
+            padding-top: 10px !important;
+        }
+    </style>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- font awesome -->
+    <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h3 style="color:#9E9E9E"><strong>Datos Generales</strong></h3>
+    <p>
+        <label>Nombre proveedor</label>
+
+    <h4 style="color: #E91E63;"><%= proveedor.nombre %></h4>
+
+    </p>
+
+    <p>
+        <%if(proveedor.por_pagar < 0){%>
+            <label>Saldo por pagar</label>
+    <h3 style="color: #E91E63;"><%= (-1)*proveedor.por_pagar %></h3>
+    <%}else{%>
+        <label>El proveedor tiene un saldo deudor de </label>
+        <h3 style="color: #E91E63;"><%= (-1)*proveedor.por_pagar %></h3>
+    <%}%>
+    </p>
+
+    <!-- <div class="row">
+     <div class="col-sm-6">
+     <p>
+     <label>Razón Social</label>
+     <h5 style="color: #9E9E9E;"><%= proveedor.razon_social %></h5>
+     </p>
+     </div>
+     <div class="col-sm-6">
+     <p>
+     <label>RFC</label>
+     <h5 style="color: #9E9E9E;"><%= proveedor.rfc %></h5>
+     </p>
+     </div>
+     </div>-->
+
+    <!-- Desgloce Ventas!!!-->
+    <hr>
+    <h5 style="color:#9E9E9E"><strong>Ventas periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+    <%if(ventas.length > 0){%>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td><b>ID papel</b></td>
+                <td><b>Fecha venta</b></td>
+                <td><b>Tienda</b></td>
+                <td><b>Artículo</b></td>
+                <td><b>Modelo</b></td>
+                <td><b>Unidades</b></td>
+                <td><b>Estatus</b></td>
+                <td><b>Costo unitario</b></td>
+            </tr>
+            </thead>
+            <tbody>
+            <%for(var i = 0; i < ventas.length; i++){ %>
+                <tr>
+                    <td><%= ventas[i].id_papel %></td>
+                    <td><%= new Date(ventas[i].fecha_venta).toLocaleDateString() %></td>
+                    <td><%= ventas[i].nombre_tienda %></td>
+                    <td><%= ventas[i].articulo %></td>
+                    <td><%= ventas[i].modelo %></td>
+                    <td><%= ventas[i].unidades_vendidas %></td>
+                    <td><%= ventas[i].estatus %></td>
+                    <td>
+                        <%if(ventas[i].estatus === 'devolucion'){%>
+                        <span style="color:#BDBDBD"><%=ventas[i].costo%></span>
+                        <%}else{%>
+                        <span><%=ventas[i].costo%></span>
+                        <%}%>
+                    </td>
+                </tr>
+            <%}%>
+            <hr>
+            <tr>
+                <td><strong>Total ventas</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><strong><%= total_ventas.tot_costos %></strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <%}else{%>
+        <div class="alert alert-info" role="alert">El proveedor no tiene ventas registradas en el periodo seleccionado</div>
+    <%}%>
+
+    <!-- Desgloce Solicitadas!!!-->
+    <h5 style="color:#9E9E9E"><strong>Ingreso prendas solicitadas periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+    <%if(solicitudes.length > 0){%>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td><b>ID Nota Registro</b></td>
+                <td><b>Fecha Registro</b></td>
+                <td><b>Tienda</b></td>
+                <td><b>Artículo</b></td>
+                <td><b>Modelo</b></td>
+                <td><b>Unidades</b></td>
+                <td><b>Costo unitario</b></td>
+            </tr>
+            </thead>
+            <tbody>
+            <%for(var i = 0; i < solicitudes.length; i++){ %>
+                <tr>
+                    <td><%= solicitudes[i].id_nota_registro %></td>
+                    <td><%= new Date(solicitudes[i].fecha).toLocaleDateString() %></td>
+                    <td><%= solicitudes[i].nombre_tienda %></td>
+                    <td><%= solicitudes[i].articulo %></td>
+                    <td><%= solicitudes[i].modelo %></td>
+                    <td><%= solicitudes[i].num_arts %></td>
+                    <td><%= solicitudes[i].costo_unitario %></td>
+                </tr>
+            <%}%>
+            <hr>
+            <tr>
+                <td><strong>Total costo prendas solicitadas</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><strong><%= total_sol.costo_tot %></strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <%}else{%>
+        <div class="alert alert-info" role="alert">El proveedor no tiene prendas solicitadas registradas en el periodo seleccionado</div>
+    <%}%>
+
+    <!-- Desgloce Devoluciones Proveedores!!!-->
+    <hr>
+    <h5 style="color:#9E9E9E"><strong>Devoluciones a proveedores periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+    <%if(devs_prov.length > 0){%>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td><b>Nombre</b></td>
+                <td><b>Modelo</b></td>
+                <td><b>Fecha</b></td>
+                <td><b>Unidades regresadas</b></td>
+                <td><b>Fue prenda solicitada</b></td>
+                <td><b>Costo unitario</b></td>
+            </tr>
+            </thead>
+            <tbody>
+            <%for(var i = 0; i < devs_prov.length; i++){ %>
+                <tr>
+                    <td><%= devs_prov[i].articulo %></td>
+                    <td><%= devs_prov[i].modelo %></td>
+                    <td><%= new Date(devs_prov[i].fecha).toLocaleDateString() %></td>
+                    <td><%= devs_prov[i].unidades_regresadas %></td>
+                    <td><%= devs_prov[i].fue_sol == 1 ? 'Si' : 'No' %></td>
+                    <td><%= devs_prov[i].costo_unitario %></td>
+                </tr>
+            <%}%>
+            </tbody>
+        </table>
+        <hr>
+    </div>
+    <%}else{%>
+        <div class="alert alert-info" role="alert">No se hicieron devoluciones al proveedor en el periodo seleccionado</div>
+    <%}%>
+
+
+
+<!-- Desgloce Devoluciones!!!-->
+    <hr>
+    <h5 style="color:#9E9E9E"><strong>Devoluciones de clientes periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+    <%if(devoluciones.length > 0){%>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td><b>ID papel</b></td>
+                <td><b>Fecha venta</b></td>
+                <td><b>Tienda</b></td>
+                <td><b>Artículo</b></td>
+                <td><b>Modelo</b></td>
+                <td><b>Unidades</b></td>
+                <td><b>Costo unitario</b></td>
+            </tr>
+            </thead>
+            <tbody>
+            <%for(var i = 0; i < devoluciones.length; i++){ %>
+                <tr>
+                    <td><%= devoluciones[i].id_papel %></td>
+                    <td><%= new Date(devoluciones[i].fecha_venta).toLocaleDateString() %></td>
+                    <td><%= devoluciones[i].nombre_tienda %></td>
+                    <td><%= devoluciones[i].articulo %></td>
+                    <td><%= devoluciones[i].modelo %></td>
+                    <td><%= devoluciones[i].unidades_vendidas %></td>
+                    <td><%= devoluciones[i].costo %></td>
+                </tr>
+            <%}%>
+            <hr>
+            <tr>
+                <td><strong>Total devoluciones</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><strong><%= total_dev.tot_costos %></strong></td>
+            </tr>
+            </tbody>
+        </table>
+        <hr>
+    </div>
+    <%}else{%>
+        <div class="alert alert-info" role="alert">No se hicieron devoluciones de clientes en el periodo seleccionado</div>
+    <%}%>
+
+    <!-- Desgloce Pagos!!!-->
+    <h5 style="color:#9E9E9E"><strong>Pagos realizados al proveedor en el periodo: <span><%=fecha_inicial%>  <%=fecha_final%></span></strong></h5>
+    <%if(total_pagos.length > 0){%>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td><b>Concepto</b></td>
+                <td><b>Fecha Registro</b></td>
+                <td><b>Monto</b></td>
+            </tr>
+            </thead>
+            <tbody>
+            <%for(var i = 0; i < total_pagos.length; i++){ %>
+                <tr>
+                    <td><%= total_pagos[i].concepto_de_pago %></td>
+                    <td><%= new Date(total_pagos[i].fecha).toLocaleDateString() %></td>
+                    <td><%= total_pagos[i].monto_pagado %></td>
+                </tr>
+            <%}%>
+            <hr>
+            <tr>
+                <td><strong>Total pagado a proveedor en periodo</strong></td>
+                <td></td>
+                <td><strong><%= total_pago.monto_total %></strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <%}else{%>
+        <div class="alert alert-info" role="alert">El proveedor no tiene pagos registrados en el periodo seleccionado</div>
+    <%}%>
+
+
+<p>
+    <button class="btn btn-primary" onclick="<%= "window.print()"%>"> <i class="fa fa-print"></i> Imprimir reporte</button>
+</p>
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -4177,7 +4177,7 @@ router.get('/print/supplier/details', (req, res) => {
         })
     }).then(function (data) {
         console.log(JSON.stringify(data))
-        res.render('partials/suppliers/supplier_details',
+        res.render('partials/suppliers/supplier_details_for_pdf',
             {
                 proveedor: data[0],
                 ventas: data[1],
