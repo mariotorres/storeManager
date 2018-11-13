@@ -373,7 +373,7 @@
 
 
     <p>
-        <%var url = '/print/employee/details?user_id='+ usuario.id %>
+        <%var url = '/print/employee/details?user_id='+ usuario.id + '&id_tienda=' + usuario.id_tienda + '&fecha_init=' + fecha_inicial + '&fecha_fin=' + fecha_final  %>
         <button class="btn btn-primary" onclick="<%= "window.open('"+ url +"')"%>"> <i class="fa fa-print"></i> Imprimir reporte</button>
     </p>
 <!--</form>-->
