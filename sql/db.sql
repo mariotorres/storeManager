@@ -110,7 +110,8 @@ create table usuarios(
     permiso_empleados boolean,
     permiso_inventario boolean,
     hora_llegada time,
-    hora_salida time
+    hora_salida time,
+    comision numeric(1000, 2)
 );
 
 
@@ -124,23 +125,23 @@ insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_pat
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
-                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(1,'eddus','$2a$10$9tP9kfd31uKWUA3Eh1hXAOdL8/IbZvXuxA4hY8AeKwD0CbX4mdDeW','Eduardo','','', true, true, true, true, 500.0, '10:00:00', '18:00:00');
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida", "comision") values
+(1,'eddus','$2a$10$9tP9kfd31uKWUA3Eh1hXAOdL8/IbZvXuxA4hY8AeKwD0CbX4mdDeW','Eduardo','','', true, true, true, true, 500.0, '10:00:00', '18:00:00', .03);
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
-                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(1,'lorena','$2a$10$MisCfq8fNz6rmCSLzBpIg.GovnM5rSUrl3frwzNQ.Z7PMHZfX11jG','Lorena','','', true, false, true, false, 500.0, '10:00:00', '18:00:00');
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida", "comision") values
+(1,'lorena','$2a$10$MisCfq8fNz6rmCSLzBpIg.GovnM5rSUrl3frwzNQ.Z7PMHZfX11jG','Lorena','','', true, false, true, false, 500.0, '10:00:00', '18:00:00', .03);
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
-                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(1,'karen','$2a$10$P3yLFwz1i2bCkbrynLhUVO1UUlBMYTMo7HuycUzbxtEzwpoyE1tD2','Karen','','', true, false, true, false, 500.0, '10:00:00', '18:00:00');
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida", "comision") values
+(1,'karen','$2a$10$P3yLFwz1i2bCkbrynLhUVO1UUlBMYTMo7HuycUzbxtEzwpoyE1tD2','Karen','','', true, false, true, false, 500.0, '10:00:00', '18:00:00', .03);
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
-                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(1,'nedly','$2a$10$5COmCOiUq.9GJL.X6Owzceup78zMSSZWHK71ELIeQACG1zjzOnX6i','Nedly','','', true, false, true, false, 500.0, '10:00:00', '18:00:00');
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida", "comision") values
+(1,'nedly','$2a$10$5COmCOiUq.9GJL.X6Owzceup78zMSSZWHK71ELIeQACG1zjzOnX6i','Nedly','','', true, false, true, false, 500.0, '10:00:00', '18:00:00', .03);
 
 
 /*
@@ -149,18 +150,18 @@ insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_pat
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
-                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(3,'claus','$2a$10$sy8M9I19WT12UiCiBlx8Ge7fUHZBJg4a33pC/HREuZwvIx11OvAA2','Claudia','','', true, true, true, true, 700.0, '10:00:00', '18:00:00');
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida", "comision") values
+(3,'claus','$2a$10$sy8M9I19WT12UiCiBlx8Ge7fUHZBJg4a33pC/HREuZwvIx11OvAA2','Claudia','','', true, true, true, true, 700.0, '10:00:00', '18:00:00', .03);
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
-                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(3,'mago','$2a$10$nmXTphwfI5WrRPJELNKhVeYfNvdYfgOZsDUKV/VJ83crD/KivZWJK','Mago','','', true, false, true, false, 500.0, '10:00:00', '18:00:00');
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida", "comision") values
+(3,'mago','$2a$10$nmXTphwfI5WrRPJELNKhVeYfNvdYfgOZsDUKV/VJ83crD/KivZWJK','Mago','','', true, false, true, false, 500.0, '10:00:00', '18:00:00', .03);
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
-                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(3,'mayra','$2a$10$n0goYwdjLuLBdQYJrejTwOdo/aK39g78Frx.L7p64jYhOSBqQfnW.','Mayra','','', true, false, true, false, 500.0, '10:00:00', '18:00:00');
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida", "comision") values
+(3,'mayra','$2a$10$n0goYwdjLuLBdQYJrejTwOdo/aK39g78Frx.L7p64jYhOSBqQfnW.','Mayra','','', true, false, true, false, 500.0, '10:00:00', '18:00:00', .03);
 
 
 
@@ -170,18 +171,18 @@ insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_pat
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
-                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(4,'elena','$2a$10$CjY39hte0kRZvAMc1S6.2uxFM3f87cl7A90xCuHAxH68XrEaQZnVm','Elena','','', true, true, true, true, 550.0, '10:00:00', '18:00:00');
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida", "comision") values
+(4,'elena','$2a$10$CjY39hte0kRZvAMc1S6.2uxFM3f87cl7A90xCuHAxH68XrEaQZnVm','Elena','','', true, true, true, true, 550.0, '10:00:00', '18:00:00', .03);
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
-                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(4,'angeles','$2a$10$XmwdlE4DXu2hVDdBmnkFVe6IE8UNJG1rp9gmr5Tmvsvwvho9gnfLC','Ángeles','','', true, false, true, false, 500.0, '10:00:00', '18:00:00');
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida", "comision") values
+(4,'angeles','$2a$10$XmwdlE4DXu2hVDdBmnkFVe6IE8UNJG1rp9gmr5Tmvsvwvho9gnfLC','Ángeles','','', true, false, true, false, 500.0, '10:00:00', '18:00:00', .03);
 
 insert into usuarios ("id_tienda","usuario","contrasena","nombres","apellido_paterno",
                       "apellido_materno","permiso_tablero","permiso_administrador",
-                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida") values
-(4,'ericka','$2a$10$ZwIPxHfrAP3eKhPhxVuy7.INBBCGIg4dDp76I9b.wNJBybWUYu.Jq','Ericka','','', true, false, true, false, 500.0, '10:00:00', '18:00:00');
+                      "permiso_empleados", "permiso_inventario", "salario", "hora_llegada", "hora_salida", "comision") values
+(4,'ericka','$2a$10$ZwIPxHfrAP3eKhPhxVuy7.INBBCGIg4dDp76I9b.wNJBybWUYu.Jq','Ericka','','', true, false, true, false, 500.0, '10:00:00', '18:00:00', .03);
 
 
 /* prestamos */

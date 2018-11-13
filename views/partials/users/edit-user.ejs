@@ -145,7 +145,7 @@
 
 
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <p>
                 <label>¿Es empleado?</label>
                 <select class="form-control" name="empleado">
@@ -155,10 +155,16 @@
             </p>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <p>
                 <label>Salario</label>
                 <input type="number" step="any" class="form-control" name="salario" value="<%= user.salario%>">
+            </p>
+        </div>
+        <div class="col-sm-2">
+            <p>
+                <label>Comsión %</label>
+                <input type="number" step="any" class="form-control" name="comision" value="<%=user.comision*100%>">
             </p>
         </div>
         <div class="col-sm-3">

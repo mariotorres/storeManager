@@ -1744,8 +1744,8 @@ router.post('/user/signup', isAuthenticated, function (req, res) {
 
         return db_conf.db.one('insert into usuarios ( usuario, contrasena, email, nombres, apellido_paterno, apellido_materno, rfc, direccion_calle, direccion_numero_int, ' +
             'direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais,' +
-            'empleado, salario, permiso_tablero, permiso_administrador, permiso_empleados, permiso_inventario, id_tienda, hora_llegada, hora_salida) values' +
-            '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25) returning id, usuario ', [
+            'empleado, salario, permiso_tablero, permiso_administrador, permiso_empleados, permiso_inventario, id_tienda, hora_llegada, hora_salida, comision) values' +
+            '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25, $26) returning id, usuario ', [
             req.body.usuario.trim(),
             bCrypt.hashSync(req.body.contrasena, bCrypt.genSaltSync(10), null),
             req.body.email,
@@ -1770,7 +1770,8 @@ router.post('/user/signup', isAuthenticated, function (req, res) {
             stob(req.body.permiso_inventario),
             numericCol(req.body.id_tienda),
             req.body.llegada,
-            req.body.salida
+            req.body.salida,
+            req.body.comision/100
         ]);
 
 
@@ -2576,7 +2577,7 @@ router.post('/user/update', isAuthenticated, function (req, res) {
     db_conf.db.one('update usuarios set nombres=$2, apellido_paterno=$3, apellido_materno=$4, rfc=$5, direccion_calle=$6, direccion_numero_int=$7, ' +
         'direccion_numero_ext=$8, direccion_colonia=$9, direccion_localidad=$10, direccion_municipio=$11, direccion_ciudad=$12, direccion_estado= $13,' +
         'direccion_pais=$14, email=$15, id_tienda=$16, salario=$17, empleado=$18, permiso_tablero=$19, permiso_administrador=$20, permiso_empleados=$21, ' +
-        'permiso_inventario=$22, hora_llegada = $23, hora_salida = $24 ' +
+        'permiso_inventario=$22, hora_llegada = $23, hora_salida = $24, comision = $25 ' +
         'where id = $1 returning id, usuario ', [
         req.body.id,
         req.body.nombres,
@@ -2601,7 +2602,8 @@ router.post('/user/update', isAuthenticated, function (req, res) {
         stob(req.body.permiso_empleados),
         stob(req.body.permiso_inventario),
         req.body.llegada,
-        req.body.salida
+        req.body.salida,
+        req.body.comision/100
     ]).then(function (data) {
         res.json({
             status: 'Ok',
@@ -3792,7 +3794,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                 fecha_inicial,
                 fecha_final
             ]),
-            this.oneOrNone(" select sum(monto)*.03 as comision from (select monto_efectivo + monto_credito + " +
+            this.oneOrNone(" select sum(monto) from (select monto_efectivo + monto_credito + " +
                 " monto_debito as monto from ventas, " +
                 " transferencia where ventas.id_usuario = $1 and " +
                 " transferencia.fecha <= $3 and transferencia.fecha >= " +
@@ -3964,7 +3966,9 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
         });
     }).then(function (data) {
         console.log(data)
-        var totalComsion = (data[0][8] === null ? {'comision': 0} : data[0][8]);
+        var totalComision = (data[0][8].sum === null ? 0 : data[0][8].sum);
+
+        console.log('total comision ' + totalComision * data[0][0].comision);
         var pagoExtra = (data[0][12] === null ? {'monto': 0, 'descripcion': ''} : data[0][12]);
         var montoPrestamos = (data[0][5] === null ? {'pago': 0} : data[0][5]);
         var montoVentas = (data[0][7] === null ? {'montoventas': 0} : data[0][7]);
@@ -3988,7 +3992,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
             montoPrestamos: data[0][5],
             ventas: ventas,
             montoVentas: data[0][7],//montoVentas,
-            totalComision: data[0][8],//totalComsion,
+            totalComision: {'comision': totalComision * data[0][0].comision},//totalComsion,
             tienda: data[0][9],
             ventaTiendas: ventaTiendas,
             montoVentasTiendas: data[0][11],//montoVentasTiendas,
@@ -4272,7 +4276,7 @@ router.get('/print/employee/details', /* isAuthenticated, */ function (req, res)
             this.oneOrNone("select sum(precio_venta) as montoVentas from ventas where ventas.id_usuario = $1 "//"and " +
                 //"ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')"
                  , id),
-            this.oneOrNone("select sum(precio_venta*.03) as comision from ventas where ventas.id_usuario = $1 "//"and " +
+            this.oneOrNone("select sum(precio_venta) as comision from ventas where ventas.id_usuario = $1 "//"and " +
                 //" ventas.fecha_venta <= date_trunc('day', now()) and ventas.fecha_venta > date_trunc('day', now() - interval '1 week')"
                 , id),
             this.oneOrNone("select * from usuarios, tiendas where usuarios.id = $1 and tiendas.id = usuarios.id_tienda ", id),
@@ -4348,7 +4352,8 @@ router.get('/print/employee/details', /* isAuthenticated, */ function (req, res)
             ])
         });
     }).then(function (data) {
-        var totalComsion = (data[0][8] === null ? {'comision': 0} : data[0][8]);
+        var totalComision = (data[0][8].comision === null ? 0 : data[0][8].comision);
+        console.log(data)
         var pagoExtra = (data[0][12] === null ? {'monto': 0, 'descripcion': ''} : data[0][12]);
         var montoPrestamos = (data[0][5] === null ? {'pago': 0} : data[0][5]);
         var montoVentas = (data[0][7] === null ? {'montoventas': 0} : data[0][7]);
@@ -4375,7 +4380,7 @@ router.get('/print/employee/details', /* isAuthenticated, */ function (req, res)
             montoPrestamos: data[0][5],
             ventas: ventas,
             montoVentas: data[0][7],//montoVentas,
-            totalComision: data[0][8],//totalComsion,
+            totalComision: {'comision': totalComision},//totalComsion,
             tienda: data[0][9],
             ventaTiendas: ventaTiendas,
             montoVentasTiendas: data[0][11],//montoVentasTiendas,
