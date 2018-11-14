@@ -266,15 +266,6 @@ function modalEvents(button, modal, page) {
                 });
                 modal.find('#findEmployees').submit(function (e) {
                     modal.find('#search_results').load('/search/employees/results', $(this).serializeArray(), function () {
-                        /*$('#search_results').find('#findEmployees').submit(function(e){
-                            $.post('/employee/details', $(this).serialize()).done(function (data) {
-                                alert(data.message);
-                                if(data.status=='Ok'){
-                                    modal.modal('hide');
-                                }
-                            });
-                            e.preventDefault();
-                        })*/
                         $('#search_results').find('.list-group-item').click(function () {
                             modal.find('#modal_content').load('/employee/details', {
                                 id: $(this).data('user_id'),
