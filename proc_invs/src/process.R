@@ -1,5 +1,5 @@
 library(tidyverse)
-library(plyr)
+library(readxl)
 library(stringdist)
 
 
@@ -47,7 +47,13 @@ assign_m_prov <- function(prov, the_field){
 ## ----------------------------------------
 ## Read in data
 ## ----------------------------------------
-data <- read_csv('../data/mariana.csv') %>%
+
+
+
+###########################################
+## GOOD Old trial iter
+###########################################
+data <- read_csv('./data/new_trial/imagen.csv') %>%
     `colnames<-` (c('modelo',
                     'existencias_ant',
                     'n_existencias',
@@ -57,20 +63,21 @@ data <- read_csv('../data/mariana.csv') %>%
                     'to_ve',
                     'x_ve',
                     'descripcion')) %>%
-    select(modelo, n_existencias, precio, descripcion)
-
+    select(modelo, n_existencias, precio, descripcion) %>%
+    filter(!is.na(modelo))
 
 clean_data <- data %>%
     separate(modelo, into = c('modelo', 'proveedor'), sep = ' ') %>%
+    filter(!is.na(modelo)) %>%
     mutate(modelo = str_extract(modelo, '[^\\*]+'),
            id_proveedor = assign_m_prov(proveedor, the_provs),
            id_marca = assign_m_prov(proveedor, the_labels),
            costo = precio,
-           precio = costo * 2) %>%
-    filter(!is.na(modelo))
+           precio = costo * 2) 
+    
 
 clean_data$descripcion[is.na(clean_data$descripcion)] <- ''
-clean_data$id_tienda <- 4
+clean_data$id_tienda <- 3
 clean_data$notas <- ''
 
 clean_data <- clean_data %>%
@@ -78,4 +85,6 @@ clean_data <- clean_data %>%
            id_proveedor, id_marca, costo, id_tienda, notas) %>%
     filter(costo > 0)
 
-write.csv(clean_data, '../output_data/mariana.csv', row.names = FALSE)
+clean_data$articulo <- 'Prenda'
+
+write.csv(clean_data, './output_data/new_trial/imagen.csv', row.names = FALSE)

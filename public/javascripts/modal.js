@@ -58,6 +58,11 @@ function modalEvents(button, modal, page) {
             modal.find('#modal_content').html("");
             modal.find('#modal_content').load('/item/new', {}, function () {
 
+                $('#register_datepicker').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date().setDate(new Date().getDate() - 1)
+                });
+
                 var ButtonValue;
 
                 $('button[type="submit"]').click(function (e) {
@@ -521,6 +526,10 @@ function modalEvents(button, modal, page) {
                     modal.find('#search_results').load('/search/registers/results', $(this).serializeArray(), function () {
                         modal.find('form').submit(function (e) {
                             modal.find('#modal_content').load('/item/registers/edit', $(this).serializeArray(), function () {
+                                $('#register_datepicker').datetimepicker({
+                                    format: 'YYYY-MM-DD',
+                                    defaultDate: new Date().setDate(new Date().getDate() - 1)
+                                });
                                 modal.find('form').submit(function (e) {
                                     $.post('/item/registers/update', $(this).serializeArray(), function (data) {
                                         alert(data.message);

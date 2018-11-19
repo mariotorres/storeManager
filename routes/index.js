@@ -1637,14 +1637,15 @@ router.post('/item/register', upload.single('imagen'), function (req, res) {
                 data,
                 t.one(' insert into nota_entrada(id_nota_registro, id_usuario, id_articulo, ' +
                     ' num_arts, hora, fecha, costo_unitario, concepto, descuento_proveedor) ' +
-                    ' values($1, $2, $3, $4, localtime, current_date, $5, $6, $7) returning id', [
+                    ' values($1, $2, $3, $4, localtime, $8, $5, $6, $7) returning id', [
                     req.body.id_nota_registro,
                     req.user.id,
                     data[1].id,
                     req.body.n_arts,
                     req.body.costo,
                     'ingreso articulos',
-                    req.body.discount
+                    req.body.discount,
+                    req.body.fecha_registro
                 ])
             ])
         })
@@ -2941,12 +2942,13 @@ router.post('/items/list/item_edits', isAuthenticated, function (req, res) {
 router.post('/item/registers/update', isAuthenticated, function (req, res) {
     console.log(req.body)
     db_conf.db.oneOrNone(
-        " update nota_entrada set num_arts = $1, costo_unitario = $2, hora = localtime, fecha = current_date, " +
+        " update nota_entrada set num_arts = $1, costo_unitario = $2, hora = localtime, fecha = $5, " +
         " concepto = 'ingreso articulos' where id = $3 and id_nota_registro = $4 returning id_articulo", [
             req.body.n_arts,
             req.body.costo,
             req.body.unique_id_nota_registro,
-            req.body.id_nota_registro
+            req.body.id_nota_registro,
+            req.body.fecha_registro
         ]
     ).then(function (data) {
         console.log('First step: ' + data.id_articulo)
@@ -5288,7 +5290,8 @@ router.post('/item/delete', isAuthenticated, function (req, res) {
                 t.oneOrNone('update proveedores set a_cuenta= a_cuenta + $2 where id = $1 returning id, nombre', [
                     data.id_proveedor,
                     data.costo * data.n_existencias
-                ])
+                ]),
+                t.one("delete from articulos where id =$1", [req.body.id])
             ]);
         })
 
