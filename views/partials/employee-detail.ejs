@@ -250,7 +250,7 @@
             <p>
                 <label>Monto extra correspondiente:</label>
             <h5 style="color: #9E9E9E;">
-               <%=((usuario.salario/7)*domingos.domingos).toFixed(2)%>
+               <%=((usuario.salario/7)*domingos.domingos*2).toFixed(2)%>
             </h5>
             </p>
         </div>
@@ -359,13 +359,13 @@
             <label>Sueldo Neto</label>
         <h2 style="color: #E91E63;">
             <%if (bono.length > 0 && penalizacion.length > 0){%>
-            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(montoBono.monto) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
+            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(montoBono.monto) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos*2).toFixed(2)%>
             <%}else if(penalizacion.length > 0){%>
-            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
+            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago) + Number(penalizacion[0].monto)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos*2).toFixed(2)%>
             <%}else if(bono.length > 0){%>
-            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(montoBono.monto) + Number(pagos_extra.monto)  - (Number(montoPrestamos.pago)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
+            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(montoBono.monto) + Number(pagos_extra.monto)  - (Number(montoPrestamos.pago)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos*2).toFixed(2)%>
             <%}else{%>
-            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos).toFixed(2)%>
+            <%=(Number(usuario.salario) + Number(totalComision.comision) + Number(pagos_extra.monto) - (Number(montoPrestamos.pago)) + Number(montoPremios.monto) + (usuario.salario/7)*domingos.domingos*2).toFixed(2)%>
             <%}%>
         </h2>
         </p>
