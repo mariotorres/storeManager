@@ -669,7 +669,7 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
             this.one('select count(*) from ventas as count where ' +
                 'id_tienda = $1 and id_papel = $2',
                 [req.body['data[1][value]'], req.body['data[0][value]']]),
-            this.manyOrNone(" select ventas.id as id_venta, id_papel, precio_venta from ventas, transferencia where estatus = $4 and id_tienda = $1 and ventas.id_papel = $5 and " +
+            this.manyOrNone(" select ventas.id as id_venta, ventas.id_papel, ventas.precio_venta from ventas, transferencia where estatus = $4 and id_tienda = $1 and ventas.id_papel = $5 and " +
                 " transferencia.id_venta = ventas.id and transferencia.motivo_transferencia = 'venta' and fecha <= $7 and " +
                 " fecha >= $6 " +
                 " order by ventas.id desc limit $2 offset $3 ",
