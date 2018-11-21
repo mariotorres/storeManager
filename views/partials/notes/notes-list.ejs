@@ -2,7 +2,7 @@
 if (sales.length > 0){%>
 <div class="list-group">
     <% for ( var i =0; i < sales.length ; i ++ ){ %>
-        <a href="#" class="list-group-item" data-sales_id="<%= sales[i].id %>">
+        <a href="#" class="list-group-item" data-sales_id="<%= sales[i].id_venta %>">
             <p class="list-group-item-text"> <strong>Id Papel:</strong> <%= sales[i].id_papel %></p>
             <p class="list-group-item-text"> <strong>Total:</strong> <%= sales[i].precio_venta %></p>
         </a>
