@@ -3542,7 +3542,7 @@ router.post('/supplier/details', isAuthenticated, function (req, res) {
             req.body.id_proveedor
         ]).then(function (data) {
         if(data.lat_pay && req.body['lat_pay']){
-            fecha_inicial = data.lat_pay
+            fecha_inicial = new Date(data.lat_pay).toLocaleDateString()
         }
         console.log('fecha_inicial: ' + fecha_inicial)
         return db_conf.db.task(function (t) {
