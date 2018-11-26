@@ -3960,7 +3960,7 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
 router.get('/print/supplier/details', (req, res) => {
 
 
-    const {id_proveedor, fecha_inicial, fecha_final} = req.query;
+    let {id_proveedor, fecha_inicial, fecha_final} = req.query;
 
 
     //var fecha_inicial = req.body.fecha_inicial
@@ -3970,10 +3970,9 @@ router.get('/print/supplier/details', (req, res) => {
             id_proveedor
         ]).then(function (data) {
         // var fecha_inicial = req.body.fecha_inicial
-        /*
-        if(data.lat_pay && req.body.hasOwnProperty('lat_pay')){
-            fecha_inicial = data.lat_pay
-        }*/
+        if(data.lat_pay && req.body['lat_pay']){
+            fecha_inicial = new Date(data.lat_pay).toLocaleDateString()
+        }
         return db_conf.db.task(function (t) {
             return t.batch([
                 t.oneOrNone(" select * from proveedores where id = $1 ", [
