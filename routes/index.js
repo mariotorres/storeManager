@@ -3535,12 +3535,12 @@ router.post('/notes/find-notes-view', function (req, res) {
 
 router.post('/supplier/details', isAuthenticated, function (req, res) {
     console.log(req.body);
+    var fecha_inicial = req.body.fecha_inicial
     db_conf.db.oneOrNone(
         ' select max(fecha) as lat_pay from nota_pago_prov ' +
         ' where id_proveedor = $1', [
             req.body.id_proveedor
         ]).then(function (data) {
-        var fecha_inicial = req.body.fecha_inicial
         if(data.lat_pay && req.body['lat_pay']){
             fecha_inicial = data.lat_pay
         }
