@@ -3541,11 +3541,11 @@ router.post('/supplier/details', isAuthenticated, function (req, res) {
         ' where id_proveedor = $1', [
             req.body.id_proveedor
         ]).then(function (data) {
-        // var fecha_inicial = req.body.fecha_inicial
-        /*
+            var fecha_inicial = req.body.fecha_inicial
+
         if(data.lat_pay && req.body.hasOwnProperty('lat_pay')){
             fecha_inicial = data.lat_pay
-        }*/
+        }
         return db_conf.db.task(function (t) {
             return t.batch([
                 t.oneOrNone(" select * from proveedores where id = $1 ", [
