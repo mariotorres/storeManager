@@ -3546,6 +3546,7 @@ router.post('/supplier/details', isAuthenticated, function (req, res) {
         if(data.lat_pay && req.body['lat_pay']){
             fecha_inicial = data.lat_pay
         }
+        console.log('fecha_inicial: ' + fecha_inicial)
         return db_conf.db.task(function (t) {
             return t.batch([
                 t.oneOrNone(" select * from proveedores where id = $1 ", [
