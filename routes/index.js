@@ -3543,7 +3543,7 @@ router.post('/supplier/details', isAuthenticated, function (req, res) {
         ]).then(function (data) {
             var fecha_inicial = req.body.fecha_inicial
 
-        if(data.lat_pay && req.body.hasOwnProperty('lat_pay')){
+        if(data.lat_pay && req.body['lat_pay']){
             fecha_inicial = data.lat_pay
         }
         return db_conf.db.task(function (t) {
