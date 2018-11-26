@@ -4141,7 +4141,7 @@ router.get('/print/supplier/details', (req, res) => {
                 total_pago: data[8],
                 devs_prov: data[9],
                 fecha_inicial: fecha_inicial,
-                fecha_final: req.body.fecha_final,
+                fecha_final: fecha_final,
             }
         );
     }).catch(function (error) {
