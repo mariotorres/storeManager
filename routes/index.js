@@ -4082,22 +4082,7 @@ router.get('/print/supplier/details', (req, res) => {
                     " and id_proveedor = $3 group by venta_articulos.id_articulo,  id_articulo_unidad, venta_articulos.id_venta, " +
                     " modelo, articulo, descripcion, fecha_venta, fue_sol,  costo_def, venta_articulos.id_articulo, " +
                     " unidades_vendidas) as temp group by id_articulo, id_articulo_unidad, id_venta, id_articulo, unidades_vendidas) as temp1"
-                    /*
-                       " select sum(costo_def * unidades_vendidas) as tot_costos from (select max(costo_def) " +
-                       " as costo_def, id_articulo, id_venta, id_articulo, unidades_vendidas from " +
-                       " (select case when fue_sol > 0 then costo_unitario else costo end as costo_def, " +
-                       " unidades_vendidas, venta_articulos.id_venta, venta_articulos.id_articulo from " +
-                       " venta_articulos, nota_entrada, articulos, ventas, (select min(fecha) as fecha_venta, " +
-                       " transferencia.id_venta as id_venta from ventas, transferencia where " +
-                       " transferencia.id_venta  = ventas.id group by id_venta) as fechas_ventas where " +
-                       " venta_articulos.estatus = 'devolucion'  and ventas.estatus = 'activa' and ventas.id =  " +
-                       " venta_articulos.id_venta and fechas_ventas.fecha_venta <= $2 and  " +
-                       " venta_articulos.id_articulo = articulos.id and  fechas_ventas.fecha_venta >= $1 " +
-                       " and fechas_ventas.id_venta = ventas.id  and nota_entrada.id_articulo = " +
-                       " venta_articulos.id_articulo and id_proveedor = $3 group by venta_articulos.id_articulo, " +
-                       " venta_articulos.id_venta, modelo,  articulo, descripcion, fecha_venta, fue_sol, " +
-                       " costo_def, venta_articulos.id_articulo, unidades_vendidas) as temp group by " +
-                       " id_articulo, id_venta, id_articulo, unidades_vendidas) as temp1"*/, [
+                    , [
                         fecha_inicial,
                         fecha_final,
                         id_proveedor
@@ -4151,35 +4136,6 @@ router.get('/print/supplier/details', (req, res) => {
             message: 'Ocurrió un error al cargar los datos del proveedor'
         })
     })
-
-    /*
-    console.log(req.query);
-    db_conf.db.oneOrNone(
-        ' select max(fecha) as lat_pay from nota_pago_prov ' +
-        ' where id_proveedor = $1', [
-            req.query.id_proveedor
-        ]).then(function (data) {
-        var fecha_inicial = req.body.fecha_inicial
-        if (req.query.hasOwnProperty(lat_pay)) {
-            fecha_inicial = data.max
-        }
-        console.log(`DATE: ${fecha_inicial} `)
-    }).then(function (data) {
-        res.render('reports/supplier-details', {
-            ventas: data[0],
-            venta_arts: data[1],
-            proveedor: data[2],
-            fecha_inicial: req.query.fecha_inicial,
-            fecha_final: req.query.fecha_final
-        })
-    }).catch(function (error) {
-        console.log(error);
-        res.json({
-            status: 'Error',
-            message: 'Ocurrió un error al cargar los datos del proveedor'
-        })
-    })
-    */
 });
 
 router.get('/print/employee/details', /* isAuthenticated, */ function (req, res) {
