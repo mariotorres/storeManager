@@ -498,22 +498,15 @@ create table devolucion_prov_articulos(
 
 
 
-    /*
-tipo_transaccion
-retorno_mercancia
-pago_mercancia
-¿ esto debe existir ?
-*/
-
     /* transacciones */
 drop table if exists transacciones;
 create table transacciones(
         id serial primary key,
         id_proveedor integer references proveedores(id),
-        id_tipo_transaccion integer,
-        notas text,
+        tipo_transaccion integer,
+        fecha date,
+        concepto text,
         monto numeric(1000,2)
-        /* ... */
         );
 
     /* Operaciones nomina */
