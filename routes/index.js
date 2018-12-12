@@ -3746,6 +3746,14 @@ router.post('/supplier/details', isAuthenticated, function (req, res) {
                         req.body.fecha_final,
                         req.body.id_proveedor
                     ]
+                ),
+                // Global por pagar
+                t.oneOrNone(
+                    " select sum(monto) as por_pagar from transacciones where fecha >= $1 and fecha <= $2 and id_proveedor = $3 ", [
+                        fecha_inicial,
+                        req.body.fecha_final,
+                        req.body.id_proveedor
+                    ]
                 )
             ])
         })
@@ -3765,6 +3773,7 @@ router.post('/supplier/details', isAuthenticated, function (req, res) {
                 devs_prov: data[9],
                 fecha_inicial: fecha_inicial,
                 fecha_final: req.body.fecha_final,
+                global_pagar: data[10]
             }
         );
     }).catch(function (error) {
@@ -4175,6 +4184,14 @@ router.get('/print/supplier/details', (req, res) => {
                         fecha_final,
                         id_proveedor
                     ]
+                ),
+                // Global por pagar
+                t.oneOrNone(
+                    " select sum(monto) as por_pagar from transacciones where fecha >= $1 and fecha <= $2 and id_proveedor = $3 ", [
+                        fecha_inicial,
+                        req.body.fecha_final,
+                        req.body.id_proveedor
+                    ]
                 )
             ])
         })
@@ -4194,6 +4211,7 @@ router.get('/print/supplier/details', (req, res) => {
                 devs_prov: data[9],
                 fecha_inicial: fecha_inicial,
                 fecha_final: fecha_final,
+                global_pagar: data[10]
             }
         );
     }).catch(function (error) {

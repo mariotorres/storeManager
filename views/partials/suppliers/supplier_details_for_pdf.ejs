@@ -42,12 +42,17 @@
     </p>
 
     <p>
-        <%if(proveedor.por_pagar < 0){%>
+        <%if(global_pagar.por_pagar){%>
+        <%if(global_pagar.por_pagar < 0){%>
             <label>Saldo por pagar</label>
-    <h3 style="color: #E91E63;"><%= (-1)*proveedor.por_pagar %></h3>
+    <h3 style="color: #E91E63;"><%= (-1)*global_pagar.por_pagar %></h3>
     <%}else{%>
         <label>El proveedor tiene un saldo deudor de </label>
-        <h3 style="color: #E91E63;"><%= (-1)*proveedor.por_pagar %></h3>
+        <h3 style="color: #E91E63;"><%= (-1)*global_pagar.por_pagar %></h3>
+    <%}%>
+    <%}else{%>
+        <label>El proveedor tiene un saldo de </label>
+        <h3 style="color: #E91E63;"><%= 0 %></h3>
     <%}%>
     </p>
 
