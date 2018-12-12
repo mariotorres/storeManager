@@ -503,7 +503,7 @@ drop table if exists transacciones;
 create table transacciones(
         id serial primary key,
         id_proveedor integer references proveedores(id),
-        tipo_transaccion integer,
+        tipo_transaccion text,
         fecha date,
         concepto text,
         monto numeric(1000,2)

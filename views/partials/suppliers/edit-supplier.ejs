@@ -64,7 +64,7 @@
     </p>
     <p>
         <label>Por pagar</label>
-        <input type="number" value="<%=supplier.por_pagar%>" class="form-control" name="por_pagar" max="0" disabled>
+        <input type="number" value="<%=por_pagar.por_pagar ? por_pagar.por_pagar : 0%>" class="form-control" name="por_pagar" max="0" disabled>
     </p>
 
     <br>

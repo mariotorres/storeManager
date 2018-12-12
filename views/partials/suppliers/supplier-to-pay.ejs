@@ -1,6 +1,6 @@
 <form id="suppForm">
     <h2>Proveedor: <%=prov.nombre%> </h2>
-    <h3>Saldo: <span style='color:#E91E63'><%=prov.por_pagar%></span></h3>
+    <h3>Saldo: <span style='color:#E91E63'><%=por_pagar.por_pagar ? por_pagar.por_pagar : 0%></span></h3>
     <hr>
     <input type="text" value="<%=prov.id%>" name="id" hidden>
     <label>Fecha en la que se realiza el pago</label>

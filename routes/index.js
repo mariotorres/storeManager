@@ -512,7 +512,8 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                     /*
                     * Agregar transacción con proveedor
                     * */
-                    queries.push(t.one('insert into transacciones (id_proveedor, tipo_transaccion, fecha, concepto, monto) returning id', [
+                    queries.push(t.one('insert into transacciones (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+                        ' values($1, $2, $3, $4, $5) returning id', [
                         numericCol(data[0][i].id_proveedor),
                         'cargo',
                         req.body.fecha_venta,
@@ -1240,10 +1241,17 @@ router.post('/brand/edit-brand/', isAuthenticated, function (req, res) {
 // Load supplier data into modal
 router.post('/supplier/edit-supplier/', isAuthenticated, function (req, res) {
     var id = req.body.id;
-    db_conf.db.one('select * from proveedores where id = $1', [id]).then(function (data) {
+    db_conf.db.task(function (t) {
+        return t.batch([
+            db_conf.db.one('select * from proveedores where id = $1', [id]),
+            db_conf.db.oneOrNone('select sum(monto) as por_pagar from transacciones where ' +
+                ' id_proveedor = $1 ', [id])
+        ])
+    }).then(function (data) {
         res.render('partials/suppliers/edit-supplier', {
             status: 'Ok',
-            supplier: data
+            supplier: data[0],
+            por_pagar: data[1]
         });
     }).catch(function (error) {
         console.log(error);
@@ -1355,12 +1363,21 @@ router.post('/type/payment', function (req, res) {
 
 router.post('/supplier/supplier-to-pay', isAuthenticated, function (req, res) {
     console.log(req.body)
-    db_conf.db.oneOrNone("select * from proveedores where id = $1", [
-        req.body.id
-    ]).then(function (data) {
+    db_conf.db.task(function(t) {
+        return this.batch([
+            db_conf.db.oneOrNone("select * from proveedores where id = $1", [
+                req.body.id
+            ]),
+            db_conf.db.oneOrNone('select sum(monto) as por_pagar from transacciones where ' +
+                ' id_proveedor = $1 ',[
+                 req.body.id
+                ])
+        ])
+    }).then(function (data) {
         console.log(data)
         res.render('partials/suppliers/supplier-to-pay', {
-            prov: data
+            prov: data[0],
+            por_pagar: data[1]
         })
     }).catch(function (error) {
         console.log(error)
@@ -1426,9 +1443,13 @@ router.post('/supplier/list/pay', isAuthenticated, function (req, res) {
     db_conf.db.task(function (t) {
         return this.batch([
             this.one('select count(*) from proveedores as count'),
-            this.manyOrNone('select * from proveedores order by nombre limit $1 offset $2', [pageSize, offset])
+            this.manyOrNone('select proveedores.id, nombre, a_cuenta, razon_social, rfc, transacciones.por_pagar as por_pagar ' +
+                ' from proveedores left join (select id_proveedor, sum(monto) as por_pagar from transacciones group ' +
+                ' by id_proveedor) as transacciones on transacciones.id_proveedor = proveedores.id order by nombre ' +
+                ' limit $1 offset $2', [pageSize, offset])
         ]);
     }).then(function (data) {
+        console.log(data[1])
         res.render('partials/suppliers/supplier-list-pay', {
             status: "Ok",
             suppliers: data[1],
