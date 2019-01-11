@@ -4196,8 +4196,8 @@ router.get('/print/supplier/details', (req, res) => {
                 t.oneOrNone(
                     " select sum(monto) as por_pagar from transacciones where fecha >= $1 and fecha <= $2 and id_proveedor = $3 ", [
                         fecha_inicial,
-                        req.body.fecha_final,
-                        req.body.id_proveedor
+                        fecha_final,
+                        id_proveedor
                     ]
                 )
             ])
