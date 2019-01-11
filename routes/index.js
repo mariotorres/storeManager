@@ -2456,6 +2456,13 @@ router.post('/item/return', isAuthenticated, function (req, res) {
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.n_devoluciones),
                 numericCol(req.body.costo)
+            ]),
+            t.oneOrNone(' insert into transacciones (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+                'values($1, $2, Now(), $3, $4) returning id', [
+                req.body.id_proveedor,
+                'abono',
+                'devolución artículos',
+                numericCol(req.body.costo * req.body.n_devoluciones)
             ])
         ])
     }).then(function (data) {
