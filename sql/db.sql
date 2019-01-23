@@ -243,45 +243,37 @@ direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
                         ('Cocoon','-','-','-','-','-','-','-', '-', '-', 'Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
-direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais , a_cuenta, por_pagar) values
-                        ('Eli Corame','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais , a_cuenta, por_pagar) VALUES ('Eli Corame','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
-direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
-                        ('Ema Valdemosa','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) VALUES ('Ema Valdemosa','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
-direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
-                        ('Lessan','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) VALUES ('Lessan','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
-direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
-                        ('Libertad','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) VALUES ('Libertad','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
-direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
-                        ('Neon Nyx','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) VALUES ('Neon Nyx','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
-direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
-                        ('Nicoletta','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) VALUES ('Nicoletta','-','-','-','-','-','-','-','-','-', 'Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
-direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
-                        ('Punto Blanco','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) VALUES ('Punto Blanco','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
-direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
-                        ('D Moseli','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) VALUES ('D Moseli','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
-direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
-                        ('Bianchi','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) VALUES ('Bianchi','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
 
 insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
-direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) values
-                        ('No Especificado','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) VALUES ('Interno','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
 
+insert into proveedores (nombre, razon_social, rfc, direccion_calle, direccion_numero_int,
+direccion_numero_ext, direccion_colonia, direccion_localidad, direccion_municipio, direccion_ciudad, direccion_estado, direccion_pais, a_cuenta, por_pagar) VALUES ('No Especificado','-','-','-','-','-','-','-','-','-','Ciudad de México','México', 0, 0);
 
 drop table if exists marcas cascade;
 create table marcas (
@@ -301,7 +293,9 @@ insert into marcas(nombre, descripcion) values ('Nicoletta', 'Marca de proveedor
 insert into marcas(nombre, descripcion) values ('Punto Blanco', 'Marca de proveedor Punto Blanco');
 insert into marcas(nombre, descripcion) values ('D Moseli', 'Marca de proveedor D Moseli');
 insert into marcas(nombre, descripcion) values ('Bianchi', 'Marca de proveedor Bianchi');
+insert into marcas(nombre, descripcion) values ('Interno', 'Prendas internas');
 insert into marcas(nombre, descripcion) values ('No Especificado', 'Marca de proveedor No Especificado');
+
 
 /* Inventario */
 drop table if exists articulos cascade;
@@ -547,7 +541,7 @@ tipo text
 */
 
 /* Insert into inventory */
-\copy articulos(modelo, n_existencias, precio, descripcion, id_proveedor, id_marca, costo, id_tienda, notas, articulo) from './imagen.csv' DELIMITER ',' CSV HEADER;
+\copy articulos(modelo, n_existencias, precio, descripcion, id_proveedor, id_marca, costo, id_tienda, notas, articulo) from './mariana.csv' DELIMITER ',' CSV HEADER;
 
 
 /* Update supplier account */
