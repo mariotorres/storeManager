@@ -2323,6 +2323,7 @@ router.post('/penalization/update', isAuthenticated, function (req, res) {
  * Actualización de items
  */
 router.post('/item/update', upload.single('imagen'), function (req, res) {
+    console.log('SALDOS PROVEEDORES');
     console.log(req.body);
     db_conf.db.tx(function (t) {
         return this.batch([
@@ -2349,6 +2350,20 @@ router.post('/item/update', upload.single('imagen'), function (req, res) {
                 req.body.id_proveedor,
                 numericCol(req.body.costo_anterior) * numericCol(req.body.existencias_anterior),
                 numericCol(req.body.costo) * numericCol(req.body.n_existencias)
+            ]),
+            t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                ' fecha, concepto, monto) values($1, $2, Now(), $3, $4) returning id', [
+                numericCol(req.body.id_proveedor),
+                'abono',
+                'modificacion proveedor en prenda',
+                numericCol(req.body.costo_anterior) * numericCol(req.body.existencias_anterior)
+            ]),
+            t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                ' fecha, concepto, monto) values($1, $2, Now(), $3, $4) returning id', [
+                numericCol(req.body.id_proveedor),
+                'cargo',
+                'modificacion proveedor en prenda',
+                -numericCol(req.body.costo) * numericCol(req.body.n_existencias)
             ]),
             t.one('insert into nota_modificacion (id_articulo, id_usuario, modificacion, hora, fecha) ' +
                 ' values($1,$2,$3, localtime, current_date) returning id', [
