@@ -1777,6 +1777,7 @@ router.post('/store/register', isAuthenticated, function (req, res) {
  */
 
 router.post('/user/signup', isAuthenticated, function (req, res) {
+    console.log(req.body)
     db_conf.db.one('select count(*) as count from usuarios where usuario =$1', [req.body.usuario]).then(function (data) {
 
         // 8 char pass
@@ -4001,15 +4002,15 @@ router.post('/employee/details', isAuthenticated, function (req, res) {
                     7 - data[3].length
                 ]),
                 /* Se listan todos los bonos */
-                t.manyOrNone("select * from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
-                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3) order by monto desc", [
+                t.manyOrNone("select * from bonos, usuarios  where ((monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
+                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3)) and usuarios.empleado = false order by monto desc", [
                     data[11].montotienda,
                     data[7].montoventas,
                     req.body.id
                 ]),
                 /* Monto bonos total */
-                t.oneOrNone("select sum(monto) as monto from bonos, usuarios  where (monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
-                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3)", [
+                t.oneOrNone("select sum(monto) as monto from bonos, usuarios  where ((monto_alcanzar <= $1 and criterio = 'Tienda' and bonos.id_tienda = usuarios.id_tienda and usuarios.id = $3) or " +
+                    "(monto_alcanzar <=  $2 and criterio ='Individual' and usuarios.id = $3)) and usuarios.empleado = false ", [
                     data[11].montotienda,
                     data[7].montoventas,
                     req.body.id
