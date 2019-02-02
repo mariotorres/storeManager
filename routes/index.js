@@ -3623,11 +3623,11 @@ router.post('/employees/find-employees-view', isAuthenticated, function (req, re
 });
 
 router.post('/notes/find-notes-view', function (req, res) {
-    var query = 'select * from ventas, tiendas where ventas.id_tienda = tiendas.id and tiendas.id = ' +
+    var query = "select * from ventas, tiendas where ventas.estatus = 'activa' and ventas.id_tienda = tiendas.id and tiendas.id = " +
         req.user.id_tienda
     var query2 = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda
     if (req.user.permiso_administrador) {
-        query = 'select * from ventas, tiendas where ventas.id_tienda = tiendas.id'
+        query = "select * from ventas, tiendas where ventas.id_tienda = tiendas.id and ventas.estatus = 'activa'"
         query2 = 'select * from tiendas'
     }
     db_conf.db.task(function (t) {
