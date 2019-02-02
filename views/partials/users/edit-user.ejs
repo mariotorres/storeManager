@@ -45,13 +45,13 @@
         <div class="col-sm-6">
             <p>
                 <label>Apellido paterno</label>
-                <input type="text" value="<%=user.apellido_paterno%>" class="form-control" name="apellido_paterno" required>
+                <input type="text" value="<%=user.apellido_paterno%>" class="form-control" name="apellido_paterno">
             </p>
         </div>
         <div class="col-sm-6">
             <p>
                 <label>Apellido materno</label>
-                <input type="text" value="<%=user.apellido_materno%>" class="form-control" name="apellido_materno" required>
+                <input type="text" value="<%=user.apellido_materno%>" class="form-control" name="apellido_materno">
             </p>
         </div>
     </div>
@@ -158,25 +158,25 @@
         <div class="col-sm-2">
             <p>
                 <label>Salario</label>
-                <input type="number" step="any" class="form-control" name="salario" value="<%= user.salario%>">
+                <input type="number" step="any" class="form-control" name="salario" value="<%= user.salario%>" required>
             </p>
         </div>
         <div class="col-sm-2">
             <p>
                 <label>Comsión %</label>
-                <input type="number" step="any" class="form-control" name="comision" value="<%=user.comision*100%>">
+                <input type="number" step="any" class="form-control" name="comision" value="<%=user.comision*100%>" required>
             </p>
         </div>
         <div class="col-sm-3">
             <p>
                 <label>Hora de entrada</label>
-                <input type="text" class="form-control" id="timepicker1" name="llegada" value="<%= user.hora_llegada%>">
+                <input type="text" class="form-control" id="timepicker1" name="llegada" value="<%= user.hora_llegada%>" required>
             </p>
         </div>
         <div class="col-sm-3">
             <p>
                 <label>Hora de salida</label>
-                <input type="text" class="form-control" id="timepicker2" name="salida" value="<%= user.hora_salida%>">
+                <input type="text" class="form-control" id="timepicker2" name="salida" value="<%= user.hora_salida%>" required>
             </p>
         </div>
     </div>

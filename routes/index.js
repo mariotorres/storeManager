@@ -598,13 +598,18 @@ router.post('/carrito/new', isAuthenticated, function (req, res) {
                     ])
                 )
             }
+            query.push(
+                db_conf.db.oneOrNone('select * from articulos where id = $1', [
+                    req.body.item_id
+                ])
+            )
             db_conf.db.task(function (t) {
                 return this.batch(query)
             }).then(function (data) {
                 console.log('Artículo añadido al carrito');
                 res.json({
                     status: 'Ok',
-                    message: 'La prenda "' + data[0].id_articulo + '" ha sido registrada en el carrito'
+                    message: 'La prenda con modelo: "' + data[1].modelo + '" ha sido registrada en el carrito'
                 });
             }).catch(function (error) {
                 console.log(error);
@@ -2351,6 +2356,9 @@ router.post('/item/update', upload.single('imagen'), function (req, res) {
                 numericCol(req.body.costo_anterior) * numericCol(req.body.existencias_anterior),
                 numericCol(req.body.costo) * numericCol(req.body.n_existencias)
             ]),
+
+            /*
+
             t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
                 ' fecha, concepto, monto) values($1, $2, Now(), $3, $4) returning id', [
                 numericCol(req.body.id_proveedor),
@@ -2365,6 +2373,20 @@ router.post('/item/update', upload.single('imagen'), function (req, res) {
                 'modificacion proveedor en prenda',
                 -numericCol(req.body.costo) * numericCol(req.body.n_existencias)
             ]),
+            t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                ' fecha, concepto, monto) values($1, $2, Now(), $3, $4) returning id', [
+                numericCol(req.body.id_proveedor_anterior),
+                'abono',
+                'modificacion proveedor en prenda',
+                numericCol(req.body.costo_anterior) * numericCol(req.body.existencias_anterior)
+            ]),
+            t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                ' fecha, concepto, monto) values($1, $2, Now(), $3, $4) returning id', [
+                numericCol(req.body.id_proveedor),
+                'cargo',
+                'modificacion proveedor en prenda',
+                -numericCol(req.body.costo) * numericCol(req.body.n_existencias)
+            ]),*/
             t.one('insert into nota_modificacion (id_articulo, id_usuario, modificacion, hora, fecha) ' +
                 ' values($1,$2,$3, localtime, current_date) returning id', [
                 req.body.id,
@@ -4496,6 +4518,7 @@ router.get('/print/employee/details', /* isAuthenticated, */ function (req, res)
 
 
 router.post('/notes/cancel', isAuthenticated, function (req, res) {
+    console.log('BODY CANCELACION')
     console.log(req.body)
     db_conf.db.task(function (t) {
         return this.batch([
@@ -4531,7 +4554,7 @@ router.post('/notes/cancel', isAuthenticated, function (req, res) {
                             queries.push(
                                 t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
                                     " where id = $2 returning id", [
-                                    data[i].costo, // * data[i].unidades_vendidas,
+                                    data[i].costo * data[i].unidades_vendidas, // * data[i].unidades_vendidas,
                                     data[i].id_proveedor
                                 ]))
                             queries.push(
@@ -4541,7 +4564,7 @@ router.post('/notes/cancel', isAuthenticated, function (req, res) {
                                     'abono',
                                     req.body.fecha_venta,
                                     'cancelación de nota',
-                                    numericCol(req.body.costo_proveedor * req.body.existencias)
+                                    numericCol(data[i].costo * data[i].unidades_vendidas)
                                 ])
                             )
                         }
@@ -4594,7 +4617,7 @@ router.post('/notes/cancel', isAuthenticated, function (req, res) {
                                     queries.push(
                                         t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
                                             " where id = $2 returning id", [
-                                            data[i].costo, // * data[i].unidades_vendidas,
+                                            data[i].costo * data[i].unidades_vendidas, // * data[i].unidades_vendidas,
                                             data[i].id_proveedor
                                         ]))
 
@@ -4605,7 +4628,7 @@ router.post('/notes/cancel', isAuthenticated, function (req, res) {
                                             'abono',
                                             req.body.fecha_venta,
                                             'cancelación de nota',
-                                            numericCol(data[i].costo)
+                                            numericCol(data[i].costo * data[i].unidades_vendidas)
                                         ])
                                     )
                                 }
@@ -5380,17 +5403,17 @@ router.post('/item/delete', isAuthenticated, function (req, res) {
     db_conf.db.tx(function (t) {
         return this.one("select id, costo, n_existencias, id_proveedor from articulos where id = $1 ", [req.body.id]).then(function (data) {
             return t.batch([
-                t.one("update articulos set n_existencias = 0 where id = $1 returning id, costo, n_existencias, id_proveedor, nombre_imagen", [data.id]),
+                t.one("delete from  nota_entrada  where id_articulo = $1 returning id", [data.id]),
+                t.one("delete from  articulos  where id = $1 returning id, modelo, costo, n_existencias, id_proveedor, nombre_imagen", [data.id]),
                 t.oneOrNone('update proveedores set a_cuenta= a_cuenta + $2 where id = $1 returning id, nombre', [
                     data.id_proveedor,
                     data.costo * data.n_existencias
-                ]),
-                t.one("delete from articulos where id =$1", [req.body.id])
+                ])
             ]);
         })
 
     }).then(function (data) {
-        console.log('Articulo eliminado: ', data[0].id);
+        console.log('Modelo articulo eliminado: ', data[1].modelo);
 
         // borra la imagen anterior
         /*
@@ -5406,7 +5429,7 @@ router.post('/item/delete', isAuthenticated, function (req, res) {
 
 
         if (data[1] !== null) {
-            console.log('El proveedor saldo a cuenta del proveedor ' + data[1].nombre + ' ha sido actualizado');
+            console.log('El proveedor saldo a cuenta del proveedor ' + data[2].nombre + ' ha sido actualizado');
         }
 
         res.json({
