@@ -2,10 +2,11 @@
 library(stringdist)
 library(plyr)
 library(dplyr)
-
+library(stringr)
 ## ----------------------------------------
 ## Global Variables
 ## ----------------------------------------
+
 the_labels <- c("Cocoon",
                 "Eli Corame",
                 "Ema Valdemosa",
@@ -61,7 +62,7 @@ get_prov <- function(text){
 ## GOOD Old trial iter
 ###########################################
 ## Clean
-data <- read.csv('../data/MARIANALATEST.csv',
+data <- read.csv('../data/MARIANA2.csv',
                  stringsAsFactors = FALSE) %>%
     `colnames<-` (c('modelo',
                     'existencias_ant',
@@ -74,29 +75,30 @@ data <- read.csv('../data/MARIANALATEST.csv',
                     'descripcion')) %>%
     select(modelo, n_existencias, precio, descripcion) %>%
     filter(!is.na(modelo))
+### ----------------------------------------
 ### DIRTY
-mod_provs <- llply(data$modelo, get_prov) 
+### ----------------------------------------
+## Separar modelo de proveedor
+mod_provs <- llply(data$modelo, get_prov)
 mod_provs <- data.frame(do.call(rbind, mod_provs))
 names(mod_provs)<- c('modelo', 'proveedor')
+## Asignar id de proveedor
+mod_provs$prov_id <- assign_m_prov(mod_provs$proveedor, the_provs)
+## Asignar id de marca
+mod_provs$label_id <- assign_m_prov(mod_provs$proveedor, the_labels)
+## Cambiar y ajustar nombres
+mod_provs$proveedor <- NULL
+names(mod_provs)<- c('modelo', 'id_proveedor', 'id_marca')
+## Unificar data con provs
 data$modelo <- NULL
 data <- cbind(data, mod_provs)
-### DIRTY
-clean_data <- data %>%
-    # separate(modelo, into = c('modelo', 'proveedor'), sep = ' ') %>%
-    filter(!is.na(modelo)) %>%
-    mutate(# modelo = str_extract(modelo, '[^\\*]+'),
-           id_proveedor = assign_m_prov(proveedor, the_provs),
-           id_marca = assign_m_prov(proveedor, the_labels),
-           costo = precio,
-           precio = costo * 2) 
-    
-
+data$costo <- data$precio
+data$precio <- data$costo * 2
+## DATOS LIMPIOS
+clean_data <- data
 clean_data$descripcion[is.na(clean_data$descripcion)] <- ''
-
-
 clean_data$id_tienda <- 4
 clean_data$notas <- ''
-
 clean_data <- clean_data %>%
     select(modelo, n_existencias, precio, descripcion,
            id_proveedor, id_marca, costo, id_tienda, notas) %>%
