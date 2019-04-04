@@ -715,6 +715,45 @@ router.post('/notes/list/', isAuthenticated, function (req, res) {
 });
 
 
+// Display de notas
+router.post('/notes-partials/list/', isAuthenticated, function (req, res) {
+    console.log(req.body)
+    var pageSize = 10;
+    var offset = req.body.page * pageSize;
+    db_conf.db.task(function (t) {
+        return this.batch([
+            this.one('select count(*)  as count from transferencia, ventas where ' +
+                'transferencia.id_venta = ventas.id and ventas.id_tienda = $1 and transferencia.id_papel = $2',
+                [req.body['data[1][value]'], req.body['data[0][value]']]),
+            this.manyOrNone(" select ventas.id as id_venta, transferencia.id_papel, ventas.precio_venta from ventas, " +
+                " transferencia where estatus = $4 and id_tienda = $1 and transferencia.id_papel = $5 and " +
+                " transferencia.id_venta = ventas.id and fecha <= $7 and " +
+                " fecha >= $6 " +
+                " order by ventas.id desc limit $2 offset $3 ",
+                [req.body['data[1][value]'],
+                    pageSize,
+                    offset,
+                    "activa",
+                    req.body['data[0][value]'],
+                    req.body['data[2][value]'],
+                    req.body['data[3][value]']])
+        ]);
+    }).then(function (data) {
+        console.log('COUNT')
+        console.log(data[0])
+        res.render('partials/notes/notes-list', {
+            status: 'Ok',
+            count: data[0],
+            sales: data[1],
+            pageNumber: req.body.page,
+            numberOfPages: parseInt((+data[0].count + pageSize - 1) / pageSize)
+        });
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+});
+
 // Display de notas para imprimir
 router.post('/print/notes/list/', isAuthenticated, function (req, res) {
     console.log(req.body);
@@ -3645,6 +3684,28 @@ router.post('/notes/find-notes-view', function (req, res) {
     });
 });
 
+router.post('/notes/find-notes-partials-view', function (req, res) {
+    var query = "select transferencia.id_papel as id_papel from transferencia, ventas, tiendas where transferencia.id_venta = ventas.id and  ventas.estatus = 'activa' and ventas.id_tienda = tiendas.id and tiendas.id = " +
+        req.user.id_tienda
+    var query2 = 'select * from tiendas where tiendas.id = ' + req.user.id_tienda
+    if (req.user.permiso_administrador) {
+        query = "select  transferencia.id_papel as id_papel from transferencia, ventas, tiendas where transferencia.id_venta = ventas.id and ventas.id_tienda = tiendas.id and  ventas.estatus = 'activa'"
+        query2 = 'select * from tiendas'
+    }
+    db_conf.db.task(function (t) {
+        return t.batch([
+            t.manyOrNone(query),
+            t.manyOrNone(query2)
+        ])
+    }).then(function (data) {
+        console.log(data);
+        res.render('partials/notes/find-notes', {tiendas: data[1], notas: data[0]});
+    }).catch(function (error) {
+        console.log(error);
+        res.send('<b>Error</b>');
+    });
+});
+
 router.post('/supplier/details', isAuthenticated, function (req, res) {
     console.log(req.body);
     var fecha_inicial = req.body.fecha_inicial
@@ -4268,7 +4329,7 @@ router.get('/print/supplier/details', (req, res) => {
     })
 });
 
-router.get('/print/employee/details', /* isAuthenticated, */ function (req, res) {
+router.get('/print/ ', /* isAuthenticated, */ function (req, res) {
 
     // Comisión total 3%.
     console.log('PRINTING EMPLOYEE DETAILS');
