@@ -541,7 +541,7 @@ tipo text
 */
 
 /* Insert into inventory */
-\copy articulos(modelo, n_existencias, precio, descripcion, id_proveedor, id_marca, costo, id_tienda, notas, articulo) from './mariana.csv' DELIMITER ',' CSV HEADER;
+\copy articulos(modelo, n_existencias, precio, descripcion, id_proveedor, id_marca, costo, id_tienda, notas, articulo) from './mar_im.csv' DELIMITER ',' CSV HEADER;
 
 
 /* Update supplier account */
