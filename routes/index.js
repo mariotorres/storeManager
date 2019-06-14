@@ -2487,7 +2487,7 @@ router.post('/item/return_sols', isAuthenticated, function (req, res) {
                     numericCol(req.body.unidades_devolver),
                     numericCol(data.costo_unitario)
                 ]),
-                t.oneOrNone(' insert into transacciones (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+                t.oneOrNone(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
                     'values($1, $2, Now(), $3, $4) returning id', [
                         data.id_proveedor,
                     'abono',
@@ -2534,7 +2534,7 @@ router.post('/item/return', isAuthenticated, function (req, res) {
                 numericCol(req.body.n_devoluciones),
                 numericCol(req.body.costo)
             ]),
-            t.oneOrNone(' insert into transacciones (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+            t.oneOrNone(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
                 'values($1, $2, Now(), $3, $4) returning id', [
                 req.body.id_proveedor,
                 'abono',
@@ -2686,7 +2686,7 @@ router.post('/cancel/note', isAuthenticated, function (req, res) {
                     ])
                 )
                 proveedores.push(
-                    t.one(' insert into transacciones (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+                    t.one(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
                         ' values($1, $2, Now(), $3, $4) returning id', [
                         numericCol(data[i].id_proveedor),
                         'abono',
@@ -3544,7 +3544,7 @@ router.post('/register/sol', isAuthenticated, function (req, res) {
                     ])
                 )
                 the_query.push(
-                    t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                    t.one(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, ' +
                         ' fecha, concepto, monto) values($1, $2, Now(), $3, $4) returning id', [
                         numericCol(data[1].id_proveedor),
                         'cargo',
@@ -3855,7 +3855,7 @@ router.post('/supplier/details', isAuthenticated, function (req, res) {
                 ),
                 // Global por pagar
                 t.oneOrNone(
-                    " select sum(monto) as por_pagar from transacciones where fecha >= $1 and fecha <= $2 and id_proveedor = $3 ", [
+                    " select sum(monto) as por_pagar from transacciones_por_pagar where fecha >= $1 and fecha <= $2 and id_proveedor = $3 ", [
                         fecha_inicial,
                         req.body.fecha_final,
                         req.body.id_proveedor
@@ -4293,7 +4293,7 @@ router.get('/print/supplier/details', (req, res) => {
                 ),
                 // Global por pagar
                 t.oneOrNone(
-                    " select sum(monto) as por_pagar from transacciones where fecha >= $1 and fecha <= $2 and id_proveedor = $3 ", [
+                    " select sum(monto) as por_pagar from transacciones_por_pagar where fecha >= $1 and fecha <= $2 and id_proveedor = $3 ", [
                         fecha_inicial,
                         fecha_final,
                         id_proveedor
@@ -4620,7 +4620,7 @@ router.post('/notes/cancel', isAuthenticated, function (req, res) {
                                     data[i].id_proveedor
                                 ]))
                             queries.push(
-                                t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                                t.one(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, ' +
                                     ' fecha, concepto, monto) values($1, $2, $3, $4, $5) returning id', [
                                     numericCol(data[i].id_proveedor),
                                     'abono',
@@ -4684,7 +4684,7 @@ router.post('/notes/cancel', isAuthenticated, function (req, res) {
                                         ]))
 
                                     queries.push(
-                                        t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                                        t.one(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, ' +
                                             ' fecha, concepto, monto) values($1, $2, $3, $4, $5) returning id', [
                                             numericCol(data[i].id_proveedor),
                                             'abono',
@@ -4784,7 +4784,7 @@ router.post('/notes/update', isAuthenticated, function (req, res) {
                                 data[i].id_proveedor
                             ]))
                         queries.push(
-                            t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                            t.one(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, ' +
                                 ' fecha, concepto, monto) values($1, $2, $3, $4, $5) returning id', [
                                 numericCol(data[i].id_proveedor),
                                 'abono',
@@ -4846,7 +4846,7 @@ router.post('/notes/update', isAuthenticated, function (req, res) {
                                         data[i].id_proveedor
                                     ]))
                                 queries.push(
-                                    t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                                    t.one(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, ' +
                                         ' fecha, concepto, monto) values($1, $2, $3, $4, $5) returning id', [
                                         numericCol(data[i].id_proveedor),
                                         'abono',
@@ -5162,7 +5162,7 @@ router.post('/notes/finitPayment', isAuthenticated, function (req, res) {
                         articles[1][i].id_proveedor,
                         numericCol(articles[1][i].costo)
                     ]),
-                    t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                    t.one(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, ' +
                         ' fecha, concepto, monto) values($1, $2, Now(), $3, $4) returning id', [
                         articles[1][i].id_proveedor,
                         'cargo',
