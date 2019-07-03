@@ -60,11 +60,11 @@
     </p>
     <p>
         <label>A cuenta</label>
-        <input type="number" value="<%=supplier.a_cuenta%>" class="form-control" name="a_cuenta" disabled max="0">
+        <input type="number" value="<%=a_cuenta.a_cuenta ? a_cuenta.a_cuenta : 0%>" class="form-control" name="a_cuenta" disabled >
     </p>
     <p>
         <label>Por pagar</label>
-        <input type="number" value="<%=por_pagar.por_pagar ? por_pagar.por_pagar : 0%>" class="form-control" name="por_pagar" max="0" disabled>
+        <input type="number" value="<%=por_pagar.por_pagar ? por_pagar.por_pagar : 0%>" class="form-control" name="por_pagar" disabled>
     </p>
 
     <br>

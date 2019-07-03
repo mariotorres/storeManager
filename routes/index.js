@@ -402,7 +402,6 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
     var sale_time = new Date().toLocaleTimeString()
     var cred = numericCol(req.body.optradio === 'cred')
     var id_papel = 0
-    console.log("CREEEDD: " + cred)
     if (req.user.permiso_administrador) {
         // Si el usuario es administrador el ID de la venta es el que el asigna. Y la fecha y hora igual.
         user_sale_id = req.body.user_sale;
@@ -509,10 +508,18 @@ router.post('/carrito/sell', isAuthenticated, function (req, res) {
                         numericCol(data[0][i].id_proveedor),
                         numericCol(data[0][i].costo * data[0][i].unidades_carrito)
                     ]));
+                    queries.push(t.one('insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+                        ' values($1, $2, $3, $4, $5) returning id', [
+                        numericCol(data[0][i].id_proveedor),
+                        'abono',
+                        req.body.fecha_venta,
+                        'venta de mercancía, nota: ' +   req.body.id_papel,
+                        numericCol(data[0][i].costo * data[0][i].unidades_carrito)
+                    ]))
                     /*
                     * Agregar transacción con proveedor
                     * */
-                    queries.push(t.one('insert into transacciones (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+                    queries.push(t.one('insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
                         ' values($1, $2, $3, $4, $5) returning id', [
                         numericCol(data[0][i].id_proveedor),
                         'cargo',
@@ -1286,18 +1293,23 @@ router.post('/brand/edit-brand/', isAuthenticated, function (req, res) {
 router.post('/supplier/edit-supplier/', isAuthenticated, function (req, res) {
     var id = req.body.id;
     db_conf.db.task(function (t) {
+        // a cuenta y por pagar considerados
         return t.batch([
             db_conf.db.one('select * from proveedores where id = $1', [id]),
-            db_conf.db.oneOrNone('select sum(monto) as por_pagar from transacciones where ' +
+            db_conf.db.oneOrNone('select sum(monto) as por_pagar from transacciones_por_pagar where ' +
+                ' id_proveedor = $1 ', [id]),
+            db_conf.db.oneOrNone('select sum(monto) as a_cuenta from transacciones_a_cuenta where ' +
                 ' id_proveedor = $1 ', [id])
         ])
     }).then(function (data) {
         res.render('partials/suppliers/edit-supplier', {
             status: 'Ok',
             supplier: data[0],
-            por_pagar: data[1]
+            por_pagar: data[1],
+            a_cuenta: data[2]
         });
     }).catch(function (error) {
+
         console.log(error);
         res.send('<b>Error</b>');
     });
@@ -1412,16 +1424,21 @@ router.post('/supplier/supplier-to-pay', isAuthenticated, function (req, res) {
             db_conf.db.oneOrNone("select * from proveedores where id = $1", [
                 req.body.id
             ]),
-            db_conf.db.oneOrNone('select sum(monto) as por_pagar from transacciones where ' +
+            db_conf.db.oneOrNone('select sum(monto) as por_pagar from transacciones_por_pagar where ' +
                 ' id_proveedor = $1 ',[
                  req.body.id
-                ])
+                ]),
+            db_conf.db.oneOrNone('select sum(monto) as a_cuenta from transacciones_a_cuenta where ' +
+                ' id_proveedor = $1 ',[
+                req.body.id
+            ])
         ])
     }).then(function (data) {
         console.log(data)
         res.render('partials/suppliers/supplier-to-pay', {
             prov: data[0],
-            por_pagar: data[1]
+            por_pagar: data[1],
+            a_cuenta: data[2]
         })
     }).catch(function (error) {
         console.log(error)
@@ -1454,7 +1471,7 @@ router.post('/supplier/payment', isAuthenticated, function (req, res) {
                     req.body.fecha_pago,
                     req.body.concepto
                 ]),
-                db_conf.db.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
+                db_conf.db.one(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, ' +
                     ' fecha, concepto, monto) values($1, $2, $3, $4, $5) returning id', [
                         req.body.id,
                         'abono',
@@ -1485,11 +1502,15 @@ router.post('/supplier/list/pay', isAuthenticated, function (req, res) {
     var pageSize = 15;
     var offset = page * pageSize;
     db_conf.db.task(function (t) {
+        // a_cuenta and por_pagar contemplado
         return this.batch([
             this.one('select count(*) from proveedores as count'),
-            this.manyOrNone('select proveedores.id, nombre, a_cuenta, razon_social, rfc, transacciones.por_pagar as por_pagar ' +
-                ' from proveedores left join (select id_proveedor, sum(monto) as por_pagar from transacciones group ' +
-                ' by id_proveedor) as transacciones on transacciones.id_proveedor = proveedores.id order by nombre ' +
+            this.manyOrNone('select proveedores.id, nombre, razon_social, rfc, transacciones_a_cuenta.a_cuenta, ' +
+                ' transacciones_por_pagar.por_pagar  from proveedores left join (select id_proveedor, sum(monto) as ' +
+                ' por_pagar from transacciones_por_pagar group by id_proveedor) as transacciones_por_pagar on ' +
+                ' transacciones_por_pagar.id_proveedor = proveedores.id left join (select id_proveedor, sum(monto) ' +
+                ' as a_cuenta from transacciones_a_cuenta group by id_proveedor) as transacciones_a_cuenta on ' +
+                ' transacciones_a_cuenta.id_proveedor = proveedores.id  order by nombre' +
                 ' limit $1 offset $2', [pageSize, offset])
         ]);
     }).then(function (data) {
@@ -1513,12 +1534,19 @@ router.post('/supplier/list/', isAuthenticated, function (req, res) {
     var pageSize = 15;
     var offset = page * pageSize;
     db_conf.db.task(function (t) {
+        // a_cuenta and por_pagar contemplado
         return this.batch([
             this.one('select count(*) from proveedores as count'),
-            this.manyOrNone('select * from proveedores order by nombre limit $1 offset $2', [pageSize, offset])
+            this.manyOrNone('select proveedores.id, nombre, razon_social, rfc, transacciones_a_cuenta.a_cuenta, ' +
+                ' transacciones_por_pagar.por_pagar  from proveedores left join (select id_proveedor, sum(monto) as ' +
+                ' por_pagar from transacciones_por_pagar group by id_proveedor) as transacciones_por_pagar on ' +
+                ' transacciones_por_pagar.id_proveedor = proveedores.id left join (select id_proveedor, sum(monto) ' +
+                ' as a_cuenta from transacciones_a_cuenta group by id_proveedor) as transacciones_a_cuenta on ' +
+                ' transacciones_a_cuenta.id_proveedor = proveedores.id  order by nombre' +
+                ' limit $1 offset $2', [pageSize, offset])
         ]);
     }).then(function (data) {
-        res.render('partials/suppliers/supplier-list', {
+        res.render('partials/suppliers/supplier-list-pay', {
             status: "Ok",
             suppliers: data[1],
             pageNumber: page,
@@ -1690,6 +1718,7 @@ router.post('/item/register', upload.single('imagen'), function (req, res) {
                 //Si el artículo tiene un proveedor, se agrega a la cuenta
                 var proveedor = null;
                 if (req.body.id_proveedor != null && req.body.id_proveedor != '') {
+                    // a_cuenta and por_pagar contemplado
                     proveedor = t.one('update proveedores set a_cuenta = a_cuenta - $2 where id=$1 returning id, nombre', [
                         numericCol(req.body.id_proveedor),
                         numericCol(req.body.costo) * numericCol(req.body.n_arts)
@@ -1732,6 +1761,14 @@ router.post('/item/register', upload.single('imagen'), function (req, res) {
                     'ingreso articulos',
                     req.body.discount,
                     req.body.fecha_registro
+                ]),
+                t.one(' insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+                    ' values($1, $2 ,$3, $4, $5) returning id', [
+                    numericCol(req.body.id_proveedor),
+                    'cargo',
+                    req.body.fecha_registro,
+                    `ingreso de ${req.body.n_arts} unidades del modelo ${req.body.modelo}`,
+                    - numericCol(req.body.costo) * numericCol(req.body.n_arts)
                 ])
             ])
         })
@@ -2391,12 +2428,26 @@ router.post('/item/update', upload.single('imagen'), function (req, res) {
                 req.body.id_proveedor,
                 req.body.id_tienda
             ]),
+            // Este a cuenta ya fue modificado a transacciones_a_cuenta
             t.one('update proveedores set a_cuenta = ((a_cuenta - $3) + $2) where id = $1 returning id', [
                 req.body.id_proveedor,
                 numericCol(req.body.costo_anterior) * numericCol(req.body.existencias_anterior),
                 numericCol(req.body.costo) * numericCol(req.body.n_existencias)
             ]),
-
+            t.one('insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                ' fecha, concepto, monto) values($1, $2, current_date, $3, $4)  returning id', [
+                req.body.id_proveedor,
+                'abono',
+                'modificacion de inventario (primera parte)',
+                numericCol(req.body.costo_anterior) * numericCol(req.body.existencias_anterior)
+            ]),
+            t.one('insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                ' fecha, concepto, monto) values($1, $2, current_date, $3, $4) returning id', [
+                req.body.id_proveedor,
+                'cargo',
+                'modificacion de inventario (segunda parte)',
+                - numericCol(req.body.costo) * numericCol(req.body.n_existencias)
+            ]),
             /*
 
             t.one(' insert into transacciones (id_proveedor, tipo_transaccion, ' +
@@ -2517,12 +2568,31 @@ router.post('/item/return_sols', isAuthenticated, function (req, res) {
 router.post('/item/return', isAuthenticated, function (req, res) {
     console.log(req.body);
     db_conf.db.tx(function (t) {
+        var transac_type = null;
+        if(req.body.optradio === 'si'){
+            transac_type = t.oneOrNone(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+                'values($1, $2, Now(), $3, $4) returning id', [
+                req.body.id_proveedor,
+                'abono',
+                'devolución artículos',
+                numericCol(req.body.costo * req.body.n_devoluciones)
+            ]);
+        }else{
+            t.oneOrNone(' insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+                'values($1, $2, Now(), $3, $4) returning id', [
+                req.body.id_proveedor,
+                'abono',
+                'devolución artículos a proveedor',
+                numericCol(req.body.costo * req.body.n_devoluciones)
+            ])
+        }
         return t.batch([
             t.one('update articulos set n_existencias = $2 where id=$1 returning id, articulo', [
                 req.body.id,
                 numericCol(req.body.n_existencias) - numericCol(req.body.n_devoluciones),
                 new Date()
             ]),
+            // Este a cuenta ya fue modificado a transacciones_a_cuenta
             t.one('update proveedores set a_cuenta = a_cuenta + $2 where id = $1 returning nombre', [
                 numericCol(req.body.id_proveedor),
                 numericCol(req.body.costo * req.body.n_devoluciones)
@@ -2534,13 +2604,7 @@ router.post('/item/return', isAuthenticated, function (req, res) {
                 numericCol(req.body.n_devoluciones),
                 numericCol(req.body.costo)
             ]),
-            t.oneOrNone(' insert into transacciones_por_pagar (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
-                'values($1, $2, Now(), $3, $4) returning id', [
-                req.body.id_proveedor,
-                'abono',
-                'devolución artículos',
-                numericCol(req.body.costo * req.body.n_devoluciones)
-            ])
+            transac_type
         ])
     }).then(function (data) {
         console.log('Devolución: ', data);
@@ -2679,10 +2743,20 @@ router.post('/cancel/note', isAuthenticated, function (req, res) {
         }).then(function (data) {
             var proveedores = [];
             for (var i = 0; i < (data.length - 1); i++) {
+                // Este a cuenta ya fue modificado a transacciones_a_cuenta... no se usa
                 proveedores.push(
                     t.one('update proveedores set a_cuenta = a_cuenta - $2, por_pagar = por_pagar + $2 where id = $1 returning id', [
                         numericCol(data[i].id_proveedor),
                         numericCol(data[i].costo_def) * numericCol(data[data.length - 1][i].unidades_vendidas)
+                    ])
+                )
+                proveedores.push(
+                    t.one(' insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, fecha, concepto, monto) ' +
+                        ' values($1, $2, Now(), $3, $4) returning id', [
+                        numericCol(data[i].id_proveedor),
+                        'cargo',
+                        'cancelación de nota',
+                        -numericCol(data[i].costo_def) * numericCol(data[data.length - 1][i].unidades_vendidas)
                     ])
                 )
                 proveedores.push(
@@ -3119,12 +3193,33 @@ router.post('/item/registers/update', isAuthenticated, function (req, res) {
             ])
         }).then(function (data) {
             console.log(data)
+            /*
             db_conf.db.oneOrNone(
                 "update proveedores set a_cuenta = (a_cuenta + $1) - $2 where id = $3 returning id", [
                     data[0].n_existencias * data[0].costo,
                     req.body.n_arts * req.body.costo,
                     data[0].id_proveedor
-                ]).then(function (data) {
+                ])
+                */
+            // Este a cuenta ya fue tomado en cuenta
+            db_conf.db.task(function(t) {
+              return this.batch([
+                  t.one('insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                      ' fecha, concepto, monto) values($1, $2, current_date, $3, $4)  returning id', [
+                      data[0].id_proveedor,
+                      'abono',
+                      'modificacion de inventario (primera parte)',
+                      numericCol(data[0].n_existencias * data[0].costo)
+                  ]),
+                  t.one('insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                      ' fecha, concepto, monto) values($1, $2, current_date, $3, $4) returning id', [
+                      data[0].id_proveedor,
+                      'cargo',
+                      'modificacion de inventario (segunda parte)',
+                      - numericCol(req.body.n_arts * req.body.costo)
+                  ])
+              ])
+            }).then(function (data) {
                 console.log(data)
                 res.json({
                     estatus: 'Ok',
@@ -3211,8 +3306,16 @@ router.post('/back/note_item', isAuthenticated, function (req, res) {
             for (var i = 0; i < data.length; i++) {
                 query.push(t.one('update articulos set n_existencias = n_existencias - ' + data[i].num_arts +
                     ' where id =  ' + data[i].id + ' returning id'))
-                query.push(t.one('update proveedores set a_cuenta = a_cuenta + ' + data[i].num_arts * data[i].costo +
-                    ' where id = ' + data[i].id_proveedor + ' returning id'))
+                /*query.push(t.one('update proveedores set a_cuenta = a_cuenta + ' + data[i].num_arts * data[i].costo +
+                    ' where id = ' + data[i].id_proveedor + ' returning id'))*/
+                // Este a cuenta ya fue considerado
+                query.push(t.one('insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                ' fecha, concepto, monto) values($1, $2, current_date, $3, $4)  returning id', [
+                    data[i].id_proveedor,
+                    'abono',
+                    'devolución de prenda: ' + data[i].modelo,
+                    numericCol(data[i].num_arts * data[i].costo)
+                ]))
                 query.push(t.one('insert into nota_devolucion (id_nota_devolucion, id_articulo, id_usuario, num_arts, ' +
                     ' hora, fecha) values ($1, $2, $3, $4, localtime, current_date) returning id', [
                     data[i].id_nota_registro,
@@ -3367,7 +3470,11 @@ router.post('/search/registers/results', isAuthenticated, function (req, res) {
             ]),
             t.oneOrNone('select * from usuarios where id = $1', [req.user.id]),
             t.manyOrNone('select * from terminales'),
-            t.oneOrNone('select nombre, a_cuenta from proveedores where proveedores.id = $1', [req.body.id_proveedor])
+            //t.oneOrNone('select nombre, a_cuenta from proveedores where proveedores.id = $1', [req.body.id_proveedor])
+            // Este a cuenta ya fue considerado
+            t.oneOrNone('select nombre, sum(transacciones_a_cuenta.monto) as a_cuenta from transacciones_a_cuenta, proveedores ' +
+                ' where proveedores.id = transacciones_a_cuenta.id_proveedor and proveedores.id = $1 group by nombre',
+                [req.body.id_proveedor])
         ])
     }).then(function (data) {
         console.log(data)
@@ -4613,6 +4720,7 @@ router.post('/notes/cancel', isAuthenticated, function (req, res) {
                     )
                     if (estatus !== 'devolucion' && estatus !== 'solicitada') {
                         if (!data[i].fue_sol) {
+                            // Este a cuenta ya fue considerado
                             queries.push(
                                 t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
                                     " where id = $2 returning id", [
@@ -4627,6 +4735,16 @@ router.post('/notes/cancel', isAuthenticated, function (req, res) {
                                     req.body.fecha_venta,
                                     'cancelación de nota',
                                     numericCol(data[i].costo * data[i].unidades_vendidas)
+                                ])
+                            )
+                            queries.push(
+                                t.one(' insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                                    ' fecha, concepto, monto) values($1, $2, $3, $4, $5) returning id', [
+                                    numericCol(data[i].id_proveedor),
+                                    'cargo',
+                                    req.body.fecha_venta,
+                                    'cancelación de nota',
+                                    -numericCol(data[i].costo * data[i].unidades_vendidas)
                                 ])
                             )
                         }
@@ -4676,6 +4794,8 @@ router.post('/notes/cancel', isAuthenticated, function (req, res) {
                             )
                             if (estatus !== 'devolucion' && estatus !== 'solicitada') {
                                 if (!data[i].fue_sol) {
+                                    // Este a cuenta ya fue considerado
+
                                     queries.push(
                                         t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
                                             " where id = $2 returning id", [
@@ -4693,6 +4813,18 @@ router.post('/notes/cancel', isAuthenticated, function (req, res) {
                                             numericCol(data[i].costo * data[i].unidades_vendidas)
                                         ])
                                     )
+
+                                    queries.push(
+                                        t.one(' insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                                            ' fecha, concepto, monto) values($1, $2, $3, $4, $5) returning id', [
+                                            numericCol(data[i].id_proveedor),
+                                            'cargo',
+                                            req.body.fecha_venta,
+                                            'cancelación de nota',
+                                            -numericCol(data[i].costo * data[i].unidades_vendidas)
+                                        ])
+                                    )
+
                                 }
                                 queries.push(
                                     t.one(" update articulos set n_existencias = n_existencias + $1 " +
@@ -4777,6 +4909,7 @@ router.post('/notes/update', isAuthenticated, function (req, res) {
                     )
                     if (estatus === 'devolucion') {
                         console.log('unidades: ' + data[i].unidades_vendidas + ' id_art: ' + data[i].id_articulo);
+                        // Este a cuenta ya fue considerado
                         queries.push(
                             t.one(" update proveedores set por_pagar = por_pagar + $1, a_cuenta = a_cuenta - $1 " +
                                 " where id = $2 returning id", [
@@ -4791,6 +4924,16 @@ router.post('/notes/update', isAuthenticated, function (req, res) {
                                 req.body.fecha_venta,
                                 'devolución de prenda vendida',
                                 data[i].costo_def
+                            ])
+                        )
+                        queries.push(
+                            t.one(' insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                                ' fecha, concepto, monto) values($1, $2, $3, $4, $5) returning id', [
+                                numericCol(data[i].id_proveedor),
+                                'cargo',
+                                req.body.fecha_venta,
+                                'devolución de prenda vendida',
+                                -data[i].costo_def
                             ])
                         )
                         queries.push(
@@ -4853,6 +4996,16 @@ router.post('/notes/update', isAuthenticated, function (req, res) {
                                         req.body.fecha_venta,
                                         'devolución de prenda vendida',
                                         data[i].costo_def
+                                    ])
+                                )
+                                queries.push(
+                                    t.one(' insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                                        ' fecha, concepto, monto) values($1, $2, $3, $4, $5) returning id', [
+                                        numericCol(data[i].id_proveedor),
+                                        'cargo',
+                                        req.body.fecha_venta,
+                                        'devolución de prenda vendida',
+                                        -data[i].costo_def
                                     ])
                                 )
 
@@ -5158,6 +5311,7 @@ router.post('/notes/finitPayment', isAuthenticated, function (req, res) {
                         articles[2][i].id_art,
                         "entregada"
                     ]),
+                    // Este a cuenta ya fue considerado
                     t.one("update proveedores set a_cuenta = a_cuenta + $2, por_pagar = por_pagar - $2 where id = $1 returning id", [
                         articles[1][i].id_proveedor,
                         numericCol(articles[1][i].costo)
@@ -5166,6 +5320,13 @@ router.post('/notes/finitPayment', isAuthenticated, function (req, res) {
                         ' fecha, concepto, monto) values($1, $2, Now(), $3, $4) returning id', [
                         articles[1][i].id_proveedor,
                         'cargo',
+                        'finalización de pago',
+                        -numericCol(articles[1][i].costo)
+                    ]),
+                    t.one(' insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                        ' fecha, concepto, monto) values($1, $2, Now(), $3, $4) returning id', [
+                        articles[1][i].id_proveedor,
+                        'abono',
                         'finalización de pago',
                         -numericCol(articles[1][i].costo)
                     ])
@@ -5463,6 +5624,7 @@ router.post('/brand/delete', isAuthenticated, function (req, res) {
 router.post('/item/delete', isAuthenticated, function (req, res) {
     // Eliminar articulo
     db_conf.db.tx(function (t) {
+        // Este a cuenta ya fue considerado
         return this.one("select id, costo, n_existencias, id_proveedor from articulos where id = $1 ", [req.body.id]).then(function (data) {
             return t.batch([
                 t.one("delete from  nota_entrada  where id_articulo = $1 returning id", [data.id]),
@@ -5470,7 +5632,15 @@ router.post('/item/delete', isAuthenticated, function (req, res) {
                 t.oneOrNone('update proveedores set a_cuenta= a_cuenta + $2 where id = $1 returning id, nombre', [
                     data.id_proveedor,
                     data.costo * data.n_existencias
+                ]),
+                t.one(' insert into transacciones_a_cuenta (id_proveedor, tipo_transaccion, ' +
+                    ' fecha, concepto, monto) values($1, $2, Now(), $3, $4) returning id', [
+                    data.id_proveedor,
+                    'abono',
+                    'Eliminación de artículo',
+                    numericCol(data.costo * data.n_existencias)
                 ])
+
             ]);
         })
 

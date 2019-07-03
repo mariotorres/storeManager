@@ -83,7 +83,7 @@ function modalEvents(button, modal, page) {
 
                     // alert(ButtonValue);
                     // --------------------------------------------------------
-                    if (confirm("¿Está seguro que quiere registrar " + $('#nArts').val() + " artículos?")) {
+                    if (confirm("¿Está seguro que quiere registrar los  artículos?")) {
                         $.ajax({
                             url: '/item/register',
                             data: formData,

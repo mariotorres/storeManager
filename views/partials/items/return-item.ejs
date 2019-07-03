@@ -44,6 +44,13 @@
         </select>
     </p>
 
+    <br>
+    <p id="prenda_pagada">
+        <label>El articulo ya fue pagado al proveedor:</label>
+        <label class="radio-inline"><input type="radio" name="optradio" value="si" >si</label>
+        <label class="radio-inline"><input type="radio" name="optradio" value="no" checked="checked">no</label>
+    </p>
+
     <p hidden>
         <label>Costo unitario</label>
         <input type="number" name="costo" value="<%= item.costo %>" class="form-control">

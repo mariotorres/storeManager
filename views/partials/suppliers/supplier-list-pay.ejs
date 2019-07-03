@@ -6,7 +6,7 @@ if ( suppliers.length > 0){%>
     <a href="#" class="list-group-item" data-supplier_name="<%=suppliers[i].nombre%>" data-supplier_id="<%= suppliers[i].id %>">
         <h4 class="list-group-item-heading"> <i class="fa fa-male"></i> <%= suppliers[i].nombre %></h4>
         <p class="list-group-item-text"><%= "Razón social: "+ suppliers[i].razon_social + ", RFC: " +
-            suppliers[i].rfc + ", Saldo a cuenta: " +  suppliers[i].a_cuenta +
+            suppliers[i].rfc + ", Saldo a cuenta: " +  (suppliers[i].a_cuenta ? suppliers[i].a_cuenta : 0) +
             ", Saldo a pagar: " + (suppliers[i].por_pagar ? suppliers[i].por_pagar : 0) %></p>
     </a>
     <%}%>
@@ -19,24 +19,3 @@ if ( suppliers.length > 0){%>
 <%}%>
 
 
-<!--
-<label>Fecha en la que se realiza el pago</label>
-<div class="form-group">
-    <div class='input-group'>
-        <input type="text" name="fecha_pago" id="payment_date" class="form-control" required>
-        <span class="input-group-addon">
-            <span class="glyphicon glyphicon-calendar"></span>
-        </span>
-    </div>
-    <br>
-    <p>
-        <label>Monto a pagar: </label>
-        <input type="number" name="monto_pago" id="monto_pago" class="form-control" required>
-    </p>
-    <br>
-    <p>
-        <label>Notas o comentarios: </label>
-        <textarea class="form-control" rows="5" name="concepto" id="concepto"></textarea>
-    </p>
-</div>
--->
