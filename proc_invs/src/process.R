@@ -73,7 +73,7 @@ stores <- list('mariana'=4,
                'celine'=1)
 ###########################################
 # setwd('/home/luis/Documents/Projects/storeManager/proc_invs/src')
-the_store <- 'mariana'
+the_store <- 'imagen'
 data_path <- paste0('../data/mar_img/',
                     the_store,
                     '.csv')
@@ -116,7 +116,7 @@ data <- cbind(data, mod_provs)
 data$costo <- data$precio
 data$precio <- data$costo * 2
 print('--------third phase add price-------')
-print(head(mod_provs))
+print(head(data))
 ## ----------------------------------------
 ## DATOS LIMPIOS
 ## ----------------------------------------
@@ -130,11 +130,11 @@ clean_data <- clean_data %>%
     filter(costo > 0)
 clean_data$articulo <- 'Prenda'
 print('--------fourth phase clean data-------')
-print(head(mod_provs))
+print(head(clean_data))
 ## ----------------------------------------
 ## More than one store
 ## ----------------------------------------
-##aux_data <- clean_data
+## aux_data <- clean_data
 clean_data <- rbind(aux_data, clean_data)
 ## ----------------------------------------
 ## Write data
